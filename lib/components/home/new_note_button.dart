@@ -3,16 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:go_router/go_router.dart';
 import 'package:foledge/components/navbar/horizontal_navbar.dart';
-import 'package:foledge/components/theming/foledge_theme.dart';
 import 'package:foledge/data/file_manager/file_manager.dart';
 import 'package:foledge/data/routes.dart';
 import 'package:foledge/i18n/strings.g.dart';
 import 'package:foledge/pages/editor/editor.dart';
 
 class NewNoteButton extends StatefulWidget {
-  const NewNoteButton({super.key, required this.cupertino, this.path});
+  const NewNoteButton({super.key, this.path});
 
-  final bool cupertino;
   final String? path;
 
   @override
@@ -32,14 +30,11 @@ class _NewNoteButtonState extends State<NewNoteButton> {
       childPadding: const .all(5),
       spaceBetweenChildren: 4,
       switchLabelPosition: Directionality.of(context) == .rtl,
-      shape: widget.cupertino
-          ? const CircleBorder()
-          : const RoundedRectangleBorder(borderRadius: materialBorderRadius),
+      shape: const RoundedRectangleBorder(borderRadius: materialBorderRadius),
       dialRoot: (context, open, toggleChildren) {
-        final platform = Theme.of(context).platform;
         return GlassyContainer(
           height: 56,
-          borderRadius: platform.isCupertino ? null : materialBorderRadius,
+          borderRadius: materialBorderRadius,
           child: AspectRatio(
             aspectRatio: 1,
             child: IconButton(
@@ -48,11 +43,9 @@ class _NewNoteButtonState extends State<NewNoteButton> {
               visualDensity: VisualDensity.compact,
               style: IconButton.styleFrom(
                 padding: .zero,
-                shape: platform.isCupertino
-                    ? const CircleBorder()
-                    : const RoundedRectangleBorder(
-                        borderRadius: materialBorderRadius,
-                      ),
+                shape: const RoundedRectangleBorder(
+                  borderRadius: materialBorderRadius,
+                ),
               ),
               icon: const Center(child: Icon(Icons.add)),
             ),

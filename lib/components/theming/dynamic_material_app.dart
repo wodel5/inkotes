@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,11 +7,9 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:go_router/go_router.dart';
 import 'package:foledge/components/theming/foledge_theme.dart';
-import 'package:foledge/components/theming/yaru_builder.dart';
 import 'package:foledge/data/prefs.dart';
 import 'package:foledge/i18n/extensions/redirecting_localization_delegate.dart';
 import 'package:foledge/i18n/strings.g.dart';
-import 'package:window_manager/window_manager.dart';
 
 class DynamicMaterialApp extends StatefulHookWidget {
   const DynamicMaterialApp({
@@ -29,121 +25,30 @@ class DynamicMaterialApp extends StatefulHookWidget {
 
   @override
   State<DynamicMaterialApp> createState() => DynamicMaterialAppState();
-
-  static final ValueNotifier<bool> _isFullscreen = ValueNotifier(false);
-  static bool get isFullscreen => _isFullscreen.value;
-
-  static void setFullscreen(bool value, {required bool updateSystem}) {
-    _isFullscreen.value = value;
-    if (!updateSystem) return;
-
-    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-      windowManager.setFullScreen(value);
-    } else {
-      SystemChrome.setEnabledSystemUIMode(
-        value ? SystemUiMode.immersive : SystemUiMode.edgeToEdge,
-      );
-    }
-  }
-
-  static void addFullscreenListener(void Function() listener) {
-    _isFullscreen.addListener(listener);
-  }
-
-  static void removeFullscreenListener(void Function() listener) {
-    _isFullscreen.removeListener(listener);
-  }
 }
 
-class DynamicMaterialAppState extends State<DynamicMaterialApp>
-    with WindowListener {
-  @override
-  void initState() {
-    windowManager.addListener(this);
-    SystemChrome.setSystemUIChangeCallback(_onFullscreenChange);
-
-    super.initState();
-  }
-
-  @override
-  void onWindowEnterFullScreen() {
-    DynamicMaterialApp.setFullscreen(true, updateSystem: false);
-  }
-
-  @override
-  void onWindowLeaveFullScreen() {
-    DynamicMaterialApp.setFullscreen(false, updateSystem: false);
-  }
-
-  Future<void> _onFullscreenChange(bool systemOverlaysAreVisible) async {
-    DynamicMaterialApp.setFullscreen(
-      !systemOverlaysAreVisible,
-      updateSystem: false,
-    );
-  }
-
+class DynamicMaterialAppState extends State<DynamicMaterialApp> {
   @override
   Widget build(BuildContext context) {
     final themeMode = useValueListenable(stows.appTheme);
-    final platform = useValueListenable(stows.platform);
-    var chosenAccentColor = useValueListenable(stows.accentColor);
-    if ((chosenAccentColor?.a ?? 0) < double.minPositive)
-      chosenAccentColor = null; // discard transparent accent color
-    useListenable(stows.hyperlegibleFont);
 
-    // Use Yaru theme, with or without [chosenAccentColor]
-    if (platform == .linux) {
-      return YaruBuilder(
-        primary: chosenAccentColor, // if null, falls back to system color
-        platform: platform,
-        builder: (context, themes) {
-          return ExplicitlyThemedApp(
-            title: widget.title,
-            router: widget.router,
-            themeMode: themeMode,
-            theme: themes.theme,
-            darkTheme: themes.darkTheme,
-            highContrastTheme: themes.highContrastTheme,
-            highContrastDarkTheme: themes.highContrastDarkTheme,
-          );
-        },
-      );
-    }
+    final platform = Theme.of(context).platform;
 
-    // Use [chosenAccentColor] with material/cupertino theme
-    if (chosenAccentColor != null) {
-      return ExplicitlyThemedApp(
-        title: widget.title,
-        router: widget.router,
-        themeMode: themeMode,
-        theme: foledgeTheme.createThemeFromSeed(
-          chosenAccentColor,
-          .light,
-          platform,
-        ),
-        darkTheme: foledgeTheme.createThemeFromSeed(
-          chosenAccentColor,
-          .dark,
-          platform,
-        ),
-      );
-    }
-
-    // Try and use device's accent color, or fall back to defaultSwatch
+    // Use device's accent color, or fall back to defaultSwatch
     return DynamicColorBuilder(
       builder: (ColorScheme? lightColorScheme, ColorScheme? darkColorScheme) {
         return ExplicitlyThemedApp(
           title: widget.title,
           router: widget.router,
           themeMode: themeMode,
-          theme: (!platform.usesYaruColors && lightColorScheme != null)
+          theme: (lightColorScheme != null)
               ? foledgeTheme.createTheme(lightColorScheme, platform)
               : foledgeTheme.createThemeFromSeed(
                   lightColorScheme?.primary ?? widget.defaultSwatch,
                   .light,
                   platform,
                 ),
-          darkTheme: (!platform.usesYaruColors && darkColorScheme != null)
+          darkTheme: (darkColorScheme != null)
               ? foledgeTheme.createTheme(darkColorScheme, platform)
               : foledgeTheme.createThemeFromSeed(
                   darkColorScheme?.primary ?? widget.defaultSwatch,
@@ -157,7 +62,6 @@ class DynamicMaterialAppState extends State<DynamicMaterialApp>
 
   @override
   void dispose() {
-    windowManager.removeListener(this);
     SystemChrome.setSystemUIChangeCallback(null);
 
     super.dispose();

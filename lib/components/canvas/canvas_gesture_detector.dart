@@ -444,9 +444,7 @@ class CanvasGestureDetectorState extends State<CanvasGestureDetector> {
     widget.updatePointerData(event.kind, pressure);
 
     if (isStylus &&
-        stows.autoDisableFingerDrawingWhenStylusDetected.value &&
-        // Don't change if the user has a fixed value for finger drawing
-        !stows.hideFingerDrawingToggle.value) {
+        stows.autoDisableFingerDrawingWhenStylusDetected.value) {
       stows.editorFingerDrawing.value = false;
     }
   }

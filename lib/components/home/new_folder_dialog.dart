@@ -55,7 +55,6 @@ class _NewFolderDialogState extends State<NewFolderDialog> {
           placeholder: t.home.newFolder.folderName,
           prefixIcon: const AdaptiveIcon(
             icon: Icons.create_new_folder,
-            cupertinoIcon: CupertinoIcons.folder_badge_plus,
           ),
           validator: validateFolderName,
         ),

@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:foledge/components/home/delete_folder_button.dart';
@@ -157,12 +156,6 @@ class _GridFolderState extends State<_GridFolder> {
                               .backFolder => Icons.folder_open,
                               .newFolder => Icons.create_new_folder,
                               .realFolder => Icons.folder,
-                            },
-                            cupertinoIcon: switch (widget.cardType) {
-                              .backFolder => CupertinoIcons.folder_open,
-                              .newFolder =>
-                                CupertinoIcons.folder_fill_badge_plus,
-                              .realFolder => CupertinoIcons.folder_fill,
                             },
                             size: 50,
                           ),

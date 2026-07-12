@@ -16,7 +16,6 @@ import 'package:foledge/components/home/no_files.dart';
 import 'package:foledge/components/home/path_components.dart';
 import 'package:foledge/components/home/rename_note_button.dart';
 import 'package:foledge/components/home/sort_button.dart';
-import 'package:foledge/components/theming/foledge_theme.dart';
 import 'package:foledge/data/file_manager/file_manager.dart';
 import 'package:foledge/data/prefs.dart';
 import 'package:foledge/data/routes.dart';
@@ -119,7 +118,6 @@ class _BrowsePageState extends State<BrowsePage> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = ColorScheme.of(context);
-    final platform = Theme.of(context).platform;
     final crossAxisCount = MediaQuery.sizeOf(context).width ~/ 300 + 1;
     useListenable(stows.homeLayout);
     useOnListenableChange(stows.browseSortMetric, findChildrenOfPath);
@@ -207,7 +205,6 @@ class _BrowsePageState extends State<BrowsePage> {
         ],
       ),
       floatingActionButton: NewNoteButton(
-        cupertino: platform.isCupertino,
         path: path,
       ),
       persistentFooterButtons: selectedFiles.value.isEmpty

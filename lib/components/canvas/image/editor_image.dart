@@ -85,7 +85,7 @@ sealed class EditorImage extends ChangeNotifier {
   /// If the image is new, it will be [active] (draggable) when loaded
   var newImage = false;
 
-  /// Whether this image is inverted if Prefs.editorAutoInvert.value
+  /// Whether this image is inverted in dark mode
   bool invertible;
 
   /// The BoxFit used if this is a page's background image

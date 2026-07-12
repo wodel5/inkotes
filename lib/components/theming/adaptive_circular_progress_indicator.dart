@@ -1,24 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:yaru/yaru.dart';
 
-class AdaptiveCircularProgressIndicator extends CircularProgressIndicator {
+class AdaptiveCircularProgressIndicator extends StatelessWidget {
   const AdaptiveCircularProgressIndicator({
     super.key,
-    super.value,
-    super.backgroundColor,
-    super.valueColor,
-    super.strokeWidth,
-    super.semanticsLabel,
-    super.semanticsValue,
-    super.strokeCap,
-    super.strokeAlign,
-    super.constraints,
-    super.trackGap,
-    super.padding,
-  }) : super.adaptive();
+    this.value,
+    this.backgroundColor,
+    this.valueColor,
+    this.strokeWidth,
+    this.semanticsLabel,
+    this.semanticsValue,
+  });
 
-  /// Creates a circular progress indicator with the same size and color
-  /// as the surrounding text.
+  final double? value;
+  final Color? backgroundColor;
+  final Animation<Color?>? valueColor;
+  final double? strokeWidth;
+  final String? semanticsLabel;
+  final String? semanticsValue;
+
   static Widget textStyled({double? value, double alpha = 1.0}) => Builder(
     builder: (context) {
       final textStyle = DefaultTextStyle.of(context).style;
@@ -38,49 +37,14 @@ class AdaptiveCircularProgressIndicator extends CircularProgressIndicator {
   );
 
   @override
-  State<AdaptiveCircularProgressIndicator> createState() =>
-      _CircularProgressIndicatorState();
-}
-
-class _CircularProgressIndicatorState
-    extends State<AdaptiveCircularProgressIndicator> {
-  @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    if (theme.platform == .linux) {
-      return _buildYaru(context);
-    } else {
-      return _buildDefault(context);
-    }
-  }
-
-  Widget _buildYaru(BuildContext context) {
-    return YaruCircularProgressIndicator(
-      value: widget.value,
-      strokeWidth: widget.strokeWidth,
-      color: widget.color,
-      valueColor: widget.valueColor,
-      trackColor: widget.backgroundColor,
-      semanticsLabel: widget.semanticsLabel,
-      semanticsValue: widget.semanticsValue,
-    );
-  }
-
-  Widget _buildDefault(BuildContext context) {
     return CircularProgressIndicator.adaptive(
-      value: widget.value,
-      backgroundColor: widget.backgroundColor,
-      valueColor: widget.valueColor,
-      strokeWidth: widget.strokeWidth,
-      semanticsLabel: widget.semanticsLabel,
-      semanticsValue: widget.semanticsValue,
-      strokeCap: widget.strokeCap,
-      strokeAlign: widget.strokeAlign,
-      constraints: widget.constraints,
-      trackGap: widget.trackGap,
-      // ignore: deprecated_member_use
-      year2023: widget.year2023,
-      padding: widget.padding,
+      value: value,
+      backgroundColor: backgroundColor,
+      valueColor: valueColor,
+      strokeWidth: strokeWidth ?? 4,
+      semanticsLabel: semanticsLabel,
+      semanticsValue: semanticsValue,
     );
   }
 }

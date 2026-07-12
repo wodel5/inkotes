@@ -1,14 +1,11 @@
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:foledge/components/canvas/image/editor_image.dart';
 import 'package:foledge/components/theming/adaptive_icon.dart';
 import 'package:foledge/components/theming/adaptive_switch.dart';
-import 'package:foledge/components/theming/foledge_theme.dart';
 import 'package:foledge/data/file_manager/file_manager.dart';
-import 'package:foledge/data/prefs.dart';
 import 'package:foledge/i18n/strings.g.dart';
 
 class CanvasImageDialog extends StatefulWidget {
@@ -44,15 +41,14 @@ class _CanvasImageDialogState extends State<CanvasImageDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final platform = Theme.of(context).platform;
     final children = <Widget>[
       MergeSemantics(
         child: _CanvasImageDialogItem(
-          onTap: stows.editorAutoInvert.value ? setInvertible : null,
+          onTap: setInvertible,
           title: t.editor.imageOptions.invertible,
           child: AdaptiveSwitch(
             value: widget.image.invertible,
-            onChanged: stows.editorAutoInvert.value ? setInvertible : null,
+            onChanged: setInvertible,
             thumbIcon: WidgetStateProperty.all(
               widget.image.invertible
                   ? const Icon(Icons.invert_colors)
@@ -118,7 +114,6 @@ class _CanvasImageDialogState extends State<CanvasImageDialog> {
         title: t.editor.imageOptions.download,
         child: const AdaptiveIcon(
           icon: Icons.download,
-          cupertinoIcon: CupertinoIcons.arrow_down_circle_fill,
         ),
       ),
       _CanvasImageDialogItem(
@@ -131,7 +126,6 @@ class _CanvasImageDialogState extends State<CanvasImageDialog> {
             : t.editor.imageOptions.setAsBackground,
         child: const AdaptiveIcon(
           icon: Icons.wallpaper,
-          cupertinoIcon: CupertinoIcons.photo_fill_on_rectangle_fill,
         ),
       ),
       _CanvasImageDialogItem(
@@ -143,7 +137,6 @@ class _CanvasImageDialogState extends State<CanvasImageDialog> {
         title: t.editor.imageOptions.delete,
         child: const AdaptiveIcon(
           icon: Icons.delete,
-          cupertinoIcon: CupertinoIcons.trash_fill,
         ),
       ),
     ];
@@ -155,15 +148,7 @@ class _CanvasImageDialogState extends State<CanvasImageDialog> {
       shrinkWrap: true,
       children: children,
     );
-    // issues with intrinsic sizes with each type of dialog
-    if (platform.isCupertino) {
-      return AspectRatio(
-        aspectRatio: widget.singleRow ? children.length / 1 : 2,
-        child: gridView,
-      );
-    } else {
-      return SizedBox(width: 250, child: gridView);
-    }
+    return SizedBox(width: 250, child: gridView);
   }
 }
 

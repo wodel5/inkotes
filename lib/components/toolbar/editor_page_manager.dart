@@ -1,9 +1,7 @@
-import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
 import 'package:foledge/components/canvas/canvas_gesture_detector.dart';
 import 'package:foledge/components/canvas/canvas_preview.dart';
 import 'package:foledge/components/theming/adaptive_icon.dart';
-import 'package:foledge/components/theming/foledge_theme.dart';
 import 'package:foledge/data/editor/editor_core_info.dart';
 import 'package:foledge/i18n/strings.g.dart';
 
@@ -45,11 +43,9 @@ class _EditorPageManagerState extends State<EditorPageManager> {
 
   @override
   Widget build(BuildContext context) {
-    final platform = Theme.of(context).platform;
-    final cupertino = platform.isCupertino;
     return SizedBox(
-      width: cupertino ? null : 300,
-      height: cupertino ? 600 : null,
+      width: 300,
+      height: null,
       child: ReorderableListView.builder(
         buildDefaultDragHandles: false,
         itemCount: widget.coreInfo.pages.length,
@@ -72,7 +68,7 @@ class _EditorPageManagerState extends State<EditorPageManager> {
                       ),
                       ConstrainedBox(
                         constraints: BoxConstraints(
-                          maxWidth: cupertino ? 100 : 150,
+                          maxWidth: 150,
                           maxHeight: 250,
                         ),
                         child: FittedBox(
@@ -102,7 +98,6 @@ class _EditorPageManagerState extends State<EditorPageManager> {
                         tooltip: t.editor.menu.insertPage,
                         icon: const AdaptiveIcon(
                           icon: Icons.insert_page_break,
-                          cupertinoIcon: CupertinoIcons.add,
                         ),
                         onPressed: () => setState(() {
                           widget.insertPageAfter(pageIndex);
@@ -113,7 +108,6 @@ class _EditorPageManagerState extends State<EditorPageManager> {
                         tooltip: t.editor.menu.duplicatePage,
                         icon: const AdaptiveIcon(
                           icon: Icons.content_copy,
-                          cupertinoIcon: CupertinoIcons.doc_on_clipboard,
                         ),
                         onPressed: () => setState(() {
                           widget.duplicatePage(pageIndex);
@@ -137,7 +131,6 @@ class _EditorPageManagerState extends State<EditorPageManager> {
                         tooltip: t.editor.menu.deletePage,
                         icon: const AdaptiveIcon(
                           icon: Icons.delete,
-                          cupertinoIcon: CupertinoIcons.delete,
                         ),
                         onPressed: isEmptyLastPage
                             ? null

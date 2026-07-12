@@ -13,7 +13,6 @@ import 'package:foledge/components/home/move_note_button.dart';
 import 'package:foledge/components/home/new_note_button.dart';
 import 'package:foledge/components/home/rename_note_button.dart';
 import 'package:foledge/components/home/welcome.dart';
-import 'package:foledge/components/theming/foledge_theme.dart';
 import 'package:foledge/data/file_manager/file_manager.dart';
 import 'package:foledge/data/prefs.dart';
 import 'package:foledge/data/routes.dart';
@@ -112,7 +111,6 @@ class _RecentPageState extends State<RecentPage> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = ColorScheme.of(context);
-    final platform = Theme.of(context).platform;
     final crossAxisCount = MediaQuery.sizeOf(context).width ~/ 300 + 1;
     useListenable(stows.homeLayout);
 
@@ -157,7 +155,7 @@ class _RecentPageState extends State<RecentPage> {
           ],
         ],
       ),
-      floatingActionButton: NewNoteButton(cupertino: platform.isCupertino),
+      floatingActionButton: NewNoteButton(),
       persistentFooterButtons: selectedFiles.value.isEmpty
           ? null
           : [

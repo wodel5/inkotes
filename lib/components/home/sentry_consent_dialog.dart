@@ -1,6 +1,5 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:foledge/components/settings/app_info.dart';
 import 'package:foledge/data/prefs.dart';
 import 'package:foledge/data/sentry/sentry_init.dart';
 import 'package:foledge/i18n/strings.g.dart';
@@ -56,7 +55,7 @@ class SentryConsentDialog extends StatelessWidget {
                 style: TextStyle(color: ColorScheme.of(context).primary),
                 recognizer: TapGestureRecognizer()
                   ..onTap = () {
-                    launchUrl(AppInfo.privacyPolicyUrl);
+                    launchUrl(Uri.parse('https://foledge.adil.hanney.org/privacy-policy/'));
                   },
               ),
             ),

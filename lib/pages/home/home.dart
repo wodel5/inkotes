@@ -2,8 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:foledge/components/home/sentry_consent_dialog.dart';
 import 'package:foledge/components/navbar/responsive_navbar.dart';
-import 'package:foledge/components/settings/update_manager.dart';
-import 'package:foledge/components/theming/dynamic_material_app.dart';
 import 'package:foledge/pages/home/browse.dart';
 import 'package:foledge/pages/home/recent_notes.dart';
 import 'package:foledge/pages/home/settings.dart';
@@ -33,7 +31,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   void initState() {
-    DynamicMaterialApp.addFullscreenListener(_setState);
     super.initState();
     _showDialogs();
   }
@@ -41,12 +38,7 @@ class _HomePageState extends State<HomePage> {
   void _showDialogs() async {
     await null; // initState must be completed before using context
     if (!mounted) return;
-    UpdateManager.showUpdateDialog(context);
     SentryConsentDialog.showIfNeeded(context);
-  }
-
-  void _setState() {
-    if (mounted) setState(() {});
   }
 
   Widget get body {
@@ -66,12 +58,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // hide navbar in fullscreen whiteboard
-    if (widget.subpage == HomePage.whiteboardSubpage &&
-        DynamicMaterialApp.isFullscreen) {
-      return body;
-    }
-
     return ResponsiveNavbar(
       selectedIndex: HomePage.subpages.indexOf(widget.subpage),
       body: body,
@@ -79,9 +65,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
+  @override
   void dispose() {
-    DynamicMaterialApp.removeFullscreenListener(_setState);
-
     super.dispose();
   }
 }

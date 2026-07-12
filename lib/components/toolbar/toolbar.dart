@@ -9,7 +9,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:keybinder/keybinder.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:foledge/components/theming/adaptive_icon.dart';
-import 'package:foledge/components/theming/dynamic_material_app.dart';
 import 'package:foledge/components/theming/uni_icon.dart';
 import 'package:foledge/components/toolbar/color_bar.dart';
 import 'package:foledge/components/toolbar/export_bar.dart';
@@ -43,7 +42,6 @@ class Toolbar extends StatefulWidget {
     required this.isUndoPossible,
     required this.redo,
     required this.isRedoPossible,
-    required this.toggleFingerDrawing,
     required this.pickPhoto,
     required this.paste,
     required this.duplicateSelection,
@@ -68,8 +66,6 @@ class Toolbar extends StatefulWidget {
   final VoidCallback redo;
   final bool isRedoPossible;
 
-  final VoidCallback toggleFingerDrawing;
-
   final VoidCallback pickPhoto;
 
   final VoidCallback paste;
@@ -85,7 +81,6 @@ class Toolbar extends StatefulWidget {
   State<Toolbar> createState() => _ToolbarState();
 
   static const _buttonPaddingHorizontal = EdgeInsets.symmetric(horizontal: 6);
-  static const _buttonPaddingVertical = EdgeInsets.symmetric(vertical: 6);
 }
 
 class _ToolbarState extends State<Toolbar> {
@@ -97,18 +92,13 @@ class _ToolbarState extends State<Toolbar> {
   void initState() {
     _assignKeybindings();
 
-    DynamicMaterialApp.addFullscreenListener(_setState);
-
     super.initState();
   }
-
-  void _setState() => setState(() {});
 
   Keybinding? _ctrlF;
   Keybinding? _ctrlE;
   Keybinding? _ctrlC;
   Keybinding? _ctrlShiftS;
-  Keybinding? _f11;
   Keybinding? _ctrlV;
   void _assignKeybindings() {
     _ctrlF = Keybinding([
@@ -128,17 +118,14 @@ class _ToolbarState extends State<Toolbar> {
       KeyCode.shift,
       KeyCode.from(LogicalKeyboardKey.keyS),
     ], inclusive: true);
-    _f11 = Keybinding([KeyCode.from(LogicalKeyboardKey.f11)], inclusive: true);
     _ctrlV = Keybinding([
       KeyCode.ctrl,
       KeyCode.from(LogicalKeyboardKey.keyV),
     ], inclusive: true);
 
-    Keybinder.bind(_ctrlF!, widget.toggleFingerDrawing);
     Keybinder.bind(_ctrlE!, toggleEraser);
     Keybinder.bind(_ctrlC!, toggleColorOptions);
     Keybinder.bind(_ctrlShiftS!, toggleExportBar);
-    Keybinder.bind(_f11!, toggleFullscreen);
     Keybinder.bind(_ctrlV!, widget.paste);
   }
 
@@ -147,7 +134,6 @@ class _ToolbarState extends State<Toolbar> {
     if (_ctrlE != null) Keybinder.remove(_ctrlE!);
     if (_ctrlC != null) Keybinder.remove(_ctrlC!);
     if (_ctrlShiftS != null) Keybinder.remove(_ctrlShiftS!);
-    if (_f11 != null) Keybinder.remove(_f11!);
     if (_ctrlV != null) Keybinder.remove(_ctrlV!);
   }
 
@@ -164,27 +150,14 @@ class _ToolbarState extends State<Toolbar> {
     showExportOptions.value = !showExportOptions.value;
   }
 
-  void toggleFullscreen() async {
-    DynamicMaterialApp.setFullscreen(
-      !DynamicMaterialApp.isFullscreen,
-      updateSystem: true,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final colorScheme = ColorScheme.of(context);
 
     final brightness = Theme.brightnessOf(context);
-    final invert = stows.editorAutoInvert.value && brightness == .dark;
+    final invert = brightness == .dark;
 
-    final isToolbarVertical =
-        stows.editorToolbarAlignment.value == AxisDirection.left ||
-        stows.editorToolbarAlignment.value == AxisDirection.right;
-
-    final buttonPadding = isToolbarVertical
-        ? Toolbar._buttonPaddingVertical
-        : Toolbar._buttonPaddingHorizontal;
+    final buttonPadding = Toolbar._buttonPaddingHorizontal;
 
     final currentColor = switch (widget.currentTool) {
       final Pen pen => pen.color,
@@ -204,16 +177,14 @@ class _ToolbarState extends State<Toolbar> {
         valueListenable: showExportOptions,
         builder: (context, showExportOptions, child) {
           return Collapsible(
-            axis: isToolbarVertical
-                ? CollapsibleAxis.horizontal
-                : CollapsibleAxis.vertical,
+            axis: CollapsibleAxis.vertical,
             maintainState: true,
             collapsed: !showExportOptions,
             child: child!,
           );
         },
         child: ExportBar(
-          axis: isToolbarVertical ? Axis.vertical : Axis.horizontal,
+          axis: Axis.horizontal,
           toggleExportBar: toggleExportBar,
           exportAsSba: widget.exportAsSba,
           exportAsPdf: widget.exportAsPdf,
@@ -224,9 +195,7 @@ class _ToolbarState extends State<Toolbar> {
         valueListenable: toolOptionsType,
         builder: (context, toolOptionsType, _) {
           return Collapsible(
-            axis: isToolbarVertical
-                ? CollapsibleAxis.horizontal
-                : CollapsibleAxis.vertical,
+            axis: CollapsibleAxis.vertical,
             maintainState: true,
             collapsed: toolOptionsType == .hide,
             child: switch (toolOptionsType) {
@@ -255,16 +224,14 @@ class _ToolbarState extends State<Toolbar> {
         valueListenable: showColorOptions,
         builder: (context, showColorOptions, child) {
           return Collapsible(
-            axis: isToolbarVertical
-                ? CollapsibleAxis.horizontal
-                : CollapsibleAxis.vertical,
+            axis: CollapsibleAxis.vertical,
             maintainState: true,
             collapsed: !showColorOptions,
             child: child!,
           );
         },
         child: ColorBar(
-          axis: isToolbarVertical ? Axis.vertical : Axis.horizontal,
+          axis: Axis.horizontal,
           setColor: widget.setColor,
           currentColor: currentColor,
           invert: invert,
@@ -291,16 +258,14 @@ class _ToolbarState extends State<Toolbar> {
             ),
           );
           return Collapsible(
-            axis: isToolbarVertical
-                ? CollapsibleAxis.horizontal
-                : CollapsibleAxis.vertical,
+            axis: CollapsibleAxis.vertical,
             maintainState: false,
             collapsed: !widget.textEditing || quill == null,
             child: quill != null
                 ? QuillSimpleToolbar(
                     controller: quill.controller,
                     config: QuillSimpleToolbarConfig(
-                      axis: isToolbarVertical ? Axis.vertical : Axis.horizontal,
+                      axis: Axis.horizontal,
                       buttonOptions: QuillSimpleToolbarButtonOptions(
                         base: QuillToolbarBaseButtonOptions(
                           iconTheme: iconTheme,
@@ -323,7 +288,7 @@ class _ToolbarState extends State<Toolbar> {
         child: Padding(
           padding: const .all(8),
           child: Wrap(
-            direction: isToolbarVertical ? Axis.vertical : Axis.horizontal,
+            direction: Axis.horizontal,
             alignment: WrapAlignment.center,
             runSpacing: 8,
             children: [
@@ -463,7 +428,6 @@ class _ToolbarState extends State<Toolbar> {
                 padding: buttonPadding,
                 child: const AdaptiveIcon(
                   icon: Icons.photo,
-                  cupertinoIcon: CupertinoIcons.photo,
                 ),
               ),
               ToolbarIconButton(
@@ -474,40 +438,26 @@ class _ToolbarState extends State<Toolbar> {
                 padding: buttonPadding,
                 child: const AdaptiveIcon(
                   icon: Icons.text_fields,
-                  cupertinoIcon: CupertinoIcons.text_cursor,
                 ),
               ),
-              if (!stows.hideFingerDrawingToggle.value)
-                ValueListenableBuilder(
-                  valueListenable: stows.editorFingerDrawing,
-                  builder: (context, value, child) {
-                    return ToolbarIconButton(
-                      tooltip: t.editor.toolbar.toggleFingerDrawing,
-                      selected: value,
-                      enabled: !widget.readOnly,
-                      onPressed: widget.toggleFingerDrawing,
-                      padding: buttonPadding,
-                      child: const Icon(CupertinoIcons.hand_draw),
-                    );
-                  },
-                ),
-              ToolbarIconButton(
-                tooltip: t.editor.toolbar.fullscreen,
-                selected: DynamicMaterialApp.isFullscreen,
-                enabled: !widget.readOnly,
-                onPressed: toggleFullscreen,
-                padding: buttonPadding,
-                child: AdaptiveIcon(
-                  icon: DynamicMaterialApp.isFullscreen
-                      ? Icons.fullscreen_exit
-                      : Icons.fullscreen,
-                  cupertinoIcon: DynamicMaterialApp.isFullscreen
-                      ? CupertinoIcons.fullscreen_exit
-                      : CupertinoIcons.fullscreen,
-                ),
+              ValueListenableBuilder(
+                valueListenable: stows.editorFingerDrawing,
+                builder: (context, value, child) {
+                  return ToolbarIconButton(
+                    tooltip: t.editor.toolbar.toggleFingerDrawing,
+                    selected: value,
+                    enabled: !widget.readOnly,
+                    onPressed: () {
+                      stows.editorFingerDrawing.value =
+                          !stows.editorFingerDrawing.value;
+                    },
+                    padding: buttonPadding,
+                    child: const Icon(CupertinoIcons.hand_draw),
+                  );
+                },
               ),
               Wrap(
-                direction: isToolbarVertical ? Axis.vertical : Axis.horizontal,
+                direction: Axis.horizontal,
                 children: [
                   ToolbarIconButton(
                     tooltip: t.editor.toolbar.undo,
@@ -516,7 +466,6 @@ class _ToolbarState extends State<Toolbar> {
                     padding: buttonPadding,
                     child: const AdaptiveIcon(
                       icon: Icons.undo,
-                      cupertinoIcon: CupertinoIcons.arrow_uturn_left,
                     ),
                   ),
                   ToolbarIconButton(
@@ -526,7 +475,6 @@ class _ToolbarState extends State<Toolbar> {
                     padding: buttonPadding,
                     child: const AdaptiveIcon(
                       icon: Icons.redo,
-                      cupertinoIcon: CupertinoIcons.arrow_uturn_right,
                     ),
                   ),
                 ],
@@ -545,7 +493,6 @@ class _ToolbarState extends State<Toolbar> {
                 },
                 child: const AdaptiveIcon(
                   icon: Icons.share,
-                  cupertinoIcon: CupertinoIcons.share,
                 ),
               ),
             ],
@@ -555,26 +502,14 @@ class _ToolbarState extends State<Toolbar> {
     ];
 
     return Flex(
-      direction: isToolbarVertical ? Axis.horizontal : Axis.vertical,
-      textDirection: switch (stows.editorToolbarAlignment.value) {
-        AxisDirection.left => .rtl,
-        AxisDirection.right => .ltr,
-        _ => null,
-      },
-      verticalDirection: switch (stows.editorToolbarAlignment.value) {
-        AxisDirection.down => VerticalDirection.down,
-        AxisDirection.up => VerticalDirection.up,
-        _ => VerticalDirection.down,
-      },
+      direction: Axis.vertical,
+      verticalDirection: VerticalDirection.down,
       children: bars,
     );
   }
 
   @override
   void dispose() {
-    DynamicMaterialApp.removeFullscreenListener(_setState);
-    DynamicMaterialApp.setFullscreen(false, updateSystem: true);
-
     _removeKeybindings();
     super.dispose();
   }

@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:foledge/components/toolbar/size_picker.dart';
-import 'package:foledge/data/extensions/axis_extensions.dart';
-import 'package:foledge/data/prefs.dart';
 import 'package:foledge/data/tools/_tool.dart';
 import 'package:foledge/data/tools/highlighter.dart';
 import 'package:foledge/data/tools/pen.dart';
@@ -24,7 +22,7 @@ class PenModal extends StatefulWidget {
 class _PenModalState extends State<PenModal> {
   @override
   Widget build(BuildContext context) {
-    final axis = stows.editorToolbarAlignment.value.axis.opposite;
+    final axis = Axis.vertical;
     final Tool currentTool = widget.getTool();
     final Pen currentPen;
     if (currentTool is Pen) {

@@ -26,7 +26,6 @@ import 'package:foledge/pages/editor/editor.dart';
 import 'package:foledge/pages/home/home.dart';
 import 'package:foledge/pages/logs.dart';
 
-import 'package:window_manager/window_manager.dart';
 import 'package:worker_manager/worker_manager.dart';
 
 
@@ -82,8 +81,6 @@ Future<void> appRunner(List<String> args) async {
 
   await Future.wait([
     stows.customDataDir.waitUntilRead().then((_) => FileManager.init()),
-    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS)
-      windowManager.ensureInitialized(),
     workerManager.init(
       // Fewer isolates in debug mode to avoid slowing down hot reload
       isolatesCount: kDebugMode ? 1 : 2,

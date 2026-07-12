@@ -265,14 +265,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.8.1"
-  dynamic_yaru:
-    dependency: "direct main"
-    description:
-      name: dynamic_yaru
-      sha256: b748f4b20a29125108888bcd76432abd6abd77360bd444b399a7acd3b4137132
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "0.1.0"
   encrypt:
     dependency: "direct main"
     description:
@@ -653,14 +645,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "4.8.0"
-  ini:
-    dependency: transitive
-    description:
-      name: ini
-      sha256: "12a76c53591ffdf86d1265be3f986888a6dfeb34a85957774bc65912d989a173"
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "2.1.0"
   intl:
     dependency: "direct main"
     description:
@@ -1786,7 +1770,7 @@ packages:
     source: hosted
     version: "2.1.0"
   window_manager:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: window_manager
       sha256: "05c231fd7b23d2380f14c5cc10b7b93d60d4fa4a2fb4e0f032de27e44b5560e9"

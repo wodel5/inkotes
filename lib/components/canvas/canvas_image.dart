@@ -7,7 +7,6 @@ import 'package:foledge/components/canvas/canvas_image_dialog.dart';
 import 'package:foledge/components/canvas/image/editor_image.dart';
 import 'package:foledge/components/theming/adaptive_alert_dialog.dart';
 import 'package:foledge/data/extensions/change_notifier_extensions.dart';
-import 'package:foledge/data/prefs.dart';
 import 'package:foledge/i18n/strings.g.dart';
 
 class CanvasImage extends StatefulHookWidget {
@@ -104,7 +103,7 @@ class _CanvasImageState extends State<CanvasImage> {
         ? Theme.brightnessOf(context)
         : Brightness.light;
 
-    if (stows.editorAutoInvert.value && currentBrightness != imageBrightness) {
+    if (currentBrightness != imageBrightness) {
       imageBrightness = currentBrightness;
     }
 

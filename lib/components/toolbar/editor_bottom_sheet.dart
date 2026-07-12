@@ -6,7 +6,6 @@ import 'package:foledge/components/canvas/inner_canvas.dart';
 import 'package:foledge/data/editor/editor_core_info.dart';
 import 'package:foledge/data/editor/page.dart';
 import 'package:foledge/data/extensions/list_extensions.dart';
-import 'package:foledge/data/prefs.dart';
 import 'package:foledge/i18n/extensions/box_fit_localized.dart';
 import 'package:foledge/i18n/extensions/canvas_background_pattern_localized.dart';
 import 'package:foledge/i18n/strings.g.dart';

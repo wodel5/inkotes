@@ -1,8 +1,6 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import 'package:foledge/data/is_this_a_test.dart';
 import 'package:foledge/data/prefs.dart';
 import 'package:foledge/data/sentry/sentry_filter.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -15,10 +13,9 @@ export 'package:sentry_flutter/sentry_flutter.dart' show SentryWidget;
 ///
 /// This flag will be:
 /// - false if the foss patches were applied before this build
-/// - false on Linux (except in tests)
-/// - true otherwise
+/// Whether Sentry is available on this platform.
 @pragma('vm:platform-const-if', !kDebugMode)
-bool get isSentryAvailable => !Platform.isLinux || isThisATest;
+bool get isSentryAvailable => true;
 
 /// Whether Sentry was initialized when the app started.
 ///

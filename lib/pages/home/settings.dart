@@ -1,29 +1,19 @@
 import 'dart:io';
 
-import 'package:collapsible/collapsible.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:foledge/components/navbar/responsive_navbar.dart';
-import 'package:foledge/components/settings/app_info.dart';
 import 'package:foledge/components/settings/settings_button.dart';
-import 'package:foledge/components/settings/settings_color.dart';
 import 'package:foledge/components/settings/settings_directory_selector.dart';
 import 'package:foledge/components/settings/settings_dropdown.dart';
 import 'package:foledge/components/settings/settings_selection.dart';
 import 'package:foledge/components/settings/settings_sentry.dart';
 import 'package:foledge/components/settings/settings_subtitle.dart';
 import 'package:foledge/components/settings/settings_switch.dart';
-import 'package:foledge/components/settings/update_manager.dart';
 import 'package:foledge/components/theming/adaptive_alert_dialog.dart';
 import 'package:foledge/components/theming/adaptive_toggle_buttons.dart';
-import 'package:foledge/components/theming/foledge_theme.dart';
-import 'package:foledge/components/theming/uni_icon.dart';
-import 'package:foledge/data/file_manager/file_manager.dart';
-import 'package:foledge/data/flavor_config.dart';
-import 'package:foledge/data/is_this_a_test.dart';
 import 'package:foledge/data/locales.dart';
 import 'package:foledge/data/prefs.dart';
 import 'package:foledge/data/routes.dart';
@@ -77,32 +67,17 @@ abstract class _SettingsStows {
     (int value) => ThemeMode.values[value],
   );
 
-  static final platform = TransformedStow(
-    stows.platform,
-    (TargetPlatform value) => value.index,
-    (int value) => TargetPlatform.values[value],
-  );
-
   static final layoutSize = TransformedStow(
     stows.layoutSize,
     (LayoutSize value) => value.index,
     (int value) => LayoutSize.values[value],
   );
-
-  static final editorToolbarAlignment = TransformedStow(
-    stows.editorToolbarAlignment,
-    (AxisDirection value) => value.index,
-    (int value) => AxisDirection.values[value],
-  );
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  late TargetPlatform platform;
-
   @override
   void initState() {
     stows.locale.addListener(onChanged);
-    UpdateManager.status.addListener(onChanged);
     super.initState();
   }
 
@@ -110,46 +85,9 @@ class _SettingsPageState extends State<SettingsPage> {
     setState(() {});
   }
 
-  // In tests, pretend the current platform is the defaultTargetPlatform
-  bool get usesCupertinoByDefault =>
-      switch (isThisATest ? platform : defaultTargetPlatform) {
-        .iOS => true,
-        .macOS => true,
-        _ => false,
-      };
-  bool get usesYaruByDefault =>
-      switch (isThisATest ? platform : defaultTargetPlatform) {
-        .linux => true,
-        _ => false,
-      };
-  bool get usesMaterialByDefault =>
-      !usesCupertinoByDefault && !usesYaruByDefault;
-
-  static const cupertinoDirectionIcons = [
-    CupertinoIcons.arrow_up_to_line,
-    CupertinoIcons.arrow_right_to_line,
-    CupertinoIcons.arrow_down_to_line,
-    CupertinoIcons.arrow_left_to_line,
-  ];
-  static const materialDirectionIcons = [
-    Icons.north,
-    Icons.east,
-    Icons.south,
-    Icons.west,
-  ];
-
   @override
   Widget build(BuildContext context) {
     final colorScheme = ColorScheme.of(context);
-    platform = Theme.of(context).platform;
-    final cupertino = platform.isCupertino;
-
-    final requiresManualUpdates = FlavorConfig.appStore.isEmpty;
-
-    final materialIcon = switch (defaultTargetPlatform) {
-      .windows => FontAwesomeIcons.windows,
-      _ => Icons.android,
-    };
 
     return Scaffold(
       body: CustomScrollView(
@@ -172,29 +110,15 @@ class _SettingsPageState extends State<SettingsPage> {
                   bottom: 16,
                 ),
               ),
-              actions: [
-                if (UpdateManager.status.value != .upToDate)
-                  IconButton(
-                    tooltip: t.home.tooltips.showUpdateDialog,
-                    icon: const Icon(Icons.system_update),
-                    onPressed: () {
-                      UpdateManager.showUpdateDialog(
-                        context,
-                        userTriggered: true,
-                      );
-                    },
-                  ),
-              ],
             ),
           ),
           SliverSafeArea(
             sliver: SliverList.list(
               children: [
-                const Padding(padding: .all(8), child: AppInfo()),
                 SettingsSubtitle(subtitle: t.settings.prefCategories.general),
                 SettingsDropdown(
                   title: t.settings.prefLabels.locale,
-                  icon: cupertino ? CupertinoIcons.globe : Icons.language,
+                  icon: Icons.language,
                   pref: stows.locale,
                   options: [
                     ...AppLocaleUtils.supportedLocales.map((locale) {
@@ -247,42 +171,6 @@ class _SettingsPageState extends State<SettingsPage> {
                   ],
                 ),
                 SettingsSelection(
-                  title: t.settings.prefLabels.platform,
-                  iconBuilder: (i) => switch (stows.platform.value) {
-                    .iOS || .macOS => Icons.apple,
-                    .linux => FontAwesomeIcons.ubuntu,
-                    _ => materialIcon,
-                  },
-                  pref: _SettingsStows.platform,
-                  optionsWidth: 60,
-                  options: [
-                    ToggleButtonsOption(() {
-                      if (usesMaterialByDefault)
-                        return defaultTargetPlatform.index;
-                      return TargetPlatform.android.index;
-                    }(), UniIcon(materialIcon, semanticLabel: 'Material')),
-                    ToggleButtonsOption(() {
-                      // Hack to allow screenshot golden tests
-                      if (kDebugMode && stows.platform.value.isCupertino)
-                        return stows.platform.value.index;
-                      if (usesCupertinoByDefault)
-                        return defaultTargetPlatform.index;
-                      return TargetPlatform.iOS.index;
-                    }(), const Icon(Icons.apple, semanticLabel: 'Cupertino')),
-                    ToggleButtonsOption(
-                      () {
-                        if (usesYaruByDefault)
-                          return defaultTargetPlatform.index;
-                        return TargetPlatform.linux.index;
-                      }(),
-                      const UniIcon(
-                        FontAwesomeIcons.ubuntu,
-                        semanticLabel: 'Yaru',
-                      ),
-                    ),
-                  ],
-                ),
-                SettingsSelection(
                   title: t.settings.prefLabels.layoutSize,
                   subtitle: switch (stows.layoutSize.value) {
                     .auto => t.settings.layoutSizes.auto,
@@ -321,36 +209,18 @@ class _SettingsPageState extends State<SettingsPage> {
                     ),
                   ],
                 ),
-                SettingsColor(
-                  title: t.settings.prefLabels.customAccentColor,
-                  icon: Icons.colorize,
-                  pref: stows.accentColor,
-                ),
-                SettingsSwitch(
-                  title: t.settings.prefLabels.hyperlegibleFont,
-                  subtitle: t.settings.prefDescriptions.hyperlegibleFont,
-                  iconBuilder: (b) {
-                    if (b)
-                      return cupertino
-                          ? CupertinoIcons.textformat
-                          : Icons.font_download;
-                    return cupertino
-                        ? CupertinoIcons.textformat_alt
-                        : Icons.font_download_off;
-                  },
-                  pref: stows.hyperlegibleFont,
-                ),
-
                 SettingsSubtitle(subtitle: t.settings.prefCategories.writing),
                 SettingsSwitch(
-                  title: t.settings.prefLabels.preferGreyscale,
-                  subtitle: t.settings.prefDescriptions.preferGreyscale,
-                  iconBuilder: (b) {
-                    return b
-                        ? Icons.monochrome_photos
-                        : Icons.enhance_photo_translate;
-                  },
-                  pref: stows.preferGreyscale,
+                  title: t
+                      .settings
+                      .prefLabels
+                      .autoDisableFingerDrawingWhenStylusDetected,
+                  subtitle: t
+                      .settings
+                      .prefDescriptions
+                      .autoDisableFingerDrawingWhenStylusDetected,
+                  icon: CupertinoIcons.pencil,
+                  pref: stows.autoDisableFingerDrawingWhenStylusDetected,
                 ),
                 SettingsSwitch(
                   title: t.settings.prefLabels.autoClearWhiteboardOnExit,
@@ -365,115 +235,13 @@ class _SettingsPageState extends State<SettingsPage> {
                   icon: FontAwesomeIcons.eraser,
                   pref: stows.disableEraserAfterUse,
                 ),
-                ValueListenableBuilder(
-                  valueListenable: stows.hideFingerDrawingToggle,
-                  builder: (context, _, _) {
-                    return SettingsSwitch(
-                      title: t.settings.prefLabels.hideFingerDrawingToggle,
-                      subtitle: () {
-                        if (!stows.hideFingerDrawingToggle.value) {
-                          return t
-                              .settings
-                              .prefDescriptions
-                              .hideFingerDrawing
-                              .shown;
-                        } else if (stows.editorFingerDrawing.value) {
-                          return t
-                              .settings
-                              .prefDescriptions
-                              .hideFingerDrawing
-                              .fixedOn;
-                        } else {
-                          return t
-                              .settings
-                              .prefDescriptions
-                              .hideFingerDrawing
-                              .fixedOff;
-                        }
-                      }(),
-                      icon: CupertinoIcons.hand_draw_fill,
-                      pref: stows.hideFingerDrawingToggle,
-                    );
-                  },
-                ),
-                ValueListenableBuilder(
-                  valueListenable: stows.hideFingerDrawingToggle,
-                  builder: (context, hideFingerDrawing, _) {
-                    return Collapsible(
-                      collapsed: hideFingerDrawing,
-                      axis: CollapsibleAxis.vertical,
-                      child: SettingsSwitch(
-                        title: t
-                            .settings
-                            .prefLabels
-                            .autoDisableFingerDrawingWhenStylusDetected,
-                        subtitle: t
-                            .settings
-                            .prefDescriptions
-                            .autoDisableFingerDrawingWhenStylusDetected,
-                        icon: CupertinoIcons.pencil,
-                        pref: stows.autoDisableFingerDrawingWhenStylusDetected,
-                      ),
-                    );
-                  },
-                ),
-
                 SettingsSubtitle(subtitle: t.settings.prefCategories.editor),
-                SettingsSelection(
-                  title: t.settings.prefLabels.editorToolbarAlignment,
-                  subtitle:
-                      t.settings.axisDirections[_SettingsStows
-                          .editorToolbarAlignment
-                          .value],
-                  iconBuilder: (num i) {
-                    if (i is! int || i >= materialDirectionIcons.length)
-                      return null;
-                    return cupertino
-                        ? cupertinoDirectionIcons[i]
-                        : materialDirectionIcons[i];
-                  },
-                  pref: _SettingsStows.editorToolbarAlignment,
-                  optionsWidth: 60,
-                  options: [
-                    for (final AxisDirection direction in AxisDirection.values)
-                      ToggleButtonsOption(
-                        direction.index,
-                        Icon(
-                          cupertino
-                              ? cupertinoDirectionIcons[direction.index]
-                              : materialDirectionIcons[direction.index],
-                          semanticLabel:
-                              t.settings.axisDirections[direction.index],
-                        ),
-                      ),
-                  ],
-                  afterChange: (_) => setState(() {}),
-                ),
-                SettingsSwitch(
-                  title: t.settings.prefLabels.editorToolbarShowInFullscreen,
-                  icon: cupertino
-                      ? CupertinoIcons.fullscreen
-                      : Icons.fullscreen,
-                  pref: stows.editorToolbarShowInFullscreen,
-                ),
-                SettingsSwitch(
-                  title: t.settings.prefLabels.editorAutoInvert,
-                  iconBuilder: (b) {
-                    return b ? Icons.invert_colors_on : Icons.invert_colors_off;
-                  },
-                  pref: stows.editorAutoInvert,
-                ),
                 SettingsSwitch(
                   title: t.settings.prefLabels.editorPromptRename,
                   subtitle: t.settings.prefDescriptions.editorPromptRename,
                   iconBuilder: (b) {
-                    if (b)
-                      return cupertino
-                          ? CupertinoIcons.keyboard
-                          : Icons.keyboard;
-                    return cupertino
-                        ? CupertinoIcons.keyboard_chevron_compact_down
-                        : Icons.keyboard_hide;
+                    if (b) return Icons.keyboard;
+                    return Icons.keyboard_hide;
                   },
                   pref: stows.editorPromptRename,
                 ),
@@ -552,47 +320,6 @@ class _SettingsPageState extends State<SettingsPage> {
                     title: t.settings.prefLabels.customDataDir,
                     icon: Icons.folder,
                   ),
-                if (Platform.isWindows || Platform.isLinux || Platform.isMacOS)
-                  SettingsButton(
-                    title: t.settings.openDataDir,
-                    icon: Icons.folder_open,
-                    onPressed: () {
-                      if (Platform.isWindows) {
-                        Process.run('explorer', [
-                          FileManager.documentsDirectory,
-                        ]);
-                      } else if (Platform.isLinux) {
-                        Process.run('xdg-open', [
-                          FileManager.documentsDirectory,
-                        ]);
-                      } else if (Platform.isMacOS) {
-                        Process.run('open', [FileManager.documentsDirectory]);
-                      }
-                    },
-                  ),
-                if (requiresManualUpdates ||
-                    stows.shouldCheckForUpdates.value !=
-                        stows.shouldCheckForUpdates.defaultValue) ...[
-                  SettingsSwitch(
-                    title: t.settings.prefLabels.shouldCheckForUpdates,
-                    icon: Icons.system_update,
-                    pref: stows.shouldCheckForUpdates,
-                    afterChange: (_) => setState(() {}),
-                  ),
-                  Collapsible(
-                    collapsed: !stows.shouldCheckForUpdates.value,
-                    axis: CollapsibleAxis.vertical,
-                    child: SettingsSwitch(
-                      title: t.settings.prefLabels.shouldAlwaysAlertForUpdates,
-                      subtitle: t
-                          .settings
-                          .prefDescriptions
-                          .shouldAlwaysAlertForUpdates,
-                      icon: Icons.system_security_update_warning,
-                      pref: stows.shouldAlwaysAlertForUpdates,
-                    ),
-                  ),
-                ],
                 SettingsSwitch(
                   title: t.settings.prefLabels.allowInsecureConnections,
                   subtitle:
@@ -617,7 +344,6 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   void dispose() {
     stows.locale.removeListener(onChanged);
-    UpdateManager.status.removeListener(onChanged);
     super.dispose();
   }
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:foledge/components/theming/foledge_theme.dart';
 
 class AdaptiveAlertDialog extends StatelessWidget {
   const AdaptiveAlertDialog({
@@ -23,19 +22,10 @@ class AdaptiveAlertDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final platform = Theme.of(context).platform;
-    if (platform.isCupertino) {
-      return CupertinoAlertDialog(
-        title: title,
-        content: Material(color: Colors.transparent, child: content),
-        actions: actions,
-      );
-    } else {
-      return AlertDialog(
-        title: title,
-        content: content,
-        actions: actions.isNotEmpty ? _materialActions : null,
-      );
-    }
+    return AlertDialog(
+      title: title,
+      content: content,
+      actions: actions.isNotEmpty ? _materialActions : null,
+    );
   }
 }

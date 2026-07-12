@@ -24,8 +24,7 @@ class ColorBar extends StatefulWidget {
   final Color? currentColor;
   final bool invert;
 
-  static List<NamedColor> get colorPresets =>
-      stows.preferGreyscale.value ? greyScaleColorOptions : normalColorOptions;
+  static List<NamedColor> get colorPresets => normalColorOptions;
   static final List<NamedColor> normalColorOptions = [
     (name: t.editor.colors.black, color: Colors.black),
     (name: t.editor.colors.red, color: Colors.red),

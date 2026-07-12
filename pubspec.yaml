@@ -94,8 +94,6 @@ dependencies:
   flutter_quill: ^11.5.1
   quill_native_bridge_linux: ^0.0.2
 
-  window_manager: ^0.5.1
-
   worker_manager: ^7.0.1
 
   archive: ^4.0.3
@@ -152,7 +150,6 @@ dependencies:
   background_downloader: ^9.2.6
 
   flutter_hooks: ^0.21.3+1
-  dynamic_yaru: ^0.1.0
   image: ^4.8.0
   pool: ^1.5.2
 ########################################################################################

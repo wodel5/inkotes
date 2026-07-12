@@ -74,7 +74,6 @@ class LogsPage extends StatelessWidget {
                     IconButton(
                       icon: const AdaptiveIcon(
                         icon: Icons.play_arrow,
-                        cupertinoIcon: CupertinoIcons.play_arrow,
                       ),
                       onPressed: logsHistory.unfreeze,
                     )
@@ -82,14 +81,12 @@ class LogsPage extends StatelessWidget {
                     IconButton(
                       icon: const AdaptiveIcon(
                         icon: Icons.pause,
-                        cupertinoIcon: CupertinoIcons.pause,
                       ),
                       onPressed: logsHistory.freeze,
                     ),
                   IconButton(
                     icon: const AdaptiveIcon(
                       icon: Icons.copy,
-                      cupertinoIcon: CupertinoIcons.doc_on_clipboard,
                     ),
                     onPressed: logsHistory.history.isEmpty
                         ? null

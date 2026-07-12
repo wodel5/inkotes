@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -8,9 +7,7 @@ import 'package:perfect_freehand/perfect_freehand.dart';
 import 'package:foledge/components/home/home_layout_button.dart';
 import 'package:foledge/components/home/sort_button.dart';
 import 'package:foledge/components/navbar/responsive_navbar.dart';
-import 'package:foledge/components/settings/app_info.dart';
 import 'package:foledge/data/codecs/base64_codec.dart';
-import 'package:foledge/data/flavor_config.dart';
 import 'package:foledge/data/sentry/sentry_consent.dart';
 import 'package:foledge/data/tools/highlighter.dart';
 import 'package:foledge/data/tools/pen.dart';
@@ -93,13 +90,6 @@ class Stows {
     volatile: !_isOnMainIsolate,
   );
 
-  /// The type of platform to theme. Default value is [defaultTargetPlatform].
-  final platform = PlainStow(
-    'platform',
-    defaultTargetPlatform,
-    codec: const EnumCodec(TargetPlatform.values),
-    volatile: !_isOnMainIsolate,
-  );
   final layoutSize = PlainStow(
     'layoutSize',
     LayoutSize.auto,
@@ -107,48 +97,19 @@ class Stows {
     volatile: !_isOnMainIsolate,
   );
 
-  /// The accent color of the app. If 0, the system accent color will be used.
-  final accentColor = PlainStow<Color?>(
-    'accentColor',
-    null,
-    codec: const ColorCodec(),
-    volatile: !_isOnMainIsolate,
-  );
-  final hyperlegibleFont = PlainStow(
-    'hyperlegibleFont',
-    false,
-    volatile: !_isOnMainIsolate,
-  );
-
-  final editorToolbarAlignment = PlainStow(
-    'editorToolbarAlignment',
-    AxisDirection.down,
-    codec: const EnumCodec(AxisDirection.values),
-    volatile: !_isOnMainIsolate,
-  );
-  final editorToolbarShowInFullscreen = PlainStow(
-    'editorToolbarShowInFullscreen',
-    true,
-    volatile: !_isOnMainIsolate,
-  );
   final editorFingerDrawing = PlainStow(
     'editorFingerDrawing',
     true,
     volatile: !_isOnMainIsolate,
   );
-  final editorAutoInvert = PlainStow(
-    'editorAutoInvert',
+  final autoDisableFingerDrawingWhenStylusDetected = PlainStow(
+    'autoDisableFingerDrawingWhenStylusDetected',
     true,
-    volatile: !_isOnMainIsolate,
-  );
-  final preferGreyscale = PlainStow(
-    'preferGreyscale',
-    false,
     volatile: !_isOnMainIsolate,
   );
   final editorPromptRename = PlainStow(
     'editorPromptRename',
-    isDesktop,
+    false,
     volatile: !_isOnMainIsolate,
   );
   final autosaveDelay = PlainStow(
@@ -190,20 +151,6 @@ class Stows {
     false,
     volatile: !_isOnMainIsolate,
   );
-  final hideFingerDrawingToggle = PlainStow(
-    'hideFingerDrawingToggle',
-    false,
-    volatile: !_isOnMainIsolate,
-  );
-
-  /// People don't know to turn off finger drawing when using a stylus,
-  /// so we can do it automatically.
-  final autoDisableFingerDrawingWhenStylusDetected = PlainStow(
-    'autoDisableFingerDrawingWhenStylusDetected',
-    true,
-    volatile: !_isOnMainIsolate,
-  );
-
   final recentColorsChronological = PlainStow(
     'recentColorsChronological',
     <String>[],
@@ -370,17 +317,6 @@ class Stows {
     volatile: !_isOnMainIsolate,
   );
 
-  final shouldCheckForUpdates = PlainStow(
-    'shouldCheckForUpdates',
-    FlavorConfig.shouldCheckForUpdatesByDefault && !Platform.isLinux,
-    volatile: !_isOnMainIsolate,
-  );
-  final shouldAlwaysAlertForUpdates = PlainStow(
-    'shouldAlwaysAlertForUpdates',
-    kDebugMode ? true : false,
-    volatile: !_isOnMainIsolate,
-  );
-
   final locale = PlainStow('locale', '', volatile: !_isOnMainIsolate);
 
   final sentryConsent = PlainStow(
@@ -389,10 +325,6 @@ class Stows {
     codec: SentryConsent.codec,
     volatile: !_isOnMainIsolate,
   );
-
-  @pragma('vm:platform-const')
-  static final isDesktop =
-      Platform.isLinux || Platform.isWindows || Platform.isMacOS;
 }
 
 /// An [Stow] that transforms the value of another [Stow].

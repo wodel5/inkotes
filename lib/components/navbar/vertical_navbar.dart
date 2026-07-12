@@ -21,17 +21,11 @@ class VerticalNavbar extends HookWidget {
     final expanded = useState(false);
 
     final theme = Theme.of(context);
-    final backgroundColor = switch (theme.platform) {
-      .linux => Colors.transparent,
-      _ => theme.colorScheme.surfaceContainer,
-    };
+    final backgroundColor = theme.colorScheme.surfaceContainer;
 
     return DecoratedBox(
       decoration: BoxDecoration(
         color: backgroundColor,
-        border: theme.platform == .linux
-            ? BoxBorder.fromSTEB(end: BorderSide(color: theme.dividerColor))
-            : null,
       ),
       child: Column(
         crossAxisAlignment: .start,
@@ -43,9 +37,6 @@ class VerticalNavbar extends HookWidget {
               onPressed: () => expanded.value = !expanded.value,
               child: AdaptiveIcon(
                 icon: expanded.value ? Icons.chevron_left : Icons.chevron_right,
-                cupertinoIcon: expanded.value
-                    ? CupertinoIcons.chevron_left
-                    : CupertinoIcons.chevron_right,
               ),
             ),
           ),

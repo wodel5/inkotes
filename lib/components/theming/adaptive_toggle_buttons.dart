@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:foledge/components/theming/foledge_theme.dart';
 
 class AdaptiveToggleButtons<T extends Object> extends StatelessWidget {
   const AdaptiveToggleButtons({
@@ -21,15 +19,6 @@ class AdaptiveToggleButtons<T extends Object> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final platform = Theme.of(context).platform;
-    if (platform.isCupertino) {
-      return _buildCupertino(context);
-    } else {
-      return _buildMaterial(context);
-    }
-  }
-
-  Widget _buildMaterial(BuildContext context) {
     return ToggleButtons(
       borderRadius: const .all(.circular(1000)),
       constraints: BoxConstraints(
@@ -45,18 +34,6 @@ class AdaptiveToggleButtons<T extends Object> extends StatelessWidget {
       children: [
         for (final ToggleButtonsOption option in options) option.widget,
       ],
-    );
-  }
-
-  Widget _buildCupertino(BuildContext context) {
-    return CupertinoSlidingSegmentedControl<T>(
-      children: options.asMap().map(
-        (_, ToggleButtonsOption option) =>
-            MapEntry<T, Widget>(option.value, option.widget),
-      ),
-      groupValue: value,
-      onValueChanged: onChange,
-      padding: const .all(8),
     );
   }
 }

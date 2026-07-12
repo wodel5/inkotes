@@ -24,8 +24,6 @@ import 'package:foledge/components/canvas/save_indicator.dart';
 import 'package:foledge/components/editor/read_only_banner.dart';
 import 'package:foledge/components/theming/adaptive_alert_dialog.dart';
 import 'package:foledge/components/theming/adaptive_icon.dart';
-import 'package:foledge/components/theming/dynamic_material_app.dart';
-import 'package:foledge/components/theming/foledge_theme.dart';
 import 'package:foledge/components/toolbar/color_bar.dart';
 import 'package:foledge/components/toolbar/editor_bottom_sheet.dart';
 import 'package:foledge/components/toolbar/editor_page_manager.dart';
@@ -181,8 +179,6 @@ class EditorState extends State<Editor> {
 
   @override
   void initState() {
-    DynamicMaterialApp.addFullscreenListener(_setState);
-
     _initAsync();
     _assignKeybindings();
 
@@ -258,8 +254,6 @@ class EditorState extends State<Editor> {
       setState(() {});
     }
   }
-
-  void _setState() => setState(() {});
 
   Keybinding? _ctrlZ, _ctrlY, _ctrlShiftZ;
   void _assignKeybindings() {
@@ -549,7 +543,6 @@ class EditorState extends State<Editor> {
         currentPressure != null) {
       return true;
     } else {
-      log.fine('Non-stylus found, rejected stroke');
       return false;
     }
   }
@@ -1328,10 +1321,6 @@ class EditorState extends State<Editor> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = ColorScheme.of(context);
-    final platform = Theme.of(context).platform;
-    final isToolbarVertical =
-        stows.editorToolbarAlignment.value == AxisDirection.left ||
-        stows.editorToolbarAlignment.value == AxisDirection.right;
 
     final Widget canvas = CanvasGestureDetector(
       key: _canvasGestureDetectorKey,
@@ -1378,15 +1367,11 @@ class EditorState extends State<Editor> {
     );
 
     final Widget toolbar = Collapsible(
-      axis: isToolbarVertical
-          ? CollapsibleAxis.horizontal
-          : CollapsibleAxis.vertical,
-      collapsed:
-          DynamicMaterialApp.isFullscreen &&
-          !stows.editorToolbarShowInFullscreen.value,
+      axis: CollapsibleAxis.vertical,
+      collapsed: false,
       maintainState: true,
       child: SafeArea(
-        bottom: stows.editorToolbarAlignment.value != AxisDirection.up,
+        bottom: true,
         child: Toolbar(
           readOnly: coreInfo.readOnly,
           setTool: (tool) {
@@ -1541,10 +1526,6 @@ class EditorState extends State<Editor> {
           isUndoPossible: history.canUndo,
           redo: redo,
           isRedoPossible: history.canRedo,
-          toggleFingerDrawing: () {
-            stows.editorFingerDrawing.value = !stows.editorFingerDrawing.value;
-            lastSeenPointerCount = 0;
-          },
           pickPhoto: _pickPhotos,
           paste: paste,
           exportAsSba: exportAsSba,
@@ -1555,36 +1536,14 @@ class EditorState extends State<Editor> {
     );
 
     final Widget body;
-    if (isToolbarVertical) {
-      body = Row(
-        textDirection: stows.editorToolbarAlignment.value == AxisDirection.left
-            ? .ltr
-            : .rtl,
-        children: [
-          toolbar,
-          Expanded(
-            child: Column(
-              children: [
-                Expanded(child: canvas),
-                readonlyBanner,
-              ],
-            ),
-          ),
-        ],
-      );
-    } else {
-      body = Column(
-        verticalDirection:
-            stows.editorToolbarAlignment.value == AxisDirection.up
-            ? VerticalDirection.up
-            : VerticalDirection.down,
-        children: [
-          Expanded(child: canvas),
-          toolbar,
-          readonlyBanner,
-        ],
-      );
-    }
+    body = Column(
+      verticalDirection: VerticalDirection.down,
+      children: [
+        Expanded(child: canvas),
+        toolbar,
+        readonlyBanner,
+      ],
+    );
 
     return ValueListenableBuilder(
       valueListenable: savingState,
@@ -1609,11 +1568,9 @@ class EditorState extends State<Editor> {
         );
       },
       child: Scaffold(
-        appBar: DynamicMaterialApp.isFullscreen
-            ? null
-            : AppBar(
-                toolbarHeight: kToolbarHeight,
-                title: widget.customTitle != null
+        appBar: AppBar(
+            toolbarHeight: kToolbarHeight,
+            title: widget.customTitle != null
                     ? Text(widget.customTitle!)
                     : Form(
                         key: _filenameFormKey,
@@ -1636,7 +1593,6 @@ class EditorState extends State<Editor> {
                   IconButton(
                     icon: const AdaptiveIcon(
                       icon: Icons.insert_page_break,
-                      cupertinoIcon: CupertinoIcons.add,
                     ),
                     tooltip: t.editor.menu.insertPage,
                     onPressed: () => setState(() {
@@ -1653,7 +1609,6 @@ class EditorState extends State<Editor> {
                   IconButton(
                     icon: const AdaptiveIcon(
                       icon: Icons.grid_view,
-                      cupertinoIcon: CupertinoIcons.rectangle_grid_2x2,
                     ),
                     tooltip: t.editor.pages,
                     onPressed: () {
@@ -1670,7 +1625,6 @@ class EditorState extends State<Editor> {
                   IconButton(
                     icon: const AdaptiveIcon(
                       icon: Icons.more_vert,
-                      cupertinoIcon: CupertinoIcons.ellipsis_vertical,
                     ),
                     onPressed: () {
                       showModalBottomSheet(
@@ -1686,17 +1640,6 @@ class EditorState extends State<Editor> {
                 ],
               ),
         body: body,
-        floatingActionButton:
-            (DynamicMaterialApp.isFullscreen &&
-                !stows.editorToolbarShowInFullscreen.value)
-            ? FloatingActionButton(
-                shape: platform.isCupertino ? const CircleBorder() : null,
-                onPressed: () {
-                  DynamicMaterialApp.setFullscreen(false, updateSystem: true);
-                },
-                child: const Icon(Icons.fullscreen_exit),
-              )
-            : null,
       ),
     );
   }
@@ -1710,7 +1653,7 @@ class EditorState extends State<Editor> {
 
   Widget bottomSheet(BuildContext context) {
     final Brightness brightness = Theme.brightnessOf(context);
-    final invert = stows.editorAutoInvert.value && brightness == .dark;
+    final invert = brightness == .dark;
     final int currentPageIndex = this.currentPageIndex;
 
     return EditorBottomSheet(
@@ -2010,8 +1953,6 @@ class EditorState extends State<Editor> {
   @override
   void dispose() {
     unawaited(_cleanUpAsync());
-
-    DynamicMaterialApp.removeFullscreenListener(_setState);
 
     _delayedSaveTimer?.cancel();
     _watchServerTimer?.cancel();
