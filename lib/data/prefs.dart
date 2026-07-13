@@ -107,11 +107,6 @@ class Stows {
     true,
     volatile: !_isOnMainIsolate,
   );
-  final editorPromptRename = PlainStow(
-    'editorPromptRename',
-    false,
-    volatile: !_isOnMainIsolate,
-  );
   final autosaveDelay = PlainStow(
     'autosaveDelay',
     10000,
@@ -146,11 +141,6 @@ class Stows {
     volatile: !_isOnMainIsolate,
   );
 
-  final disableEraserAfterUse = PlainStow(
-    'disableEraserAfterUse',
-    false,
-    volatile: !_isOnMainIsolate,
-  );
   final recentColorsChronological = PlainStow(
     'recentColorsChronological',
     <String>[],

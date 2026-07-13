@@ -22,7 +22,7 @@ class PenModal extends StatefulWidget {
 class _PenModalState extends State<PenModal> {
   @override
   Widget build(BuildContext context) {
-    final axis = Axis.vertical;
+    final axis = Axis.horizontal;
     final Tool currentTool = widget.getTool();
     final Pen currentPen;
     if (currentTool is Pen) {

@@ -229,22 +229,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   icon: Icons.cleaning_services,
                   pref: stows.autoClearWhiteboardOnExit,
                 ),
-                SettingsSwitch(
-                  title: t.settings.prefLabels.disableEraserAfterUse,
-                  subtitle: t.settings.prefDescriptions.disableEraserAfterUse,
-                  icon: FontAwesomeIcons.eraser,
-                  pref: stows.disableEraserAfterUse,
-                ),
                 SettingsSubtitle(subtitle: t.settings.prefCategories.editor),
-                SettingsSwitch(
-                  title: t.settings.prefLabels.editorPromptRename,
-                  subtitle: t.settings.prefDescriptions.editorPromptRename,
-                  iconBuilder: (b) {
-                    if (b) return Icons.keyboard;
-                    return Icons.keyboard_hide;
-                  },
-                  pref: stows.editorPromptRename,
-                ),
                 SettingsSwitch(
                   title: t.settings.prefLabels.recentColorsDontSavePresets,
                   icon: Icons.palette,

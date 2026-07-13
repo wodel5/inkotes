@@ -117,7 +117,7 @@ class EditorState extends State<Editor> {
 
   var history = EditorHistory();
 
-  late bool needsNaming = widget.needsNaming && stows.editorPromptRename.value;
+  late bool needsNaming = false;
 
   late Tool _currentTool = () {
     switch (stows.lastTool.value) {
@@ -658,7 +658,7 @@ class EditorState extends State<Editor> {
         );
       } else if (currentTool is Eraser) {
         final erased = (currentTool as Eraser).onDragEnd();
-        if (stylusButtonWasPressed || stows.disableEraserAfterUse.value) {
+        if (stylusButtonWasPressed) {
           // restore previous tool
           stylusButtonWasPressed = false;
           currentTool = _lastNonEraserTool;
@@ -1375,11 +1375,6 @@ class EditorState extends State<Editor> {
         child: Toolbar(
           readOnly: coreInfo.readOnly,
           setTool: (tool) {
-            if (tool is Eraser && currentTool is Eraser) {
-              // setTool(Eraser) is a special case to toggle the eraser on/off
-              tool = _lastNonEraserTool;
-            }
-
             currentTool = tool;
 
             if (tool is Highlighter) {
