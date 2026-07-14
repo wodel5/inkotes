@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:foledge/components/home/sentry_consent_dialog.dart';
 import 'package:foledge/components/navbar/responsive_navbar.dart';
 import 'package:foledge/pages/home/browse.dart';
 import 'package:foledge/pages/home/recent_notes.dart';
@@ -38,7 +37,6 @@ class _HomePageState extends State<HomePage> {
   void _showDialogs() async {
     await null; // initState must be completed before using context
     if (!mounted) return;
-    SentryConsentDialog.showIfNeeded(context);
   }
 
   Widget get body {

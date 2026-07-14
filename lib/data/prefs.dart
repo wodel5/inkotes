@@ -8,7 +8,6 @@ import 'package:foledge/components/home/home_layout_button.dart';
 import 'package:foledge/components/home/sort_button.dart';
 import 'package:foledge/components/navbar/responsive_navbar.dart';
 import 'package:foledge/data/codecs/base64_codec.dart';
-import 'package:foledge/data/sentry/sentry_consent.dart';
 import 'package:foledge/data/tools/highlighter.dart';
 import 'package:foledge/data/tools/pen.dart';
 import 'package:sbn/canvas_background_pattern.dart';
@@ -278,13 +277,6 @@ class Stows {
   );
 
   final locale = PlainStow('locale', '', volatile: !_isOnMainIsolate);
-
-  final sentryConsent = PlainStow(
-    'sentryConsent',
-    SentryConsent.unknown,
-    codec: SentryConsent.codec,
-    volatile: !_isOnMainIsolate,
-  );
 }
 
 /// An [Stow] that transforms the value of another [Stow].

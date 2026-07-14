@@ -4,14 +4,12 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:foledge/components/navbar/responsive_navbar.dart';
 import 'package:foledge/components/settings/settings_dropdown.dart';
 import 'package:foledge/components/settings/settings_selection.dart';
-import 'package:foledge/components/settings/settings_sentry.dart';
 import 'package:foledge/components/settings/settings_subtitle.dart';
 import 'package:foledge/components/settings/settings_switch.dart';
 import 'package:foledge/components/theming/adaptive_alert_dialog.dart';
 import 'package:foledge/components/theming/adaptive_toggle_buttons.dart';
 import 'package:foledge/data/locales.dart';
 import 'package:foledge/data/prefs.dart';
-import 'package:foledge/data/sentry/sentry_init.dart';
 import 'package:foledge/data/tools/shape_pen.dart';
 import 'package:foledge/i18n/strings.g.dart';
 import 'package:stow/stow.dart';
@@ -268,7 +266,6 @@ class _SettingsPageState extends State<SettingsPage> {
                   pref: stows.autoStraightenLines,
                 ),
                 SettingsSubtitle(subtitle: t.settings.prefCategories.advanced),
-                if (isSentryAvailable) const SettingsSentryConsent(),
               ],
             ),
           ),

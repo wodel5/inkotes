@@ -37,7 +37,6 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	// Translations
 	late final Translations$common$en common = Translations$common$en.internal(_root);
 	late final Translations$home$en home = Translations$home$en.internal(_root);
-	late final Translations$sentry$en sentry = Translations$sentry$en.internal(_root);
 	late final Translations$settings$en settings = Translations$settings$en.internal(_root);
 	late final Translations$logs$en logs = Translations$logs$en.internal(_root);
 	late final Translations$login$en login = Translations$login$en.internal(_root);
@@ -107,16 +106,6 @@ class Translations$home$en {
 	late final Translations$home$deleteFolder$en deleteFolder = Translations$home$deleteFolder$en.internal(_root);
 	late final Translations$home$sort$en sort = Translations$home$sort$en.internal(_root);
 	late final Translations$home$layout$en layout = Translations$home$layout$en.internal(_root);
-}
-
-// Path: sentry
-class Translations$sentry$en {
-	Translations$sentry$en.internal(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-	late final Translations$sentry$consent$en consent = Translations$sentry$consent$en.internal(_root);
 }
 
 // Path: settings
@@ -598,21 +587,6 @@ class Translations$home$layout$en {
 	String get simpleGrid => 'Simple grid';
 }
 
-// Path: sentry.consent
-class Translations$sentry$consent$en {
-	Translations$sentry$consent$en.internal(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-
-	/// en: 'Help improve Saber?'
-	String get title => 'Help improve Saber?';
-
-	late final Translations$sentry$consent$description$en description = Translations$sentry$consent$description$en.internal(_root);
-	late final Translations$sentry$consent$answers$en answers = Translations$sentry$consent$answers$en.internal(_root);
-}
-
 // Path: settings.prefCategories
 class Translations$settings$prefCategories$en {
 	Translations$settings$prefCategories$en.internal(this._root);
@@ -775,8 +749,6 @@ class Translations$settings$prefDescriptions$en {
 
 	/// en: 'Tell me about updates as soon as they're available'
 	String get shouldAlwaysAlertForUpdates => 'Tell me about updates as soon as they\'re available';
-
-	late final Translations$settings$prefDescriptions$sentry$en sentry = Translations$settings$prefDescriptions$sentry$en.internal(_root);
 }
 
 // Path: settings.themeModes
@@ -1382,52 +1354,6 @@ class Translations$editor$hud$en {
 	String get lockAxisAlignedPan => 'Lock panning to horizontal or vertical';
 }
 
-// Path: sentry.consent.description
-class Translations$sentry$consent$description$en {
-	Translations$sentry$consent$description$en.internal(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-
-	/// en: 'Would you like to automatically report unexpected errors? This helps me identify and fix issues faster.'
-	String get question => 'Would you like to automatically report unexpected errors? This helps me identify and fix issues faster.';
-
-	/// en: 'The reports may contain information about the error and your device. I've made every effort to filter out personal data but some may remain.'
-	String get scope => 'The reports may contain information about the error and your device. I\'ve made every effort to filter out personal data but some may remain.';
-
-	/// en: 'If you grant consent, error reporting will be enabled after you restart the app.'
-	String get currentlyOff => 'If you grant consent, error reporting will be enabled after you restart the app.';
-
-	/// en: 'If you revoke consent, please restart the app to disable error reporting.'
-	String get currentlyOn => 'If you revoke consent, please restart the app to disable error reporting.';
-
-	/// en: 'Learn more in the ${link(privacy policy)}.'
-	TextSpan learnMoreInPrivacyPolicy({required InlineSpanBuilder link}) => TextSpan(children: [
-		const TextSpan(text: 'Learn more in the '),
-		link('privacy policy'),
-		const TextSpan(text: '.'),
-	]);
-}
-
-// Path: sentry.consent.answers
-class Translations$sentry$consent$answers$en {
-	Translations$sentry$consent$answers$en.internal(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-
-	/// en: 'Yes'
-	String get yes => 'Yes';
-
-	/// en: 'No'
-	String get no => 'No';
-
-	/// en: 'Ask me later'
-	String get later => 'Ask me later';
-}
-
 // Path: settings.prefDescriptions.hideFingerDrawing
 class Translations$settings$prefDescriptions$hideFingerDrawing$en {
 	Translations$settings$prefDescriptions$hideFingerDrawing$en.internal(this._root);
@@ -1444,27 +1370,6 @@ class Translations$settings$prefDescriptions$hideFingerDrawing$en {
 
 	/// en: 'Finger drawing is fixed as disabled'
 	String get fixedOff => 'Finger drawing is fixed as disabled';
-}
-
-// Path: settings.prefDescriptions.sentry
-class Translations$settings$prefDescriptions$sentry$en {
-	Translations$settings$prefDescriptions$sentry$en.internal(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-
-	/// en: 'Active'
-	String get active => 'Active';
-
-	/// en: 'Inactive'
-	String get inactive => 'Inactive';
-
-	/// en: 'Active until you restart the app'
-	String get activeUntilRestart => 'Active until you restart the app';
-
-	/// en: 'Inactive until you restart the app'
-	String get inactiveUntilRestart => 'Inactive until you restart the app';
 }
 
 // Path: login.ncLoginStep.loginFlow

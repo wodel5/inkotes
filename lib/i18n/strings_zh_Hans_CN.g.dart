@@ -35,7 +35,6 @@ class TranslationsZhHansCn extends Translations with BaseTranslations<AppLocale,
 	// Translations
 	@override late final _Translations$common$zh_Hans_CN common = _Translations$common$zh_Hans_CN._(_root);
 	@override late final _Translations$home$zh_Hans_CN home = _Translations$home$zh_Hans_CN._(_root);
-	@override late final _Translations$sentry$zh_Hans_CN sentry = _Translations$sentry$zh_Hans_CN._(_root);
 	@override late final _Translations$settings$zh_Hans_CN settings = _Translations$settings$zh_Hans_CN._(_root);
 	@override late final _Translations$logs$zh_Hans_CN logs = _Translations$logs$zh_Hans_CN._(_root);
 	@override late final _Translations$login$zh_Hans_CN login = _Translations$login$zh_Hans_CN._(_root);
@@ -83,16 +82,6 @@ class _Translations$home$zh_Hans_CN extends Translations$home$en {
 	@override late final _Translations$home$deleteFolder$zh_Hans_CN deleteFolder = _Translations$home$deleteFolder$zh_Hans_CN._(_root);
 	@override late final _Translations$home$sort$zh_Hans_CN sort = _Translations$home$sort$zh_Hans_CN._(_root);
 	@override late final _Translations$home$layout$zh_Hans_CN layout = _Translations$home$layout$zh_Hans_CN._(_root);
-}
-
-// Path: sentry
-class _Translations$sentry$zh_Hans_CN extends Translations$sentry$en {
-	_Translations$sentry$zh_Hans_CN._(TranslationsZhHansCn root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHansCn _root; // ignore: unused_field
-
-	// Translations
-	@override late final _Translations$sentry$consent$zh_Hans_CN consent = _Translations$sentry$consent$zh_Hans_CN._(_root);
 }
 
 // Path: settings
@@ -398,18 +387,6 @@ class _Translations$home$layout$zh_Hans_CN extends Translations$home$layout$en {
 	@override String get simpleGrid => '简单网格';
 }
 
-// Path: sentry.consent
-class _Translations$sentry$consent$zh_Hans_CN extends Translations$sentry$consent$en {
-	_Translations$sentry$consent$zh_Hans_CN._(TranslationsZhHansCn root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHansCn _root; // ignore: unused_field
-
-	// Translations
-	@override String get title => '帮助改进 Saber？';
-	@override late final _Translations$sentry$consent$description$zh_Hans_CN description = _Translations$sentry$consent$description$zh_Hans_CN._(_root);
-	@override late final _Translations$sentry$consent$answers$zh_Hans_CN answers = _Translations$sentry$consent$answers$zh_Hans_CN._(_root);
-}
-
 // Path: settings.prefCategories
 class _Translations$settings$prefCategories$zh_Hans_CN extends Translations$settings$prefCategories$en {
 	_Translations$settings$prefCategories$zh_Hans_CN._(TranslationsZhHansCn root) : this._root = root, super.internal(root);
@@ -481,7 +458,6 @@ class _Translations$settings$prefDescriptions$zh_Hans_CN extends Translations$se
 	@override String get shapeRecognitionDelay => '形状预览更新频率';
 	@override String get autoStraightenLines => '拉直长线，无需使用形状笔';
 	@override String get shouldAlwaysAlertForUpdates => '在更新可用时尽快告诉我';
-	@override late final _Translations$settings$prefDescriptions$sentry$zh_Hans_CN sentry = _Translations$settings$prefDescriptions$sentry$zh_Hans_CN._(_root);
 }
 
 // Path: settings.themeModes
@@ -842,36 +818,6 @@ class _Translations$editor$hud$zh_Hans_CN extends Translations$editor$hud$en {
 	@override String get lockAxisAlignedPan => '锁定水平或垂直平移';
 }
 
-// Path: sentry.consent.description
-class _Translations$sentry$consent$description$zh_Hans_CN extends Translations$sentry$consent$description$en {
-	_Translations$sentry$consent$description$zh_Hans_CN._(TranslationsZhHansCn root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHansCn _root; // ignore: unused_field
-
-	// Translations
-	@override String get question => '您是否希望自动报告意外错误？这有助于我更快地发现和修复问题。';
-	@override String get scope => '报告可能包含有关错误和设备的信息。我已尽力过滤个人数据，但仍可能残留部分信息。';
-	@override String get currentlyOff => '若同意启用，重启应用后错误报告功能将激活。';
-	@override String get currentlyOn => '若撤销同意，请重启应用以禁用错误报告功能。';
-	@override TextSpan learnMoreInPrivacyPolicy({required InlineSpanBuilder link}) => TextSpan(children: [
-		const TextSpan(text: '详见'),
-		link('隐私政策'),
-		const TextSpan(text: '。'),
-	]);
-}
-
-// Path: sentry.consent.answers
-class _Translations$sentry$consent$answers$zh_Hans_CN extends Translations$sentry$consent$answers$en {
-	_Translations$sentry$consent$answers$zh_Hans_CN._(TranslationsZhHansCn root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHansCn _root; // ignore: unused_field
-
-	// Translations
-	@override String get yes => '同意';
-	@override String get no => '拒绝';
-	@override String get later => '稍后询问';
-}
-
 // Path: settings.prefDescriptions.hideFingerDrawing
 class _Translations$settings$prefDescriptions$hideFingerDrawing$zh_Hans_CN extends Translations$settings$prefDescriptions$hideFingerDrawing$en {
 	_Translations$settings$prefDescriptions$hideFingerDrawing$zh_Hans_CN._(TranslationsZhHansCn root) : this._root = root, super.internal(root);
@@ -882,19 +828,6 @@ class _Translations$settings$prefDescriptions$hideFingerDrawing$zh_Hans_CN exten
 	@override String get shown => '防止意外切换';
 	@override String get fixedOn => '手指绘图固定为启用状态';
 	@override String get fixedOff => '手指绘图固定为禁用状态';
-}
-
-// Path: settings.prefDescriptions.sentry
-class _Translations$settings$prefDescriptions$sentry$zh_Hans_CN extends Translations$settings$prefDescriptions$sentry$en {
-	_Translations$settings$prefDescriptions$sentry$zh_Hans_CN._(TranslationsZhHansCn root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHansCn _root; // ignore: unused_field
-
-	// Translations
-	@override String get active => '已启用';
-	@override String get inactive => '已禁用';
-	@override String get activeUntilRestart => '重启前保持启用';
-	@override String get inactiveUntilRestart => '重启前保持禁用';
 }
 
 // Path: login.ncLoginStep.loginFlow

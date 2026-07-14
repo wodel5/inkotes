@@ -79,19 +79,6 @@ home:
     layout: Layout
     masonryGrid: Masonry grid
     simpleGrid: Simple grid
-sentry:
-  consent:
-    title: Help improve Saber?
-    description:
-      question: Would you like to automatically report unexpected errors? This helps me identify and fix issues faster.
-      scope: The reports may contain information about the error and your device. I've made every effort to filter out personal data but some may remain.
-      currentlyOff: If you grant consent, error reporting will be enabled after you restart the app.
-      currentlyOn: If you revoke consent, please restart the app to disable error reporting.
-      learnMoreInPrivacyPolicy(rich): Learn more in the ${link(privacy policy)}.
-    answers:
-      yes: Yes
-      no: No
-      later: Ask me later
 settings:
   prefCategories:
     general: General
@@ -145,11 +132,6 @@ settings:
     shapeRecognitionDelay: How often to update the shape preview
     autoStraightenLines: Straightens long lines without having to use the shape pen
     shouldAlwaysAlertForUpdates: Tell me about updates as soon as they're available
-    sentry:
-      active: Active
-      inactive: Inactive
-      activeUntilRestart: Active until you restart the app
-      inactiveUntilRestart: Inactive until you restart the app
   themeModes:
     system: System
     light: Light

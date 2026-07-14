@@ -19,7 +19,6 @@ import 'package:foledge/data/file_manager/file_manager.dart';
 import 'package:foledge/data/flavor_config.dart';
 import 'package:foledge/data/prefs.dart';
 import 'package:foledge/data/routes.dart';
-import 'package:foledge/data/sentry/sentry_init.dart';
 import 'package:foledge/data/tools/stroke_properties.dart';
 import 'package:foledge/i18n/strings.g.dart';
 import 'package:foledge/pages/editor/editor.dart';
@@ -36,7 +35,7 @@ Future<void> main(List<String> args) async {
   ///   --dart-define=UPDATE_CHECK="false"
   FlavorConfig.setupFromEnvironment();
 
-  await initSentry(() => appRunner(args));
+  await appRunner(args);
 }
 
 Future<void> appRunner(List<String> args) async {
@@ -49,14 +48,12 @@ Future<void> appRunner(List<String> args) async {
       ? Level.INFO
       : Level.WARNING;
   Logger.root.onRecord.listen((record) {
-    if (!isSentryEnabled) {
-      // ignore: avoid_print
-      print('${record.level.name}: ${record.loggerName}: ${record.message}');
-    }
+    // ignore: avoid_print
+    print('${record.level.name}: ${record.loggerName}: ${record.message}');
   });
 
   // For some reason, logging errors breaks hot reload while debugging.
-  if (!kDebugMode && !isSentryEnabled) {
+  if (!kDebugMode) {
     final errorLogger = Logger('ErrorLogger');
     FlutterError.onError = (details) {
       errorLogger.severe(
@@ -106,7 +103,7 @@ Future<void> appRunner(List<String> args) async {
     }
   });
 
-  runApp(SentryWidget(child: TranslationProvider(child: const App())));
+  runApp(TranslationProvider(child: const App()));
 }
 
 void setLocale() {

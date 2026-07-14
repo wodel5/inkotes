@@ -79,19 +79,6 @@ home:
     layout(OUTDATED): 布局
     masonryGrid(OUTDATED): 砌体网格
     simpleGrid(OUTDATED): 简单网格
-sentry:
-  consent:
-    title: 帮助改进 Saber？
-    description:
-      question: 您是否希望自动报告意外错误？这有助于我更快地发现和修复问题。
-      scope: 报告可能包含有关错误和设备的信息。我已尽力过滤个人数据，但仍可能残留部分信息。
-      currentlyOff: 若同意启用，重启应用后错误报告功能将激活。
-      currentlyOn: 若撤销同意，请重启应用以禁用错误报告功能。
-      learnMoreInPrivacyPolicy(rich): 详见${link(隐私政策)}。
-    answers:
-      yes: 同意
-      no: 拒绝
-      later: 稍后询问
 settings:
   prefCategories:
     general: 通用
@@ -145,11 +132,6 @@ settings:
     shapeRecognitionDelay: 形状预览更新频率
     autoStraightenLines: 拉直长线，无需使用形状笔
     shouldAlwaysAlertForUpdates: 在更新可用时尽快告诉我
-    sentry:
-      active: 已启用
-      inactive: 已禁用
-      activeUntilRestart: 重启前保持启用
-      inactiveUntilRestart: 重启前保持禁用
   themeModes:
     system: 系统
     light: 浅色
