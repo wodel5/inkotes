@@ -993,14 +993,6 @@ class EditorState extends State<Editor> {
   }
 
   void updateColorBar(Color color) {
-    if (stows.recentColorsDontSavePresets.value) {
-      if (ColorBar.colorPresets.any(
-        (colorPreset) => colorPreset.color == color,
-      )) {
-        return;
-      }
-    }
-
     final newColorString = color.toARGB32().toString();
 
     // migrate from old pref format

@@ -156,11 +156,7 @@ class Stows {
     <String>[],
     volatile: !_isOnMainIsolate,
   );
-  final recentColorsDontSavePresets = PlainStow(
-    'dontSavePresetColors',
-    false,
-    volatile: !_isOnMainIsolate,
-  );
+
   final recentColorsLength = PlainStow(
     'recentColorsLength',
     5,

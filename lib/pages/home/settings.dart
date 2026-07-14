@@ -230,11 +230,6 @@ class _SettingsPageState extends State<SettingsPage> {
                   pref: stows.autoClearWhiteboardOnExit,
                 ),
                 SettingsSubtitle(subtitle: t.settings.prefCategories.editor),
-                SettingsSwitch(
-                  title: t.settings.prefLabels.recentColorsDontSavePresets,
-                  icon: Icons.palette,
-                  pref: stows.recentColorsDontSavePresets,
-                ),
                 SettingsSelection(
                   title: t.settings.prefLabels.recentColorsLength,
                   icon: Icons.history,
