@@ -44,7 +44,6 @@ import 'package:foledge/data/tools/pencil.dart';
 import 'package:foledge/data/tools/select.dart';
 import 'package:foledge/data/tools/shape_pen.dart';
 import 'package:foledge/i18n/strings.g.dart';
-import 'package:foledge/pages/home/whiteboard.dart';
 import 'package:sbn/change.dart';
 import 'package:super_clipboard/super_clipboard.dart';
 
@@ -81,9 +80,7 @@ class Editor extends StatefulWidget {
     return _reservedFilePaths.any((regex) => regex.hasMatch(path));
   }
 
-  static final _reservedFilePaths = <RegExp>[
-    RegExp(RegExp.escape(Whiteboard.filePath)),
-  ];
+  static final _reservedFilePaths = <RegExp>[];
 
   /// Whether the platform can rasterize a pdf
   static var canRasterPdf = true;
@@ -240,18 +237,7 @@ class EditorState extends State<Editor> {
         ..focusNode.requestFocus();
     }
 
-    if (coreInfo.filePath == Whiteboard.filePath &&
-        stows.autoClearWhiteboardOnExit.value &&
-        Whiteboard.needsToAutoClearWhiteboard) {
-      // clear whiteboard (and add to history)
-      clearAllPages();
-
-      // save cleared whiteboard
-      await saveToFile();
-      Whiteboard.needsToAutoClearWhiteboard = false;
-    } else {
-      setState(() {});
-    }
+    setState(() {});
   }
 
   Keybinding? _ctrlZ, _ctrlY, _ctrlShiftZ;

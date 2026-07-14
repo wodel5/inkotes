@@ -53,8 +53,8 @@ class SaveIndicator extends StatelessWidget {
 
   void _back(BuildContext context) {
     final navigator = Navigator.of(context);
-    final isWhiteboard = !navigator.canPop();
-    if (isWhiteboard) {
+    final isAtRoot = !navigator.canPop();
+    if (isAtRoot) {
       context.go(RoutePaths.home);
     } else {
       navigator.pop();

@@ -143,28 +143,16 @@ class _SettingsContentState extends State<SettingsContent> {
           pref: stows.autoDisableFingerDrawingWhenStylusDetected,
         ),
         SettingsSwitch(
-          title: t.settings.prefLabels.autoClearWhiteboardOnExit,
-          subtitle:
-              t.settings.prefDescriptions.autoClearWhiteboardOnExit,
-          icon: Icons.cleaning_services,
-          pref: stows.autoClearWhiteboardOnExit,
+          title: t.settings.prefLabels.autoStraightenLines,
+          subtitle: t.settings.prefDescriptions.autoStraightenLines,
+          icon: Icons.straighten,
+          pref: stows.autoStraightenLines,
         ),
         SettingsSwitch(
           title: t.settings.prefLabels.printPageIndicators,
           subtitle: t.settings.prefDescriptions.printPageIndicators,
           icon: Icons.numbers,
           pref: stows.printPageIndicators,
-        ),
-        SettingsSelection(
-          title: t.settings.prefLabels.autosave,
-          subtitle: t.settings.prefDescriptions.autosave,
-          icon: Icons.save,
-          pref: stows.autosaveDelay,
-          options: [
-            const ToggleButtonsOption(5000, Text('5s')),
-            const ToggleButtonsOption(10000, Text('10s')),
-            ToggleButtonsOption(-1, Text(t.settings.autosaveDisabled)),
-          ],
         ),
         SettingsSelection(
           title: t.settings.prefLabels.shapeRecognitionDelay,
@@ -183,11 +171,16 @@ class _SettingsContentState extends State<SettingsContent> {
             ShapePen.debounceDuration = ShapePen.getDebounceFromPref();
           },
         ),
-        SettingsSwitch(
-          title: t.settings.prefLabels.autoStraightenLines,
-          subtitle: t.settings.prefDescriptions.autoStraightenLines,
-          icon: Icons.straighten,
-          pref: stows.autoStraightenLines,
+        SettingsSelection(
+          title: t.settings.prefLabels.autosave,
+          subtitle: t.settings.prefDescriptions.autosave,
+          icon: Icons.save,
+          pref: stows.autosaveDelay,
+          options: [
+            const ToggleButtonsOption(5000, Text('5s')),
+            const ToggleButtonsOption(10000, Text('10s')),
+            ToggleButtonsOption(-1, Text(t.settings.autosaveDisabled)),
+          ],
         ),
       ],
     );
