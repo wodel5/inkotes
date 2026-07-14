@@ -1,9 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:go_router/go_router.dart';
 import 'package:foledge/components/navbar/responsive_navbar.dart';
-import 'package:foledge/components/settings/settings_button.dart';
 import 'package:foledge/components/settings/settings_dropdown.dart';
 import 'package:foledge/components/settings/settings_selection.dart';
 import 'package:foledge/components/settings/settings_sentry.dart';
@@ -13,7 +11,6 @@ import 'package:foledge/components/theming/adaptive_alert_dialog.dart';
 import 'package:foledge/components/theming/adaptive_toggle_buttons.dart';
 import 'package:foledge/data/locales.dart';
 import 'package:foledge/data/prefs.dart';
-import 'package:foledge/data/routes.dart';
 import 'package:foledge/data/sentry/sentry_init.dart';
 import 'package:foledge/data/tools/shape_pen.dart';
 import 'package:foledge/i18n/strings.g.dart';
@@ -272,12 +269,6 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
                 SettingsSubtitle(subtitle: t.settings.prefCategories.advanced),
                 if (isSentryAvailable) const SettingsSentryConsent(),
-                SettingsButton(
-                  title: t.logs.viewLogs,
-                  subtitle: t.logs.debuggingInfo,
-                  icon: Icons.receipt_long,
-                  onPressed: () => context.push(RoutePaths.logs),
-                ),
               ],
             ),
           ),
