@@ -80,7 +80,6 @@ Future<void> appRunner(List<String> args) async {
       isolatesCount: kDebugMode ? 1 : 2,
     ),
     stows.locale.waitUntilRead(),
-    stows.url.waitUntilRead(),
     PencilShader.init(),
     Printing.info().then((info) {
       Editor.canRasterPdf = info.canRaster;

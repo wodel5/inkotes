@@ -38,11 +38,6 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	late final Translations$common$en common = Translations$common$en.internal(_root);
 	late final Translations$home$en home = Translations$home$en.internal(_root);
 	late final Translations$settings$en settings = Translations$settings$en.internal(_root);
-	late final Translations$logs$en logs = Translations$logs$en.internal(_root);
-	late final Translations$login$en login = Translations$login$en.internal(_root);
-	late final Translations$profile$en profile = Translations$profile$en.internal(_root);
-	late final Translations$appInfo$en appInfo = Translations$appInfo$en.internal(_root);
-	late final Translations$update$en update = Translations$update$en.internal(_root);
 	late final Translations$editor$en editor = Translations$editor$en.internal(_root);
 }
 
@@ -133,153 +128,11 @@ class Translations$settings$en {
 	];
 	late final Translations$settings$reset$en reset = Translations$settings$reset$en.internal(_root);
 
-	/// en: 'Resync everything'
-	String get resyncEverything => 'Resync everything';
-
-	/// en: 'Open Saber folder'
-	String get openDataDir => 'Open Saber folder';
-
-	late final Translations$settings$customDataDir$en customDataDir = Translations$settings$customDataDir$en.internal(_root);
-
 	/// en: 'Never'
 	String get autosaveDisabled => 'Never';
 
 	/// en: 'Never'
 	String get shapeRecognitionDisabled => 'Never';
-}
-
-// Path: logs
-class Translations$logs$en {
-	Translations$logs$en.internal(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-
-	/// en: 'Logs'
-	String get logs => 'Logs';
-
-	/// en: 'View logs'
-	String get viewLogs => 'View logs';
-
-	/// en: 'Logs contain information useful for debugging and development'
-	String get debuggingInfo => 'Logs contain information useful for debugging and development';
-
-	/// en: 'No logs here!'
-	String get noLogs => 'No logs here!';
-
-	/// en: 'Logs will appear here as you use the app'
-	String get useTheApp => 'Logs will appear here as you use the app';
-}
-
-// Path: login
-class Translations$login$en {
-	Translations$login$en.internal(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-
-	/// en: 'Login'
-	String get title => 'Login';
-
-	late final Translations$login$form$en form = Translations$login$form$en.internal(_root);
-
-	/// en: 'Don't have an account yet? ${linkToSignup(Sign up now)}!'
-	TextSpan signup({required InlineSpanBuilder linkToSignup}) => TextSpan(children: [
-		const TextSpan(text: 'Don\'t have an account yet? '),
-		linkToSignup('Sign up now'),
-		const TextSpan(text: '!'),
-	]);
-
-	/// en: 'Not you? ${undoLogin(Choose another account)}.'
-	TextSpan notYou({required InlineSpanBuilder undoLogin}) => TextSpan(children: [
-		const TextSpan(text: 'Not you? '),
-		undoLogin('Choose another account'),
-		const TextSpan(text: '.'),
-	]);
-
-	late final Translations$login$status$en status = Translations$login$status$en.internal(_root);
-	late final Translations$login$ncLoginStep$en ncLoginStep = Translations$login$ncLoginStep$en.internal(_root);
-	late final Translations$login$encLoginStep$en encLoginStep = Translations$login$encLoginStep$en.internal(_root);
-}
-
-// Path: profile
-class Translations$profile$en {
-	Translations$profile$en.internal(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-
-	/// en: 'My profile'
-	String get title => 'My profile';
-
-	/// en: 'Log out'
-	String get logout => 'Log out';
-
-	/// en: 'You're using $used of $total ($percent%)'
-	String quotaUsage({required Object used, required Object total, required Object percent}) => 'You\'re using ${used} of ${total} (${percent}%)';
-
-	/// en: 'Connected to'
-	String get connectedTo => 'Connected to';
-
-	late final Translations$profile$quickLinks$en quickLinks = Translations$profile$quickLinks$en.internal(_root);
-
-	/// en: 'Frequently asked questions'
-	String get faqTitle => 'Frequently asked questions';
-
-	List<dynamic> get faq => [
-		Translations$profile$faq$0$en.internal(_root),
-		Translations$profile$faq$1$en.internal(_root),
-		Translations$profile$faq$2$en.internal(_root),
-		Translations$profile$faq$3$en.internal(_root),
-	];
-}
-
-// Path: appInfo
-class Translations$appInfo$en {
-	Translations$appInfo$en.internal(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-
-	/// en: 'Saber Copyright © 2022-$buildYear Adil Hanney This program comes with absolutely no warranty. This is free software, and you are welcome to redistribute it under certain conditions.'
-	String licenseNotice({required Object buildYear}) => 'Saber  Copyright © 2022-${buildYear}  Adil Hanney\nThis program comes with absolutely no warranty. This is free software, and you are welcome to redistribute it under certain conditions.';
-
-	/// en: 'DEBUG'
-	String get debug => 'DEBUG';
-
-	/// en: 'Tap here to sponsor me or buy more storage'
-	String get sponsorButton => 'Tap here to sponsor me or buy more storage';
-
-	/// en: 'Tap here to view more license information'
-	String get licenseButton => 'Tap here to view more license information';
-
-	/// en: 'Tap here to view the privacy policy'
-	String get privacyPolicyButton => 'Tap here to view the privacy policy';
-}
-
-// Path: update
-class Translations$update$en {
-	Translations$update$en.internal(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-
-	/// en: 'Update available'
-	String get updateAvailable => 'Update available';
-
-	/// en: 'A new version of the app is available:'
-	String get updateAvailableDescription => 'A new version of the app is available:';
-
-	/// en: 'Update'
-	String get update => 'Update';
-
-	/// en: 'The download isn't available yet for your platform. Please check back shortly.'
-	String get downloadNotAvailableYet => 'The download isn\'t available yet for your platform. Please check back shortly.';
 }
 
 // Path: editor
@@ -637,15 +490,6 @@ class Translations$settings$prefLabels$en {
 	/// en: 'Atkinson Hyperlegible font'
 	String get hyperlegibleFont => 'Atkinson Hyperlegible font';
 
-	/// en: 'Check for Saber updates'
-	String get shouldCheckForUpdates => 'Check for Saber updates';
-
-	/// en: 'Faster updates'
-	String get shouldAlwaysAlertForUpdates => 'Faster updates';
-
-	/// en: 'Allow insecure connections'
-	String get allowInsecureConnections => 'Allow insecure connections';
-
 	/// en: 'Toolbar position'
 	String get editorToolbarAlignment => 'Toolbar position';
 
@@ -693,12 +537,6 @@ class Translations$settings$prefLabels$en {
 
 	/// en: 'Auto straighten lines'
 	String get autoStraightenLines => 'Auto straighten lines';
-
-	/// en: 'Custom Saber folder'
-	String get customDataDir => 'Custom Saber folder';
-
-	/// en: 'Error reporting'
-	String get sentry => 'Error reporting';
 }
 
 // Path: settings.prefDescriptions
@@ -711,9 +549,6 @@ class Translations$settings$prefDescriptions$en {
 
 	/// en: 'Increases legibility for users with low vision'
 	String get hyperlegibleFont => 'Increases legibility for users with low vision';
-
-	/// en: '(Not recommended) Allow Saber to connect to servers with self-signed/untrusted certificates'
-	String get allowInsecureConnections => '(Not recommended) Allow Saber to connect to servers with self-signed/untrusted certificates';
 
 	/// en: 'For e-ink displays'
 	String get preferGreyscale => 'For e-ink displays';
@@ -746,9 +581,6 @@ class Translations$settings$prefDescriptions$en {
 
 	/// en: 'Straightens long lines without having to use the shape pen'
 	String get autoStraightenLines => 'Straightens long lines without having to use the shape pen';
-
-	/// en: 'Tell me about updates as soon as they're available'
-	String get shouldAlwaysAlertForUpdates => 'Tell me about updates as soon as they\'re available';
 }
 
 // Path: settings.themeModes
@@ -812,207 +644,6 @@ class Translations$settings$reset$en {
 
 	/// en: 'Reset'
 	String get button => 'Reset';
-}
-
-// Path: settings.customDataDir
-class Translations$settings$customDataDir$en {
-	Translations$settings$customDataDir$en.internal(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-
-	/// en: 'Cancel'
-	String get cancel => 'Cancel';
-
-	/// en: 'Select'
-	String get select => 'Select';
-
-	/// en: 'Selected folder must be empty'
-	String get mustBeEmpty => 'Selected folder must be empty';
-
-	/// en: 'Make sure syncing is complete before changing the folder'
-	String get mustBeDoneSyncing => 'Make sure syncing is complete before changing the folder';
-
-	/// en: 'This feature is currently only for developers. Using it will likely result in data loss.'
-	String get unsupported => 'This feature is currently only for developers. Using it will likely result in data loss.';
-}
-
-// Path: login.form
-class Translations$login$form$en {
-	Translations$login$form$en.internal(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-
-	/// en: 'By logging in, you agree to the ${linkToPrivacyPolicy(Privacy Policy)}.'
-	TextSpan agreeToPrivacyPolicy({required InlineSpanBuilder linkToPrivacyPolicy}) => TextSpan(children: [
-		const TextSpan(text: 'By logging in, you agree to the '),
-		linkToPrivacyPolicy('Privacy Policy'),
-		const TextSpan(text: '.'),
-	]);
-}
-
-// Path: login.status
-class Translations$login$status$en {
-	Translations$login$status$en.internal(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-
-	/// en: 'Logged out'
-	String get loggedOut => 'Logged out';
-
-	/// en: 'Tap to log in with Nextcloud'
-	String get tapToLogin => 'Tap to log in with Nextcloud';
-
-	/// en: 'Hi, $u!'
-	String hi({required Object u}) => 'Hi, ${u}!';
-
-	/// en: 'Almost ready for syncing, tap to finish logging in'
-	String get almostDone => 'Almost ready for syncing, tap to finish logging in';
-
-	/// en: 'Logged in with Nextcloud'
-	String get loggedIn => 'Logged in with Nextcloud';
-}
-
-// Path: login.ncLoginStep
-class Translations$login$ncLoginStep$en {
-	Translations$login$ncLoginStep$en.internal(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-
-	/// en: 'Choose where you want to store your data:'
-	String get whereToStoreData => 'Choose where you want to store your data:';
-
-	/// en: 'Folege's Nextcloud server'
-	String get foledgeNcServer => 'Folege\'s Nextcloud server';
-
-	/// en: 'Other Nextcloud server'
-	String get otherNcServer => 'Other Nextcloud server';
-
-	/// en: 'Server URL'
-	String get serverUrl => 'Server URL';
-
-	/// en: 'Login with Folege'
-	String get loginWithfoledge => 'Login with Folege';
-
-	/// en: 'Login with Nextcloud'
-	String get loginWithNextcloud => 'Login with Nextcloud';
-
-	late final Translations$login$ncLoginStep$loginFlow$en loginFlow = Translations$login$ncLoginStep$loginFlow$en.internal(_root);
-}
-
-// Path: login.encLoginStep
-class Translations$login$encLoginStep$en {
-	Translations$login$encLoginStep$en.internal(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-
-	/// en: 'To protect your data, please enter your encryption password:'
-	String get enterEncPassword => 'To protect your data, please enter your encryption password:';
-
-	/// en: 'New to Folege? Just enter a new encryption password.'
-	String get newTofoledge => 'New to Folege? Just enter a new encryption password.';
-
-	/// en: 'Encryption password'
-	String get encPassword => 'Encryption password';
-
-	/// en: 'Frequently asked questions'
-	String get encFaqTitle => 'Frequently asked questions';
-
-	/// en: 'Decryption failed with the provided password. Please try entering it again.'
-	String get wrongEncPassword => 'Decryption failed with the provided password. Please try entering it again.';
-
-	/// en: 'Something went wrong connecting to the server. Please try again later.'
-	String get connectionFailed => 'Something went wrong connecting to the server. Please try again later.';
-
-	List<dynamic> get encFaq => [
-		Translations$login$encLoginStep$encFaq$0$en.internal(_root),
-		Translations$login$encLoginStep$encFaq$1$en.internal(_root),
-		Translations$login$encLoginStep$encFaq$2$en.internal(_root),
-	];
-}
-
-// Path: profile.quickLinks
-class Translations$profile$quickLinks$en {
-	Translations$profile$quickLinks$en.internal(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-
-	/// en: 'Server homepage'
-	String get serverHomepage => 'Server homepage';
-
-	/// en: 'Delete account'
-	String get deleteAccount => 'Delete account';
-}
-
-// Path: profile.faq.0
-class Translations$profile$faq$0$en {
-	Translations$profile$faq$0$en.internal(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-
-	/// en: 'Will I lose my notes if I log out?'
-	String get q => 'Will I lose my notes if I log out?';
-
-	/// en: 'No. Your notes will remain both on your device and on the server. They won't be synced with the server until you log back in. Make sure syncing is complete before logging out so you don't lose any data (see the sync progress on the home screen).'
-	String get a => 'No. Your notes will remain both on your device and on the server. They won\'t be synced with the server until you log back in. Make sure syncing is complete before logging out so you don\'t lose any data (see the sync progress on the home screen).';
-}
-
-// Path: profile.faq.1
-class Translations$profile$faq$1$en {
-	Translations$profile$faq$1$en.internal(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-
-	/// en: 'How do I change my Nextcloud password?'
-	String get q => 'How do I change my Nextcloud password?';
-
-	/// en: 'Go to your server website and log in. Then go to Settings > Security > Change password. You'll need to log out and log back in to Saber after changing your password.'
-	String get a => 'Go to your server website and log in. Then go to Settings > Security > Change password. You\'ll need to log out and log back in to Saber after changing your password.';
-}
-
-// Path: profile.faq.2
-class Translations$profile$faq$2$en {
-	Translations$profile$faq$2$en.internal(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-
-	/// en: 'How do I change my encryption password?'
-	String get q => 'How do I change my encryption password?';
-
-	/// en: '0. Make sure syncing is complete (see the sync progress on the home screen). 1. Log out of Saber. 2. Go to your server website and delete your 'Saber' folder. This will delete all your notes from the server. 3. Log back in to Saber. You can choose a new encryption password when logging in. 4. Don't forget to log out and log back in to Saber on your other devices too.'
-	String get a => '0. Make sure syncing is complete (see the sync progress on the home screen).\n1. Log out of Saber.\n2. Go to your server website and delete your \'Saber\' folder. This will delete all your notes from the server.\n3. Log back in to Saber. You can choose a new encryption password when logging in.\n4. Don\'t forget to log out and log back in to Saber on your other devices too.';
-}
-
-// Path: profile.faq.3
-class Translations$profile$faq$3$en {
-	Translations$profile$faq$3$en.internal(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-
-	/// en: 'How can I delete my account?'
-	String get q => 'How can I delete my account?';
-
-	/// en: 'Tap on the "Delete account" button above, and login if needed. If you are using the official Saber server, your account will be deleted after a 1 week grace period. You can contact me at adilhanney@disroot.org during this period to cancel the deletion. If you are using a third party server, there might not be an option to delete your account: you'll need to consult the server's privacy policy for more information.'
-	String get a => 'Tap on the "${_root.profile.quickLinks.deleteAccount}" button above, and login if needed.\nIf you are using the official Saber server, your account will be deleted after a 1 week grace period. You can contact me at adilhanney@disroot.org during this period to cancel the deletion.\nIf you are using a third party server, there might not be an option to delete your account: you\'ll need to consult the server\'s privacy policy for more information.';
 }
 
 // Path: editor.toolbar
@@ -1370,69 +1001,6 @@ class Translations$settings$prefDescriptions$hideFingerDrawing$en {
 
 	/// en: 'Finger drawing is fixed as disabled'
 	String get fixedOff => 'Finger drawing is fixed as disabled';
-}
-
-// Path: login.ncLoginStep.loginFlow
-class Translations$login$ncLoginStep$loginFlow$en {
-	Translations$login$ncLoginStep$loginFlow$en.internal(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-
-	/// en: 'Please authorize Folege to access your Nextcloud account'
-	String get pleaseAuthorize => 'Please authorize Folege to access your Nextcloud account';
-
-	/// en: 'Please follow the prompts in the Nextcloud interface'
-	String get followPrompts => 'Please follow the prompts in the Nextcloud interface';
-
-	/// en: 'Login page didn't open? Click here'
-	String get browserDidntOpen => 'Login page didn\'t open? Click here';
-}
-
-// Path: login.encLoginStep.encFaq.0
-class Translations$login$encLoginStep$encFaq$0$en {
-	Translations$login$encLoginStep$encFaq$0$en.internal(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-
-	/// en: 'What is an encryption password? Why use two passwords?'
-	String get q => 'What is an encryption password? Why use two passwords?';
-
-	/// en: 'The Nextcloud password is used to access the cloud. The encryption password "scrambles" your data before it ever reaches the cloud. Even if someone gains access to your Nextcloud account, your notes will remain safe and encrypted with a separate password. This provides you a second layer of security to protect your data. No-one can access your notes on the server without your encryption password, but this also means that if you forget your encryption password, you will lose access to your data.'
-	String get a => 'The Nextcloud password is used to access the cloud. The encryption password "scrambles" your data before it ever reaches the cloud.\nEven if someone gains access to your Nextcloud account, your notes will remain safe and encrypted with a separate password. This provides you a second layer of security to protect your data.\nNo-one can access your notes on the server without your encryption password, but this also means that if you forget your encryption password, you will lose access to your data.';
-}
-
-// Path: login.encLoginStep.encFaq.1
-class Translations$login$encLoginStep$encFaq$1$en {
-	Translations$login$encLoginStep$encFaq$1$en.internal(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-
-	/// en: 'I haven't set an encryption password yet. Where do I get it?'
-	String get q => 'I haven\'t set an encryption password yet. Where do I get it?';
-
-	/// en: 'Choose a new encryption password and enter it above. Saber will generate your encryption keys from this password automatically.'
-	String get a => 'Choose a new encryption password and enter it above.\nSaber will generate your encryption keys from this password automatically.';
-}
-
-// Path: login.encLoginStep.encFaq.2
-class Translations$login$encLoginStep$encFaq$2$en {
-	Translations$login$encLoginStep$encFaq$2$en.internal(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-
-	/// en: 'Can I use the same password as my Nextcloud account?'
-	String get q => 'Can I use the same password as my Nextcloud account?';
-
-	/// en: 'Yes, but keep in mind that it would be easier for the server administrator or someone else to access your notes if they gain access to your Nextcloud account.'
-	String get a => 'Yes, but keep in mind that it would be easier for the server administrator or someone else to access your notes if they gain access to your Nextcloud account.';
 }
 
 // Path: editor.menu.boxFits

@@ -237,7 +237,6 @@ class FileManager {
     String filePath,
     List<int> toWrite, {
     bool awaitWrite = false,
-    bool alsoUpload = true,
     DateTime? lastModified,
   }) async {
     filePath = _sanitisePath(filePath);
@@ -441,7 +440,6 @@ class FileManager {
 
   static Future deleteFile(
     String filePath, {
-    bool alsoUpload = true,
     bool alsoDeleteAssets = true,
   }) async {
     filePath = _sanitisePath(filePath);
@@ -546,7 +544,6 @@ class FileManager {
   /// from the file names. We use this to get all notes in a directory.
   ///
   /// If [includeAssets] is true, assets and previews will be included.
-  /// We use this for syncing.
   ///
   /// Note: [includeAssets] can't be true without [includeExtension],
   /// since otherwise we wouldn't be able to tell the difference between notes

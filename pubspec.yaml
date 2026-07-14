@@ -54,26 +54,17 @@ dependencies:
 
   flutter_secure_storage: ^10.0.0-beta.4
 
-  url_launcher: ^6.1.8
-
   collapsible: ^1.0.0
 
   vector_math: ^2.1.2
 
   intl: any
 
-  crypto: ^3.0.2
-  encrypt: ^5.0.1
-
-  http: ^1.1.0
-
   keybinder: ^1.0.1
 
   pdf: ^3.8.4
   share_plus: ^12.0.0
   file_picker: ^11.0.2
-
-  regexed_validator: ^2.0.0+1
 
   slang: ^4.12.1
   slang_flutter:
@@ -106,8 +97,6 @@ dependencies:
 
   printing: ^5.13.2
 
-  open_file: ^4.0.0
-
   super_clipboard: ^0.9.0-dev.3
 
   fast_image_resizer: ^0.0.2
@@ -134,17 +123,12 @@ dependencies:
 
   args: ^2.5.0
 
-  flutter_web_auth_2: ^5.0.1
-
   pdfrx: ^2.4.2
   path: ^1.9.1
 
   stow: ^0.6.0
   stow_plain: ^0.6.0
-  stow_secure: ^0.6.0
   stow_codecs: ^1.4.0
-
-  background_downloader: ^9.2.6
 
   flutter_hooks: ^0.21.3+1
   image: ^4.8.0

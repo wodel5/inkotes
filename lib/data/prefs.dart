@@ -1,13 +1,11 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:perfect_freehand/perfect_freehand.dart';
 import 'package:foledge/components/home/home_layout_button.dart';
 import 'package:foledge/components/home/sort_button.dart';
 import 'package:foledge/components/navbar/responsive_navbar.dart';
-import 'package:foledge/data/codecs/base64_codec.dart';
 import 'package:foledge/data/tools/highlighter.dart';
 import 'package:foledge/data/tools/pen.dart';
 import 'package:sbn/canvas_background_pattern.dart';
@@ -15,7 +13,6 @@ import 'package:sbn/tool_id.dart';
 import 'package:stow/stow.dart';
 import 'package:stow_codecs/stow_codecs.dart';
 import 'package:stow_plain/stow_plain.dart';
-import 'package:stow_secure/stow_secure.dart';
 
 /// If false, all stows are stuck at their default values.
 var _isOnMainIsolate = false;
@@ -31,36 +28,6 @@ class Stows {
   }
 
   final log = Logger('Stows');
-
-  final url = SecureStow('url', '', volatile: !_isOnMainIsolate);
-  final username = SecureStow('username', '', volatile: !_isOnMainIsolate);
-
-  /// the password used to login to Nextcloud
-  final ncPassword = SecureStow('ncPassword', '', volatile: !_isOnMainIsolate);
-
-  /// the password used to encrypt/decrypt notes
-  final encPassword = SecureStow(
-    'encPassword',
-    '',
-    volatile: !_isOnMainIsolate,
-  );
-
-  /// Whether the user is logged in and has provided both passwords.
-  /// Please ensure that the relevant Prefs are loaded before using this.
-  bool get loggedIn =>
-      username.value.isNotEmpty &&
-      ncPassword.value.isNotEmpty &&
-      encPassword.value.isNotEmpty;
-
-  final key = SecureStow('key', '', volatile: !_isOnMainIsolate);
-  final iv = SecureStow('iv', '', volatile: !_isOnMainIsolate);
-
-  final pfp = PlainStow<Uint8List?>(
-    'pfp',
-    null,
-    codec: const Base64StowCodec(),
-    volatile: !_isOnMainIsolate,
-  );
 
   final appTheme = PlainStow(
     'appTheme',
@@ -248,31 +215,6 @@ class Stows {
   final recentFiles = PlainStow(
     'recentFiles',
     <String>[],
-    volatile: !_isOnMainIsolate,
-  );
-
-  /// File paths that have been deleted locally
-  final fileSyncAlreadyDeleted = PlainStow(
-    'fileSyncAlreadyDeleted',
-    <String>{},
-    volatile: !_isOnMainIsolate,
-  );
-
-  /// File paths that are known to be corrupted on Nextcloud
-  final fileSyncCorruptFiles = PlainStow(
-    'fileSyncCorruptFiles',
-    <String>{},
-    volatile: !_isOnMainIsolate,
-  );
-
-  /// Set when we want to resync everything.
-  /// Files on the server older than this date will be
-  /// reuploaded with the local version.
-  /// By default, we resync everything uploaded before v0.18.4, since uploads before then resulted in 0B files.
-  final fileSyncResyncEverythingDate = PlainStow(
-    'fileSyncResyncEverythingDate',
-    DateTime.parse('2023-12-10T10:06:31.000Z'),
-    codec: const DateTimeCodec(),
     volatile: !_isOnMainIsolate,
   );
 
