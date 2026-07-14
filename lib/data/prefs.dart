@@ -64,16 +64,6 @@ class Stows {
     10000,
     volatile: !_isOnMainIsolate,
   );
-  final shapeRecognitionDelay = PlainStow(
-    'shapeRecognitionDelay',
-    500,
-    volatile: !_isOnMainIsolate,
-  );
-  final autoStraightenLines = PlainStow(
-    'autoStraightenLines',
-    true,
-    volatile: !_isOnMainIsolate,
-  );
 
   final printPageIndicators = PlainStow(
     'printPageIndicators',
@@ -134,12 +124,6 @@ class Stows {
         Pen.pencilOptions,
         fromJson: _strokeOptionsFromJson,
         volatile: !_isOnMainIsolate,
-      ),
-      lastShapePenOptions = PlainStow.json(
-        'lastShapePenProperties',
-        Pen.shapePenOptions,
-        fromJson: _strokeOptionsFromJson,
-        volatile: !_isOnMainIsolate,
       );
   final lastFountainPenColor = PlainStow(
         'lastFountainPenColor',
@@ -158,11 +142,6 @@ class Stows {
       ),
       lastPencilColor = PlainStow(
         'lastPencilColor',
-        Colors.black.toARGB32(),
-        volatile: !_isOnMainIsolate,
-      ),
-      lastShapePenColor = PlainStow(
-        'lastShapePenColor',
         Colors.black.toARGB32(),
         volatile: !_isOnMainIsolate,
       );

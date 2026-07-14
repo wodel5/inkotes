@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:foledge/components/settings/settings_dropdown.dart';
 import 'package:foledge/components/settings/settings_selection.dart';
 import 'package:foledge/components/settings/settings_switch.dart';
@@ -8,7 +7,6 @@ import 'package:foledge/components/theming/adaptive_alert_dialog.dart';
 import 'package:foledge/components/theming/adaptive_toggle_buttons.dart';
 import 'package:foledge/data/locales.dart';
 import 'package:foledge/data/prefs.dart';
-import 'package:foledge/data/tools/shape_pen.dart';
 import 'package:foledge/i18n/strings.g.dart';
 import 'package:stow/stow.dart';
 
@@ -143,33 +141,10 @@ class _SettingsContentState extends State<SettingsContent> {
           pref: stows.autoDisableFingerDrawingWhenStylusDetected,
         ),
         SettingsSwitch(
-          title: t.settings.prefLabels.autoStraightenLines,
-          subtitle: t.settings.prefDescriptions.autoStraightenLines,
-          icon: Icons.straighten,
-          pref: stows.autoStraightenLines,
-        ),
-        SettingsSwitch(
           title: t.settings.prefLabels.printPageIndicators,
           subtitle: t.settings.prefDescriptions.printPageIndicators,
           icon: Icons.numbers,
           pref: stows.printPageIndicators,
-        ),
-        SettingsSelection(
-          title: t.settings.prefLabels.shapeRecognitionDelay,
-          subtitle: t.settings.prefDescriptions.shapeRecognitionDelay,
-          icon: FontAwesomeIcons.shapes,
-          pref: stows.shapeRecognitionDelay,
-          options: [
-            const ToggleButtonsOption(500, Text('0.5s')),
-            const ToggleButtonsOption(1000, Text('1s')),
-            ToggleButtonsOption(
-              -1,
-              Text(t.settings.shapeRecognitionDisabled),
-            ),
-          ],
-          afterChange: (ms) {
-            ShapePen.debounceDuration = ShapePen.getDebounceFromPref();
-          },
         ),
         SettingsSelection(
           title: t.settings.prefLabels.autosave,

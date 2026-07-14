@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:foledge/components/toolbar/size_picker.dart';
 import 'package:foledge/data/tools/_tool.dart';
 import 'package:foledge/data/tools/highlighter.dart';
 import 'package:foledge/data/tools/pen.dart';
 import 'package:foledge/data/tools/pencil.dart';
-import 'package:foledge/data/tools/shape_pen.dart';
 import 'package:foledge/i18n/strings.g.dart';
 
 class PenModal extends StatefulWidget {
@@ -92,25 +90,6 @@ class _PenModalState extends State<PenModal> {
                     : ColorScheme.of(context).onSurface,
               ),
             ),
-          ),
-          const SizedBox.square(dimension: 8),
-          IconButton(
-            onPressed: () => setState(() {
-              widget.setTool(ShapePen());
-            }),
-            style: TextButton.styleFrom(
-              foregroundColor: Pen.currentPen.icon == ShapePen.shapePenIcon
-                  ? ColorScheme.of(context).secondary
-                  : ColorScheme.of(context).onSurface,
-              backgroundColor: Pen.currentPen.icon == ShapePen.shapePenIcon
-                  ? Theme.of(
-                      context,
-                    ).colorScheme.secondary.withValues(alpha: 0.1)
-                  : Colors.transparent,
-              shape: const CircleBorder(),
-            ),
-            tooltip: t.editor.pens.shapePen,
-            icon: const FaIcon(ShapePen.shapePenIcon),
           ),
         ],
       ],

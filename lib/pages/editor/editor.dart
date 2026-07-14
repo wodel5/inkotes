@@ -42,7 +42,6 @@ import 'package:foledge/data/tools/laser_pointer.dart';
 import 'package:foledge/data/tools/pen.dart';
 import 'package:foledge/data/tools/pencil.dart';
 import 'package:foledge/data/tools/select.dart';
-import 'package:foledge/data/tools/shape_pen.dart';
 import 'package:foledge/i18n/strings.g.dart';
 import 'package:sbn/change.dart';
 import 'package:super_clipboard/super_clipboard.dart';
@@ -127,11 +126,6 @@ class EditorState extends State<Editor> {
           Pen.currentPen = Pen.ballpointPen();
         }
         return Pen.currentPen;
-      case .shapePen:
-        if (Pen.currentPen.toolId != stows.lastTool.value) {
-          Pen.currentPen = ShapePen();
-        }
-        return Pen.currentPen;
       case .highlighter:
         return Highlighter.currentHighlighter;
       case .pencil:
@@ -144,6 +138,8 @@ class EditorState extends State<Editor> {
         return Tool.textEditing;
       case .laserPointer:
         return LaserPointer.currentLaserPointer;
+      default:
+        return Pen.currentPen;
     }
   }();
   Tool get currentTool => _currentTool;
@@ -624,12 +620,6 @@ class EditorState extends State<Editor> {
         final newStroke = (currentTool as Pen).onDragEnd();
         if (newStroke == null) return;
         if (newStroke.isEmpty) return;
-
-        if (stows.autoStraightenLines.value &&
-            currentTool is! ShapePen &&
-            newStroke.isStraightLine()) {
-          newStroke.convertToLine();
-        }
 
         createPage(newStroke.pageIndex);
         page.insertStroke(newStroke);
@@ -1701,10 +1691,7 @@ class EditorState extends State<Editor> {
       textEditing: currentTool == Tool.textEditing,
       coreInfo: coreInfo,
       currentStroke: currentStroke,
-      currentStrokeDetectedShape:
-          currentTool is ShapePen && currentStroke != null
-          ? ShapePen.detectedShape
-          : null,
+      currentStrokeDetectedShape: null,
       currentSelection: () {
         if (currentTool is! Select) return null;
         final selectResult = (currentTool as Select).selectResult;
@@ -1936,7 +1923,6 @@ class EditorState extends State<Editor> {
     stows.lastBallpointPenOptions.notifyListeners();
     stows.lastHighlighterOptions.notifyListeners();
     stows.lastPencilOptions.notifyListeners();
-    stows.lastShapePenOptions.notifyListeners();
 
     super.dispose();
   }

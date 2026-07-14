@@ -2,9 +2,7 @@ import 'dart:math';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
-import 'package:one_dollar_unistroke_recognizer/one_dollar_unistroke_recognizer.dart';
 import 'package:path_drawing/path_drawing.dart';
-import 'package:perfect_freehand/perfect_freehand.dart';
 import 'package:foledge/components/canvas/_circle_stroke.dart';
 import 'package:foledge/components/canvas/_rectangle_stroke.dart';
 import 'package:foledge/components/canvas/_stroke.dart';
@@ -13,7 +11,6 @@ import 'package:foledge/data/extensions/color_extensions.dart';
 import 'package:foledge/data/tools/highlighter.dart';
 import 'package:foledge/data/tools/laser_pointer.dart';
 import 'package:foledge/data/tools/select.dart';
-import 'package:foledge/data/tools/shape_pen.dart';
 
 class CanvasPainter extends CustomPainter {
   const CanvasPainter({
@@ -53,7 +50,6 @@ class CanvasPainter extends CustomPainter {
     _drawNonHighlighterStrokes(canvas);
     for (final stroke in laserStrokes) _drawLaserStroke(canvas, stroke);
     _drawCurrentStroke(canvas);
-    _drawDetectedShape(canvas);
     _drawSelection(canvas);
     _drawPageIndicator(canvas, size);
   }
@@ -189,43 +185,6 @@ class CanvasPainter extends CustomPainter {
         ),
     );
     canvas.drawPath(stroke.innerPath, Paint()..color = const Color(0xDDffffff));
-  }
-
-  void _drawDetectedShape(Canvas canvas) {
-    final shape = ShapePen.detectedShape;
-    if (shape == null) return;
-
-    final color = currentStroke?.color.withInversion(invert) ?? Colors.black;
-    final shapePaint = Paint()
-      ..color = Color.lerp(color, primaryColor, 0.5)!.withValues(alpha: 0.7)
-      ..style = .stroke
-      ..strokeWidth = currentStroke?.options.size ?? 3;
-
-    switch (shape.name) {
-      case null:
-        break;
-      case DefaultUnistrokeNames.line:
-        var (firstPoint, lastPoint) = shape.convertToLine();
-        (firstPoint, lastPoint) = Stroke.snapLine(
-          firstPoint is PointVector
-              ? firstPoint
-              : PointVector.fromOffset(offset: firstPoint),
-          lastPoint is PointVector
-              ? lastPoint
-              : PointVector.fromOffset(offset: lastPoint),
-        );
-        canvas.drawLine(firstPoint, lastPoint, shapePaint);
-      case DefaultUnistrokeNames.rectangle:
-        final rect = shape.convertToRect();
-        canvas.drawRect(rect, shapePaint);
-      case DefaultUnistrokeNames.circle:
-        final (center, radius) = shape.convertToCircle();
-        canvas.drawCircle(center, radius, shapePaint);
-      case DefaultUnistrokeNames.triangle:
-      case DefaultUnistrokeNames.star:
-        final polygon = shape.convertToCanonicalPolygon();
-        canvas.drawPath(Path()..addPolygon(polygon, true), shapePaint);
-    }
   }
 
   void _drawSelection(Canvas canvas) {
