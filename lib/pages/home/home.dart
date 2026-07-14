@@ -1,70 +1,568 @@
+import 'dart:async';
+
+import 'package:collapsible/collapsible.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:foledge/components/navbar/responsive_navbar.dart';
-import 'package:foledge/pages/home/browse.dart';
-import 'package:foledge/pages/home/recent_notes.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:go_router/go_router.dart';
+import 'package:logging/logging.dart';
+import 'package:path/path.dart' as p;
+import 'package:foledge/components/home/delete_note_button.dart';
+import 'package:foledge/components/home/export_note_button.dart';
+import 'package:foledge/components/home/grid_folders.dart';
+import 'package:foledge/components/home/home_layout_button.dart';
+import 'package:foledge/components/home/masonry_files.dart';
+import 'package:foledge/components/home/move_note_button.dart';
+import 'package:foledge/components/home/rename_note_button.dart';
+import 'package:foledge/components/theming/adaptive_alert_dialog.dart';
+import 'package:foledge/data/file_manager/file_manager.dart';
+import 'package:foledge/data/prefs.dart';
+import 'package:foledge/data/routes.dart';
+import 'package:foledge/i18n/strings.g.dart';
+import 'package:foledge/pages/editor/editor.dart';
 import 'package:foledge/pages/home/settings.dart';
 import 'package:foledge/pages/home/whiteboard.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key, required this.subpage, required this.path});
-
-  final String subpage;
-  final String? path;
+class HomePage extends StatefulHookWidget {
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
-
-  static const recentSubpage = 'recent';
-  static const browseSubpage = 'browse';
-  static const whiteboardSubpage = 'whiteboard';
-  static const settingsSubpage = 'settings';
-  static const List<String> subpages = [
-    recentSubpage,
-    browseSubpage,
-    whiteboardSubpage,
-    settingsSubpage,
-  ];
 }
 
 class _HomePageState extends State<HomePage> {
+  final log = Logger('HomePage');
+
+  /// Current browsing path. null means root.
+  String? currentPath;
+
+  /// All files (notes) at the current path level
+  final List<String> filePaths = [];
+
+  /// Directories (folders) at the current path level
+  List<String> folders = [];
+
+  var failed = false;
+
+  final ValueNotifier<List<String>> selectedFiles = ValueNotifier([]);
+
   @override
   void initState() {
-    super.initState();
-    _showDialogs();
-  }
-
-  void _showDialogs() async {
-    await null; // initState must be completed before using context
-    if (!mounted) return;
-  }
-
-  Widget get body {
-    return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 300),
-      child: KeyedSubtree(
-        key: ValueKey(widget.subpage),
-        child: switch (widget.subpage) {
-          HomePage.browseSubpage => BrowsePage(path: widget.path),
-          HomePage.whiteboardSubpage => const Whiteboard(),
-          HomePage.settingsSubpage => const SettingsPage(),
-          _ => const RecentPage(),
-        },
-      ),
+    findChildren();
+    fileWriteSubscription = FileManager.fileWriteStream.stream.listen(
+      fileWriteListener,
     );
+    selectedFiles.addListener(_setState);
+
+    // Fix incorrectly imported files
+    moveIncorrectlyImportedFiles();
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    selectedFiles.removeListener(_setState);
+    fileWriteSubscription?.cancel();
+    super.dispose();
+  }
+
+  StreamSubscription? fileWriteSubscription;
+  void fileWriteListener(FileOperation event) {
+    findChildren(fromFileListener: true);
+  }
+
+  void _setState() => setState(() {});
+
+  /// Mitigates a bug where files got imported starting with `null/` instead of `/`.
+  void moveIncorrectlyImportedFiles() async {
+    for (final filePath in stows.recentFiles.value) {
+      if (filePath.startsWith('/')) continue;
+
+      final String newFilePath;
+      if (filePath.startsWith('null/')) {
+        newFilePath = await FileManager.suffixFilePathToMakeItUnique(
+          filePath.substring('null'.length),
+        );
+      } else {
+        newFilePath = await FileManager.suffixFilePathToMakeItUnique(
+          '/$filePath',
+        );
+      }
+
+      log.warning(
+        'Found incorrectly imported file at `$filePath`; moving to `$newFilePath`',
+      );
+      await FileManager.moveFile(filePath, newFilePath);
+    }
+  }
+
+  Future findChildren({bool fromFileListener = false}) async {
+    if (!mounted) return;
+
+    if (fromFileListener) {
+      final location = GoRouterState.of(context).uri.toString();
+      if (location != RoutePaths.home) return;
+    }
+
+    if (currentPath == null) {
+      // Root level: show recent files + folders
+      final recentFiles = await FileManager.getRecentlyAccessed();
+      filePaths.clear();
+      if (recentFiles.isEmpty) {
+        failed = true;
+      } else {
+        failed = false;
+        filePaths.addAll(recentFiles);
+      }
+
+      // Get folders at root
+      final children = await FileManager.getChildrenOfDirectory(
+        '/',
+        sortMetric: stows.browseSortMetric.value,
+      );
+      folders = children?.directories ?? [];
+    } else {
+      // Browsing a specific folder
+      final children = await FileManager.getChildrenOfDirectory(
+        currentPath!,
+        sortMetric: stows.browseSortMetric.value,
+      );
+      if (children == null) {
+        failed = true;
+        filePaths.clear();
+        folders = [];
+      } else {
+        failed = false;
+        filePaths.clear();
+        filePaths.addAll([
+          for (final filePath in children.files) "${currentPath!}/$filePath",
+        ]);
+        folders = children.directories;
+      }
+    }
+
+    if (mounted) setState(() {});
+  }
+
+  void onDirectoryTap(String folder) {
+    selectedFiles.value = [];
+    if (folder == '..') {
+      currentPath = p.dirname(currentPath ?? '/');
+      if (currentPath == '/') currentPath = null;
+    } else {
+      currentPath = p.join(currentPath ?? '/', folder);
+    }
+    findChildren();
+  }
+
+  Future<void> createFolder(String folderName) async {
+    final folderPath = '${currentPath ?? ''}/$folderName';
+    await FileManager.createFolder(folderPath);
+    findChildren();
+  }
+
+  void _showSettingsDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => const _SettingsDialog(),
+    );
+  }
+
+  Future<void> _importNote({required bool isPdf}) async {
+    if (isPdf) {
+      final result = await FilePicker.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['pdf'],
+        allowMultiple: false,
+        withData: false,
+      );
+      if (result == null || !mounted) return;
+
+      final filePath = result.files.single.path;
+      final fileName = result.files.single.name;
+      if (filePath == null) return;
+
+      if (!Editor.canRasterPdf) return;
+
+      final fileNameWithoutExtension = fileName.substring(
+        0,
+        fileName.length - '.pdf'.length,
+      );
+      final sbnFilePath = await FileManager.suffixFilePathToMakeItUnique(
+        '${currentPath ?? ''}/$fileNameWithoutExtension',
+      );
+      if (!mounted) return;
+      context.push(RoutePaths.editImportPdf(sbnFilePath, filePath));
+    } else {
+      final result = await FilePicker.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'],
+        allowMultiple: false,
+        withData: false,
+      );
+      if (result == null || !mounted) return;
+
+      final filePath = result.files.single.path;
+      if (filePath == null) return;
+
+      // Import image into a new note
+      final newFilePath = await FileManager.newFilePath(
+        '${currentPath ?? ''}/',
+      );
+      if (!mounted) return;
+      context.push(
+        Uri(
+          path: RoutePaths.edit,
+          queryParameters: {'path': newFilePath},
+        ).toString(),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return ResponsiveNavbar(
-      selectedIndex: HomePage.subpages.indexOf(widget.subpage),
-      body: body,
+    final colorScheme = ColorScheme.of(context);
+    final crossAxisCount = MediaQuery.sizeOf(context).width ~/ 300 + 1;
+    useListenable(stows.homeLayout);
+    useOnListenableChange(stows.browseSortMetric, findChildren);
+
+    return Scaffold(
+      appBar: AppBar(
+        toolbarHeight: kToolbarHeight,
+        title: Text(
+          '锋页 Foledge',
+          style: TextStyle(
+            color: colorScheme.onSurface,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        titleSpacing: 16,
+        actions: [
+          // Add button - goes to whiteboard
+          IconButton(
+            icon: const Icon(Icons.add),
+            tooltip: t.home.tooltips.newNote,
+            onPressed: () {
+              context.push(
+                Uri(
+                  path: RoutePaths.edit,
+                  queryParameters: {'path': Whiteboard.filePath},
+                ).toString(),
+              );
+            },
+          ),
+          // Import button
+          Builder(
+            builder: (context) => IconButton(
+              icon: const Icon(Icons.note_add),
+              tooltip: t.home.create.importNote,
+              onPressed: () {
+                final RenderBox button =
+                    context.findRenderObject() as RenderBox;
+                final position = RelativeRect.fromLTRB(
+                  button.localToGlobal(Offset.zero).dx,
+                  button.localToGlobal(Offset.zero).dy + button.size.height,
+                  button.localToGlobal(Offset.zero).dx + button.size.width,
+                  button.localToGlobal(Offset.zero).dy + button.size.height,
+                );
+                showMenu(
+                  context: context,
+                  position: position,
+                  items: [
+                    PopupMenuItem(
+                      value: 'pdf',
+                      child: ListTile(
+                        leading: const Icon(Icons.picture_as_pdf),
+                        title: const Text('导入 PDF'),
+                        dense: true,
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: 'image',
+                      child: ListTile(
+                        leading: const Icon(Icons.photo),
+                        title: const Text('导入图片'),
+                        dense: true,
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                    ),
+                  ],
+                ).then((value) {
+                  if (value == 'pdf') {
+                    _importNote(isPdf: true);
+                  } else if (value == 'image') {
+                    _importNote(isPdf: false);
+                  }
+                });
+              },
+            ),
+          ),
+          // Settings button
+          IconButton(
+            icon: const Icon(Icons.settings),
+            tooltip: t.home.titles.settings,
+            onPressed: _showSettingsDialog,
+          ),
+          // Layout button
+          const HomeLayoutButton(),
+        ],
+      ),
+      body: Column(
+        children: [
+          // Folder path breadcrumb
+          if (currentPath != null)
+            _PathBreadcrumb(
+              path: currentPath!,
+              onTap: (path) {
+                currentPath = path.isEmpty ? null : path;
+                findChildren();
+              },
+            ),
+          // Main content
+          Expanded(
+            child: _buildBody(crossAxisCount),
+          ),
+        ],
+      ),
+      persistentFooterButtons: selectedFiles.value.isEmpty
+          ? null
+          : [
+              Collapsible(
+                axis: CollapsibleAxis.vertical,
+                collapsed: selectedFiles.value.length != 1,
+                child: RenameNoteButton(
+                  existingPath: selectedFiles.value.isEmpty
+                      ? ''
+                      : selectedFiles.value.first,
+                  unselectNotes: () => selectedFiles.value = [],
+                ),
+              ),
+              MoveNoteButton(
+                filesToMove: selectedFiles.value,
+                unselectNotes: () => selectedFiles.value = [],
+              ),
+              DeleteNoteButton(
+                filesToDelete: selectedFiles.value,
+                unselectNotes: () => selectedFiles.value = [],
+              ),
+              ExportNoteButton(selectedFiles: selectedFiles.value),
+            ],
     );
   }
 
+  Widget _buildBody(int crossAxisCount) {
+    if (failed && currentPath == null) {
+      return _buildWelcome();
+    }
+
+    return CustomScrollView(
+      slivers: [
+        // Back folder button (when inside a subfolder)
+        if (currentPath != null)
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              child: Card(
+                child: ListTile(
+                  leading: const Icon(Icons.arrow_back),
+                  title: Text(t.home.backFolder),
+                  onTap: () => onDirectoryTap('..'),
+                ),
+              ),
+            ),
+          ),
+        // Folders
+        if (folders.isNotEmpty)
+          GridFolders(
+            isAtRoot: currentPath == null,
+            crossAxisCount: crossAxisCount,
+            onTap: onDirectoryTap,
+            createFolder: createFolder,
+            doesFolderExist: (String folderName) {
+              return folders.contains(folderName);
+            },
+            renameFolder: (String oldName, String newName) async {
+              final oldPath = '${currentPath ?? ''}/$oldName';
+              await FileManager.renameDirectory(oldPath, newName);
+              findChildren();
+            },
+            isFolderEmpty: (String folderName) async {
+              final folderPath = '${currentPath ?? ''}/$folderName';
+              final children = await FileManager.getChildrenOfDirectory(
+                folderPath,
+              );
+              return children?.isEmpty ?? true;
+            },
+            deleteFolder: (String folderName) async {
+              final folderPath = '${currentPath ?? ''}/$folderName';
+              await FileManager.deleteDirectory(folderPath);
+              findChildren();
+            },
+            folders: folders,
+          ),
+        // Notes
+        if (filePaths.isNotEmpty)
+          SliverSafeArea(
+            top: false,
+            minimum: const EdgeInsets.only(
+              bottom: 70,
+            ),
+            sliver: MasonryFiles(
+              crossAxisCount: crossAxisCount,
+              files: filePaths,
+              selectedFiles: selectedFiles,
+            ),
+          ),
+        // Empty state at root
+        if (filePaths.isEmpty && folders.isEmpty && currentPath != null)
+          const SliverSafeArea(
+            sliver: SliverToBoxAdapter(child: _NoFiles()),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildWelcome() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.note_add_outlined,
+              size: 80,
+              color: Theme.of(context)
+                  .colorScheme
+                  .primary
+                  .withValues(alpha: 0.3),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              '欢迎使用锋页 Foledge',
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              t.home.createNewNote,
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _PathBreadcrumb extends StatelessWidget {
+  const _PathBreadcrumb({required this.path, required this.onTap});
+
+  final String path;
+  final void Function(String path) onTap;
+
   @override
+  Widget build(BuildContext context) {
+    final segments = path.split('/').where((s) => s.isNotEmpty).toList();
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: [
+            GestureDetector(
+              onTap: () => onTap(''),
+              child: Text(
+                '根目录',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+            for (int i = 0; i < segments.length; i++) ...[
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 4),
+                child: Icon(Icons.chevron_right, size: 16),
+              ),
+              GestureDetector(
+                onTap: () => onTap('/${segments.sublist(0, i + 1).join('/')}'),
+                child: Text(
+                  segments[i],
+                  style: TextStyle(
+                    color: i == segments.length - 1
+                        ? Theme.of(context).colorScheme.onSurface
+                        : Theme.of(context).colorScheme.primary,
+                    fontWeight: i == segments.length - 1
+                        ? FontWeight.w600
+                        : FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _NoFiles extends StatelessWidget {
+  const _NoFiles();
+
   @override
-  void dispose() {
-    super.dispose();
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.folder_open,
+              size: 64,
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.3),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              t.home.noFiles,
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withValues(alpha: 0.5),
+                  ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SettingsDialog extends StatelessWidget {
+  const _SettingsDialog();
+
+  @override
+  Widget build(BuildContext context) {
+    return AdaptiveAlertDialog(
+      title: Text(t.home.titles.settings),
+      content: SizedBox(
+        width: 450,
+        height: 500,
+        child: const SettingsContent(),
+      ),
+      actions: [
+        CupertinoDialogAction(
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text(t.common.done),
+        ),
+      ],
+    );
   }
 }

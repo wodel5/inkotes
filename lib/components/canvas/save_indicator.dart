@@ -55,8 +55,7 @@ class SaveIndicator extends StatelessWidget {
     final navigator = Navigator.of(context);
     final isWhiteboard = !navigator.canPop();
     if (isWhiteboard) {
-      // if on whiteboard, go to "recents" tab of home screen
-      context.go(HomeRoutes.getRoute(0));
+      context.go(RoutePaths.home);
     } else {
       navigator.pop();
     }

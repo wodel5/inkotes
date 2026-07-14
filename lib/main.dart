@@ -10,7 +10,6 @@ import 'package:flutter_sharing_intent/model/sharing_file.dart';
 import 'package:go_router/go_router.dart';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
-import 'package:path_to_regexp/path_to_regexp.dart';
 import 'package:pdfrx/pdfrx.dart';
 import 'package:printing/printing.dart';
 import 'package:foledge/components/canvas/pencil_shader.dart';
@@ -28,13 +27,7 @@ import 'package:worker_manager/worker_manager.dart';
 
 
 Future<void> main(List<String> args) async {
-  /// To set the flavor config e.g. for the Play Store, use:
-  /// flutter build \
-  ///   --dart-define=FLAVOR="Google Play" \
-  ///   --dart-define=APP_STORE="Google Play" \
-  ///   --dart-define=UPDATE_CHECK="false"
   FlavorConfig.setupFromEnvironment();
-
   await appRunner(args);
 }
 
@@ -52,7 +45,6 @@ Future<void> appRunner(List<String> args) async {
     print('${record.level.name}: ${record.loggerName}: ${record.message}');
   });
 
-  // For some reason, logging errors breaks hot reload while debugging.
   if (!kDebugMode) {
     final errorLogger = Logger('ErrorLogger');
     FlutterError.onError = (details) {
@@ -65,7 +57,6 @@ Future<void> appRunner(List<String> args) async {
     };
     PlatformDispatcher.instance.onError = (error, stackTrace) {
       errorLogger.severe(error, stackTrace);
-      // Returns false in debug mode so the error is printed to stderr
       return !kDebugMode;
     };
   }
@@ -76,7 +67,6 @@ Future<void> appRunner(List<String> args) async {
   await Future.wait([
     FileManager.init(),
     workerManager.init(
-      // Fewer isolates in debug mode to avoid slowing down hot reload
       isolatesCount: kDebugMode ? 1 : 2,
     ),
     stows.locale.waitUntilRead(),
@@ -120,19 +110,12 @@ class App extends StatefulWidget {
 
   static final log = Logger('App');
 
-  static String initialLocation = pathToFunction(RoutePaths.home)({
-    'subpage': HomePage.recentSubpage,
-  });
   static final _router = GoRouter(
-    initialLocation: initialLocation,
+    initialLocation: RoutePaths.home,
     routes: <GoRoute>[
-      GoRoute(path: '/', redirect: (context, state) => initialLocation),
       GoRoute(
         path: RoutePaths.home,
-        builder: (context, state) => HomePage(
-          subpage: state.pathParameters['subpage'] ?? HomePage.recentSubpage,
-          path: state.uri.queryParameters['path'],
-        ),
+        builder: (context, state) => const HomePage(),
       ),
       GoRoute(
         path: RoutePaths.edit,
@@ -162,7 +145,6 @@ class App extends StatefulWidget {
       );
       if (path == null) return;
 
-      // allow file to finish writing
       await Future.delayed(const Duration(milliseconds: 100));
 
       _router.push(RoutePaths.editFilePath(path));
@@ -192,7 +174,6 @@ class _AppState extends State<App> {
 
   void setupSharingIntent() {
     if (Platform.isAndroid || Platform.isIOS) {
-      // for files opened while the app is closed
       FlutterSharingIntent.instance.getInitialSharing().then((
         List<SharedFile> files,
       ) {
@@ -201,7 +182,6 @@ class _AppState extends State<App> {
         }
       });
 
-      // for files opened while the app is open
       final stream = FlutterSharingIntent.instance.getMediaStream();
       _intentDataStreamSubscription = stream.listen((List<SharedFile> files) {
         for (final file in files) {
@@ -213,7 +193,7 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
-    return DynamicMaterialApp(title: 'foledge', router: App._router);
+    return DynamicMaterialApp(title: 'Foledge', router: App._router);
   }
 
   @override

@@ -5,7 +5,6 @@ import 'package:logging/logging.dart';
 import 'package:perfect_freehand/perfect_freehand.dart';
 import 'package:foledge/components/home/home_layout_button.dart';
 import 'package:foledge/components/home/sort_button.dart';
-import 'package:foledge/components/navbar/responsive_navbar.dart';
 import 'package:foledge/data/tools/highlighter.dart';
 import 'package:foledge/data/tools/pen.dart';
 import 'package:sbn/canvas_background_pattern.dart';
@@ -13,6 +12,14 @@ import 'package:sbn/tool_id.dart';
 import 'package:stow/stow.dart';
 import 'package:stow_codecs/stow_codecs.dart';
 import 'package:stow_plain/stow_plain.dart';
+
+enum LayoutSize {
+  auto,
+  phone,
+  tablet;
+
+  static const codec = EnumCodec(values);
+}
 
 /// If false, all stows are stuck at their default values.
 var _isOnMainIsolate = false;
