@@ -83,20 +83,25 @@ class _SettingsDropdownState<T> extends State<SettingsDropdown<T>> {
         ),
         title: Text(
           widget.title,
-          style: TextStyle(
-            fontSize: 18,
-            fontStyle: widget.pref.value != widget.pref.defaultValue
-                ? FontStyle.italic
-                : null,
+          style: const TextStyle(fontSize: 18),
+        ),
+        subtitle: widget.subtitle != null && widget.subtitle!.isNotEmpty
+            ? Text(
+                widget.subtitle!,
+                style: const TextStyle(fontSize: 13),
+              )
+            : null,
+        trailing: Theme(
+          data: Theme.of(context).copyWith(
+            popupMenuTheme: PopupMenuThemeData(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(kYaruContainerRadius),
+              ),
+            ),
           ),
-        ),
-        subtitle: Text(
-          widget.subtitle ?? '',
-          style: const TextStyle(fontSize: 13),
-        ),
-        trailing: YaruPopupMenuButton<T>(
-          initialValue: widget.pref.value,
-          onSelected: (value) => widget.pref.value = value,
+          child: YaruPopupMenuButton<T>(
+            initialValue: widget.pref.value,
+            onSelected: (value) => widget.pref.value = value,
           style:
               OutlinedButtonTheme.of(context).style ??
               OutlinedButton.styleFrom(
@@ -122,6 +127,7 @@ class _SettingsDropdownState<T> extends State<SettingsDropdown<T>> {
           child: widget.options
               .firstWhere((option) => option.value == widget.pref.value)
               .widget,
+          ),
         ),
       ),
     );

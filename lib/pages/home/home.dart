@@ -11,7 +11,6 @@ import 'package:path/path.dart' as p;
 import 'package:foledge/components/home/delete_note_button.dart';
 import 'package:foledge/components/home/export_note_button.dart';
 import 'package:foledge/components/home/grid_folders.dart';
-import 'package:foledge/components/home/home_layout_button.dart';
 import 'package:foledge/components/home/masonry_files.dart';
 import 'package:foledge/components/home/move_note_button.dart';
 import 'package:foledge/components/home/rename_note_button.dart';
@@ -224,7 +223,6 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final colorScheme = ColorScheme.of(context);
     final crossAxisCount = MediaQuery.sizeOf(context).width ~/ 300 + 1;
-    useListenable(stows.homeLayout);
     useOnListenableChange(stows.browseSortMetric, findChildren);
 
     return Scaffold(
@@ -306,8 +304,6 @@ class _HomePageState extends State<HomePage> {
             tooltip: t.home.titles.settings,
             onPressed: _showSettingsDialog,
           ),
-          // Layout button
-          const HomeLayoutButton(),
         ],
       ),
       body: Column(

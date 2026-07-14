@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:perfect_freehand/perfect_freehand.dart';
-import 'package:foledge/components/home/home_layout_button.dart';
 import 'package:foledge/components/home/sort_button.dart';
 import 'package:foledge/data/tools/highlighter.dart';
 import 'package:foledge/data/tools/pen.dart';
@@ -207,12 +206,6 @@ class Stows {
         volatile: !_isOnMainIsolate,
       );
 
-  final homeLayout = PlainStow(
-    'homeLayout',
-    HomeLayout.masonryGrid,
-    codec: HomeLayout.codec,
-    volatile: !_isOnMainIsolate,
-  );
   final browseSortMetric = PlainStow(
     'browseSortMetric',
     SortMetric.nameAToZ,

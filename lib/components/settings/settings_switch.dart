@@ -64,17 +64,14 @@ class _SettingsSwitchState extends State<SettingsSwitch> {
         ),
         title: Text(
           widget.title,
-          style: TextStyle(
-            fontSize: 18,
-            fontStyle: widget.pref.value != widget.pref.defaultValue
-                ? FontStyle.italic
-                : null,
-          ),
+          style: const TextStyle(fontSize: 18),
         ),
-        subtitle: Text(
-          widget.subtitle ?? '',
-          style: const TextStyle(fontSize: 13),
-        ),
+        subtitle: widget.subtitle != null && widget.subtitle!.isNotEmpty
+            ? Text(
+                widget.subtitle!,
+                style: const TextStyle(fontSize: 13),
+              )
+            : null,
         value: widget.pref.value,
         onChanged: (bool value) {
           widget.pref.value = value;

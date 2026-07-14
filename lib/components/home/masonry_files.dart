@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:foledge/components/home/preview_card.dart';
 import 'package:foledge/data/extensions/change_notifier_extensions.dart';
-import 'package:foledge/data/prefs.dart';
 
 class MasonryFiles extends StatefulWidget {
   const MasonryFiles({
@@ -42,14 +40,11 @@ class _MasonryFilesState extends State<MasonryFiles> {
     return ValueListenableBuilder(
       valueListenable: isAnythingSelected,
       builder: (context, isAnythingSelected, _) {
-        return Align(
-          alignment: .bottomCenter,
-          child: PreviewCard(
-            filePath: file,
-            toggleSelection: toggleSelection,
-            selected: widget.selectedFiles.value.contains(file),
-            isAnythingSelected: isAnythingSelected,
-          ),
+        return PreviewCard(
+          filePath: file,
+          toggleSelection: toggleSelection,
+          selected: widget.selectedFiles.value.contains(file),
+          isAnythingSelected: isAnythingSelected,
         );
       },
     );
@@ -60,28 +55,17 @@ class _MasonryFilesState extends State<MasonryFiles> {
     isAnythingSelected.value = widget.selectedFiles.value.isNotEmpty;
 
     return SliverPadding(
-      padding: const .symmetric(horizontal: 16, vertical: 8),
-      sliver: switch (stows.homeLayout.value) {
-        .masonryGrid => SliverMasonryGrid.count(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      sliver: SliverGrid.builder(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: widget.crossAxisCount,
           mainAxisSpacing: 8,
           crossAxisSpacing: 8,
-          childCount: widget.files.length,
-          itemBuilder: itemBuilder,
+          childAspectRatio: 1.25,
         ),
-        .simpleGrid => SliverGrid.builder(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: widget.crossAxisCount,
-            mainAxisSpacing: 8,
-            crossAxisSpacing: 8,
-            // This aspect ratio was chosen to fit an A4 page and
-            // two lines for the title.
-            childAspectRatio: 0.60,
-          ),
-          itemCount: widget.files.length,
-          itemBuilder: itemBuilder,
-        ),
-      },
+        itemCount: widget.files.length,
+        itemBuilder: itemBuilder,
+      ),
     );
   }
 }

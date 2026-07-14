@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:foledge/components/settings/settings_dropdown.dart';
 import 'package:foledge/components/settings/settings_selection.dart';
-import 'package:foledge/components/settings/settings_subtitle.dart';
 import 'package:foledge/components/settings/settings_switch.dart';
 import 'package:foledge/components/theming/adaptive_alert_dialog.dart';
 import 'package:foledge/components/theming/adaptive_toggle_buttons.dart';
@@ -52,12 +51,6 @@ abstract class _SettingsStows {
     (ThemeMode value) => value.index,
     (int value) => ThemeMode.values[value],
   );
-
-  static final layoutSize = TransformedStow(
-    stows.layoutSize,
-    (LayoutSize value) => value.index,
-    (int value) => LayoutSize.values[value],
-  );
 }
 
 /// Reusable settings content widget that can be embedded in a dialog or page.
@@ -83,7 +76,6 @@ class _SettingsContentState extends State<SettingsContent> {
   Widget build(BuildContext context) {
     return ListView(
       children: [
-        SettingsSubtitle(subtitle: t.settings.prefCategories.general),
         SettingsDropdown(
           title: t.settings.prefLabels.locale,
           icon: Icons.language,
@@ -138,46 +130,6 @@ class _SettingsContentState extends State<SettingsContent> {
             ),
           ],
         ),
-        SettingsSelection(
-          title: t.settings.prefLabels.layoutSize,
-          subtitle: switch (stows.layoutSize.value) {
-            .auto => t.settings.layoutSizes.auto,
-            .phone => t.settings.layoutSizes.phone,
-            .tablet => t.settings.layoutSizes.tablet,
-          },
-          afterChange: (_) => setState(() {}),
-          iconBuilder: (i) => switch (LayoutSize.values[i]) {
-            .auto => Icons.aspect_ratio,
-            .phone => Icons.smartphone,
-            .tablet => Icons.tablet,
-          },
-          pref: _SettingsStows.layoutSize,
-          optionsWidth: 60,
-          options: [
-            ToggleButtonsOption(
-              LayoutSize.auto.index,
-              Icon(
-                Icons.aspect_ratio,
-                semanticLabel: t.settings.layoutSizes.auto,
-              ),
-            ),
-            ToggleButtonsOption(
-              LayoutSize.phone.index,
-              Icon(
-                Icons.smartphone,
-                semanticLabel: t.settings.layoutSizes.phone,
-              ),
-            ),
-            ToggleButtonsOption(
-              LayoutSize.tablet.index,
-              Icon(
-                Icons.tablet,
-                semanticLabel: t.settings.layoutSizes.tablet,
-              ),
-            ),
-          ],
-        ),
-        SettingsSubtitle(subtitle: t.settings.prefCategories.writing),
         SettingsSwitch(
           title: t
               .settings
@@ -187,7 +139,7 @@ class _SettingsContentState extends State<SettingsContent> {
               .settings
               .prefDescriptions
               .autoDisableFingerDrawingWhenStylusDetected,
-          icon: CupertinoIcons.pencil,
+          icon: CupertinoIcons.hand_draw,
           pref: stows.autoDisableFingerDrawingWhenStylusDetected,
         ),
         SettingsSwitch(
@@ -197,15 +149,11 @@ class _SettingsContentState extends State<SettingsContent> {
           icon: Icons.cleaning_services,
           pref: stows.autoClearWhiteboardOnExit,
         ),
-        SettingsSubtitle(subtitle: t.settings.prefCategories.editor),
         SettingsSwitch(
           title: t.settings.prefLabels.printPageIndicators,
           subtitle: t.settings.prefDescriptions.printPageIndicators,
           icon: Icons.numbers,
           pref: stows.printPageIndicators,
-        ),
-        SettingsSubtitle(
-          subtitle: t.settings.prefCategories.performance,
         ),
         SettingsSelection(
           title: t.settings.prefLabels.autosave,
@@ -241,7 +189,6 @@ class _SettingsContentState extends State<SettingsContent> {
           icon: Icons.straighten,
           pref: stows.autoStraightenLines,
         ),
-        SettingsSubtitle(subtitle: t.settings.prefCategories.advanced),
       ],
     );
   }

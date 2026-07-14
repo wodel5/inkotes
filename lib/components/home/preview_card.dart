@@ -8,7 +8,6 @@ import 'package:foledge/components/canvas/invert_widget.dart';
 import 'package:foledge/data/extensions/color_extensions.dart';
 import 'package:foledge/data/file_manager/file_manager.dart';
 import 'package:foledge/data/is_this_a_test.dart';
-import 'package:foledge/data/prefs.dart';
 import 'package:foledge/data/routes.dart';
 import 'package:foledge/i18n/strings.g.dart';
 import 'package:foledge/pages/editor/editor.dart';
@@ -106,63 +105,45 @@ class _PreviewCardState extends State<PreviewCard> {
         onSecondaryTap: _toggleCardSelection,
         onLongPress: _toggleCardSelection,
         child: Column(
-          mainAxisSize: stows.homeLayout.value.fillVertical ? .max : .min,
           children: [
-            Flexible(
-              fit: stows.homeLayout.value.fillVertical ? .tight : .loose,
-              child: Stack(
-                children: [
-                  Positioned.fill(
-                    top: kYaruContainerRadius,
-                    left: kYaruFocusBorderWidth,
-                    right: kYaruFocusBorderWidth,
-                    child: ColoredBox(
-                      color: InnerCanvas.defaultBackgroundColor.withInversion(
-                        invert,
+            Expanded(
+              child: ClipRRect(
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(kYaruContainerRadius),
+                ),
+                child: Stack(
+                  children: [
+                    Positioned.fill(
+                      child: ColoredBox(
+                        color: InnerCanvas.defaultBackgroundColor.withInversion(
+                          invert,
+                        ),
                       ),
                     ),
-                  ),
-                  ListenableBuilder(
-                    listenable: thumbnail,
-                    builder: (context, _) => AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 300),
-                      child: ConstrainedBox(
-                        key: ValueKey(thumbnail.updateCount),
-                        constraints: const BoxConstraints(
-                          minWidth: double.infinity,
-                          minHeight: 100,
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            top: kYaruFocusBorderWidth,
-                            left: kYaruFocusBorderWidth,
-                            right: kYaruFocusBorderWidth,
+                    ListenableBuilder(
+                      listenable: thumbnail,
+                      builder: (context, _) => AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 300),
+                        child: ConstrainedBox(
+                          key: ValueKey(thumbnail.updateCount),
+                          constraints: const BoxConstraints(
+                            minWidth: double.infinity,
+                            minHeight: 100,
                           ),
-                          child: ClipRRect(
-                            borderRadius: const .only(
-                              topLeft: .circular(
-                                kYaruContainerRadius - kYaruFocusBorderWidth,
-                              ),
-                              topRight: .circular(
-                                kYaruContainerRadius - kYaruFocusBorderWidth,
-                              ),
-                            ),
-                            child: InvertWidget(
-                              invert: invert,
-                              child: thumbnail.doesImageExist
-                                  ? Image(
-                                      image: thumbnail.image!,
-                                      alignment: .topCenter,
-                                      fit: .cover,
-                                    )
-                                  : const _FallbackThumbnail(),
-                            ),
+                          child: InvertWidget(
+                            invert: invert,
+                            child: thumbnail.doesImageExist
+                                ? Image(
+                                    image: thumbnail.image!,
+                                    alignment: .topCenter,
+                                    fit: .cover,
+                                  )
+                                : const _FallbackThumbnail(),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  Positioned.fill(
+                    Positioned.fill(
                     left: -1,
                     top: -1,
                     right: -1,
@@ -200,6 +181,7 @@ class _PreviewCardState extends State<PreviewCard> {
                   ),
                 ],
               ),
+              ),
             ),
             Padding(
               padding: const .all(8),
@@ -219,7 +201,7 @@ class _PreviewCardState extends State<PreviewCard> {
       builder: (context, expanded, _) {
         return OpenContainer(
           clipBehavior: Clip.none,
-          closedColor: colorScheme.surface,
+          closedColor: colorScheme.onSurface.withValues(alpha: 0.12),
           closedShape: RoundedRectangleBorder(
             side: BorderSide(
               color: expanded
