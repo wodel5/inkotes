@@ -24,7 +24,6 @@ import 'package:foledge/components/canvas/save_indicator.dart';
 import 'package:foledge/components/editor/read_only_banner.dart';
 import 'package:foledge/components/theming/adaptive_alert_dialog.dart';
 import 'package:foledge/components/theming/adaptive_icon.dart';
-import 'package:foledge/components/toolbar/color_bar.dart';
 import 'package:foledge/components/toolbar/editor_bottom_sheet.dart';
 import 'package:foledge/components/toolbar/editor_page_manager.dart';
 import 'package:foledge/components/toolbar/toolbar.dart';
@@ -1014,8 +1013,7 @@ class EditorState extends State<Editor> {
       stows.recentColorsChronological.value.add(newColorString);
       stows.recentColorsChronological.notifyListeners();
     } else {
-      if (stows.recentColorsPositioned.value.length >=
-          stows.recentColorsLength.value) {
+      if (stows.recentColorsPositioned.value.length >= 5) {
         // if full, replace the oldest color with the new one
         final removedColorString = stows.recentColorsChronological.value
             .removeAt(0);

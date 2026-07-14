@@ -80,14 +80,13 @@ Future<void> appRunner(List<String> args) async {
   Stows.markAsOnMainIsolate();
 
   await Future.wait([
-    stows.customDataDir.waitUntilRead().then((_) => FileManager.init()),
+    FileManager.init(),
     workerManager.init(
       // Fewer isolates in debug mode to avoid slowing down hot reload
       isolatesCount: kDebugMode ? 1 : 2,
     ),
     stows.locale.waitUntilRead(),
     stows.url.waitUntilRead(),
-    stows.allowInsecureConnections.waitUntilRead(),
     PencilShader.init(),
     Printing.info().then((info) {
       Editor.canRasterPdf = info.canRaster;
@@ -96,7 +95,6 @@ Future<void> appRunner(List<String> args) async {
 
   setLocale();
   stows.locale.addListener(setLocale);
-  stows.customDataDir.addListener(FileManager.migrateDataDir);
   pdfrxFlutterInitialize();
 
   LicenseRegistry.addLicense(() async* {

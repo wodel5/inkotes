@@ -135,8 +135,7 @@ class ColorBar extends StatefulWidget {
       stows.pinnedColors.value.remove(colorString);
       stows.recentColorsChronological.value.remove(colorString);
       stows.recentColorsPositioned.value.remove(colorString);
-      if (stows.recentColorsChronological.value.length >=
-          stows.recentColorsLength.value) {
+      if (stows.recentColorsChronological.value.length >= 5) {
         // if full, replace oldest
         final oldestColor = stows.recentColorsChronological.value.removeAt(0);
         stows.recentColorsChronological.value.add(colorString);
@@ -222,11 +221,11 @@ class _ColorBarState extends State<ColorBar> {
             ),
           ),
         ),
-      // placeholders for `recentColorsLength` recent colors
+      // placeholders for recent colors
       for (
         int i = 0;
         i <
-            stows.recentColorsLength.value -
+            5 -
                 stows.recentColorsPositioned.value.length;
         ++i
       )

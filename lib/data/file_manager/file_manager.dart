@@ -76,7 +76,7 @@ class FileManager {
   }
 
   static Future<String> getDocumentsDirectory() async =>
-      stows.customDataDir.value ?? await getDefaultDocumentsDirectory();
+      await getDefaultDocumentsDirectory();
 
   static Future<String> getDefaultDocumentsDirectory() async =>
       '${(await getApplicationDocumentsDirectory()).path}/$appRootDirectoryPrefix';

@@ -1,12 +1,9 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:foledge/components/navbar/responsive_navbar.dart';
 import 'package:foledge/components/settings/settings_button.dart';
-import 'package:foledge/components/settings/settings_directory_selector.dart';
 import 'package:foledge/components/settings/settings_dropdown.dart';
 import 'package:foledge/components/settings/settings_selection.dart';
 import 'package:foledge/components/settings/settings_sentry.dart';
@@ -230,15 +227,6 @@ class _SettingsPageState extends State<SettingsPage> {
                   pref: stows.autoClearWhiteboardOnExit,
                 ),
                 SettingsSubtitle(subtitle: t.settings.prefCategories.editor),
-                SettingsSelection(
-                  title: t.settings.prefLabels.recentColorsLength,
-                  icon: Icons.history,
-                  pref: stows.recentColorsLength,
-                  options: const [
-                    ToggleButtonsOption(5, Text('5')),
-                    ToggleButtonsOption(10, Text('10')),
-                  ],
-                ),
                 SettingsSwitch(
                   title: t.settings.prefLabels.printPageIndicators,
                   subtitle: t.settings.prefDescriptions.printPageIndicators,
@@ -247,17 +235,6 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
                 SettingsSubtitle(
                   subtitle: t.settings.prefCategories.performance,
-                ),
-                SettingsSelection(
-                  title: t.settings.prefLabels.maxImageSize,
-                  subtitle: t.settings.prefDescriptions.maxImageSize,
-                  icon: Icons.photo_size_select_large,
-                  pref: stows.maxImageSize,
-                  options: const <ToggleButtonsOption<double>>[
-                    ToggleButtonsOption(500, Text('500')),
-                    ToggleButtonsOption(1000, Text('1000')),
-                    ToggleButtonsOption(2000, Text('2000')),
-                  ],
                 ),
                 SettingsSelection(
                   title: t.settings.prefLabels.autosave,
@@ -295,18 +272,6 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
                 SettingsSubtitle(subtitle: t.settings.prefCategories.advanced),
                 if (isSentryAvailable) const SettingsSentryConsent(),
-                if (Platform.isAndroid)
-                  SettingsDirectorySelector(
-                    title: t.settings.prefLabels.customDataDir,
-                    icon: Icons.folder,
-                  ),
-                SettingsSwitch(
-                  title: t.settings.prefLabels.allowInsecureConnections,
-                  subtitle:
-                      t.settings.prefDescriptions.allowInsecureConnections,
-                  icon: Icons.private_connectivity,
-                  pref: stows.allowInsecureConnections,
-                ),
                 SettingsButton(
                   title: t.logs.viewLogs,
                   subtitle: t.logs.debuggingInfo,

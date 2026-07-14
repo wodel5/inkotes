@@ -24,16 +24,7 @@ var _isOnMainIsolate = false;
 final stows = Stows();
 
 class Stows {
-  Stows() {
-    recentColorsLength.addListener(() {
-      // truncate if needed
-      while (recentColorsLength.value < recentColorsPositioned.value.length) {
-        // remove oldest color
-        final removed = recentColorsChronological.value.removeAt(0);
-        recentColorsPositioned.value.remove(removed);
-      }
-    });
-  }
+  Stows() {}
 
   /// Call this before [runApp] to set [_isOnMainIsolate] to true.
   static void markAsOnMainIsolate() {
@@ -42,17 +33,6 @@ class Stows {
 
   final log = Logger('Stows');
 
-  final customDataDir = PlainStow<String?>(
-    'customDataDir',
-    null,
-    volatile: !_isOnMainIsolate,
-  );
-
-  final allowInsecureConnections = SecureStow.bool(
-    'allowInsecureConnections',
-    false,
-    volatile: !_isOnMainIsolate,
-  );
   final url = SecureStow('url', '', volatile: !_isOnMainIsolate);
   final username = SecureStow('username', '', volatile: !_isOnMainIsolate);
 
@@ -131,7 +111,7 @@ class Stows {
 
   final maxImageSize = PlainStow<double>(
     'maxImageSize',
-    1000,
+    2000,
     volatile: !_isOnMainIsolate,
   );
 
@@ -154,12 +134,6 @@ class Stows {
   final pinnedColors = PlainStow(
     'pinnedColors',
     <String>[],
-    volatile: !_isOnMainIsolate,
-  );
-
-  final recentColorsLength = PlainStow(
-    'recentColorsLength',
-    5,
     volatile: !_isOnMainIsolate,
   );
 
