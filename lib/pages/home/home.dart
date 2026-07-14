@@ -22,7 +22,6 @@ import 'package:foledge/data/routes.dart';
 import 'package:foledge/i18n/strings.g.dart';
 import 'package:foledge/pages/editor/editor.dart';
 import 'package:foledge/pages/home/settings.dart';
-import 'package:foledge/pages/home/whiteboard.dart';
 
 class HomePage extends StatefulHookWidget {
   const HomePage({super.key});
@@ -240,17 +239,18 @@ class _HomePageState extends State<HomePage> {
         ),
         titleSpacing: 16,
         actions: [
-          // Add button - goes to whiteboard
+          // Add button - creates a new note
           IconButton(
             icon: const Icon(Icons.add),
             tooltip: t.home.tooltips.newNote,
-            onPressed: () {
-              context.push(
-                Uri(
-                  path: RoutePaths.edit,
-                  queryParameters: {'path': Whiteboard.filePath},
-                ).toString(),
+            onPressed: () async {
+              final router = GoRouter.of(context);
+              final path = currentPath;
+              final newFilePath = await FileManager.newFilePath(
+                '${path ?? ''}/',
               );
+              if (!mounted) return;
+              router.push(RoutePaths.editFilePath(newFilePath));
             },
           ),
           // Import button
