@@ -40,6 +40,9 @@ class CanvasImage extends StatefulHookWidget {
   /// The minimum size of the image itself, inside of the interactive area.
   static double minImageSize = 10;
 
+  /// The size of the edge midpoint handle dots.
+  static const double handleSize = 16;
+
   @override
   State<CanvasImage> createState() => _CanvasImageState();
 }
@@ -110,6 +113,7 @@ class _CanvasImageState extends State<CanvasImage> {
     final Widget unpositioned = IgnorePointer(
       ignoring: widget.readOnly,
       child: Stack(
+        clipBehavior: Clip.none,
         fit: StackFit.expand,
         children: [
           MouseRegion(
@@ -293,12 +297,62 @@ class _CanvasImageResizeHandle extends StatelessWidget {
   final _CanvasImageState parent;
   final void Function() afterDrag;
 
+  bool get isCorner => position.dx != 0 && position.dy != 0;
+
+  double get _handleSize => isCorner ? 40 : CanvasImage.handleSize;
+
+  double get _left {
+    if (position.dx < 0) return -_handleSize;
+    if (position.dx > 0) return image.dstRect.width;
+    return image.dstRect.width / 2 - _handleSize / 2;
+  }
+
+  double get _top {
+    if (position.dy < 0) return -_handleSize;
+    if (position.dy > 0) return image.dstRect.height;
+    return image.dstRect.height / 2 - _handleSize / 2;
+  }
+
+  double get _iconRotation {
+    if (!isCorner) return 0;
+    if (position.dx < 0 && position.dy < 0) return 45;
+    if (position.dx > 0 && position.dy < 0) return -45;
+    if (position.dx < 0 && position.dy > 0) return -45;
+    return 45;
+  }
+
+  IconData get _icon =>
+      position.dx < 0 ? Icons.chevron_left : Icons.chevron_right;
+
+  Widget _buildHandleContent(ColorScheme colorScheme) {
+    if (isCorner) {
+      return AnimatedRotation(
+        turns: _iconRotation / 360,
+        duration: const Duration(milliseconds: 100),
+        child: Icon(
+          _icon,
+          size: _handleSize,
+          color: colorScheme.onSurface,
+        ),
+      );
+    }
+    return Container(
+      width: CanvasImage.handleSize,
+      height: CanvasImage.handleSize,
+      decoration: BoxDecoration(
+        color: colorScheme.onSurface,
+        shape: .circle,
+        border: Border.all(color: colorScheme.surface, width: 2),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = ColorScheme.of(context);
     return Positioned(
-      left: (position.dx.sign + 1) / 2 * image.dstRect.width - 20,
-      top: (position.dy.sign + 1) / 2 * image.dstRect.height - 20,
+      left: _left,
+      top: _top,
       child: DeferPointer(
         paintOnTop: true,
         child: MouseRegion(
@@ -401,15 +455,7 @@ class _CanvasImageResizeHandle extends StatelessWidget {
             child: AnimatedOpacity(
               opacity: active ? 1 : 0,
               duration: const Duration(milliseconds: 100),
-              child: Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: colorScheme.onSurface,
-                  shape: .circle,
-                  border: Border.all(color: colorScheme.surface, width: 2),
-                ),
-              ),
+              child: _buildHandleContent(colorScheme),
             ),
           ),
         ),
