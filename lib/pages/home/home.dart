@@ -234,7 +234,7 @@ class _HomePageState extends State<HomePage> {
                     PopupMenuItem(
                       value: 'create',
                       child: ListTile(
-                        leading: const Icon(Icons.create),
+                        leading: const FaIcon(FontAwesomeIcons.fileCirclePlus),
                         title: Text(t.home.create.newNote),
                         dense: true,
                         contentPadding: EdgeInsets.zero,
@@ -243,7 +243,7 @@ class _HomePageState extends State<HomePage> {
                     PopupMenuItem(
                       value: 'pdf',
                       child: ListTile(
-                        leading: const Icon(Icons.picture_as_pdf),
+                        leading: const FaIcon(FontAwesomeIcons.solidFilePdf),
                         title: Text(t.home.importPdf),
                         dense: true,
                         contentPadding: EdgeInsets.zero,

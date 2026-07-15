@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:foledge/components/settings/settings_dropdown.dart';
 import 'package:foledge/components/settings/settings_selection.dart';
 import 'package:foledge/components/settings/settings_switch.dart';
@@ -76,7 +77,7 @@ class _SettingsContentState extends State<SettingsContent> {
       children: [
         SettingsDropdown(
           title: t.settings.prefLabels.locale,
-          icon: Icons.language,
+          icon: FontAwesomeIcons.globe,
           pref: stows.locale,
           options: [
             ...AppLocaleUtils.supportedLocales.map((locale) {
@@ -97,9 +98,9 @@ class _SettingsContentState extends State<SettingsContent> {
           title: t.settings.prefLabels.appTheme,
           iconBuilder: (i) {
             if (i == ThemeMode.system.index)
-              return Icons.brightness_auto;
-            if (i == ThemeMode.light.index) return Icons.light_mode;
-            if (i == ThemeMode.dark.index) return Icons.dark_mode;
+              return Icons.brightness_auto_rounded;
+            if (i == ThemeMode.light.index) return FontAwesomeIcons.solidSun;
+            if (i == ThemeMode.dark.index) return FontAwesomeIcons.solidMoon;
             return null;
           },
           pref: _SettingsStows.appTheme,
@@ -108,21 +109,24 @@ class _SettingsContentState extends State<SettingsContent> {
             ToggleButtonsOption(
               ThemeMode.system.index,
               Icon(
-                Icons.brightness_auto,
+                Icons.brightness_auto_rounded,
+                size: 24,
                 semanticLabel: t.settings.themeModes.system,
               ),
             ),
             ToggleButtonsOption(
               ThemeMode.light.index,
-              Icon(
-                Icons.light_mode,
+              FaIcon(
+                FontAwesomeIcons.solidSun,
+                size: 20,
                 semanticLabel: t.settings.themeModes.light,
               ),
             ),
             ToggleButtonsOption(
               ThemeMode.dark.index,
-              Icon(
-                Icons.dark_mode,
+              FaIcon(
+                FontAwesomeIcons.solidMoon,
+                size: 20,
                 semanticLabel: t.settings.themeModes.dark,
               ),
             ),
@@ -137,19 +141,19 @@ class _SettingsContentState extends State<SettingsContent> {
               .settings
               .prefDescriptions
               .autoDisableFingerDrawingWhenStylusDetected,
-          icon: CupertinoIcons.hand_draw,
+          icon: CupertinoIcons.hand_draw_fill,
           pref: stows.autoDisableFingerDrawingWhenStylusDetected,
         ),
         SettingsSwitch(
           title: t.settings.prefLabels.printPageIndicators,
           subtitle: t.settings.prefDescriptions.printPageIndicators,
-          icon: Icons.numbers,
+          icon: FontAwesomeIcons.hashtag,
           pref: stows.printPageIndicators,
         ),
         SettingsSelection(
           title: t.settings.prefLabels.autosave,
           subtitle: t.settings.prefDescriptions.autosave,
-          icon: Icons.save,
+          icon: FontAwesomeIcons.solidFloppyDisk,
           pref: stows.autosaveDelay,
           options: [
             const ToggleButtonsOption(5000, Text('5s')),

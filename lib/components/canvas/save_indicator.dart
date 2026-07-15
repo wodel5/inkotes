@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:foledge/components/theming/adaptive_circular_progress_indicator.dart';
 import 'package:foledge/data/is_this_a_test.dart';
@@ -30,7 +31,7 @@ class SaveIndicator extends StatelessWidget {
             key: ValueKey(savingState.value),
             onPressed: () => _onPressed(context),
             icon: switch (savingState.value) {
-              .waitingToSave => const Icon(Icons.save),
+              .waitingToSave => const FaIcon(FontAwesomeIcons.solidFloppyDisk),
               .saving => const AdaptiveCircularProgressIndicator(),
               .saved => const Icon(Icons.arrow_back),
             },
