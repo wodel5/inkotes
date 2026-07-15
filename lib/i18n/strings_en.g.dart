@@ -72,9 +72,6 @@ class Translations$home$en {
 	/// en: 'Import PDF'
 	String get importPdf => 'Import PDF';
 
-	/// en: 'Import image'
-	String get importImage => 'Import image';
-
 	late final Translations$home$tooltips$en tooltips = Translations$home$tooltips$en.internal(_root);
 	late final Translations$home$create$en create = Translations$home$create$en.internal(_root);
 

@@ -15,7 +15,6 @@ home:
     settings: 设置
     appName: 锋页笔记
   importPdf: 导入 PDF
-  importImage: 导入图片
   tooltips:
     newNote: 新建笔记
     showUpdateDialog: 显示更新对话框

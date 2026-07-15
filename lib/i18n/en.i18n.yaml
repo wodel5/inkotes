@@ -15,7 +15,6 @@ home:
     settings: Settings
     appName: Foledge Notes
   importPdf: Import PDF
-  importImage: Import image
   tooltips:
     newNote: New note
     showUpdateDialog: Show update dialog

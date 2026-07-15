@@ -61,7 +61,6 @@ class _Translations$home$zh_Hans_CN extends Translations$home$en {
 	@override late final _Translations$home$tabs$zh_Hans_CN tabs = _Translations$home$tabs$zh_Hans_CN._(_root);
 	@override late final _Translations$home$titles$zh_Hans_CN titles = _Translations$home$titles$zh_Hans_CN._(_root);
 	@override String get importPdf => '导入 PDF';
-	@override String get importImage => '导入图片';
 	@override late final _Translations$home$tooltips$zh_Hans_CN tooltips = _Translations$home$tooltips$zh_Hans_CN._(_root);
 	@override late final _Translations$home$create$zh_Hans_CN create = _Translations$home$create$zh_Hans_CN._(_root);
 	@override String get welcome => '欢迎使用锋页笔记';

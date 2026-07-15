@@ -168,55 +168,30 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Future<void> _importNote({required bool isPdf}) async {
-    if (isPdf) {
-      final result = await FilePicker.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ['pdf'],
-        allowMultiple: false,
-        withData: false,
-      );
-      if (result == null || !mounted) return;
+  Future<void> _importPdf() async {
+    final result = await FilePicker.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf'],
+      allowMultiple: false,
+      withData: false,
+    );
+    if (result == null || !mounted) return;
 
-      final filePath = result.files.single.path;
-      final fileName = result.files.single.name;
-      if (filePath == null) return;
+    final filePath = result.files.single.path;
+    final fileName = result.files.single.name;
+    if (filePath == null) return;
 
-      if (!Editor.canRasterPdf) return;
+    if (!Editor.canRasterPdf) return;
 
-      final fileNameWithoutExtension = fileName.substring(
-        0,
-        fileName.length - '.pdf'.length,
-      );
-      final sbnFilePath = await FileManager.suffixFilePathToMakeItUnique(
-        '${currentPath ?? ''}/$fileNameWithoutExtension',
-      );
-      if (!mounted) return;
-      context.push(RoutePaths.editImportPdf(sbnFilePath, filePath));
-    } else {
-      final result = await FilePicker.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'],
-        allowMultiple: false,
-        withData: false,
-      );
-      if (result == null || !mounted) return;
-
-      final filePath = result.files.single.path;
-      if (filePath == null) return;
-
-      // Import image into a new note
-      final newFilePath = await FileManager.newFilePath(
-        '${currentPath ?? ''}/',
-      );
-      if (!mounted) return;
-      context.push(
-        Uri(
-          path: RoutePaths.edit,
-          queryParameters: {'path': newFilePath},
-        ).toString(),
-      );
-    }
+    final fileNameWithoutExtension = fileName.substring(
+      0,
+      fileName.length - '.pdf'.length,
+    );
+    final sbnFilePath = await FileManager.suffixFilePathToMakeItUnique(
+      '${currentPath ?? ''}/$fileNameWithoutExtension',
+    );
+    if (!mounted) return;
+    context.push(RoutePaths.editImportPdf(sbnFilePath, filePath));
   }
 
   @override
@@ -237,25 +212,11 @@ class _HomePageState extends State<HomePage> {
         ),
         titleSpacing: 16,
         actions: [
-          // Add button - creates a new note
-          IconButton(
-            icon: const Icon(Icons.add),
-            tooltip: t.home.tooltips.newNote,
-            onPressed: () async {
-              final router = GoRouter.of(context);
-              final path = currentPath;
-              final newFilePath = await FileManager.newFilePath(
-                '${path ?? ''}/',
-              );
-              if (!mounted) return;
-              router.push(RoutePaths.editFilePath(newFilePath));
-            },
-          ),
-          // Import button
+          // Add button - popup menu
           Builder(
             builder: (context) => IconButton(
-              icon: const Icon(Icons.note_add),
-              tooltip: t.home.create.importNote,
+              icon: const Icon(Icons.add),
+              tooltip: t.home.tooltips.newNote,
               onPressed: () {
                 final RenderBox button =
                     context.findRenderObject() as RenderBox;
@@ -270,6 +231,15 @@ class _HomePageState extends State<HomePage> {
                   position: position,
                   items: [
                     PopupMenuItem(
+                      value: 'create',
+                      child: ListTile(
+                        leading: const Icon(Icons.create),
+                        title: Text(t.home.create.newNote),
+                        dense: true,
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                    ),
+                    PopupMenuItem(
                       value: 'pdf',
                       child: ListTile(
                         leading: const Icon(Icons.picture_as_pdf),
@@ -278,21 +248,18 @@ class _HomePageState extends State<HomePage> {
                         contentPadding: EdgeInsets.zero,
                       ),
                     ),
-                    PopupMenuItem(
-                      value: 'image',
-                      child: ListTile(
-                        leading: const Icon(Icons.photo),
-                        title: Text(t.home.importImage),
-                        dense: true,
-                        contentPadding: EdgeInsets.zero,
-                      ),
-                    ),
                   ],
-                ).then((value) {
-                  if (value == 'pdf') {
-                    _importNote(isPdf: true);
-                  } else if (value == 'image') {
-                    _importNote(isPdf: false);
+                ).then((value) async {
+                  if (value == 'create') {
+                    final router = GoRouter.of(context);
+                    final path = currentPath;
+                    final newFilePath = await FileManager.newFilePath(
+                      '${path ?? ''}/',
+                    );
+                    if (!mounted) return;
+                    router.push(RoutePaths.editFilePath(newFilePath));
+                  } else if (value == 'pdf') {
+                    _importPdf();
                   }
                 });
               },
