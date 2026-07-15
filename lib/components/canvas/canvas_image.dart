@@ -127,22 +127,15 @@ class _CanvasImageState extends State<CanvasImage> {
               onPanUpdate: active
                   ? (details) {
                       setState(() {
-                        final fivePercent = min(
-                          widget.pageSize.width * 0.05,
-                          widget.pageSize.height * 0.05,
-                        );
+                        final pad = handlePadding;
+                        final maxX = widget.pageSize.width - widget.image.dstRect.width - pad;
+                        final maxY = widget.pageSize.height - widget.image.dstRect.height - pad;
                         widget.image.dstRect = .fromLTWH(
                           (widget.image.dstRect.left + details.delta.dx)
-                              .clamp(
-                                fivePercent - widget.image.dstRect.width,
-                                widget.pageSize.width - fivePercent,
-                              )
+                              .clamp(pad, max(pad, maxX))
                               .toDouble(),
                           (widget.image.dstRect.top + details.delta.dy)
-                              .clamp(
-                                fivePercent - widget.image.dstRect.height,
-                                widget.pageSize.height - fivePercent,
-                              )
+                              .clamp(pad, max(pad, maxY))
                               .toDouble(),
                           widget.image.dstRect.width,
                           widget.image.dstRect.height,
@@ -418,6 +411,15 @@ class _CanvasImageResizeHandle extends StatelessWidget {
                     if (position.dy < 0) {
                       newTop = parent.panStartRect.bottom - newHeight;
                     }
+
+                    // Clamp to page bounds (frame must stay within page)
+                    final pageSize = parent.widget.pageSize;
+                    newLeft = newLeft.clamp(pad, max(pad, pageSize.width - newWidth - pad));
+                    newTop = newTop.clamp(pad, max(pad, pageSize.height - newHeight - pad));
+                    newWidth = newWidth.clamp(0.0, pageSize.width - newLeft - pad);
+                    newHeight = newHeight.clamp(0.0, pageSize.height - newTop - pad);
+
+                    if (newWidth <= 0 || newHeight <= 0) return;
 
                     image.dstRect = .fromLTWH(newLeft, newTop, newWidth, newHeight);
                     afterDrag();
