@@ -160,6 +160,30 @@ class CanvasGestureDetectorState extends State<CanvasGestureDetector> {
   /// Otherwise, panning can be done in any (i.e. diagonal) direction.
   late bool axisAlignedPanLock = stows.lastAxisAlignedPanLock.value;
 
+  bool get isZoomLocked => zoomLockedValue != null;
+  void setZoomLock(bool lock) {
+    setState(() {
+      zoomLockedValue = lock
+          ? widget._transformationController.value.approxScale
+          : null;
+      stows.lastZoomLock.value = lock;
+    });
+  }
+
+  void setSingleFingerPanLock(bool lock) {
+    setState(() {
+      singleFingerPanLock = lock;
+      stows.lastSingleFingerPanLock.value = lock;
+    });
+  }
+
+  void setAxisAlignedPanLock(bool lock) {
+    setState(() {
+      axisAlignedPanLock = lock;
+      stows.lastAxisAlignedPanLock.value = lock;
+    });
+  }
+
   void zoomIn() => widget._transformationController.value =
       setZoom(
         scaleDelta: 0.1,
@@ -539,24 +563,7 @@ class CanvasGestureDetectorState extends State<CanvasGestureDetector> {
         Positioned.fill(
           child: CanvasHud(
             transformationController: widget._transformationController,
-            zoomLock: zoomLockedValue != null,
-            setZoomLock: (bool zoomLock) => setState(() {
-              zoomLockedValue = zoomLock
-                  ? widget._transformationController.value.approxScale
-                  : null;
-              stows.lastZoomLock.value = zoomLock;
-            }),
             resetZoom: zoomLockedValue != null ? null : resetZoom,
-            singleFingerPanLock: singleFingerPanLock,
-            setSingleFingerPanLock: (bool singleFingerPanLock) => setState(() {
-              this.singleFingerPanLock = singleFingerPanLock;
-              stows.lastSingleFingerPanLock.value = singleFingerPanLock;
-            }),
-            axisAlignedPanLock: axisAlignedPanLock,
-            setAxisAlignedPanLock: (bool axisAlignedPanLock) => setState(() {
-              this.axisAlignedPanLock = axisAlignedPanLock;
-              stows.lastAxisAlignedPanLock.value = axisAlignedPanLock;
-            }),
           ),
         ),
       ],
