@@ -229,7 +229,7 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         toolbarHeight: kToolbarHeight,
         title: Text(
-          '锋页 Foledge',
+          t.home.titles.appName,
           style: TextStyle(
             color: colorScheme.onSurface,
             fontWeight: FontWeight.w600,
@@ -273,7 +273,7 @@ class _HomePageState extends State<HomePage> {
                       value: 'pdf',
                       child: ListTile(
                         leading: const Icon(Icons.picture_as_pdf),
-                        title: const Text('导入 PDF'),
+                        title: Text(t.home.importPdf),
                         dense: true,
                         contentPadding: EdgeInsets.zero,
                       ),
@@ -282,7 +282,7 @@ class _HomePageState extends State<HomePage> {
                       value: 'image',
                       child: ListTile(
                         leading: const Icon(Icons.photo),
-                        title: const Text('导入图片'),
+                        title: Text(t.home.importImage),
                         dense: true,
                         contentPadding: EdgeInsets.zero,
                       ),
@@ -438,7 +438,7 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(height: 24),
             Text(
-              '欢迎使用锋页 Foledge',
+              t.home.welcome,
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             const SizedBox(height: 8),
@@ -471,7 +471,7 @@ class _PathBreadcrumb extends StatelessWidget {
             GestureDetector(
               onTap: () => onTap(''),
               child: Text(
-                '根目录',
+                t.home.rootDirectory,
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.primary,
                   fontWeight: FontWeight.w500,

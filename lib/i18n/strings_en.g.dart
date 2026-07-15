@@ -68,11 +68,18 @@ class Translations$home$en {
 	// Translations
 	late final Translations$home$tabs$en tabs = Translations$home$tabs$en.internal(_root);
 	late final Translations$home$titles$en titles = Translations$home$titles$en.internal(_root);
+
+	/// en: 'Import PDF'
+	String get importPdf => 'Import PDF';
+
+	/// en: 'Import image'
+	String get importImage => 'Import image';
+
 	late final Translations$home$tooltips$en tooltips = Translations$home$tooltips$en.internal(_root);
 	late final Translations$home$create$en create = Translations$home$create$en.internal(_root);
 
-	/// en: 'Welcome to Saber'
-	String get welcome => 'Welcome to Saber';
+	/// en: 'Welcome to Foledge Notes'
+	String get welcome => 'Welcome to Foledge Notes';
 
 	/// en: 'The file you selected is not supported. Please select an sbn, sbn2, sba, or pdf file.'
 	String get invalidFormat => 'The file you selected is not supported. Please select an sbn, sbn2, sba, or pdf file.';
@@ -88,6 +95,9 @@ class Translations$home$en {
 
 	/// en: 'Go back to the previous folder'
 	String get backFolder => 'Go back to the previous folder';
+
+	/// en: 'Root'
+	String get rootDirectory => 'Root';
 
 	late final Translations$home$newFolder$en newFolder = Translations$home$newFolder$en.internal(_root);
 	late final Translations$home$renameNote$en renameNote = Translations$home$renameNote$en.internal(_root);
@@ -204,6 +214,9 @@ class Translations$home$titles$en {
 
 	/// en: 'Settings'
 	String get settings => 'Settings';
+
+	/// en: 'Foledge Notes'
+	String get appName => 'Foledge Notes';
 }
 
 // Path: home.tooltips

@@ -60,14 +60,17 @@ class _Translations$home$zh_Hans_CN extends Translations$home$en {
 	// Translations
 	@override late final _Translations$home$tabs$zh_Hans_CN tabs = _Translations$home$tabs$zh_Hans_CN._(_root);
 	@override late final _Translations$home$titles$zh_Hans_CN titles = _Translations$home$titles$zh_Hans_CN._(_root);
+	@override String get importPdf => '导入 PDF';
+	@override String get importImage => '导入图片';
 	@override late final _Translations$home$tooltips$zh_Hans_CN tooltips = _Translations$home$tooltips$zh_Hans_CN._(_root);
 	@override late final _Translations$home$create$zh_Hans_CN create = _Translations$home$create$zh_Hans_CN._(_root);
-	@override String get welcome => '欢迎使用 Saber';
+	@override String get welcome => '欢迎使用锋页笔记';
 	@override String get invalidFormat => '不支持该文件。请选择 .sbn、.sbn2、.sba 或 .pdf 文件。';
 	@override String get noFiles => '未找到文件';
 	@override String get noPreviewAvailable => '无可用预览';
 	@override String get createNewNote => '点击 + 按钮新建一个笔记';
 	@override String get backFolder => '回到上一个文件夹';
+	@override String get rootDirectory => '根目录';
 	@override late final _Translations$home$newFolder$zh_Hans_CN newFolder = _Translations$home$newFolder$zh_Hans_CN._(_root);
 	@override late final _Translations$home$renameNote$zh_Hans_CN renameNote = _Translations$home$renameNote$zh_Hans_CN._(_root);
 	@override late final _Translations$home$moveNote$zh_Hans_CN moveNote = _Translations$home$moveNote$zh_Hans_CN._(_root);
@@ -151,6 +154,7 @@ class _Translations$home$titles$zh_Hans_CN extends Translations$home$titles$en {
 	@override String get browse => '浏览';
 	@override String get whiteboard => '白板';
 	@override String get settings => '设置';
+	@override String get appName => '锋页笔记';
 }
 
 // Path: home.tooltips

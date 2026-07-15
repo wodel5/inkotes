@@ -13,6 +13,9 @@ home:
     browse: 浏览
     whiteboard: 白板
     settings: 设置
+    appName: 锋页笔记
+  importPdf: 导入 PDF
+  importImage: 导入图片
   tooltips:
     newNote: 新建笔记
     showUpdateDialog: 显示更新对话框
@@ -20,12 +23,13 @@ home:
   create:
     newNote: 新建笔记
     importNote: 导入笔记
-  welcome: 欢迎使用 Saber
+  welcome: 欢迎使用锋页笔记
   invalidFormat: 不支持该文件。请选择 .sbn、.sbn2、.sba 或 .pdf 文件。
   noFiles: 未找到文件
   noPreviewAvailable: 无可用预览
   createNewNote: 点击 + 按钮新建一个笔记
   backFolder: 回到上一个文件夹
+  rootDirectory: 根目录
   newFolder:
     newFolder: 新建文件夹
     folderName: 文件夹名称
