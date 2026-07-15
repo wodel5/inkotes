@@ -33,7 +33,6 @@ class PngEditorImage extends EditorImage {
     required super.pageIndex,
     required super.pageSize,
     this.maxSize,
-    super.invertible,
     super.backgroundFit,
     required super.onMoveImage,
     required super.onDeleteImage,
@@ -89,7 +88,6 @@ class PngEditorImage extends EditorImage {
           : FileImage(imageFile!),
       pageIndex: json['i'] ?? 0,
       pageSize: .infinite,
-      invertible: json['v'] ?? true,
       backgroundFit: json['f'] != null ? .values[json['f']] : .contain,
       onMoveImage: null,
       onDeleteImage: null,
@@ -200,7 +198,6 @@ class PngEditorImage extends EditorImage {
     required BuildContext context,
     required BoxFit? overrideBoxFit,
     required bool isBackground,
-    required bool invert,
   }) {
     final BoxFit boxFit;
     if (overrideBoxFit != null) {
@@ -211,10 +208,7 @@ class PngEditorImage extends EditorImage {
       boxFit = .fill;
     }
 
-    return InvertWidget(
-      invert: invert,
-      child: Image(image: imageProvider!, fit: boxFit),
-    );
+    return Image(image: imageProvider!, fit: boxFit);
   }
 
   @override
@@ -225,7 +219,6 @@ class PngEditorImage extends EditorImage {
     imageProvider: imageProvider,
     pageIndex: pageIndex,
     pageSize: .infinite,
-    invertible: invertible,
     backgroundFit: backgroundFit,
     onMoveImage: onMoveImage,
     onDeleteImage: onDeleteImage,

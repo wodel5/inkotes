@@ -23,7 +23,6 @@ class PdfEditorImage extends EditorImage {
     required this.pdfPage,
     required super.pageIndex,
     required super.pageSize,
-    super.invertible,
     super.backgroundFit,
     required super.onMoveImage,
     required super.onDeleteImage,
@@ -82,7 +81,6 @@ class PdfEditorImage extends EditorImage {
       pdfPage: json['pdfi'],
       pageIndex: json['i'] ?? 0,
       pageSize: .infinite,
-      invertible: json['v'] ?? true,
       backgroundFit: json['f'] != null ? .values[json['f']] : .contain,
       onMoveImage: null,
       onDeleteImage: null,
@@ -163,7 +161,6 @@ class PdfEditorImage extends EditorImage {
     required BuildContext context,
     required BoxFit? overrideBoxFit,
     required bool isBackground,
-    required bool invert,
   }) {
     return ValueListenableBuilder(
       valueListenable: _pdfDocument,
@@ -171,14 +168,11 @@ class PdfEditorImage extends EditorImage {
         if (pdfDocument == null) {
           return SizedBox.fromSize(size: srcRect.size);
         }
-        return InvertWidget(
-          invert: invert,
-          child: PdfPageView(
-            document: pdfDocument,
-            // [PdfPageView.pageNumber] starts at 1 not 0
-            pageNumber: pdfPage + 1,
-            decoration: const BoxDecoration(),
-          ),
+        return PdfPageView(
+          document: pdfDocument,
+          // [PdfPageView.pageNumber] starts at 1 not 0
+          pageNumber: pdfPage + 1,
+          decoration: const BoxDecoration(),
         );
       },
     );
@@ -193,7 +187,6 @@ class PdfEditorImage extends EditorImage {
     pdfFile: pdfFile,
     pageIndex: pageIndex,
     pageSize: .infinite,
-    invertible: invertible,
     backgroundFit: backgroundFit,
     onMoveImage: onMoveImage,
     onDeleteImage: onDeleteImage,

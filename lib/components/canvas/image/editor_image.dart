@@ -14,7 +14,6 @@ import 'package:meta/meta.dart';
 import 'package:pdfrx/pdfrx.dart';
 import 'package:foledge/components/canvas/_asset_cache.dart';
 import 'package:foledge/components/canvas/canvas_image.dart';
-import 'package:foledge/components/canvas/invert_widget.dart';
 import 'package:foledge/data/file_manager/file_manager.dart';
 import 'package:foledge/data/prefs.dart';
 import 'package:foledge/pages/editor/editor.dart';
@@ -85,9 +84,6 @@ sealed class EditorImage extends ChangeNotifier {
   /// If the image is new, it will be [active] (draggable) when loaded
   var newImage = false;
 
-  /// Whether this image is inverted in dark mode
-  bool invertible;
-
   /// The BoxFit used if this is a page's background image
   BoxFit backgroundFit;
 
@@ -99,7 +95,6 @@ sealed class EditorImage extends ChangeNotifier {
     required this.pageIndex,
     required this.pageSize,
     this.naturalSize = .zero,
-    this.invertible = true,
     this.backgroundFit = .contain,
     required this.onMoveImage,
     required this.onDeleteImage,
@@ -152,7 +147,6 @@ sealed class EditorImage extends ChangeNotifier {
     'id': id,
     'e': extension,
     'i': pageIndex,
-    'v': invertible,
     'f': backgroundFit.index,
     'x': dstRect.left,
     'y': dstRect.top,
@@ -246,7 +240,6 @@ sealed class EditorImage extends ChangeNotifier {
     required BuildContext context,
     required BoxFit? overrideBoxFit,
     required bool isBackground,
-    required bool invert,
   });
 
   EditorImage copy();

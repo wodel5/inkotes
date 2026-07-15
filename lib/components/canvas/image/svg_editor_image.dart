@@ -16,7 +16,6 @@ class SvgEditorImage extends EditorImage {
     required File? svgFile,
     required super.pageIndex,
     required super.pageSize,
-    super.invertible,
     super.backgroundFit,
     required super.onMoveImage,
     required super.onDeleteImage,
@@ -77,7 +76,6 @@ class SvgEditorImage extends EditorImage {
       svgFile: svgFile,
       pageIndex: json['i'] ?? 0,
       pageSize: .infinite,
-      invertible: json['v'] ?? true,
       backgroundFit: json['f'] != null ? .values[json['f']] : .contain,
       onMoveImage: null,
       onDeleteImage: null,
@@ -169,7 +167,6 @@ class SvgEditorImage extends EditorImage {
     required BuildContext context,
     required BoxFit? overrideBoxFit,
     required bool isBackground,
-    required bool invert,
   }) {
     final BoxFit boxFit;
     if (overrideBoxFit != null) {
@@ -180,10 +177,7 @@ class SvgEditorImage extends EditorImage {
       boxFit = .fill;
     }
 
-    return InvertWidget(
-      invert: invert,
-      child: SvgPicture(svgLoader, fit: boxFit),
-    );
+    return SvgPicture(svgLoader, fit: boxFit);
   }
 
   @override
@@ -197,7 +191,6 @@ class SvgEditorImage extends EditorImage {
       svgFile: svgData.file,
       pageIndex: pageIndex,
       pageSize: .infinite,
-      invertible: invertible,
       backgroundFit: backgroundFit,
       onMoveImage: onMoveImage,
       onDeleteImage: onDeleteImage,

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:foledge/components/canvas/image/editor_image.dart';
 import 'package:foledge/components/theming/adaptive_icon.dart';
-import 'package:foledge/components/theming/adaptive_switch.dart';
 import 'package:foledge/data/file_manager/file_manager.dart';
 import 'package:foledge/i18n/strings.g.dart';
 
@@ -33,30 +32,9 @@ class CanvasImageDialog extends StatefulWidget {
 }
 
 class _CanvasImageDialogState extends State<CanvasImageDialog> {
-  void setInvertible([bool? value]) => setState(() {
-    widget.image.invertible = value ?? !widget.image.invertible;
-    widget.image.onMiscChange?.call();
-    widget.redrawImage();
-  });
-
   @override
   Widget build(BuildContext context) {
     final children = <Widget>[
-      MergeSemantics(
-        child: _CanvasImageDialogItem(
-          onTap: setInvertible,
-          title: t.editor.imageOptions.invertible,
-          child: AdaptiveSwitch(
-            value: widget.image.invertible,
-            onChanged: setInvertible,
-            thumbIcon: WidgetStateProperty.all(
-              widget.image.invertible
-                  ? const Icon(Icons.invert_colors)
-                  : const Icon(Icons.invert_colors_off),
-            ),
-          ),
-        ),
-      ),
       _CanvasImageDialogItem(
         onTap: () async {
           final filePathSanitized = widget.filePath.replaceAll(

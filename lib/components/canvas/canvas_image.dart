@@ -3,11 +3,8 @@ import 'dart:math';
 import 'package:defer_pointer/defer_pointer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:foledge/components/canvas/canvas_image_dialog.dart';
 import 'package:foledge/components/canvas/image/editor_image.dart';
-import 'package:foledge/components/theming/adaptive_alert_dialog.dart';
 import 'package:foledge/data/extensions/change_notifier_extensions.dart';
-import 'package:foledge/i18n/strings.g.dart';
 
 class CanvasImage extends StatefulHookWidget {
   CanvasImage({
@@ -75,8 +72,6 @@ class _CanvasImageState extends State<CanvasImage> {
     }
   }
 
-  Brightness imageBrightness = .light;
-
   Rect panStartRect = .zero;
   Offset panStartPosition = .zero;
 
@@ -106,14 +101,6 @@ class _CanvasImageState extends State<CanvasImage> {
     useListenable(widget.image);
     if (widget.readOnly) active = false;
 
-    final currentBrightness = widget.image.invertible
-        ? Theme.brightnessOf(context)
-        : Brightness.light;
-
-    if (currentBrightness != imageBrightness) {
-      imageBrightness = currentBrightness;
-    }
-
     final Widget unpositioned = IgnorePointer(
       ignoring: widget.readOnly,
       child: Stack(
@@ -132,8 +119,6 @@ class _CanvasImageState extends State<CanvasImage> {
               onTap: () {
                 active = !active;
               },
-              onLongPress: active ? showModal : null,
-              onSecondaryTap: active ? showModal : null,
               onPanStart: active
                   ? (details) {
                       panStartRect = widget.image.dstRect;
@@ -204,7 +189,6 @@ class _CanvasImageState extends State<CanvasImage> {
                           context: context,
                           overrideBoxFit: widget.overrideBoxFit,
                           isBackground: widget.isBackground,
-                          invert: imageBrightness == .dark,
                         ),
                       ),
                     ),
@@ -264,27 +248,6 @@ class _CanvasImageState extends State<CanvasImage> {
     widget.image.loadOut();
     CanvasImage.activeListener.removeListener(disableActive);
     super.dispose();
-  }
-
-  void showModal() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AdaptiveAlertDialog(
-          title: Text(t.editor.imageOptions.title),
-          content: CanvasImageDialog(
-            filePath: widget.filePath,
-            image: widget.image,
-            redrawImage: () => setState(() {}),
-            isBackground: false,
-            toggleAsBackground: () {
-              widget.setAsBackground?.call(widget.image);
-            },
-          ),
-          actions: const [],
-        );
-      },
-    );
   }
 }
 
