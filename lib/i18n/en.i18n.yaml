@@ -3,27 +3,17 @@ common:
   continueBtn: Continue
   cancel: Cancel
 home:
-  tabs:
-    home: Home
-    browse: Browse
-    whiteboard: Whiteboard
-    settings: Settings
   titles:
     home: Recent notes
-    browse: Browse
-    whiteboard: Whiteboard
     settings: Settings
     appName: Foledge Notes
   importPdf: Import PDF
   tooltips:
-    newNote: New note
-    showUpdateDialog: Show update dialog
     exportNote: Export note
   create:
     newNote: New note
     importNote: Import note
   welcome: Welcome to Foledge Notes
-  invalidFormat: The file you selected is not supported. Please select an sbn, sbn2, sba, or pdf file.
   noFiles: No files found
   noPreviewAvailable: No preview available
   createNewNote: Tap the + button to create a new note
@@ -78,10 +68,6 @@ home:
     nameZToA: Name (Z-A)
     lastModifiedNewToOld: Edited (Newest first)
     lastModifiedOldToNew: Edited (Oldest first)
-  layout:
-    layout: Layout
-    masonryGrid: Masonry grid
-    simpleGrid: Simple grid
 settings:
   prefCategories:
     general: General

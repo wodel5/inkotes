@@ -5,6 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
@@ -210,13 +211,13 @@ class _HomePageState extends State<HomePage> {
             fontWeight: FontWeight.w600,
           ),
         ),
-        titleSpacing: 16,
+        titleSpacing: 24,
+        actionsPadding: const EdgeInsets.only(right: 24),
         actions: [
           // Add button - popup menu
           Builder(
             builder: (context) => IconButton(
-              icon: const Icon(Icons.add),
-              tooltip: t.home.tooltips.newNote,
+              icon: const FaIcon(FontAwesomeIcons.plus),
               onPressed: () {
                 final RenderBox button =
                     context.findRenderObject() as RenderBox;
@@ -267,8 +268,7 @@ class _HomePageState extends State<HomePage> {
           ),
           // Settings button
           IconButton(
-            icon: const Icon(Icons.settings),
-            tooltip: t.home.titles.settings,
+            icon: const FaIcon(FontAwesomeIcons.gear),
             onPressed: _showSettingsDialog,
           ),
         ],

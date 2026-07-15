@@ -58,13 +58,11 @@ class _Translations$home$zh_Hans_CN extends Translations$home$en {
 	final TranslationsZhHansCn _root; // ignore: unused_field
 
 	// Translations
-	@override late final _Translations$home$tabs$zh_Hans_CN tabs = _Translations$home$tabs$zh_Hans_CN._(_root);
 	@override late final _Translations$home$titles$zh_Hans_CN titles = _Translations$home$titles$zh_Hans_CN._(_root);
 	@override String get importPdf => '导入 PDF';
 	@override late final _Translations$home$tooltips$zh_Hans_CN tooltips = _Translations$home$tooltips$zh_Hans_CN._(_root);
 	@override late final _Translations$home$create$zh_Hans_CN create = _Translations$home$create$zh_Hans_CN._(_root);
 	@override String get welcome => '欢迎使用锋页笔记';
-	@override String get invalidFormat => '不支持该文件。请选择 .sbn、.sbn2、.sba 或 .pdf 文件。';
 	@override String get noFiles => '未找到文件';
 	@override String get noPreviewAvailable => '无可用预览';
 	@override String get createNewNote => '点击 + 按钮新建一个笔记';
@@ -78,7 +76,6 @@ class _Translations$home$zh_Hans_CN extends Translations$home$en {
 	@override late final _Translations$home$renameFolder$zh_Hans_CN renameFolder = _Translations$home$renameFolder$zh_Hans_CN._(_root);
 	@override late final _Translations$home$deleteFolder$zh_Hans_CN deleteFolder = _Translations$home$deleteFolder$zh_Hans_CN._(_root);
 	@override late final _Translations$home$sort$zh_Hans_CN sort = _Translations$home$sort$zh_Hans_CN._(_root);
-	@override late final _Translations$home$layout$zh_Hans_CN layout = _Translations$home$layout$zh_Hans_CN._(_root);
 }
 
 // Path: settings
@@ -129,19 +126,6 @@ class _Translations$editor$zh_Hans_CN extends Translations$editor$en {
 	@override String get needsToSaveBeforeExiting => '正在保存您的更改... 完成后您可以安全地退出编辑器';
 }
 
-// Path: home.tabs
-class _Translations$home$tabs$zh_Hans_CN extends Translations$home$tabs$en {
-	_Translations$home$tabs$zh_Hans_CN._(TranslationsZhHansCn root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHansCn _root; // ignore: unused_field
-
-	// Translations
-	@override String get home => '首页';
-	@override String get browse => '全部笔记';
-	@override String get whiteboard => '白板';
-	@override String get settings => '设置';
-}
-
 // Path: home.titles
 class _Translations$home$titles$zh_Hans_CN extends Translations$home$titles$en {
 	_Translations$home$titles$zh_Hans_CN._(TranslationsZhHansCn root) : this._root = root, super.internal(root);
@@ -150,8 +134,6 @@ class _Translations$home$titles$zh_Hans_CN extends Translations$home$titles$en {
 
 	// Translations
 	@override String get home => '最近笔记';
-	@override String get browse => '浏览';
-	@override String get whiteboard => '白板';
 	@override String get settings => '设置';
 	@override String get appName => '锋页笔记';
 }
@@ -163,8 +145,6 @@ class _Translations$home$tooltips$zh_Hans_CN extends Translations$home$tooltips$
 	final TranslationsZhHansCn _root; // ignore: unused_field
 
 	// Translations
-	@override String get newNote => '新建笔记';
-	@override String get showUpdateDialog => '显示更新对话框';
 	@override String get exportNote => '导出笔记';
 }
 
@@ -282,18 +262,6 @@ class _Translations$home$sort$zh_Hans_CN extends Translations$home$sort$en {
 	@override String get nameZToA => '姓名（从 A 到 Z）';
 	@override String get lastModifiedNewToOld => '编辑（最新优先）';
 	@override String get lastModifiedOldToNew => '编辑（按最旧的排序）';
-}
-
-// Path: home.layout
-class _Translations$home$layout$zh_Hans_CN extends Translations$home$layout$en {
-	_Translations$home$layout$zh_Hans_CN._(TranslationsZhHansCn root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHansCn _root; // ignore: unused_field
-
-	// Translations
-	@override String get layout => '布局';
-	@override String get masonryGrid => '砌体网格';
-	@override String get simpleGrid => '简单网格';
 }
 
 // Path: settings.prefCategories

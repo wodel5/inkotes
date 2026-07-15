@@ -55,7 +55,7 @@ class _MasonryFilesState extends State<MasonryFiles> {
     isAnythingSelected.value = widget.selectedFiles.value.isNotEmpty;
 
     return SliverPadding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
       sliver: SliverGrid.builder(
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: widget.crossAxisCount,

@@ -66,7 +66,6 @@ class Translations$home$en {
 	final Translations _root; // ignore: unused_field
 
 	// Translations
-	late final Translations$home$tabs$en tabs = Translations$home$tabs$en.internal(_root);
 	late final Translations$home$titles$en titles = Translations$home$titles$en.internal(_root);
 
 	/// en: 'Import PDF'
@@ -77,9 +76,6 @@ class Translations$home$en {
 
 	/// en: 'Welcome to Foledge Notes'
 	String get welcome => 'Welcome to Foledge Notes';
-
-	/// en: 'The file you selected is not supported. Please select an sbn, sbn2, sba, or pdf file.'
-	String get invalidFormat => 'The file you selected is not supported. Please select an sbn, sbn2, sba, or pdf file.';
 
 	/// en: 'No files found'
 	String get noFiles => 'No files found';
@@ -107,7 +103,6 @@ class Translations$home$en {
 	late final Translations$home$renameFolder$en renameFolder = Translations$home$renameFolder$en.internal(_root);
 	late final Translations$home$deleteFolder$en deleteFolder = Translations$home$deleteFolder$en.internal(_root);
 	late final Translations$home$sort$en sort = Translations$home$sort$en.internal(_root);
-	late final Translations$home$layout$en layout = Translations$home$layout$en.internal(_root);
 }
 
 // Path: settings
@@ -171,27 +166,6 @@ class Translations$editor$en {
 	String get needsToSaveBeforeExiting => 'Saving your changes... You can safely exit the editor when it\'s done';
 }
 
-// Path: home.tabs
-class Translations$home$tabs$en {
-	Translations$home$tabs$en.internal(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-
-	/// en: 'Home'
-	String get home => 'Home';
-
-	/// en: 'Browse'
-	String get browse => 'Browse';
-
-	/// en: 'Whiteboard'
-	String get whiteboard => 'Whiteboard';
-
-	/// en: 'Settings'
-	String get settings => 'Settings';
-}
-
 // Path: home.titles
 class Translations$home$titles$en {
 	Translations$home$titles$en.internal(this._root);
@@ -202,12 +176,6 @@ class Translations$home$titles$en {
 
 	/// en: 'Recent notes'
 	String get home => 'Recent notes';
-
-	/// en: 'Browse'
-	String get browse => 'Browse';
-
-	/// en: 'Whiteboard'
-	String get whiteboard => 'Whiteboard';
 
 	/// en: 'Settings'
 	String get settings => 'Settings';
@@ -223,12 +191,6 @@ class Translations$home$tooltips$en {
 	final Translations _root; // ignore: unused_field
 
 	// Translations
-
-	/// en: 'New note'
-	String get newNote => 'New note';
-
-	/// en: 'Show update dialog'
-	String get showUpdateDialog => 'Show update dialog';
 
 	/// en: 'Export note'
 	String get exportNote => 'Export note';
@@ -430,24 +392,6 @@ class Translations$home$sort$en {
 
 	/// en: 'Edited (Oldest first)'
 	String get lastModifiedOldToNew => 'Edited (Oldest first)';
-}
-
-// Path: home.layout
-class Translations$home$layout$en {
-	Translations$home$layout$en.internal(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-
-	/// en: 'Layout'
-	String get layout => 'Layout';
-
-	/// en: 'Masonry grid'
-	String get masonryGrid => 'Masonry grid';
-
-	/// en: 'Simple grid'
-	String get simpleGrid => 'Simple grid';
 }
 
 // Path: settings.prefCategories
