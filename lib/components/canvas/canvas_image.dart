@@ -297,7 +297,16 @@ class _CanvasImageResizeHandle extends StatelessWidget {
   IconData get _icon =>
       position.dx < 0 ? Icons.chevron_left : Icons.chevron_right;
 
+  Color _handleColor(ColorScheme colorScheme, Brightness brightness) {
+    if (!active) return Colors.grey.shade500;
+    final isDragging = parent.panStartRect != .zero;
+    if (!isDragging) return Colors.grey.shade500;
+    return brightness == Brightness.light ? Colors.grey.shade900 : Colors.grey.shade100;
+  }
+
   Widget _buildHandleContent(ColorScheme colorScheme) {
+    final brightness = Theme.of(parent.context).brightness;
+    final color = _handleColor(colorScheme, brightness);
     if (isCorner) {
       return AnimatedRotation(
         turns: _iconRotation / 360,
@@ -305,7 +314,7 @@ class _CanvasImageResizeHandle extends StatelessWidget {
         child: Icon(
           _icon,
           size: 40,
-          color: colorScheme.onSurface,
+          color: color,
         ),
       );
     }
@@ -313,7 +322,7 @@ class _CanvasImageResizeHandle extends StatelessWidget {
     return Icon(
       edgeIcon,
       size: 40,
-      color: colorScheme.onSurface,
+      color: color,
     );
   }
 
