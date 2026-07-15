@@ -50,6 +50,10 @@ class CanvasImage extends StatefulHookWidget {
 class _CanvasImageState extends State<CanvasImage> {
   var _active = false;
 
+  /// Distance between the handle and the image edge.
+  /// Positive = handles outside image, 0 = on edge, negative = inside.
+  double handlePadding = 25;
+
   /// Whether this image can be dragged
   bool get active => _active;
   set active(bool value) {
@@ -116,6 +120,11 @@ class _CanvasImageState extends State<CanvasImage> {
         clipBehavior: Clip.none,
         fit: StackFit.expand,
         children: [
+          DecoratedBox(
+            decoration: BoxDecoration(
+              border: Border.all(color: colorScheme.primary, width: 2),
+            ),
+          ),
           MouseRegion(
             cursor: active ? SystemMouseCursors.grab : MouseCursor.defer,
             child: GestureDetector(
@@ -171,13 +180,8 @@ class _CanvasImageState extends State<CanvasImage> {
                       panStartRect = .zero;
                     }
                   : null,
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: active ? colorScheme.onSurface : Colors.transparent,
-                    width: 2,
-                  ),
-                ),
+              child: Padding(
+                padding: EdgeInsets.all(handlePadding),
                 child: Center(
                   child: SizedBox(
                     width: widget.isBackground
@@ -237,20 +241,22 @@ class _CanvasImageState extends State<CanvasImage> {
         child: unpositioned,
       );
     }
-    return AnimatedPositioned(
+    Widget positioned = AnimatedPositioned(
       // no animation if the image is being dragged or it's selected
       duration: (panStartRect != .zero || widget.selected)
           ? Duration.zero
           : const Duration(milliseconds: 300),
       curve: Curves.fastLinearToSlowEaseIn,
 
-      left: widget.image.dstRect.left,
-      top: widget.image.dstRect.top,
-      width: max(widget.image.dstRect.width, CanvasImage.minInteractiveSize),
-      height: max(widget.image.dstRect.height, CanvasImage.minInteractiveSize),
+      left: widget.image.dstRect.left - handlePadding,
+      top: widget.image.dstRect.top - handlePadding,
+      width: max(widget.image.dstRect.width + handlePadding * 2, CanvasImage.minInteractiveSize),
+      height: max(widget.image.dstRect.height + handlePadding * 2, CanvasImage.minInteractiveSize),
 
       child: unpositioned,
     );
+
+    return positioned;
   }
 
   @override
@@ -299,19 +305,23 @@ class _CanvasImageResizeHandle extends StatelessWidget {
 
   bool get isCorner => position.dx != 0 && position.dy != 0;
 
-  double get _handleSize => isCorner ? 40 : CanvasImage.handleSize;
+  double get _handleSize => 40;
 
   double get _left {
-    if (position.dx < 0) return -_handleSize;
-    if (position.dx > 0) return image.dstRect.width;
-    return image.dstRect.width / 2 - _handleSize / 2;
+    final frameWidth = image.dstRect.width + _parentHandlePadding * 2;
+    if (position.dx < 0) return 0;
+    if (position.dx > 0) return frameWidth - _handleSize;
+    return frameWidth / 2 - _handleSize / 2;
   }
 
   double get _top {
-    if (position.dy < 0) return -_handleSize;
-    if (position.dy > 0) return image.dstRect.height;
-    return image.dstRect.height / 2 - _handleSize / 2;
+    final frameHeight = image.dstRect.height + _parentHandlePadding * 2;
+    if (position.dy < 0) return 0;
+    if (position.dy > 0) return frameHeight - _handleSize;
+    return frameHeight / 2 - _handleSize / 2;
   }
+
+  double get _parentHandlePadding => parent.handlePadding;
 
   double get _iconRotation {
     if (!isCorner) return 0;
@@ -331,19 +341,16 @@ class _CanvasImageResizeHandle extends StatelessWidget {
         duration: const Duration(milliseconds: 100),
         child: Icon(
           _icon,
-          size: _handleSize,
+          size: 40,
           color: colorScheme.onSurface,
         ),
       );
     }
-    return Container(
-      width: CanvasImage.handleSize,
-      height: CanvasImage.handleSize,
-      decoration: BoxDecoration(
-        color: colorScheme.onSurface,
-        shape: .circle,
-        border: Border.all(color: colorScheme.surface, width: 2),
-      ),
+    final edgeIcon = position.dx != 0 ? Icons.more_vert : Icons.more_horiz;
+    return Icon(
+      edgeIcon,
+      size: 40,
+      color: colorScheme.onSurface,
     );
   }
 
@@ -392,29 +399,35 @@ class _CanvasImageResizeHandle extends StatelessWidget {
                     final Offset delta =
                         details.localPosition - parent.panStartPosition;
 
-                    double newWidth;
+                    final pad = parent.handlePadding;
+
+                    // Calculate new frame size from drag delta
+                    double newFrameWidth;
                     if (position.dx < 0) {
-                      newWidth = parent.panStartRect.width - delta.dx;
+                      newFrameWidth = parent.panStartRect.width + pad * 2 - delta.dx;
                     } else if (position.dx > 0) {
-                      newWidth = parent.panStartRect.width + delta.dx;
+                      newFrameWidth = parent.panStartRect.width + pad * 2 + delta.dx;
                     } else {
-                      newWidth = parent.panStartRect.width;
+                      newFrameWidth = parent.panStartRect.width + pad * 2;
                     }
 
-                    double newHeight;
+                    double newFrameHeight;
                     if (position.dy < 0) {
-                      newHeight = parent.panStartRect.height - delta.dy;
+                      newFrameHeight = parent.panStartRect.height + pad * 2 - delta.dy;
                     } else if (position.dy > 0) {
-                      newHeight = parent.panStartRect.height + delta.dy;
+                      newFrameHeight = parent.panStartRect.height + pad * 2 + delta.dy;
                     } else {
-                      newHeight = parent.panStartRect.height;
+                      newFrameHeight = parent.panStartRect.height + pad * 2;
                     }
+
+                    // Image size = frame size - padding on both sides
+                    double newWidth = newFrameWidth - pad * 2;
+                    double newHeight = newFrameHeight - pad * 2;
 
                     if (newWidth <= 0 || newHeight <= 0) return;
 
                     // preserve aspect ratio if diagonal
                     if (position.dx != 0 && position.dy != 0) {
-                      // if diagonal
                       final aspectRatio =
                           image.dstRect.width / image.dstRect.height;
                       if (newWidth / newHeight > aspectRatio) {
@@ -424,16 +437,17 @@ class _CanvasImageResizeHandle extends StatelessWidget {
                       }
                     }
 
-                    // resize from the correct corner
-                    double left = image.dstRect.left, top = image.dstRect.top;
+                    // Calculate new image position (keep centered in frame)
+                    double newLeft = image.dstRect.left;
+                    double newTop = image.dstRect.top;
                     if (position.dx < 0) {
-                      left = image.dstRect.right - newWidth;
+                      newLeft = parent.panStartRect.right - newWidth;
                     }
                     if (position.dy < 0) {
-                      top = image.dstRect.bottom - newHeight;
+                      newTop = parent.panStartRect.bottom - newHeight;
                     }
 
-                    image.dstRect = .fromLTWH(left, top, newWidth, newHeight);
+                    image.dstRect = .fromLTWH(newLeft, newTop, newWidth, newHeight);
                     afterDrag();
                   }
                 : null,
