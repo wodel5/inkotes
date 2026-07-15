@@ -172,11 +172,6 @@ class Stows {
         'lastSingleFingerPanLock',
         false,
         volatile: !_isOnMainIsolate,
-      ),
-      lastAxisAlignedPanLock = PlainStow(
-        'lastAxisAlignedPanLock',
-        false,
-        volatile: !_isOnMainIsolate,
       );
 
   final browseSortMetric = PlainStow(

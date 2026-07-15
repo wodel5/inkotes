@@ -12,7 +12,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_quill/flutter_quill.dart' as flutter_quill;
 import 'package:keybinder/keybinder.dart';
 import 'package:logging/logging.dart';
-import 'package:material_symbols_icons/symbols.dart';
 import 'package:path/path.dart' as p;
 import 'package:pdfrx/pdfrx.dart';
 import 'package:foledge/components/canvas/_asset_cache.dart';
@@ -1584,29 +1583,6 @@ class EditorState extends State<Editor> {
                             : t.editor.hud.lockSingleFingerPan,
                         onPressed: () {
                           gestureDetector?.setSingleFingerPanLock(!isLocked);
-                          setState(() {});
-                        },
-                      );
-                    },
-                  ),
-                  // Axis aligned pan lock
-                  Builder(
-                    builder: (context) {
-                      final gestureDetector =
-                          _canvasGestureDetectorKey.currentState;
-                      final isLocked =
-                          gestureDetector?.axisAlignedPanLock ?? false;
-                      return IconButton(
-                        icon: AnimatedRotation(
-                          turns: isLocked ? 0 : 1 / 8,
-                          duration: const Duration(milliseconds: 200),
-                          child: const Icon(Symbols.drag_pan),
-                        ),
-                        tooltip: isLocked
-                            ? t.editor.hud.unlockAxisAlignedPan
-                            : t.editor.hud.lockAxisAlignedPan,
-                        onPressed: () {
-                          gestureDetector?.setAxisAlignedPanLock(!isLocked);
                           setState(() {});
                         },
                       );

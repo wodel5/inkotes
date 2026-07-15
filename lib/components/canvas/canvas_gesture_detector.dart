@@ -156,10 +156,6 @@ class CanvasGestureDetectorState extends State<CanvasGestureDetector> {
   /// Two-finger panning is always enabled.
   late bool singleFingerPanLock = stows.lastSingleFingerPanLock.value;
 
-  /// Whether panning is locked to being horizontal or vertical.
-  /// Otherwise, panning can be done in any (i.e. diagonal) direction.
-  late bool axisAlignedPanLock = stows.lastAxisAlignedPanLock.value;
-
   bool get isZoomLocked => zoomLockedValue != null;
   void setZoomLock(bool lock) {
     setState(() {
@@ -174,13 +170,6 @@ class CanvasGestureDetectorState extends State<CanvasGestureDetector> {
     setState(() {
       singleFingerPanLock = lock;
       stows.lastSingleFingerPanLock.value = lock;
-    });
-  }
-
-  void setAxisAlignedPanLock(bool lock) {
-    setState(() {
-      axisAlignedPanLock = lock;
-      stows.lastAxisAlignedPanLock.value = lock;
     });
   }
 
@@ -526,7 +515,7 @@ class CanvasGestureDetectorState extends State<CanvasGestureDetector> {
                   minScale: zoomLockedValue ?? CanvasGestureDetector.kMinScale,
                   maxScale: zoomLockedValue ?? CanvasGestureDetector.kMaxScale,
                   panEnabled: !singleFingerPanLock,
-                  panAxis: axisAlignedPanLock ? PanAxis.aligned : PanAxis.free,
+                  panAxis: PanAxis.free,
 
                   // Smoother scrolling fling gesture than the default
                   interactionEndFrictionCoefficient: 0.3,
