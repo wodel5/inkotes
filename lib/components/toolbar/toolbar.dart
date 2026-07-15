@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:collapsible/collapsible.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,14 +9,12 @@ import 'package:flutter_quill/flutter_quill.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:keybinder/keybinder.dart';
 import 'package:material_symbols_icons/symbols.dart';
-import 'package:foledge/components/theming/adaptive_icon.dart';
 import 'package:foledge/components/theming/uni_icon.dart';
 import 'package:foledge/components/toolbar/color_bar.dart';
 import 'package:foledge/components/toolbar/export_bar.dart';
 import 'package:foledge/components/toolbar/pen_modal.dart';
 import 'package:foledge/components/toolbar/selection_bar.dart';
 import 'package:foledge/components/toolbar/size_picker.dart';
-import 'package:foledge/components/toolbar/toolbar_button.dart';
 import 'package:foledge/data/editor/page.dart';
 import 'package:foledge/data/extensions/color_extensions.dart';
 import 'package:foledge/data/prefs.dart';
@@ -26,7 +25,6 @@ import 'package:foledge/data/tools/laser_pointer.dart';
 import 'package:foledge/data/tools/pen.dart';
 import 'package:foledge/data/tools/pencil.dart';
 import 'package:foledge/data/tools/select.dart';
-import 'package:foledge/i18n/strings.g.dart';
 
 class Toolbar extends StatefulWidget {
   const Toolbar({
@@ -79,8 +77,6 @@ class Toolbar extends StatefulWidget {
 
   @override
   State<Toolbar> createState() => _ToolbarState();
-
-  static const _buttonPaddingHorizontal = EdgeInsets.symmetric(horizontal: 6);
 }
 
 class _ToolbarState extends State<Toolbar> {
@@ -156,8 +152,6 @@ class _ToolbarState extends State<Toolbar> {
 
     final brightness = Theme.brightnessOf(context);
     final invert = brightness == .dark;
-
-    final buttonPadding = Toolbar._buttonPaddingHorizontal;
 
     final currentColor = switch (widget.currentTool) {
       final Pen pen => pen.color,
@@ -286,216 +280,167 @@ class _ToolbarState extends State<Toolbar> {
       ),
       Center(
         child: Padding(
-          padding: const .all(8),
-          child: Wrap(
-            direction: Axis.horizontal,
-            alignment: WrapAlignment.center,
-            runSpacing: 8,
-            children: [
-              ToolbarIconButton(
-                tooltip: Pen.currentPen.name,
-                selected: widget.currentTool == Pen.currentPen,
-                enabled: !widget.readOnly,
-                onPressed: () {
-                  if (widget.currentTool == Pen.currentPen) {
-                    if (toolOptionsType.value == .pen) {
-                      toolOptionsType.value = .hide;
-                    } else {
-                      toolOptionsType.value = .pen;
-                    }
-                  } else {
-                    toolOptionsType.value = .hide;
-                    widget.setTool(Pen.currentPen);
-                  }
-                },
-                padding: buttonPadding,
-                child: UniIcon(Pen.currentPen.icon, size: 16),
-              ),
-              ToolbarIconButton(
-                tooltip: t.editor.pens.pencil,
-                selected: widget.currentTool == Pencil.currentPencil,
-                enabled: !widget.readOnly,
-                onPressed: () {
-                  if (widget.currentTool == Pencil.currentPencil) {
-                    if (toolOptionsType.value == .pencil) {
-                      toolOptionsType.value = .hide;
-                    } else {
-                      toolOptionsType.value = .pencil;
-                    }
-                  } else {
-                    toolOptionsType.value = .hide;
-                    widget.setTool(Pencil.currentPencil);
-                  }
-                },
-                padding: buttonPadding,
-                child: const FaIcon(Pencil.pencilIcon, size: 16),
-              ),
-              ToolbarIconButton(
-                tooltip: t.editor.pens.highlighter,
-                selected: widget.currentTool == Highlighter.currentHighlighter,
-                enabled: !widget.readOnly,
-                onPressed: () {
-                  if (widget.currentTool == Highlighter.currentHighlighter) {
-                    if (toolOptionsType.value == .highlighter) {
-                      toolOptionsType.value = .hide;
-                    } else {
-                      toolOptionsType.value = .highlighter;
-                    }
-                  } else {
-                    toolOptionsType.value = .hide;
-                    widget.setTool(Highlighter.currentHighlighter);
-                  }
-                },
-                padding: buttonPadding,
-                child: const FaIcon(Highlighter.highlighterIcon, size: 16),
-              ),
-              ValueListenableBuilder(
-                valueListenable: showColorOptions,
-                builder: (context, showColorOptions, child) {
-                  return ToolbarIconButton(
-                    tooltip: t.editor.toolbar.toggleColors,
-                    selected: showColorOptions,
-                    enabled: !widget.readOnly,
-                    onPressed: toggleColorOptions,
-                    padding: buttonPadding,
-                    child: child!,
-                  );
-                },
-                child: currentColor == null
-                    ? const Icon(Icons.palette)
-                    : Container(
-                        width: 18,
-                        height: 18,
-                        decoration: BoxDecoration(
-                          color: currentColor
-                              .withInversion(invert)
-                              .withValues(alpha: 1),
-                          shape: .circle,
-                          border: Border.all(
-                            color: colorScheme.primary,
-                            width: 2,
-                          ),
-                        ),
+          padding: const EdgeInsets.fromLTRB(12, 4, 12, 8),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(24),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.6),
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(
+                    color: colorScheme.outlineVariant.withValues(alpha: 0.3),
+                    width: 0.5,
+                  ),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _DockButton(
+                      selected: widget.currentTool == Pen.currentPen,
+                      enabled: !widget.readOnly,
+                      onPressed: () {
+                        if (widget.currentTool == Pen.currentPen) {
+                          toolOptionsType.value = toolOptionsType.value == .pen
+                              ? .hide
+                              : .pen;
+                        } else {
+                          toolOptionsType.value = .hide;
+                          widget.setTool(Pen.currentPen);
+                        }
+                      },
+                      child: UniIcon(Pen.currentPen.icon, size: 18),
+                    ),
+                    _DockButton(
+                      selected: widget.currentTool == Pencil.currentPencil,
+                      enabled: !widget.readOnly,
+                      onPressed: () {
+                        if (widget.currentTool == Pencil.currentPencil) {
+                          toolOptionsType.value = toolOptionsType.value == .pencil
+                              ? .hide
+                              : .pencil;
+                        } else {
+                          toolOptionsType.value = .hide;
+                          widget.setTool(Pencil.currentPencil);
+                        }
+                      },
+                      child: const FaIcon(Pencil.pencilIcon, size: 18),
+                    ),
+                    _DockButton(
+                      selected: widget.currentTool == Highlighter.currentHighlighter,
+                      enabled: !widget.readOnly,
+                      onPressed: () {
+                        if (widget.currentTool == Highlighter.currentHighlighter) {
+                          toolOptionsType.value = toolOptionsType.value == .highlighter
+                              ? .hide
+                              : .highlighter;
+                        } else {
+                          toolOptionsType.value = .hide;
+                          widget.setTool(Highlighter.currentHighlighter);
+                        }
+                      },
+                      child: const FaIcon(Highlighter.highlighterIcon, size: 18),
+                    ),
+                    _DockDivider(),
+                    _DockButton(
+                      selected: showColorOptions.value,
+                      enabled: !widget.readOnly,
+                      onPressed: toggleColorOptions,
+                      child: currentColor == null
+                          ? const Icon(Icons.palette, size: 18)
+                          : Container(
+                              width: 18,
+                              height: 18,
+                              decoration: BoxDecoration(
+                                color: currentColor.withInversion(invert).withValues(alpha: 1),
+                                shape: .circle,
+                                border: Border.all(
+                                  color: colorScheme.primary,
+                                  width: 2,
+                                ),
+                              ),
+                            ),
+                    ),
+                    _DockButton(
+                      selected: widget.currentTool is Select,
+                      enabled: !widget.readOnly,
+                      onPressed: () {
+                        toolOptionsType.value = .hide;
+                        widget.setTool(Select.currentSelect);
+                      },
+                      child: Icon(
+                        CupertinoIcons.lasso,
+                        shadows: !widget.readOnly
+                            ? [
+                                BoxShadow(
+                                  color: colorScheme.primary,
+                                  blurRadius: 0.1,
+                                  spreadRadius: 10,
+                                  blurStyle: BlurStyle.solid,
+                                ),
+                              ]
+                            : null,
                       ),
-              ),
-              ToolbarIconButton(
-                tooltip: t.editor.toolbar.select,
-                selected: widget.currentTool is Select,
-                enabled: !widget.readOnly,
-                onPressed: () {
-                  toolOptionsType.value = .hide;
-                  widget.setTool(Select.currentSelect);
-                },
-                padding: buttonPadding,
-                child: Icon(
-                  CupertinoIcons.lasso,
-                  shadows: !widget.readOnly
-                      ? [
-                          BoxShadow(
-                            color: colorScheme.primary,
-                            blurRadius: 0.1,
-                            spreadRadius: 10,
-                            blurStyle: BlurStyle.solid,
-                          ),
-                        ]
-                      : null,
-                ),
-              ),
-              ToolbarIconButton(
-                tooltip: t.editor.pens.laserPointer,
-                selected:
-                    widget.currentTool == LaserPointer.currentLaserPointer,
-                enabled: true, // even in read-only mode
-                onPressed: () {
-                  toolOptionsType.value = .hide;
-                  widget.setTool(LaserPointer.currentLaserPointer);
-                },
-                padding: buttonPadding,
-                child: const Icon(Symbols.stylus_laser_pointer),
-              ),
-              ToolbarIconButton(
-                tooltip: t.editor.toolbar.toggleEraser,
-                selected: widget.currentTool is Eraser,
-                enabled: !widget.readOnly,
-                onPressed: toggleEraser,
-                padding: buttonPadding,
-                child: const FaIcon(FontAwesomeIcons.eraser, size: 16),
-              ),
-              ToolbarIconButton(
-                tooltip: t.editor.toolbar.photo,
-                enabled: !widget.readOnly,
-                onPressed: widget.pickPhoto,
-                padding: buttonPadding,
-                child: const AdaptiveIcon(
-                  icon: Icons.photo,
-                ),
-              ),
-              ToolbarIconButton(
-                tooltip: t.editor.toolbar.text,
-                selected: widget.textEditing,
-                enabled: !widget.readOnly,
-                onPressed: widget.toggleTextEditing,
-                padding: buttonPadding,
-                child: const AdaptiveIcon(
-                  icon: Icons.text_fields,
-                ),
-              ),
-              ValueListenableBuilder(
-                valueListenable: stows.editorFingerDrawing,
-                builder: (context, value, child) {
-                  return ToolbarIconButton(
-                    tooltip: t.editor.toolbar.toggleFingerDrawing,
-                    selected: value,
-                    enabled: !widget.readOnly,
-                    onPressed: () {
-                      stows.editorFingerDrawing.value =
-                          !stows.editorFingerDrawing.value;
-                    },
-                    padding: buttonPadding,
-                    child: const Icon(CupertinoIcons.hand_draw),
-                  );
-                },
-              ),
-              Wrap(
-                direction: Axis.horizontal,
-                children: [
-                  ToolbarIconButton(
-                    tooltip: t.editor.toolbar.undo,
-                    enabled: !widget.readOnly && widget.isUndoPossible,
-                    onPressed: widget.undo,
-                    padding: buttonPadding,
-                    child: const AdaptiveIcon(
-                      icon: Icons.undo,
                     ),
-                  ),
-                  ToolbarIconButton(
-                    tooltip: t.editor.toolbar.redo,
-                    enabled: !widget.readOnly && widget.isRedoPossible,
-                    onPressed: widget.redo,
-                    padding: buttonPadding,
-                    child: const AdaptiveIcon(
-                      icon: Icons.redo,
+                    _DockButton(
+                      selected: widget.currentTool == LaserPointer.currentLaserPointer,
+                      enabled: true,
+                      onPressed: () {
+                        toolOptionsType.value = .hide;
+                        widget.setTool(LaserPointer.currentLaserPointer);
+                      },
+                      child: const Icon(Symbols.stylus_laser_pointer),
                     ),
-                  ),
-                ],
-              ),
-              ValueListenableBuilder(
-                valueListenable: showExportOptions,
-                builder: (context, showExportOptions, child) {
-                  return ToolbarIconButton(
-                    tooltip: t.editor.toolbar.export,
-                    selected: showExportOptions,
-                    enabled: !widget.readOnly,
-                    onPressed: toggleExportBar,
-                    padding: buttonPadding,
-                    child: child!,
-                  );
-                },
-                child: const AdaptiveIcon(
-                  icon: Icons.share,
+                    _DockButton(
+                      selected: widget.currentTool is Eraser,
+                      enabled: !widget.readOnly,
+                      onPressed: toggleEraser,
+                      child: const FaIcon(FontAwesomeIcons.eraser, size: 18),
+                    ),
+                    _DockDivider(),
+                    _DockButton(
+                      enabled: !widget.readOnly,
+                      onPressed: widget.pickPhoto,
+                      child: const Icon(Icons.photo, size: 18),
+                    ),
+                    _DockButton(
+                      selected: widget.textEditing,
+                      enabled: !widget.readOnly,
+                      onPressed: widget.toggleTextEditing,
+                      child: const Icon(Icons.text_fields, size: 18),
+                    ),
+                    _DockButton(
+                      selected: stows.editorFingerDrawing.value,
+                      enabled: !widget.readOnly,
+                      onPressed: () {
+                        stows.editorFingerDrawing.value = !stows.editorFingerDrawing.value;
+                      },
+                      child: const Icon(CupertinoIcons.hand_draw, size: 18),
+                    ),
+                    _DockDivider(),
+                    _DockButton(
+                      enabled: !widget.readOnly && widget.isUndoPossible,
+                      onPressed: widget.undo,
+                      child: const Icon(Icons.undo, size: 18),
+                    ),
+                    _DockButton(
+                      enabled: !widget.readOnly && widget.isRedoPossible,
+                      onPressed: widget.redo,
+                      child: const Icon(Icons.redo, size: 18),
+                    ),
+                    _DockDivider(),
+                    _DockButton(
+                      selected: showExportOptions.value,
+                      enabled: !widget.readOnly,
+                      onPressed: toggleExportBar,
+                      child: const Icon(Icons.share, size: 18),
+                    ),
+                  ],
                 ),
               ),
-            ],
+            ),
           ),
         ),
       ),
@@ -516,3 +461,70 @@ class _ToolbarState extends State<Toolbar> {
 }
 
 enum ToolOptions { hide, pen, highlighter, pencil, select }
+
+class _DockButton extends StatefulWidget {
+  const _DockButton({
+    required this.child,
+    this.selected = false,
+    this.enabled = true,
+    this.onPressed,
+  });
+
+  final Widget child;
+  final bool selected;
+  final bool enabled;
+  final VoidCallback? onPressed;
+
+  @override
+  State<_DockButton> createState() => _DockButtonState();
+}
+
+class _DockButtonState extends State<_DockButton> {
+  bool _hovering = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = ColorScheme.of(context);
+    final scale = _hovering ? 1.3 : 1.0;
+
+    final iconColor = !widget.enabled
+        ? colorScheme.onSurface.withValues(alpha: 0.3)
+        : widget.selected
+            ? colorScheme.primary
+            : colorScheme.onSurface;
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovering = true),
+      onExit: (_) => setState(() => _hovering = false),
+      child: GestureDetector(
+        onTap: widget.enabled ? widget.onPressed : null,
+        child: AnimatedScale(
+          scale: scale,
+          duration: const Duration(milliseconds: 150),
+          curve: Curves.easeOut,
+          child: Container(
+            width: 40,
+            height: 40,
+            padding: const EdgeInsets.all(8),
+            child: IconTheme(
+              data: IconThemeData(color: iconColor),
+              child: widget.child,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _DockDivider extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 1,
+      height: 24,
+      margin: const EdgeInsets.symmetric(horizontal: 4),
+      color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.3),
+    );
+  }
+}

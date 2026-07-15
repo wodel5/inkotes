@@ -1497,12 +1497,16 @@ class EditorState extends State<Editor> {
     );
 
     final Widget body;
-    body = Column(
-      verticalDirection: VerticalDirection.down,
+    body = Stack(
       children: [
-        Expanded(child: canvas),
-        toolbar,
-        readonlyBanner,
+        Positioned.fill(child: canvas),
+        Positioned(
+          left: 0,
+          right: 0,
+          bottom: 0,
+          child: toolbar,
+        ),
+        if (coreInfo.readOnly) readonlyBanner,
       ],
     );
 

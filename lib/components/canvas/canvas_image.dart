@@ -107,11 +107,6 @@ class _CanvasImageState extends State<CanvasImage> {
         clipBehavior: Clip.none,
         fit: StackFit.expand,
         children: [
-          DecoratedBox(
-            decoration: BoxDecoration(
-              border: Border.all(color: colorScheme.primary, width: 2),
-            ),
-          ),
           MouseRegion(
             cursor: active ? SystemMouseCursors.grab : MouseCursor.defer,
             child: GestureDetector(
