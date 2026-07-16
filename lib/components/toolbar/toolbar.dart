@@ -284,10 +284,12 @@ class _ToolbarState extends State<Toolbar> {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(24),
             child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+              filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
               child: Container(
                 decoration: BoxDecoration(
-                  color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.6),
+                  color: Theme.of(context).brightness == Brightness.light
+                      ? const Color(0xFF0775E4).withValues(alpha: 0.15)
+                      : colorScheme.surfaceContainerHighest.withValues(alpha: 0.6),
                   borderRadius: BorderRadius.circular(24),
                   border: Border.all(
                     color: colorScheme.outlineVariant.withValues(alpha: 0.3),

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:yaru/yaru.dart';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 import 'package:foledge/components/home/delete_note_button.dart';
@@ -221,21 +222,25 @@ class _HomePageState extends State<HomePage> {
               onPressed: () {
                 final RenderBox button =
                     context.findRenderObject() as RenderBox;
+                final buttonRect = button.localToGlobal(Offset.zero) & button.size;
                 final position = RelativeRect.fromLTRB(
-                  button.localToGlobal(Offset.zero).dx,
-                  button.localToGlobal(Offset.zero).dy + button.size.height,
-                  button.localToGlobal(Offset.zero).dx + button.size.width,
-                  button.localToGlobal(Offset.zero).dy + button.size.height,
+                  buttonRect.left - buttonRect.width,
+                  buttonRect.top + buttonRect.height,
+                  buttonRect.left - buttonRect.width,
+                  buttonRect.top + buttonRect.height,
                 );
                 showMenu(
                   context: context,
                   position: position,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(kYaruContainerRadius),
+                  ),
                   items: [
                     PopupMenuItem(
                       value: 'create',
                       child: ListTile(
                         leading: const FaIcon(FontAwesomeIcons.fileCirclePlus),
-                        title: Text(t.home.create.newNote),
+                        title: Text(t.home.create.newNote, style: const TextStyle(fontSize: 16)),
                         dense: true,
                         contentPadding: EdgeInsets.zero,
                       ),
@@ -244,7 +249,7 @@ class _HomePageState extends State<HomePage> {
                       value: 'pdf',
                       child: ListTile(
                         leading: const FaIcon(FontAwesomeIcons.solidFilePdf),
-                        title: Text(t.home.importPdf),
+                        title: Text(t.home.importPdf, style: const TextStyle(fontSize: 16)),
                         dense: true,
                         contentPadding: EdgeInsets.zero,
                       ),

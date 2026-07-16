@@ -201,12 +201,16 @@ class _PreviewCardState extends State<PreviewCard> {
       builder: (context, expanded, _) {
         return OpenContainer(
           clipBehavior: Clip.none,
-          closedColor: colorScheme.onSurface.withValues(alpha: 0.12),
+          closedColor: Theme.of(context).brightness == Brightness.light
+              ? const Color(0xFFD7E7F8)
+              : const Color(0xFF111115),
           closedShape: RoundedRectangleBorder(
             side: BorderSide(
               color: expanded
                   ? colorScheme.primary
-                  : colorScheme.onSurface.withValues(alpha: 0.12),
+                  : Theme.of(context).brightness == Brightness.light
+                      ? const Color(0xFFD0D5DD)
+                      : const Color(0xFF2C2C2E),
               width: kYaruFocusBorderWidth,
             ),
             borderRadius: const .all(.circular(kYaruContainerRadius)),
