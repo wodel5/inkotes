@@ -141,8 +141,8 @@ class Translations$editor$en {
 	late final Translations$editor$quill$en quill = Translations$editor$quill$en.internal(_root);
 	late final Translations$editor$hud$en hud = Translations$editor$hud$en.internal(_root);
 
-	/// en: 'Pages'
-	String get pages => 'Pages';
+	/// en: 'Page Management'
+	String get pages => 'Page Management';
 
 	/// en: 'Untitled'
 	String get untitled => 'Untitled';

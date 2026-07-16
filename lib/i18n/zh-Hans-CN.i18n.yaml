@@ -191,6 +191,6 @@ editor:
     lockSingleFingerPan: 禁用单指平移
     unlockAxisAlignedPan: 解锁水平或垂直平移
     lockAxisAlignedPan: 锁定水平或垂直平移
-  pages: 页面
+  pages: 页面管理
   untitled: 未命名
   needsToSaveBeforeExiting: 正在保存您的更改... 完成后您可以安全地退出编辑器

@@ -111,7 +111,7 @@ class _Translations$editor$zh_Hans_CN extends Translations$editor$en {
 	@override late final _Translations$editor$versionTooNew$zh_Hans_CN versionTooNew = _Translations$editor$versionTooNew$zh_Hans_CN._(_root);
 	@override late final _Translations$editor$quill$zh_Hans_CN quill = _Translations$editor$quill$zh_Hans_CN._(_root);
 	@override late final _Translations$editor$hud$zh_Hans_CN hud = _Translations$editor$hud$zh_Hans_CN._(_root);
-	@override String get pages => '页面';
+	@override String get pages => '页面管理';
 	@override String get untitled => '未命名';
 	@override String get needsToSaveBeforeExiting => '正在保存您的更改... 完成后您可以安全地退出编辑器';
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:foledge/components/canvas/canvas_gesture_detector.dart';
 import 'package:foledge/components/canvas/canvas_preview.dart';
 import 'package:foledge/components/theming/adaptive_icon.dart';
@@ -106,9 +107,7 @@ class _EditorPageManagerState extends State<EditorPageManager> {
                       ),
                       IconButton(
                         tooltip: t.editor.menu.duplicatePage,
-                        icon: const AdaptiveIcon(
-                          icon: Icons.content_copy,
-                        ),
+                        icon: const FaIcon(FontAwesomeIcons.solidCopy, size: 18),
                         onPressed: () => setState(() {
                           widget.duplicatePage(pageIndex);
                           scrollToPage(pageIndex + 1);
@@ -129,9 +128,7 @@ class _EditorPageManagerState extends State<EditorPageManager> {
                       ),
                       IconButton(
                         tooltip: t.editor.menu.deletePage,
-                        icon: const AdaptiveIcon(
-                          icon: Icons.delete,
-                        ),
+                        icon: const FaIcon(FontAwesomeIcons.trashCan, size: 18),
                         onPressed: isEmptyLastPage
                             ? null
                             : () => setState(() {
