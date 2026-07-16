@@ -202,7 +202,7 @@ class _PreviewCardState extends State<PreviewCard> {
         return OpenContainer(
           clipBehavior: Clip.none,
           closedColor: Theme.of(context).brightness == Brightness.light
-              ? const Color(0xFFD7E7F8)
+              ? const Color(0xFFE8EAED)
               : const Color(0xFF111115),
           closedShape: RoundedRectangleBorder(
             side: BorderSide(

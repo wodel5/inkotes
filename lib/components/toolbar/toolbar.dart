@@ -288,7 +288,7 @@ class _ToolbarState extends State<Toolbar> {
               child: Container(
                 decoration: BoxDecoration(
                   color: Theme.of(context).brightness == Brightness.light
-                      ? const Color(0xFF0775E4).withValues(alpha: 0.15)
+                      ? const Color(0xFF4A4A4A).withValues(alpha: 0.15)
                       : colorScheme.surfaceContainerHighest.withValues(alpha: 0.6),
                   borderRadius: BorderRadius.circular(24),
                   border: Border.all(

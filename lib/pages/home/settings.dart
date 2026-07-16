@@ -83,10 +83,7 @@ class _SettingsContentState extends State<SettingsContent> {
             ...AppLocaleUtils.supportedLocales.map((locale) {
               final localeCode = locale.toLanguageTag();
               final localeName = localeNames[localeCode];
-              assert(
-                localeName != null,
-                'Missing locale name for $localeCode',
-              );
+              assert(localeName != null, 'Missing locale name for $localeCode');
               return ToggleButtonsOption(
                 localeCode,
                 Text(localeName ?? localeCode),
@@ -97,8 +94,9 @@ class _SettingsContentState extends State<SettingsContent> {
         SettingsSelection(
           title: t.settings.prefLabels.appTheme,
           iconBuilder: (i) {
-            if (i == ThemeMode.system.index)
-              return Icons.brightness_auto_rounded;
+            if (i == ThemeMode.system.index) {
+              return FontAwesomeIcons.circleHalfStroke;
+            }
             if (i == ThemeMode.light.index) return FontAwesomeIcons.solidSun;
             if (i == ThemeMode.dark.index) return FontAwesomeIcons.solidMoon;
             return null;
@@ -108,35 +106,21 @@ class _SettingsContentState extends State<SettingsContent> {
           options: [
             ToggleButtonsOption(
               ThemeMode.system.index,
-              Icon(
-                Icons.brightness_auto_rounded,
-                size: 24,
-                semanticLabel: t.settings.themeModes.system,
-              ),
+              FaIcon(FontAwesomeIcons.circleHalfStroke, size: 20),
             ),
             ToggleButtonsOption(
               ThemeMode.light.index,
-              FaIcon(
-                FontAwesomeIcons.solidSun,
-                size: 20,
-                semanticLabel: t.settings.themeModes.light,
-              ),
+              FaIcon(FontAwesomeIcons.solidSun, size: 20),
             ),
             ToggleButtonsOption(
               ThemeMode.dark.index,
-              FaIcon(
-                FontAwesomeIcons.solidMoon,
-                size: 20,
-                semanticLabel: t.settings.themeModes.dark,
-              ),
+              FaIcon(FontAwesomeIcons.solidMoon, size: 20),
             ),
           ],
         ),
         SettingsSwitch(
-          title: t
-              .settings
-              .prefLabels
-              .autoDisableFingerDrawingWhenStylusDetected,
+          title:
+              t.settings.prefLabels.autoDisableFingerDrawingWhenStylusDetected,
           subtitle: t
               .settings
               .prefDescriptions
@@ -155,6 +139,7 @@ class _SettingsContentState extends State<SettingsContent> {
           subtitle: t.settings.prefDescriptions.autosave,
           icon: FontAwesomeIcons.solidFloppyDisk,
           pref: stows.autosaveDelay,
+          optionsWidth: 60,
           options: [
             const ToggleButtonsOption(5000, Text('5s')),
             const ToggleButtonsOption(10000, Text('10s')),

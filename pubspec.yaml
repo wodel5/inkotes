@@ -37,6 +37,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.5
   material_symbols_icons: ^4.2758.0
+  font_awesome_flutter: ^11.0.0
 
   sbn:
     path: packages/sbn
@@ -70,8 +71,6 @@ dependencies:
   slang_flutter:
 
   flex_color_picker: ^3.4.1
-
-  font_awesome_flutter: ^11.0.0
 
   flutter_svg: ^2.0.0+1
 
