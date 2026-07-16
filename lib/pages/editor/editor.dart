@@ -10,6 +10,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_quill/flutter_quill.dart' as flutter_quill;
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:keybinder/keybinder.dart';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
@@ -1588,7 +1589,7 @@ class EditorState extends State<Editor> {
                           _canvasGestureDetectorKey.currentState;
                       final isLocked = gestureDetector?.isZoomLocked ?? false;
                       return IconButton(
-                        icon: Icon(isLocked ? Icons.lock : Icons.lock_open),
+                        icon: FaIcon(isLocked ? FontAwesomeIcons.lock : FontAwesomeIcons.unlockKeyhole),
                         tooltip: isLocked
                             ? t.editor.hud.unlockZoom
                             : t.editor.hud.lockZoom,
@@ -1607,7 +1608,7 @@ class EditorState extends State<Editor> {
                       final isLocked =
                           gestureDetector?.singleFingerPanLock ?? false;
                       return IconButton(
-                        icon: Icon(isLocked ? Icons.pinch : Icons.swipe_up),
+                        icon: Icon(isLocked ? Icons.swipe_vertical : Icons.swipe_up),
                         tooltip: isLocked
                             ? t.editor.hud.unlockSingleFingerPan
                             : t.editor.hud.lockSingleFingerPan,
@@ -1619,9 +1620,7 @@ class EditorState extends State<Editor> {
                     },
                   ),
                   IconButton(
-                    icon: const AdaptiveIcon(
-                      icon: Icons.insert_page_break,
-                    ),
+                    icon: const Icon(Icons.insert_page_break),
                     tooltip: t.editor.menu.insertPage,
                     onPressed: () => setState(() {
                       final currentPageIndex = this.currentPageIndex;
@@ -1635,9 +1634,7 @@ class EditorState extends State<Editor> {
                     }),
                   ),
                   IconButton(
-                    icon: const AdaptiveIcon(
-                      icon: Icons.grid_view,
-                    ),
+                    icon: const FaIcon(FontAwesomeIcons.borderAll),
                     tooltip: t.editor.pages,
                     onPressed: () {
                       showDialog(

@@ -282,7 +282,7 @@ class _ToolbarState extends State<Toolbar> {
         child: Padding(
           padding: const EdgeInsets.fromLTRB(12, 4, 12, 8),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(10),
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
               child: Container(
@@ -290,7 +290,7 @@ class _ToolbarState extends State<Toolbar> {
                   color: Theme.of(context).brightness == Brightness.light
                       ? const Color(0xFF9999BB).withValues(alpha: 0.15)
                       : colorScheme.surfaceContainerHighest.withValues(alpha: 0.6),
-                  borderRadius: BorderRadius.circular(24),
+                  borderRadius: BorderRadius.circular(10),
                   border: Border.all(
                     color: colorScheme.outlineVariant.withValues(alpha: 0.3),
                     width: 0.5,
@@ -310,6 +310,8 @@ class _ToolbarState extends State<Toolbar> {
                               : .pen;
                         } else {
                           toolOptionsType.value = .hide;
+                          showColorOptions.value = false;
+                          showExportOptions.value = false;
                           widget.setTool(Pen.currentPen);
                         }
                       },
@@ -325,6 +327,8 @@ class _ToolbarState extends State<Toolbar> {
                               : .pencil;
                         } else {
                           toolOptionsType.value = .hide;
+                          showColorOptions.value = false;
+                          showExportOptions.value = false;
                           widget.setTool(Pencil.currentPencil);
                         }
                       },
@@ -340,29 +344,19 @@ class _ToolbarState extends State<Toolbar> {
                               : .highlighter;
                         } else {
                           toolOptionsType.value = .hide;
+                          showColorOptions.value = false;
+                          showExportOptions.value = false;
                           widget.setTool(Highlighter.currentHighlighter);
                         }
                       },
                       child: const FaIcon(Highlighter.highlighterIcon, size: 18),
                     ),
                     _DockButton(
-                      selected: showColorOptions.value,
-                      enabled: !widget.readOnly,
+                      enabled: !widget.readOnly && widget.currentTool is! LaserPointer && widget.currentTool is! Eraser,
                       onPressed: toggleColorOptions,
                       child: currentColor == null
                           ? const FaIcon(FontAwesomeIcons.palette, size: 18)
-                          : Container(
-                              width: 18,
-                              height: 18,
-                              decoration: BoxDecoration(
-                                color: currentColor.withInversion(invert).withValues(alpha: 1),
-                                shape: .circle,
-                                border: Border.all(
-                                  color: colorScheme.primary,
-                                  width: 2,
-                                ),
-                              ),
-                            ),
+                          : FaIcon(FontAwesomeIcons.palette, size: 18, color: currentColor.withInversion(invert)),
                     ),
                     _DockDivider(),
                     _DockButton(
@@ -370,6 +364,8 @@ class _ToolbarState extends State<Toolbar> {
                       enabled: true,
                       onPressed: () {
                         toolOptionsType.value = .hide;
+                        showColorOptions.value = false;
+                        showExportOptions.value = false;
                         widget.setTool(LaserPointer.currentLaserPointer);
                       },
                       child: const Icon(Symbols.stylus_laser_pointer),
@@ -379,6 +375,8 @@ class _ToolbarState extends State<Toolbar> {
                       enabled: !widget.readOnly,
                       onPressed: () {
                         toolOptionsType.value = .hide;
+                        showColorOptions.value = false;
+                        showExportOptions.value = false;
                         widget.setTool(Select.currentSelect);
                       },
                       child: const FaIcon(FontAwesomeIcons.solidObjectGroup, size: 18),
@@ -386,19 +384,31 @@ class _ToolbarState extends State<Toolbar> {
                     _DockButton(
                       selected: widget.currentTool is Eraser,
                       enabled: !widget.readOnly,
-                      onPressed: toggleEraser,
+                      onPressed: () {
+                        showColorOptions.value = false;
+                        showExportOptions.value = false;
+                        toggleEraser();
+                      },
                       child: const FaIcon(FontAwesomeIcons.eraser, size: 18),
                     ),
                     _DockDivider(),
                     _DockButton(
                       enabled: !widget.readOnly,
-                      onPressed: widget.pickPhoto,
+                      onPressed: () {
+                        showColorOptions.value = false;
+                        showExportOptions.value = false;
+                        widget.pickPhoto();
+                      },
                       child: const FaIcon(FontAwesomeIcons.solidImage, size: 18),
                     ),
                     _DockButton(
                       selected: widget.textEditing,
                       enabled: !widget.readOnly,
-                      onPressed: widget.toggleTextEditing,
+                      onPressed: () {
+                        showColorOptions.value = false;
+                        showExportOptions.value = false;
+                        widget.toggleTextEditing();
+                      },
                       child: const FaIcon(FontAwesomeIcons.t, size: 18),
                     ),
                     _DockDivider(),
@@ -406,6 +416,8 @@ class _ToolbarState extends State<Toolbar> {
                       selected: stows.editorFingerDrawing.value,
                       enabled: !widget.readOnly,
                       onPressed: () {
+                        showColorOptions.value = false;
+                        showExportOptions.value = false;
                         stows.editorFingerDrawing.value = !stows.editorFingerDrawing.value;
                       },
                       child: const Icon(CupertinoIcons.hand_draw, size: 18),
@@ -413,7 +425,11 @@ class _ToolbarState extends State<Toolbar> {
                     _DockDivider(),
                     _DockButton(
                       enabled: !widget.readOnly && widget.isUndoPossible,
-                      onPressed: widget.undo,
+                      onPressed: () {
+                        showColorOptions.value = false;
+                        showExportOptions.value = false;
+                        widget.undo();
+                      },
                       child: Transform.scale(
                         scaleX: -1,
                         child: const FaIcon(FontAwesomeIcons.share, size: 18),
@@ -421,14 +437,20 @@ class _ToolbarState extends State<Toolbar> {
                     ),
                     _DockButton(
                       enabled: !widget.readOnly && widget.isRedoPossible,
-                      onPressed: widget.redo,
+                      onPressed: () {
+                        showColorOptions.value = false;
+                        showExportOptions.value = false;
+                        widget.redo();
+                      },
                       child: const FaIcon(FontAwesomeIcons.share, size: 18),
                     ),
                     _DockDivider(),
                     _DockButton(
-                      selected: showExportOptions.value,
                       enabled: !widget.readOnly,
-                      onPressed: toggleExportBar,
+                      onPressed: () {
+                        showColorOptions.value = false;
+                        toggleExportBar();
+                      },
                       child: const FaIcon(FontAwesomeIcons.shareNodes, size: 18),
                     ),
                   ],
@@ -474,12 +496,12 @@ class _DockButton extends StatefulWidget {
 }
 
 class _DockButtonState extends State<_DockButton> {
-  bool _hovering = false;
+  bool _pressing = false;
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = ColorScheme.of(context);
-    final scale = _hovering ? 1.3 : 1.0;
+    final brightness = Theme.of(context).brightness;
 
     final iconColor = !widget.enabled
         ? colorScheme.onSurface.withValues(alpha: 0.3)
@@ -487,26 +509,39 @@ class _DockButtonState extends State<_DockButton> {
             ? colorScheme.primary
             : colorScheme.onSurface;
 
-    return MouseRegion(
-      onEnter: (_) => setState(() => _hovering = true),
-      onExit: (_) => setState(() => _hovering = false),
-      child: GestureDetector(
+    // 选中状态的背景色
+    Color? backgroundColor;
+    if (widget.selected) {
+      backgroundColor = brightness == Brightness.light
+          ? colorScheme.primary.withValues(alpha: 0.15)
+          : colorScheme.primary.withValues(alpha: 0.25);
+    } else if (_pressing) {
+      backgroundColor = brightness == Brightness.light
+          ? Colors.grey.withValues(alpha: 0.2)
+          : Colors.white.withValues(alpha: 0.1);
+    }
+
+    return GestureDetector(
+        onTapDown: widget.enabled ? (_) => setState(() => _pressing = true) : null,
+        onTapUp: widget.enabled ? (_) => setState(() => _pressing = false) : null,
+        onTapCancel: () => setState(() => _pressing = false),
         onTap: widget.enabled ? widget.onPressed : null,
-        child: AnimatedScale(
-          scale: scale,
+        child: AnimatedContainer(
           duration: const Duration(milliseconds: 150),
           curve: Curves.easeOut,
-          child: Container(
-            width: 40,
-            height: 40,
-            padding: const EdgeInsets.all(8),
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            color: backgroundColor,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Center(
             child: IconTheme(
-              data: IconThemeData(color: iconColor),
+              data: IconThemeData(color: iconColor, size: 18),
               child: widget.child,
             ),
           ),
         ),
-      ),
     );
   }
 }

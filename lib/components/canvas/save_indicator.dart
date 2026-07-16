@@ -33,7 +33,7 @@ class SaveIndicator extends StatelessWidget {
             icon: switch (savingState.value) {
               .waitingToSave => const FaIcon(FontAwesomeIcons.solidFloppyDisk),
               .saving => const AdaptiveCircularProgressIndicator(),
-              .saved => const Icon(Icons.arrow_back),
+              .saved => const FaIcon(FontAwesomeIcons.arrowLeft),
             },
           ),
         );
