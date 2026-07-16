@@ -56,7 +56,7 @@ class Pen extends Tool {
   @override
   final ToolId toolId;
 
-  static const fountainPenIcon = FontAwesomeIcons.penFancy;
+  static const fountainPenIcon = FontAwesomeIcons.penClip;
   static const ballpointPenIcon = FontAwesomeIcons.pen;
 
   static Stroke? currentStroke;

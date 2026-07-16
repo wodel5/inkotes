@@ -288,7 +288,7 @@ class _ToolbarState extends State<Toolbar> {
               child: Container(
                 decoration: BoxDecoration(
                   color: Theme.of(context).brightness == Brightness.light
-                      ? const Color(0xFF4A4A4A).withValues(alpha: 0.15)
+                      ? const Color(0xFF9999BB).withValues(alpha: 0.15)
                       : colorScheme.surfaceContainerHighest.withValues(alpha: 0.6),
                   borderRadius: BorderRadius.circular(24),
                   border: Border.all(
@@ -345,13 +345,12 @@ class _ToolbarState extends State<Toolbar> {
                       },
                       child: const FaIcon(Highlighter.highlighterIcon, size: 18),
                     ),
-                    _DockDivider(),
                     _DockButton(
                       selected: showColorOptions.value,
                       enabled: !widget.readOnly,
                       onPressed: toggleColorOptions,
                       child: currentColor == null
-                          ? const Icon(Icons.palette, size: 18)
+                          ? const FaIcon(FontAwesomeIcons.palette, size: 18)
                           : Container(
                               width: 18,
                               height: 18,
@@ -365,27 +364,7 @@ class _ToolbarState extends State<Toolbar> {
                               ),
                             ),
                     ),
-                    _DockButton(
-                      selected: widget.currentTool is Select,
-                      enabled: !widget.readOnly,
-                      onPressed: () {
-                        toolOptionsType.value = .hide;
-                        widget.setTool(Select.currentSelect);
-                      },
-                      child: Icon(
-                        CupertinoIcons.lasso,
-                        shadows: !widget.readOnly
-                            ? [
-                                BoxShadow(
-                                  color: colorScheme.primary,
-                                  blurRadius: 0.1,
-                                  spreadRadius: 10,
-                                  blurStyle: BlurStyle.solid,
-                                ),
-                              ]
-                            : null,
-                      ),
-                    ),
+                    _DockDivider(),
                     _DockButton(
                       selected: widget.currentTool == LaserPointer.currentLaserPointer,
                       enabled: true,
@@ -394,6 +373,15 @@ class _ToolbarState extends State<Toolbar> {
                         widget.setTool(LaserPointer.currentLaserPointer);
                       },
                       child: const Icon(Symbols.stylus_laser_pointer),
+                    ),
+                    _DockButton(
+                      selected: widget.currentTool is Select,
+                      enabled: !widget.readOnly,
+                      onPressed: () {
+                        toolOptionsType.value = .hide;
+                        widget.setTool(Select.currentSelect);
+                      },
+                      child: const FaIcon(FontAwesomeIcons.solidObjectGroup, size: 18),
                     ),
                     _DockButton(
                       selected: widget.currentTool is Eraser,
@@ -405,14 +393,15 @@ class _ToolbarState extends State<Toolbar> {
                     _DockButton(
                       enabled: !widget.readOnly,
                       onPressed: widget.pickPhoto,
-                      child: const Icon(Icons.photo, size: 18),
+                      child: const FaIcon(FontAwesomeIcons.solidImage, size: 18),
                     ),
                     _DockButton(
                       selected: widget.textEditing,
                       enabled: !widget.readOnly,
                       onPressed: widget.toggleTextEditing,
-                      child: const Icon(Icons.text_fields, size: 18),
+                      child: const FaIcon(FontAwesomeIcons.t, size: 18),
                     ),
+                    _DockDivider(),
                     _DockButton(
                       selected: stows.editorFingerDrawing.value,
                       enabled: !widget.readOnly,
@@ -425,19 +414,22 @@ class _ToolbarState extends State<Toolbar> {
                     _DockButton(
                       enabled: !widget.readOnly && widget.isUndoPossible,
                       onPressed: widget.undo,
-                      child: const Icon(Icons.undo, size: 18),
+                      child: Transform.scale(
+                        scaleX: -1,
+                        child: const FaIcon(FontAwesomeIcons.share, size: 18),
+                      ),
                     ),
                     _DockButton(
                       enabled: !widget.readOnly && widget.isRedoPossible,
                       onPressed: widget.redo,
-                      child: const Icon(Icons.redo, size: 18),
+                      child: const FaIcon(FontAwesomeIcons.share, size: 18),
                     ),
                     _DockDivider(),
                     _DockButton(
                       selected: showExportOptions.value,
                       enabled: !widget.readOnly,
                       onPressed: toggleExportBar,
-                      child: const Icon(Icons.share, size: 18),
+                      child: const FaIcon(FontAwesomeIcons.shareNodes, size: 18),
                     ),
                   ],
                 ),
