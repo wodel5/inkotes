@@ -82,7 +82,6 @@ dependencies:
   animations: ^2.0.7
 
   flutter_quill: ^11.5.1
-  quill_native_bridge_linux: ^0.0.2
 
   worker_manager: ^7.0.1
 
@@ -115,8 +114,6 @@ dependencies:
   one_dollar_unistroke_recognizer: ^1.1.1
 
   meta: ^1.0.0
-
-  mutex: ^3.1.0
 
   collection: ^1.0.0
 
@@ -234,8 +231,3 @@ icons_launcher:
     macos:
       enable: true
       image_path: "assets/icon/icon_macos.png"
-
-sentry:
-  upload_debug_symbols: true
-  upload_source_maps: true
-  project: foledge

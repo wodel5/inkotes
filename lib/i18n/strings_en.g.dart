@@ -115,26 +115,11 @@ class Translations$settings$en {
 	late final Translations$settings$prefCategories$en prefCategories = Translations$settings$prefCategories$en.internal(_root);
 	late final Translations$settings$prefLabels$en prefLabels = Translations$settings$prefLabels$en.internal(_root);
 	late final Translations$settings$prefDescriptions$en prefDescriptions = Translations$settings$prefDescriptions$en.internal(_root);
-	late final Translations$settings$themeModes$en themeModes = Translations$settings$themeModes$en.internal(_root);
-	late final Translations$settings$layoutSizes$en layoutSizes = Translations$settings$layoutSizes$en.internal(_root);
 	late final Translations$settings$accentColorPicker$en accentColorPicker = Translations$settings$accentColorPicker$en.internal(_root);
-
-	/// en: 'Auto'
-	String get systemLanguage => 'Auto';
-
-	List<String> get axisDirections => [
-		'Top',
-		'Right',
-		'Bottom',
-		'Left',
-	];
 	late final Translations$settings$reset$en reset = Translations$settings$reset$en.internal(_root);
 
 	/// en: 'Never'
 	String get autosaveDisabled => 'Never';
-
-	/// en: 'Never'
-	String get shapeRecognitionDisabled => 'Never';
 }
 
 // Path: editor
@@ -410,12 +395,6 @@ class Translations$settings$prefCategories$en {
 
 	/// en: 'Editor'
 	String get editor => 'Editor';
-
-	/// en: 'Performance'
-	String get performance => 'Performance';
-
-	/// en: 'Advanced'
-	String get advanced => 'Advanced';
 }
 
 // Path: settings.prefLabels
@@ -432,65 +411,14 @@ class Translations$settings$prefLabels$en {
 	/// en: 'App theme'
 	String get appTheme => 'App theme';
 
-	/// en: 'Theme type'
-	String get platform => 'Theme type';
-
-	/// en: 'Layout type'
-	String get layoutSize => 'Layout type';
-
-	/// en: 'Custom accent color'
-	String get customAccentColor => 'Custom accent color';
-
-	/// en: 'Atkinson Hyperlegible font'
-	String get hyperlegibleFont => 'Atkinson Hyperlegible font';
-
-	/// en: 'Toolbar position'
-	String get editorToolbarAlignment => 'Toolbar position';
-
-	/// en: 'Show the toolbar in fullscreen mode'
-	String get editorToolbarShowInFullscreen => 'Show the toolbar in fullscreen mode';
-
-	/// en: 'Invert notes in dark mode'
-	String get editorAutoInvert => 'Invert notes in dark mode';
-
-	/// en: 'Prefer greyscale colors'
-	String get preferGreyscale => 'Prefer greyscale colors';
-
-	/// en: 'Maximum image size'
-	String get maxImageSize => 'Maximum image size';
-
-	/// en: 'Auto-clear the whiteboard'
-	String get autoClearWhiteboardOnExit => 'Auto-clear the whiteboard';
-
-	/// en: 'Auto-disable the eraser'
-	String get disableEraserAfterUse => 'Auto-disable the eraser';
-
-	/// en: 'Hide the finger drawing toggle'
-	String get hideFingerDrawingToggle => 'Hide the finger drawing toggle';
-
 	/// en: 'Auto-disable finger drawing'
 	String get autoDisableFingerDrawingWhenStylusDetected => 'Auto-disable finger drawing';
-
-	/// en: 'Prompt you to rename new notes'
-	String get editorPromptRename => 'Prompt you to rename new notes';
-
-	/// en: 'Don't save preset colors in recent colors'
-	String get recentColorsDontSavePresets => 'Don\'t save preset colors in recent colors';
-
-	/// en: 'How many recent colors to store'
-	String get recentColorsLength => 'How many recent colors to store';
 
 	/// en: 'Print page indicators'
 	String get printPageIndicators => 'Print page indicators';
 
 	/// en: 'Auto-save'
 	String get autosave => 'Auto-save';
-
-	/// en: 'Shape recognition delay'
-	String get shapeRecognitionDelay => 'Shape recognition delay';
-
-	/// en: 'Auto straighten lines'
-	String get autoStraightenLines => 'Auto straighten lines';
 }
 
 // Path: settings.prefDescriptions
@@ -501,76 +429,14 @@ class Translations$settings$prefDescriptions$en {
 
 	// Translations
 
-	/// en: 'Increases legibility for users with low vision'
-	String get hyperlegibleFont => 'Increases legibility for users with low vision';
-
-	/// en: 'For e-ink displays'
-	String get preferGreyscale => 'For e-ink displays';
-
-	/// en: 'Clears the whiteboard after you exit the app'
-	String get autoClearWhiteboardOnExit => 'Clears the whiteboard after you exit the app';
-
-	/// en: 'Automatically switches back to the pen after using the eraser'
-	String get disableEraserAfterUse => 'Automatically switches back to the pen after using the eraser';
-
-	/// en: 'Larger images will be compressed'
-	String get maxImageSize => 'Larger images will be compressed';
-
-	late final Translations$settings$prefDescriptions$hideFingerDrawing$en hideFingerDrawing = Translations$settings$prefDescriptions$hideFingerDrawing$en.internal(_root);
-
 	/// en: 'Turn off finger drawing when a stylus is detected'
 	String get autoDisableFingerDrawingWhenStylusDetected => 'Turn off finger drawing when a stylus is detected';
-
-	/// en: 'You can always rename notes later'
-	String get editorPromptRename => 'You can always rename notes later';
 
 	/// en: 'Show page indicators in exports'
 	String get printPageIndicators => 'Show page indicators in exports';
 
 	/// en: 'Auto-save after a short delay, or never'
 	String get autosave => 'Auto-save after a short delay, or never';
-
-	/// en: 'How often to update the shape preview'
-	String get shapeRecognitionDelay => 'How often to update the shape preview';
-
-	/// en: 'Straightens long lines without having to use the shape pen'
-	String get autoStraightenLines => 'Straightens long lines without having to use the shape pen';
-}
-
-// Path: settings.themeModes
-class Translations$settings$themeModes$en {
-	Translations$settings$themeModes$en.internal(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-
-	/// en: 'System'
-	String get system => 'System';
-
-	/// en: 'Light'
-	String get light => 'Light';
-
-	/// en: 'Dark'
-	String get dark => 'Dark';
-}
-
-// Path: settings.layoutSizes
-class Translations$settings$layoutSizes$en {
-	Translations$settings$layoutSizes$en.internal(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-
-	/// en: 'Auto'
-	String get auto => 'Auto';
-
-	/// en: 'Phone'
-	String get phone => 'Phone';
-
-	/// en: 'Tablet'
-	String get tablet => 'Tablet';
 }
 
 // Path: settings.accentColorPicker
@@ -661,9 +527,6 @@ class Translations$editor$pens$en {
 
 	/// en: 'Pencil'
 	String get pencil => 'Pencil';
-
-	/// en: 'Shape pen'
-	String get shapePen => 'Shape pen';
 
 	/// en: 'Laser pointer'
 	String get laserPointer => 'Laser pointer';
@@ -854,12 +717,6 @@ class Translations$editor$menu$en {
 	/// en: 'Import'
 	String get import => 'Import';
 
-	/// en: 'Watch for updates on the server'
-	String get watchServer => 'Watch for updates on the server';
-
-	/// en: 'Editing is disabled while watching the server'
-	String get watchServerReadOnly => 'Editing is disabled while watching the server';
-
 	late final Translations$editor$menu$boxFits$en boxFits = Translations$editor$menu$boxFits$en.internal(_root);
 	late final Translations$editor$menu$bgPatterns$en bgPatterns = Translations$editor$menu$bgPatterns$en.internal(_root);
 }
@@ -937,24 +794,6 @@ class Translations$editor$hud$en {
 
 	/// en: 'Lock panning to horizontal or vertical'
 	String get lockAxisAlignedPan => 'Lock panning to horizontal or vertical';
-}
-
-// Path: settings.prefDescriptions.hideFingerDrawing
-class Translations$settings$prefDescriptions$hideFingerDrawing$en {
-	Translations$settings$prefDescriptions$hideFingerDrawing$en.internal(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-
-	/// en: 'Prevents accidental toggling'
-	String get shown => 'Prevents accidental toggling';
-
-	/// en: 'Finger drawing is fixed as enabled'
-	String get fixedOn => 'Finger drawing is fixed as enabled';
-
-	/// en: 'Finger drawing is fixed as disabled'
-	String get fixedOff => 'Finger drawing is fixed as disabled';
 }
 
 // Path: editor.menu.boxFits

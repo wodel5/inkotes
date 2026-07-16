@@ -73,68 +73,22 @@ settings:
     general: General
     writing: Writing
     editor: Editor
-    performance: Performance
-    advanced: Advanced
   prefLabels:
     locale: Language
     appTheme: App theme
-    platform: Theme type
-    layoutSize: Layout type
-    customAccentColor: Custom accent color
-    hyperlegibleFont: Atkinson Hyperlegible font
-    editorToolbarAlignment: Toolbar position
-    editorToolbarShowInFullscreen: Show the toolbar in fullscreen mode
-    editorAutoInvert: Invert notes in dark mode
-    preferGreyscale: Prefer greyscale colors
-    maxImageSize: Maximum image size
-    autoClearWhiteboardOnExit: Auto-clear the whiteboard
-    disableEraserAfterUse: Auto-disable the eraser
-    hideFingerDrawingToggle: Hide the finger drawing toggle
     autoDisableFingerDrawingWhenStylusDetected: Auto-disable finger drawing
-    editorPromptRename: Prompt you to rename new notes
-    recentColorsDontSavePresets: Don't save preset colors in recent colors
-    recentColorsLength: How many recent colors to store
     printPageIndicators: Print page indicators
     autosave: Auto-save
-    shapeRecognitionDelay: Shape recognition delay
-    autoStraightenLines: Auto straighten lines
   prefDescriptions:
-    hyperlegibleFont: Increases legibility for users with low vision
-    preferGreyscale: For e-ink displays
-    autoClearWhiteboardOnExit: Clears the whiteboard after you exit the app
-    disableEraserAfterUse: Automatically switches back to the pen after using the eraser
-    maxImageSize: Larger images will be compressed
-    hideFingerDrawing:
-      shown: Prevents accidental toggling
-      fixedOn: Finger drawing is fixed as enabled
-      fixedOff: Finger drawing is fixed as disabled
     autoDisableFingerDrawingWhenStylusDetected: Turn off finger drawing when a stylus is detected
-    editorPromptRename: You can always rename notes later
     printPageIndicators: Show page indicators in exports
     autosave: Auto-save after a short delay, or never
-    shapeRecognitionDelay: How often to update the shape preview
-    autoStraightenLines: Straightens long lines without having to use the shape pen
-  themeModes:
-    system: System
-    light: Light
-    dark: Dark
-  layoutSizes:
-    auto: Auto
-    phone: Phone
-    tablet: Tablet
   accentColorPicker:
     pickAColor: Pick a color
-  systemLanguage: Auto
-  axisDirections:
-  - Top
-  - Right
-  - Bottom
-  - Left
   reset:
     title: Reset this setting?
     button: Reset
   autosaveDisabled: Never
-  shapeRecognitionDisabled: Never
 editor:
   toolbar:
     toggleColors: Toggle colors (Ctrl C)
@@ -153,7 +107,6 @@ editor:
     ballpointPen: Ballpoint pen
     highlighter: Highlighter
     pencil: Pencil
-    shapePen: Shape pen
     laserPointer: Laser pointer
   penOptions:
     size: Size
@@ -207,8 +160,6 @@ editor:
     backgroundImageFit: Background image fit
     backgroundPattern: Background pattern
     import: Import
-    watchServer: Watch for updates on the server
-    watchServerReadOnly: Editing is disabled while watching the server
     boxFits:
       fill: Stretch
       cover: Cover

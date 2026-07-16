@@ -73,68 +73,22 @@ settings:
     general: 通用
     writing: 书写
     editor: 编辑器
-    performance: 性能
-    advanced: 高级
   prefLabels:
     locale: 应用语言
     appTheme: 应用主题
-    platform: 主题类型
-    layoutSize: 布局大小
-    customAccentColor: 自定义主题色
-    hyperlegibleFont: 易读字体
-    editorToolbarAlignment: 编辑工具栏对齐方式
-    editorToolbarShowInFullscreen: 在全屏模式中显示编辑菜单栏
-    editorAutoInvert: 在深色模式下使用反色笔记背景
-    preferGreyscale: 使用灰度颜色
-    maxImageSize: 最大图片大小
-    autoClearWhiteboardOnExit: 离开应用后清除白板
-    disableEraserAfterUse: 自动禁用橡皮擦
-    hideFingerDrawingToggle: 隐藏 切换手指绘图
     autoDisableFingerDrawingWhenStylusDetected: 自动禁用手指绘图
-    editorPromptRename: 提示您重命名新笔记
-    recentColorsDontSavePresets: 不在最近使用的颜色中保存预设颜色
-    recentColorsLength: 要存储多少种最近的颜色
     printPageIndicators: 打印页码
     autosave: 自动保存
-    shapeRecognitionDelay: 形状识别延迟
-    autoStraightenLines: 自动拉直线
   prefDescriptions:
-    hyperlegibleFont: Atkinson Hyperlegible 字体为低视力读者提高易读性
-    preferGreyscale: 用于电子墨水显示器
-    autoClearWhiteboardOnExit: 这将会同步到您的其他设备
-    disableEraserAfterUse: 使用橡皮擦后自动切换回笔
-    maxImageSize: 更大的图片将会被压缩
-    hideFingerDrawing:
-      shown: 防止意外切换
-      fixedOn: 手指绘图固定为启用状态
-      fixedOff: 手指绘图固定为禁用状态
     autoDisableFingerDrawingWhenStylusDetected: 当检测到手写笔时关闭手指绘图
-    editorPromptRename: 您可以总是稍后重命名笔记
     printPageIndicators: 在导出中显示页码
     autosave: 短暂延迟后自动保存，或永不保存
-    shapeRecognitionDelay: 形状预览更新频率
-    autoStraightenLines: 拉直长线，无需使用形状笔
-  themeModes:
-    system: 系统
-    light: 浅色
-    dark: 深色
-  layoutSizes:
-    auto: 自动
-    phone: 手机
-    tablet: 平板
   accentColorPicker:
     pickAColor: 选取颜色
-  systemLanguage: 系统语言
-  axisDirections:
-  - 上
-  - 右
-  - 下
-  - 左
   reset:
     title: 重置此设置？
     button: 重置
   autosaveDisabled: 禁用
-  shapeRecognitionDisabled: 禁用
 editor:
   toolbar:
     toggleColors: 切换颜色 (Ctrl C)
@@ -153,7 +107,6 @@ editor:
     ballpointPen: 圆珠笔
     highlighter: 荧光笔
     pencil: 铅笔
-    shapePen: 形状笔
     laserPointer: 激光笔
   penOptions:
     size: 粗细
@@ -207,8 +160,6 @@ editor:
     backgroundImageFit: 背景图像拟合
     backgroundPattern: 背景图案
     import: 导入
-    watchServer: 监视服务器上的更新
-    watchServerReadOnly: 监视服务器时禁用编辑
     boxFits:
       fill: 拉伸
       cover: 覆盖

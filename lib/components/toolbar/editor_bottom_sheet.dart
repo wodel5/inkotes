@@ -28,8 +28,6 @@ class EditorBottomSheet extends StatefulWidget {
     required this.pickPhotos,
     required this.importPdf,
     required this.canRasterPdf,
-    required this.getIsWatchingServer,
-    required this.setIsWatchingServer,
   });
 
   final bool invert;
@@ -46,8 +44,6 @@ class EditorBottomSheet extends StatefulWidget {
   final Future<int> Function() pickPhotos;
   final Future<bool> Function() importPdf;
   final bool canRasterPdf;
-  final bool Function() getIsWatchingServer;
-  final void Function(bool) setIsWatchingServer;
 
   @override
   State<EditorBottomSheet> createState() => _EditorBottomSheetState();

@@ -154,7 +154,6 @@ class EditorState extends State<Editor> {
 
   ValueNotifier<SavingState> savingState = ValueNotifier(SavingState.saved);
   Timer? _delayedSaveTimer;
-  Timer? _watchServerTimer;
 
   // used to prevent accidentally drawing when pinch zooming
   var lastSeenPointerCount = 0;
@@ -1745,8 +1744,6 @@ class EditorState extends State<Editor> {
       pickPhotos: _pickPhotos,
       importPdf: importPdf,
       canRasterPdf: Editor.canRasterPdf,
-      getIsWatchingServer: () => false,
-      setIsWatchingServer: (bool watch) {},
     );
   }
 
@@ -1984,7 +1981,6 @@ class EditorState extends State<Editor> {
     unawaited(_cleanUpAsync());
 
     _delayedSaveTimer?.cancel();
-    _watchServerTimer?.cancel();
     _lastSeenPointerCountTimer?.cancel();
     _transformationController.removeListener(_onTransformChanged);
 

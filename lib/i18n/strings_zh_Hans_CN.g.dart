@@ -88,19 +88,9 @@ class _Translations$settings$zh_Hans_CN extends Translations$settings$en {
 	@override late final _Translations$settings$prefCategories$zh_Hans_CN prefCategories = _Translations$settings$prefCategories$zh_Hans_CN._(_root);
 	@override late final _Translations$settings$prefLabels$zh_Hans_CN prefLabels = _Translations$settings$prefLabels$zh_Hans_CN._(_root);
 	@override late final _Translations$settings$prefDescriptions$zh_Hans_CN prefDescriptions = _Translations$settings$prefDescriptions$zh_Hans_CN._(_root);
-	@override late final _Translations$settings$themeModes$zh_Hans_CN themeModes = _Translations$settings$themeModes$zh_Hans_CN._(_root);
-	@override late final _Translations$settings$layoutSizes$zh_Hans_CN layoutSizes = _Translations$settings$layoutSizes$zh_Hans_CN._(_root);
 	@override late final _Translations$settings$accentColorPicker$zh_Hans_CN accentColorPicker = _Translations$settings$accentColorPicker$zh_Hans_CN._(_root);
-	@override String get systemLanguage => '系统语言';
-	@override List<String> get axisDirections => [
-		'上',
-		'右',
-		'下',
-		'左',
-	];
 	@override late final _Translations$settings$reset$zh_Hans_CN reset = _Translations$settings$reset$zh_Hans_CN._(_root);
 	@override String get autosaveDisabled => '禁用';
-	@override String get shapeRecognitionDisabled => '禁用';
 }
 
 // Path: editor
@@ -274,8 +264,6 @@ class _Translations$settings$prefCategories$zh_Hans_CN extends Translations$sett
 	@override String get general => '通用';
 	@override String get writing => '书写';
 	@override String get editor => '编辑器';
-	@override String get performance => '性能';
-	@override String get advanced => '高级';
 }
 
 // Path: settings.prefLabels
@@ -287,26 +275,9 @@ class _Translations$settings$prefLabels$zh_Hans_CN extends Translations$settings
 	// Translations
 	@override String get locale => '应用语言';
 	@override String get appTheme => '应用主题';
-	@override String get platform => '主题类型';
-	@override String get layoutSize => '布局大小';
-	@override String get customAccentColor => '自定义主题色';
-	@override String get hyperlegibleFont => '易读字体';
-	@override String get editorToolbarAlignment => '编辑工具栏对齐方式';
-	@override String get editorToolbarShowInFullscreen => '在全屏模式中显示编辑菜单栏';
-	@override String get editorAutoInvert => '在深色模式下使用反色笔记背景';
-	@override String get preferGreyscale => '使用灰度颜色';
-	@override String get maxImageSize => '最大图片大小';
-	@override String get autoClearWhiteboardOnExit => '离开应用后清除白板';
-	@override String get disableEraserAfterUse => '自动禁用橡皮擦';
-	@override String get hideFingerDrawingToggle => '隐藏 切换手指绘图';
 	@override String get autoDisableFingerDrawingWhenStylusDetected => '自动禁用手指绘图';
-	@override String get editorPromptRename => '提示您重命名新笔记';
-	@override String get recentColorsDontSavePresets => '不在最近使用的颜色中保存预设颜色';
-	@override String get recentColorsLength => '要存储多少种最近的颜色';
 	@override String get printPageIndicators => '打印页码';
 	@override String get autosave => '自动保存';
-	@override String get shapeRecognitionDelay => '形状识别延迟';
-	@override String get autoStraightenLines => '自动拉直线';
 }
 
 // Path: settings.prefDescriptions
@@ -316,42 +287,9 @@ class _Translations$settings$prefDescriptions$zh_Hans_CN extends Translations$se
 	final TranslationsZhHansCn _root; // ignore: unused_field
 
 	// Translations
-	@override String get hyperlegibleFont => 'Atkinson Hyperlegible 字体为低视力读者提高易读性';
-	@override String get preferGreyscale => '用于电子墨水显示器';
-	@override String get autoClearWhiteboardOnExit => '这将会同步到您的其他设备';
-	@override String get disableEraserAfterUse => '使用橡皮擦后自动切换回笔';
-	@override String get maxImageSize => '更大的图片将会被压缩';
-	@override late final _Translations$settings$prefDescriptions$hideFingerDrawing$zh_Hans_CN hideFingerDrawing = _Translations$settings$prefDescriptions$hideFingerDrawing$zh_Hans_CN._(_root);
 	@override String get autoDisableFingerDrawingWhenStylusDetected => '当检测到手写笔时关闭手指绘图';
-	@override String get editorPromptRename => '您可以总是稍后重命名笔记';
 	@override String get printPageIndicators => '在导出中显示页码';
 	@override String get autosave => '短暂延迟后自动保存，或永不保存';
-	@override String get shapeRecognitionDelay => '形状预览更新频率';
-	@override String get autoStraightenLines => '拉直长线，无需使用形状笔';
-}
-
-// Path: settings.themeModes
-class _Translations$settings$themeModes$zh_Hans_CN extends Translations$settings$themeModes$en {
-	_Translations$settings$themeModes$zh_Hans_CN._(TranslationsZhHansCn root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHansCn _root; // ignore: unused_field
-
-	// Translations
-	@override String get system => '系统';
-	@override String get light => '浅色';
-	@override String get dark => '深色';
-}
-
-// Path: settings.layoutSizes
-class _Translations$settings$layoutSizes$zh_Hans_CN extends Translations$settings$layoutSizes$en {
-	_Translations$settings$layoutSizes$zh_Hans_CN._(TranslationsZhHansCn root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHansCn _root; // ignore: unused_field
-
-	// Translations
-	@override String get auto => '自动';
-	@override String get phone => '手机';
-	@override String get tablet => '平板';
 }
 
 // Path: settings.accentColorPicker
@@ -406,7 +344,6 @@ class _Translations$editor$pens$zh_Hans_CN extends Translations$editor$pens$en {
 	@override String get ballpointPen => '圆珠笔';
 	@override String get highlighter => '荧光笔';
 	@override String get pencil => '铅笔';
-	@override String get shapePen => '形状笔';
 	@override String get laserPointer => '激光笔';
 }
 
@@ -500,8 +437,6 @@ class _Translations$editor$menu$zh_Hans_CN extends Translations$editor$menu$en {
 	@override String get backgroundImageFit => '背景图像拟合';
 	@override String get backgroundPattern => '背景图案';
 	@override String get import => '导入';
-	@override String get watchServer => '监视服务器上的更新';
-	@override String get watchServerReadOnly => '监视服务器时禁用编辑';
 	@override late final _Translations$editor$menu$boxFits$zh_Hans_CN boxFits = _Translations$editor$menu$boxFits$zh_Hans_CN._(_root);
 	@override late final _Translations$editor$menu$bgPatterns$zh_Hans_CN bgPatterns = _Translations$editor$menu$bgPatterns$zh_Hans_CN._(_root);
 }
@@ -553,18 +488,6 @@ class _Translations$editor$hud$zh_Hans_CN extends Translations$editor$hud$en {
 	@override String get lockSingleFingerPan => '禁用单指平移';
 	@override String get unlockAxisAlignedPan => '解锁水平或垂直平移';
 	@override String get lockAxisAlignedPan => '锁定水平或垂直平移';
-}
-
-// Path: settings.prefDescriptions.hideFingerDrawing
-class _Translations$settings$prefDescriptions$hideFingerDrawing$zh_Hans_CN extends Translations$settings$prefDescriptions$hideFingerDrawing$en {
-	_Translations$settings$prefDescriptions$hideFingerDrawing$zh_Hans_CN._(TranslationsZhHansCn root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHansCn _root; // ignore: unused_field
-
-	// Translations
-	@override String get shown => '防止意外切换';
-	@override String get fixedOn => '手指绘图固定为启用状态';
-	@override String get fixedOff => '手指绘图固定为禁用状态';
 }
 
 // Path: editor.menu.boxFits
