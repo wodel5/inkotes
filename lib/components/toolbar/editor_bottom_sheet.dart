@@ -17,6 +17,7 @@ class EditorBottomSheet extends StatefulWidget {
     required this.coreInfo,
     required this.currentPageIndex,
     required this.setBackgroundPattern,
+    required this.setBackgroundColor,
     required this.setLineHeight,
     required this.setLineThickness,
     required this.removeBackgroundImage,
@@ -32,6 +33,7 @@ class EditorBottomSheet extends StatefulWidget {
   final EditorCoreInfo coreInfo;
   final int? currentPageIndex;
   final void Function(CanvasBackgroundPattern) setBackgroundPattern;
+  final void Function(Color?) setBackgroundColor;
   final void Function(int) setLineHeight;
   final void Function(int) setLineThickness;
   final VoidCallback removeBackgroundImage;
@@ -175,9 +177,33 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
               ),
               const SizedBox(height: 16),
             ],
-            Text(
-              t.editor.menu.backgroundPattern,
-              style: TextTheme.of(context).titleMedium,
+            Row(
+              children: [
+                Text(
+                  t.editor.menu.backgroundPattern,
+                  style: TextTheme.of(context).titleMedium,
+                ),
+                const Spacer(),
+                _BackgroundColorButton(
+                  color: null,
+                  label: t.editor.menu.defaultColor,
+                  isSelected: widget.coreInfo.backgroundColor == null,
+                  onTap: () => setState(() {
+                    widget.setBackgroundColor(null);
+                  }),
+                ),
+                for (final preset in _backgroundColorPresets) ...[
+                  const SizedBox(width: 6),
+                  _BackgroundColorButton(
+                    color: preset,
+                    label: '',
+                    isSelected: widget.coreInfo.backgroundColor == preset,
+                    onTap: () => setState(() {
+                      widget.setBackgroundColor(preset);
+                    }),
+                  ),
+                ],
+              ],
             ),
             const SizedBox(height: 8),
             SizedBox(
@@ -275,6 +301,71 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
             ),
             const SizedBox(height: 16),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+const _backgroundColorPresets = [
+  Color(0xFFFFFBF0), // 暖白
+  Color(0xFFF0FFF0), // 浅绿
+  Color(0xFFF0F7FF), // 浅蓝
+  Color(0xFFF5F5F5), // 浅灰
+];
+
+class _BackgroundColorButton extends StatelessWidget {
+  const _BackgroundColorButton({
+    required this.color,
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  final Color? color;
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = ColorScheme.of(context);
+    return GestureDetector(
+      onTap: onTap,
+      child: Tooltip(
+        message: label,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          width: 28,
+          height: 28,
+          decoration: BoxDecoration(
+            color: color ?? InnerCanvas.defaultBackgroundColor,
+            borderRadius: BorderRadius.circular(6),
+            border: Border.all(
+              color: isSelected
+                  ? colorScheme.primary
+                  : colorScheme.outlineVariant.withValues(alpha: 0.5),
+              width: isSelected ? 2.5 : 1,
+            ),
+            boxShadow: isSelected
+                ? [
+                    BoxShadow(
+                      color: colorScheme.primary.withValues(alpha: 0.3),
+                      blurRadius: 4,
+                    ),
+                  ]
+                : null,
+          ),
+          child: isSelected
+              ? Icon(
+                  Icons.check,
+                  size: 14,
+                  color: color == null ||
+                          (color!.computeLuminance() > 0.5)
+                      ? colorScheme.primary
+                      : Colors.white,
+                )
+              : null,
         ),
       ),
     );

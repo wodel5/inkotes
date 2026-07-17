@@ -101,6 +101,9 @@ class EditorCoreInfo {
   @visibleForTesting
   EditorCoreInfo({required this.filePath, this.readOnlyReason})
     : nextImageId = 0,
+      backgroundColor = stows.lastBackgroundColor.value != null
+          ? Color(stows.lastBackgroundColor.value!)
+          : null,
       backgroundPattern = stows.lastBackgroundPattern.value,
       lineHeight = stows.lastLineHeight.value,
       lineThickness = stows.lastLineThickness.value,

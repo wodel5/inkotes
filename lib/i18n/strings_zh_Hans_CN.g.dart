@@ -435,6 +435,7 @@ class _Translations$editor$menu$zh_Hans_CN extends Translations$editor$menu$en {
 	@override String get lineThickness => '线条粗细';
 	@override String get backgroundImageFit => '背景图像拟合';
 	@override String get backgroundPattern => '画纸类型';
+	@override String get defaultColor => '默认';
 	@override String get import => '导入';
 	@override late final _Translations$editor$menu$boxFits$zh_Hans_CN boxFits = _Translations$editor$menu$boxFits$zh_Hans_CN._(_root);
 	@override late final _Translations$editor$menu$bgPatterns$zh_Hans_CN bgPatterns = _Translations$editor$menu$bgPatterns$zh_Hans_CN._(_root);

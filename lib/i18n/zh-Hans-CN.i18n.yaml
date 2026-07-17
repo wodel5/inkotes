@@ -157,6 +157,7 @@ editor:
     lineThickness: 线条粗细
     backgroundImageFit: 背景图像拟合
     backgroundPattern: 画纸类型
+    defaultColor: 默认
     import: 导入
     boxFits:
       fill: 拉伸

@@ -826,23 +826,23 @@ class EditorState extends State<Editor> {
     history.markLastChangeAsSaved();
   }
 
-  Future<void> saveToFile() async {
+  Future<void> saveToFile({bool force = false}) async {
     if (coreInfo.readOnly) return;
 
     switch (savingState.value) {
       case .saved:
-        // avoid saving if nothing has changed
-        return;
+        if (!force) return;
+        savingState.value = .waitingToSave;
+        break;
       case .saving:
-        // avoid saving if already saving
         log.warning('saveToFile() called while already saving');
         return;
       case .waitingToSave:
-        // continue
-        _delayedSaveTimer?.cancel();
-        savingState.value = .saving;
+        break;
     }
-    if (history.isCurrentStateSaved) return cancelAutosaveAndMarkSaved();
+    _delayedSaveTimer?.cancel();
+    savingState.value = .saving;
+    if (!force && history.isCurrentStateSaved) return cancelAutosaveAndMarkSaved();
 
     await _renameFileNow();
 
@@ -1462,12 +1462,7 @@ class EditorState extends State<Editor> {
     body = Stack(
       children: [
         Positioned.fill(child: canvas),
-        Positioned(
-          left: 0,
-          right: 0,
-          bottom: 0,
-          child: toolbar,
-        ),
+        Positioned(left: 0, right: 0, bottom: 0, child: toolbar),
         if (coreInfo.readOnly) readonlyBanner,
       ],
     );
@@ -1505,8 +1500,8 @@ class EditorState extends State<Editor> {
               opacity: _showAppBar ? 1.0 : 0.0,
               duration: const Duration(milliseconds: 200),
               child: AppBar(
-                  toolbarHeight: kToolbarHeight,
-            title: widget.customTitle != null
+                toolbarHeight: kToolbarHeight,
+                title: widget.customTitle != null
                     ? Text(widget.customTitle!)
                     : Form(
                         key: _filenameFormKey,
@@ -1533,7 +1528,11 @@ class EditorState extends State<Editor> {
                           _canvasGestureDetectorKey.currentState;
                       final isLocked = gestureDetector?.isZoomLocked ?? false;
                       return IconButton(
-                        icon: FaIcon(isLocked ? FontAwesomeIcons.lock : FontAwesomeIcons.unlockKeyhole),
+                        icon: FaIcon(
+                          isLocked
+                              ? FontAwesomeIcons.lock
+                              : FontAwesomeIcons.unlockKeyhole,
+                        ),
                         tooltip: isLocked
                             ? t.editor.hud.unlockZoom
                             : t.editor.hud.lockZoom,
@@ -1552,7 +1551,9 @@ class EditorState extends State<Editor> {
                       final isLocked =
                           gestureDetector?.singleFingerPanLock ?? false;
                       return IconButton(
-                        icon: Icon(isLocked ? Icons.swipe_vertical : Icons.swipe_up),
+                        icon: Icon(
+                          isLocked ? Icons.swipe_vertical : Icons.swipe_up,
+                        ),
                         tooltip: isLocked
                             ? t.editor.hud.unlockSingleFingerPan
                             : t.editor.hud.lockSingleFingerPan,
@@ -1594,9 +1595,7 @@ class EditorState extends State<Editor> {
                   Builder(
                     builder: (context) {
                       return IconButton(
-                        icon: const AdaptiveIcon(
-                          icon: Icons.more_vert,
-                        ),
+                        icon: const AdaptiveIcon(icon: Icons.more_vert),
                         onPressed: () {
                           _showMoreMenu(context);
                         },
@@ -1631,17 +1630,14 @@ class EditorState extends State<Editor> {
       },
       transitionBuilder: (context, animation, secondaryAnimation, child) {
         return SlideTransition(
-          position: Tween<Offset>(
-            begin: const Offset(0, -0.1),
-            end: Offset.zero,
-          ).animate(CurvedAnimation(
-            parent: animation,
-            curve: Curves.easeOutCubic,
-          )),
-          child: FadeTransition(
-            opacity: animation,
-            child: child,
-          ),
+          position:
+              Tween<Offset>(
+                begin: const Offset(0, -0.1),
+                end: Offset.zero,
+              ).animate(
+                CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
+              ),
+          child: FadeTransition(opacity: animation, child: child),
         );
       },
     );
@@ -1679,6 +1675,14 @@ class EditorState extends State<Editor> {
         );
         autosaveAfterDelay();
       }),
+      setBackgroundColor: (color) {
+        setState(() {
+          if (coreInfo.readOnly) return;
+          coreInfo.backgroundColor = color;
+          stows.lastBackgroundColor.value = color?.toARGB32();
+        });
+        saveToFile(force: true);
+      },
       setLineHeight: (lineHeight) => setState(() {
         if (coreInfo.readOnly) return;
         coreInfo.lineHeight = lineHeight;
@@ -1976,10 +1980,7 @@ class EditorState extends State<Editor> {
 }
 
 class _MoreMenuOverlay extends StatelessWidget {
-  const _MoreMenuOverlay({
-    required this.buttonRect,
-    required this.child,
-  });
+  const _MoreMenuOverlay({required this.buttonRect, required this.child});
 
   final Rect buttonRect;
   final Widget child;

@@ -711,6 +711,9 @@ class Translations$editor$menu$en {
 	/// en: 'Paper type'
 	String get backgroundPattern => 'Paper type';
 
+	/// en: 'Default'
+	String get defaultColor => 'Default';
+
 	/// en: 'Import'
 	String get import => 'Import';
 

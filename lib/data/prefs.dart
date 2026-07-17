@@ -151,6 +151,11 @@ class Stows {
     codec: const EnumCodec(CanvasBackgroundPattern.values),
     volatile: !_isOnMainIsolate,
   );
+  final lastBackgroundColor = PlainStow<int?>(
+    'lastBackgroundColor',
+    null,
+    volatile: !_isOnMainIsolate,
+  );
   static const defaultLineHeight = 40;
   static const defaultLineThickness = 3;
   final lastLineHeight = PlainStow(

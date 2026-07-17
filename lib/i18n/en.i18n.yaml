@@ -157,6 +157,7 @@ editor:
     lineThickness: Line thickness
     backgroundImageFit: Background image fit
     backgroundPattern: Paper type
+    defaultColor: Default
     import: Import
     boxFits:
       fill: Stretch
