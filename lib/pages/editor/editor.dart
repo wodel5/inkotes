@@ -514,6 +514,14 @@ class EditorState extends State<Editor> {
     history.canRedo = false;
 
     if (currentTool is Pen) {
+      // 检查起始点是否在画纸范围内
+      final pageSize = page.size;
+      if (position.dx < 0 ||
+          position.dx > pageSize.width ||
+          position.dy < 0 ||
+          position.dy > pageSize.height) {
+        return; // 起始点在画纸外，不创建笔画
+      }
       (currentTool as Pen).onDragStart(
         position,
         page,
@@ -559,7 +567,39 @@ class EditorState extends State<Editor> {
     final offset = position - previousPosition;
 
     if (currentTool is Pen) {
-      (currentTool as Pen).onDragUpdate(position, currentPressure);
+      final pageSize = page.size;
+      // 检查点是否在画纸范围内
+      if (position.dx >= 0 &&
+          position.dx <= pageSize.width &&
+          position.dy >= 0 &&
+          position.dy <= pageSize.height) {
+        // 如果当前没有笔画，创建新笔画
+        if (Pen.currentStroke == null) {
+          (currentTool as Pen).onDragStart(
+            position,
+            page,
+            dragPageIndex!,
+            currentPressure,
+          );
+          setState(() {}); // 触发重建，让 Canvas 拿到新的 currentStroke
+        }
+        (currentTool as Pen).onDragUpdate(position, currentPressure);
+      } else {
+        // 点超出画纸范围，结束当前笔画
+        final stroke = (currentTool as Pen).onDragEnd();
+        if (stroke != null) {
+          page.insertStroke(stroke);
+          history.recordChange(
+            EditorHistoryItem(
+              type: .draw,
+              pageIndex: dragPageIndex!,
+              strokes: [stroke],
+              images: const [],
+            ),
+          );
+        }
+        autosaveAfterDelay();
+      }
       page.redrawStrokes();
     } else if (currentTool is Eraser) {
       for (final stroke in (currentTool as Eraser).checkForOverlappingStrokes(
@@ -598,6 +638,7 @@ class EditorState extends State<Editor> {
     setState(() {
       if (currentTool is Pen) {
         final newStroke = (currentTool as Pen).onDragEnd();
+        // 如果在onDrawUpdate中已经结束了笔画（点超出画纸范围），newStroke会是null
         if (newStroke == null) return;
         if (newStroke.isEmpty) return;
 
