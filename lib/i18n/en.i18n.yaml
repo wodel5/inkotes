@@ -155,7 +155,6 @@ editor:
     deletePage: Delete page
     lineHeight: Line height
     lineThickness: Line thickness
-    lineThicknessDescription: Background line thickness
     backgroundImageFit: Background image fit
     backgroundPattern: Background pattern
     import: Import

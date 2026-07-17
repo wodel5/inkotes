@@ -1407,6 +1407,8 @@ class EditorState extends State<Editor> {
           redo: redo,
           isRedoPossible: history.canRedo,
           pickPhoto: _pickPhotos,
+          importPdf: importPdf,
+          canRasterPdf: Editor.canRasterPdf,
           paste: paste,
           exportAsSba: exportAsSba,
           exportAsPdf: exportAsPdf,

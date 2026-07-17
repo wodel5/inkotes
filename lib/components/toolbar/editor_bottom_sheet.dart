@@ -73,7 +73,7 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
         child: ListView(
           shrinkWrap: true,
           children: [
-            const SizedBox(height: 16),
+            const SizedBox(height: 8),
             Row(
               children: [
                 Text(
@@ -230,12 +230,13 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
               ),
             ),
             const SizedBox(height: 16),
-            Text(
-              t.editor.menu.lineHeight,
-              style: TextTheme.of(context).titleMedium,
-            ),
             Row(
               children: [
+                Text(
+                  t.editor.menu.lineHeight,
+                  style: TextTheme.of(context).titleMedium,
+                ),
+                const SizedBox(width: 12),
                 Text(widget.coreInfo.lineHeight.toString()),
                 Expanded(
                   child: Slider(
@@ -252,16 +253,13 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
                 ),
               ],
             ),
-            Text(
-              t.editor.menu.lineThickness,
-              style: TextTheme.of(context).titleMedium,
-            ),
-            Text(
-              t.editor.menu.lineThicknessDescription,
-              style: TextTheme.of(context).bodyMedium,
-            ),
             Row(
               children: [
+                Text(
+                  t.editor.menu.lineThickness,
+                  style: TextTheme.of(context).titleMedium,
+                ),
+                const SizedBox(width: 12),
                 Text(widget.coreInfo.lineThickness.toString()),
                 Expanded(
                   child: Slider(
@@ -279,36 +277,6 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
               ],
             ),
             const SizedBox(height: 16),
-            Text(
-              t.editor.menu.import,
-              style: TextTheme.of(context).titleMedium,
-            ),
-            Wrap(
-              spacing: 8,
-              children: [
-                ElevatedButton(
-                  onPressed: () async {
-                    final photosPicked = await widget.pickPhotos();
-                    if (photosPicked > 0) {
-                      if (!context.mounted) return;
-                      Navigator.pop(context);
-                    }
-                  },
-                  child: Text(t.editor.toolbar.photo),
-                ),
-                if (widget.canRasterPdf)
-                  ElevatedButton(
-                    onPressed: () async {
-                      final pdfImported = await widget.importPdf();
-                      if (pdfImported) {
-                        if (!context.mounted) return;
-                        Navigator.pop(context);
-                      }
-                    },
-                    child: const Text('PDF'),
-                  ),
-              ],
-            ),
           ],
         ),
       ),

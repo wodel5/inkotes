@@ -705,9 +705,6 @@ class Translations$editor$menu$en {
 	/// en: 'Line thickness'
 	String get lineThickness => 'Line thickness';
 
-	/// en: 'Background line thickness'
-	String get lineThicknessDescription => 'Background line thickness';
-
 	/// en: 'Background image fit'
 	String get backgroundImageFit => 'Background image fit';
 

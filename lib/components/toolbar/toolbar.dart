@@ -35,6 +35,8 @@ class Toolbar extends StatefulWidget {
     required this.redo,
     required this.isRedoPossible,
     required this.pickPhoto,
+    required this.importPdf,
+    required this.canRasterPdf,
     required this.paste,
     required this.duplicateSelection,
     required this.deleteSelection,
@@ -55,6 +57,8 @@ class Toolbar extends StatefulWidget {
   final bool isRedoPossible;
 
   final VoidCallback pickPhoto;
+  final Future<bool> Function() importPdf;
+  final bool canRasterPdf;
 
   final VoidCallback paste;
 
@@ -344,6 +348,16 @@ class _ToolbarState extends State<Toolbar> {
                       },
                       child: const FaIcon(FontAwesomeIcons.solidImage, size: 18),
                     ),
+                    if (widget.canRasterPdf)
+                      _DockButton(
+                        enabled: !widget.readOnly,
+                        onPressed: () async {
+                          showColorOptions.value = false;
+                          showExportOptions.value = false;
+                          await widget.importPdf();
+                        },
+                        child: const FaIcon(FontAwesomeIcons.solidFilePdf, size: 18),
+                      ),
                     _DockDivider(),
                     _DockButton(
                       selected: stows.editorFingerDrawing.value,
