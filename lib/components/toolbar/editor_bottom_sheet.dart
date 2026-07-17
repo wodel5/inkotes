@@ -74,21 +74,24 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
           shrinkWrap: true,
           children: [
             const SizedBox(height: 16),
-            Wrap(
-              spacing: 8,
+            Row(
               children: [
-                ElevatedButton(
-                  onPressed: widget.coreInfo.isNotEmpty
-                      ? () {
-                          widget.clearPage();
-                          Navigator.pop(context);
-                        }
-                      : null,
-                  child: Wrap(
-                    children: [
-                      const Icon(Icons.cleaning_services),
-                      const SizedBox(width: 8),
-                      Text(
+                Text(
+                  t.editor.more,
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                const Spacer(),
+                Wrap(
+                  spacing: 8,
+                  children: [
+                    TextButton(
+                      onPressed: widget.coreInfo.isNotEmpty
+                          ? () {
+                              widget.clearPage();
+                              Navigator.pop(context);
+                            }
+                          : null,
+                      child: Text(
                         t.editor.menu.clearPage(
                           page: widget.currentPageIndex == null
                               ? '?'
@@ -96,23 +99,17 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
                           totalPages: widget.coreInfo.pages.length,
                         ),
                       ),
-                    ],
-                  ),
-                ),
-                ElevatedButton(
-                  onPressed: widget.coreInfo.isNotEmpty
-                      ? () {
-                          widget.clearAllPages();
-                          Navigator.pop(context);
-                        }
-                      : null,
-                  child: Wrap(
-                    children: [
-                      const Icon(Icons.cleaning_services),
-                      const SizedBox(width: 8),
-                      Text(t.editor.menu.clearAllPages),
-                    ],
-                  ),
+                    ),
+                    TextButton(
+                      onPressed: widget.coreInfo.isNotEmpty
+                          ? () {
+                              widget.clearAllPages();
+                              Navigator.pop(context);
+                            }
+                          : null,
+                      child: Text(t.editor.menu.clearAllPages),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -187,48 +184,49 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
             ),
             SizedBox(
               height: previewSize.height,
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                itemCount: CanvasBackgroundPattern.values.length,
-                separatorBuilder: (_, _) => const SizedBox(width: 8),
-                itemBuilder: (context, index) {
-                  final backgroundPattern =
-                      CanvasBackgroundPattern.values[index];
-                  return InkWell(
-                    borderRadius: const .all(.circular(8)),
-                    onTap: () => setState(() {
-                      widget.setBackgroundPattern(backgroundPattern);
-                    }),
-                    child: Stack(
-                      children: [
-                        CanvasBackgroundPreview(
-                          selected:
-                              widget.coreInfo.backgroundPattern ==
-                              backgroundPattern,
-                          invert: widget.invert,
-                          backgroundColor:
-                              widget.coreInfo.backgroundColor ??
-                              InnerCanvas.defaultBackgroundColor,
-                          backgroundPattern: backgroundPattern,
-                          backgroundImage: null, // focus on background pattern
-                          pageSize: pageSize,
-                          lineHeight: widget.coreInfo.lineHeight,
-                          lineThickness: widget.coreInfo.lineThickness,
-                        ),
-                        Positioned(
-                          bottom: previewSize.height * 0.1,
-                          left: 0,
-                          right: 0,
-                          child: Center(
-                            child: _PermanentTooltip(
-                              text: backgroundPattern.localizedName,
+              child: Row(
+                children: [
+                  for (final backgroundPattern in CanvasBackgroundPattern.values) ...[
+                    if (backgroundPattern != CanvasBackgroundPattern.values.first)
+                      const SizedBox(width: 8),
+                    Expanded(
+                      child: InkWell(
+                        borderRadius: const .all(.circular(8)),
+                        onTap: () => setState(() {
+                          widget.setBackgroundPattern(backgroundPattern);
+                        }),
+                        child: Stack(
+                          children: [
+                            CanvasBackgroundPreview(
+                              selected:
+                                  widget.coreInfo.backgroundPattern ==
+                                  backgroundPattern,
+                              invert: widget.invert,
+                              backgroundColor:
+                                  widget.coreInfo.backgroundColor ??
+                                  InnerCanvas.defaultBackgroundColor,
+                              backgroundPattern: backgroundPattern,
+                              backgroundImage: null,
+                              pageSize: pageSize,
+                              lineHeight: widget.coreInfo.lineHeight,
+                              lineThickness: widget.coreInfo.lineThickness,
                             ),
-                          ),
+                            Positioned(
+                              bottom: previewSize.height * 0.1,
+                              left: 0,
+                              right: 0,
+                              child: Center(
+                                child: _PermanentTooltip(
+                                  text: backgroundPattern.localizedName,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
-                  );
-                },
+                  ],
+                ],
               ),
             ),
             const SizedBox(height: 16),
@@ -249,9 +247,11 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
                     min: 20,
                     max: 100,
                     divisions: 8,
-                    onChanged: (double value) => setState(() {
-                      widget.setLineHeight(value.toInt());
-                    }),
+                    onChanged: widget.coreInfo.backgroundPattern == CanvasBackgroundPattern.none
+                        ? null
+                        : (double value) => setState(() {
+                              widget.setLineHeight(value.toInt());
+                            }),
                   ),
                 ),
               ],
@@ -273,9 +273,11 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
                     min: 1,
                     max: 5,
                     divisions: 4,
-                    onChanged: (double value) => setState(() {
-                      widget.setLineThickness(value.toInt());
-                    }),
+                    onChanged: widget.coreInfo.backgroundPattern == CanvasBackgroundPattern.none
+                        ? null
+                        : (double value) => setState(() {
+                              widget.setLineThickness(value.toInt());
+                            }),
                   ),
                 ),
               ],

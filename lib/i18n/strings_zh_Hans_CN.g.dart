@@ -112,6 +112,7 @@ class _Translations$editor$zh_Hans_CN extends Translations$editor$en {
 	@override late final _Translations$editor$quill$zh_Hans_CN quill = _Translations$editor$quill$zh_Hans_CN._(_root);
 	@override late final _Translations$editor$hud$zh_Hans_CN hud = _Translations$editor$hud$zh_Hans_CN._(_root);
 	@override String get pages => '页面管理';
+	@override String get more => '更多';
 	@override String get untitled => '未命名';
 	@override String get needsToSaveBeforeExiting => '正在保存您的更改... 完成后您可以安全地退出编辑器';
 }
@@ -510,12 +511,6 @@ class _Translations$editor$menu$bgPatterns$zh_Hans_CN extends Translations$edito
 
 	// Translations
 	@override String get none => '空白';
-	@override String get college => 'College-ruled';
-	@override String get collegeRtl => 'College-ruled（反转）';
 	@override String get lined => '横线';
-	@override String get grid => '网格';
 	@override String get dots => '点';
-	@override String get staffs => '五线谱';
-	@override String get tablature => '绘画';
-	@override String get cornell => '康奈尔';
 }

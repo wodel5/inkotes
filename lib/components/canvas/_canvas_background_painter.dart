@@ -85,8 +85,6 @@ class CanvasBackgroundPainter extends CustomPainter {
     switch (pattern) {
       case .none:
         return;
-      case .collegeLtr:
-      case .collegeRtl:
       case .lined:
         // horizontal lines
         for (double y = lineHeight * 2; y < size.height; y += lineHeight) {
@@ -96,105 +94,11 @@ class CanvasBackgroundPainter extends CustomPainter {
             isLine: true,
           );
         }
-
-        // vertical line
-        if (pattern == .collegeLtr) {
-          yield PatternElement(
-            Offset(lineHeight * 2, 0),
-            Offset(lineHeight * 2, size.height),
-            isLine: true,
-            secondaryColor: true,
-          );
-        } else if (pattern == .collegeRtl) {
-          yield PatternElement(
-            Offset(size.width - lineHeight * 2, 0),
-            Offset(size.width - lineHeight * 2, size.height),
-            isLine: true,
-            secondaryColor: true,
-          );
-        }
-      case .grid:
-        for (double y = lineHeight * 2; y < size.height; y += lineHeight) {
-          yield PatternElement(
-            Offset(0, y),
-            Offset(size.width, y),
-            isLine: true,
-          );
-        }
-        for (double x = 0; x < size.width; x += lineHeight) {
-          yield PatternElement(
-            Offset(x, lineHeight * 2),
-            Offset(x, size.height),
-            isLine: true,
-          );
-        }
       case .dots:
         for (double y = lineHeight * 2; y <= size.height; y += lineHeight) {
           for (double x = 0; x <= size.width; x += lineHeight) {
             yield PatternElement(Offset(x, y), Offset(x, y), isLine: false);
           }
-        }
-      case .staffs:
-      case .tablature:
-        final staffSpaces = pattern == .staffs ? 4 : 5;
-        final staffHeight = lineHeight * staffSpaces;
-        final staffSpacing = lineHeight * 3;
-
-        for (
-          double topOfStaff = staffSpacing.toDouble() - lineHeight;
-          topOfStaff + staffHeight < size.height;
-          topOfStaff += staffHeight + staffSpacing
-        ) {
-          // horizontal lines
-          for (int line = 0; line < staffSpaces + 1; line++) {
-            yield PatternElement(
-              Offset(lineHeight.toDouble(), topOfStaff + lineHeight * line),
-              Offset(size.width - lineHeight, topOfStaff + lineHeight * line),
-              isLine: true,
-            );
-          }
-
-          // vertical lines on either side
-          yield PatternElement(
-            Offset(lineHeight.toDouble(), topOfStaff),
-            Offset(lineHeight.toDouble(), topOfStaff + staffHeight),
-            isLine: true,
-          );
-          yield PatternElement(
-            Offset(size.width - lineHeight, topOfStaff),
-            Offset(size.width - lineHeight, topOfStaff + staffHeight),
-            isLine: true,
-          );
-        }
-      case .cornell:
-        // half-width line for name field
-        yield PatternElement(
-          Offset(lineHeight.toDouble(), lineHeight * 2),
-          Offset(size.width / 2 - lineHeight / 2, lineHeight * 2),
-          isLine: true,
-        );
-        // half-width line for date field
-        yield PatternElement(
-          Offset(size.width / 2 + lineHeight / 2, lineHeight * 2),
-          Offset(size.width - lineHeight, lineHeight * 2),
-          isLine: true,
-        );
-        // full-width line for title field
-        yield PatternElement(
-          Offset(lineHeight.toDouble(), lineHeight * 3),
-          Offset(size.width - lineHeight, lineHeight * 3),
-          isLine: true,
-        );
-
-        // lines for main notes
-        final left = size.width * 0.35; // 35% width reserved for cues column
-        final bottom = size.height * 0.7; // 30% height reserved for summary
-        for (double y = lineHeight * 5; y < bottom; y += lineHeight) {
-          yield PatternElement(
-            Offset(left, y),
-            Offset(size.width - lineHeight, y),
-            isLine: true,
-          );
         }
     }
   }

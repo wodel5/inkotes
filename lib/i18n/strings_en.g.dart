@@ -144,6 +144,9 @@ class Translations$editor$en {
 	/// en: 'Page Management'
 	String get pages => 'Page Management';
 
+	/// en: 'More'
+	String get more => 'More';
+
 	/// en: 'Untitled'
 	String get untitled => 'Untitled';
 
@@ -825,27 +828,9 @@ class Translations$editor$menu$bgPatterns$en {
 	/// en: 'Blank'
 	String get none => 'Blank';
 
-	/// en: 'College-ruled'
-	String get college => 'College-ruled';
-
-	/// en: 'College-ruled (Reverse)'
-	String get collegeRtl => 'College-ruled (Reverse)';
-
 	/// en: 'Lined'
 	String get lined => 'Lined';
 
-	/// en: 'Grid'
-	String get grid => 'Grid';
-
 	/// en: 'Dots'
 	String get dots => 'Dots';
-
-	/// en: 'Staffs'
-	String get staffs => 'Staffs';
-
-	/// en: 'Tablature'
-	String get tablature => 'Tablature';
-
-	/// en: 'Cornell'
-	String get cornell => 'Cornell';
 }

@@ -166,14 +166,8 @@ editor:
       contain: Contain
     bgPatterns:
       none: Blank
-      college: College-ruled
-      collegeRtl: College-ruled (Reverse)
       lined: Lined
-      grid: Grid
       dots: Dots
-      staffs: Staffs
-      tablature: Tablature
-      cornell: Cornell
   readOnlyBanner:
     title: Read-only mode
     watchingServer: You are currently watching for updates on the server. Editing is disabled in this mode.
@@ -192,5 +186,6 @@ editor:
     unlockAxisAlignedPan: Unlock panning to horizontal or vertical
     lockAxisAlignedPan: Lock panning to horizontal or vertical
   pages: Page Management
+  more: More
   untitled: Untitled
   needsToSaveBeforeExiting: Saving your changes... You can safely exit the editor when it's done

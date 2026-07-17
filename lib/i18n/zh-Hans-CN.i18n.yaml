@@ -166,14 +166,8 @@ editor:
       contain: 包含
     bgPatterns:
       none: 空白
-      college: College-ruled
-      collegeRtl: College-ruled（反转）
       lined: 横线
-      grid: 网格
       dots: 点
-      staffs: 五线谱
-      tablature: 绘画
-      cornell: 康奈尔
   readOnlyBanner:
     title: 只读模式
     watchingServer: 当前正在监视服务器的更新，此模式下编辑功能已禁用。
@@ -192,5 +186,6 @@ editor:
     unlockAxisAlignedPan: 解锁水平或垂直平移
     lockAxisAlignedPan: 锁定水平或垂直平移
   pages: 页面管理
+  more: 更多
   untitled: 未命名
   needsToSaveBeforeExiting: 正在保存您的更改... 完成后您可以安全地退出编辑器
