@@ -148,7 +148,7 @@ editor:
     delete: Delete
     duplicate: Duplicate
   menu:
-    clearPage: Clear page $page/$totalPages
+    clearPage: Clear current page $page/$totalPages
     clearAllPages: Clear all pages
     insertPage: Insert page below
     duplicatePage: Duplicate page
@@ -156,7 +156,7 @@ editor:
     lineHeight: Line height
     lineThickness: Line thickness
     backgroundImageFit: Background image fit
-    backgroundPattern: Background pattern
+    backgroundPattern: Paper type
     import: Import
     boxFits:
       fill: Stretch

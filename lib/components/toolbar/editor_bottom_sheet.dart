@@ -182,6 +182,7 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
               t.editor.menu.backgroundPattern,
               style: TextTheme.of(context).titleMedium,
             ),
+            const SizedBox(height: 8),
             SizedBox(
               height: previewSize.height,
               child: Row(

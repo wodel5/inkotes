@@ -684,8 +684,8 @@ class Translations$editor$menu$en {
 
 	// Translations
 
-	/// en: 'Clear page $page/$totalPages'
-	String clearPage({required Object page, required Object totalPages}) => 'Clear page ${page}/${totalPages}';
+	/// en: 'Clear current page $page/$totalPages'
+	String clearPage({required Object page, required Object totalPages}) => 'Clear current page ${page}/${totalPages}';
 
 	/// en: 'Clear all pages'
 	String get clearAllPages => 'Clear all pages';
@@ -708,8 +708,8 @@ class Translations$editor$menu$en {
 	/// en: 'Background image fit'
 	String get backgroundImageFit => 'Background image fit';
 
-	/// en: 'Background pattern'
-	String get backgroundPattern => 'Background pattern';
+	/// en: 'Paper type'
+	String get backgroundPattern => 'Paper type';
 
 	/// en: 'Import'
 	String get import => 'Import';

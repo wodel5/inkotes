@@ -148,7 +148,7 @@ editor:
     delete: 删除
     duplicate: 复制
   menu:
-    clearPage: 清除页面 $page/$totalPages
+    clearPage: 清除当前页面 $page/$totalPages
     clearAllPages: 清除全部页面
     insertPage: 在下方插入页面
     duplicatePage: 复制页面
@@ -156,7 +156,7 @@ editor:
     lineHeight: 行高
     lineThickness: 线条粗细
     backgroundImageFit: 背景图像拟合
-    backgroundPattern: 背景图案
+    backgroundPattern: 画纸类型
     import: 导入
     boxFits:
       fill: 拉伸
