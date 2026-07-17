@@ -7,7 +7,6 @@ import 'package:foledge/components/canvas/_circle_stroke.dart';
 import 'package:foledge/components/canvas/_rectangle_stroke.dart';
 import 'package:foledge/components/canvas/_stroke.dart';
 import 'package:foledge/data/editor/page.dart';
-import 'package:foledge/data/extensions/color_extensions.dart';
 import 'package:foledge/data/tools/highlighter.dart';
 import 'package:foledge/data/tools/laser_pointer.dart';
 import 'package:foledge/data/tools/select.dart';
@@ -15,7 +14,6 @@ import 'package:foledge/data/tools/select.dart';
 class CanvasPainter extends CustomPainter {
   const CanvasPainter({
     super.repaint,
-    this.invert = false,
     required this.strokes,
     required this.laserStrokes,
     required this.currentStroke,
@@ -29,7 +27,6 @@ class CanvasPainter extends CustomPainter {
     required this.defaultTextStyle,
   });
 
-  final bool invert;
   final List<Stroke> strokes;
   final List<LaserStroke> laserStrokes;
   final Stroke? currentStroke;
@@ -62,7 +59,6 @@ class CanvasPainter extends CustomPainter {
         // Laser strokes are always fading out, so always repaint if present
         (laserStrokes.isNotEmpty || oldDelegate.laserStrokes.isNotEmpty) ||
         // Check for any other changes
-        invert != oldDelegate.invert ||
         strokes.length != oldDelegate.strokes.length ||
         currentSelection != oldDelegate.currentSelection ||
         primaryColor != oldDelegate.primaryColor ||
@@ -75,7 +71,7 @@ class CanvasPainter extends CustomPainter {
 
   void _drawHighlighterStrokes(Canvas canvas, Rect canvasRect) {
     final layerPaint = Paint()
-      ..blendMode = invert ? BlendMode.lighten : BlendMode.darken
+      ..blendMode = BlendMode.darken
       ..color = Colors.white.withAlpha(Highlighter.alpha);
     bool needToRestoreCanvasLayer = false;
 
@@ -83,7 +79,7 @@ class CanvasPainter extends CustomPainter {
     for (final stroke in strokes) {
       if (stroke.toolId != .highlighter) continue;
 
-      final color = stroke.color.withValues(alpha: 1).withInversion(invert);
+      final color = stroke.color.withValues(alpha: 1);
 
       if (color != lastColor) {
         // new layer for each color
@@ -106,7 +102,7 @@ class CanvasPainter extends CustomPainter {
     for (final stroke in strokes) {
       if (stroke.toolId == .highlighter) continue;
 
-      var color = stroke.color.withInversion(invert);
+      var color = stroke.color;
       if (currentSelection?.strokes.contains(stroke) ?? false) {
         color = Color.lerp(color, primaryColor, 0.5)!;
       }
@@ -124,8 +120,7 @@ class CanvasPainter extends CustomPainter {
           paint.maskFilter = _getPencilMaskFilter(stroke.options.size);
         } else {
           // Fast imitation of pencil when zoomed out
-          final background = invert ? Colors.black : Colors.white;
-          paint.color = Color.lerp(background, color, 0.6)!;
+          paint.color = Color.lerp(Colors.white, color, 0.6)!;
         }
       }
 
@@ -155,7 +150,7 @@ class CanvasPainter extends CustomPainter {
       return _drawLaserStroke(canvas, currentStroke as LaserStroke);
     }
 
-    final color = currentStroke!.color.withInversion(invert);
+    final color = currentStroke!.color;
     final paint = Paint();
 
     paint.color = color;
@@ -178,7 +173,7 @@ class CanvasPainter extends CustomPainter {
     canvas.drawPath(
       _selectPath(stroke),
       Paint()
-        ..color = stroke.color.withInversion(invert)
+        ..color = stroke.color
         ..maskFilter = MaskFilter.blur(
           BlurStyle.solid,
           stroke.options.size * 0.4,
@@ -223,7 +218,7 @@ class CanvasPainter extends CustomPainter {
     final builder = ui.ParagraphBuilder(style)
       ..pushStyle(
         ui.TextStyle(
-          color: Colors.black.withInversion(invert).withValues(alpha: 0.5),
+          color: Colors.black.withValues(alpha: 0.5),
           fontSize: _pageIndicatorFontSize,
           fontFamily: defaultTextStyle.fontFamily,
           fontFamilyFallback: defaultTextStyle.fontFamilyFallback,

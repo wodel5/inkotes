@@ -14,7 +14,6 @@ import 'package:sbn/canvas_background_pattern.dart';
 class EditorBottomSheet extends StatefulWidget {
   const EditorBottomSheet({
     super.key,
-    required this.invert,
     required this.coreInfo,
     required this.currentPageIndex,
     required this.setBackgroundPattern,
@@ -30,7 +29,6 @@ class EditorBottomSheet extends StatefulWidget {
     required this.canRasterPdf,
   });
 
-  final bool invert;
   final EditorCoreInfo coreInfo;
   final int? currentPageIndex;
   final void Function(CanvasBackgroundPattern) setBackgroundPattern;
@@ -137,7 +135,6 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
                         children: [
                           CanvasBackgroundPreview(
                             selected: backgroundImage.backgroundFit == boxFit,
-                            invert: widget.invert,
                             backgroundColor:
                                 widget.coreInfo.backgroundColor ??
                                 InnerCanvas.defaultBackgroundColor,
@@ -202,7 +199,6 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
                               selected:
                                   widget.coreInfo.backgroundPattern ==
                                   backgroundPattern,
-                              invert: widget.invert,
                               backgroundColor:
                                   widget.coreInfo.backgroundColor ??
                                   InnerCanvas.defaultBackgroundColor,

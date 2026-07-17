@@ -13,7 +13,6 @@ import 'package:foledge/components/toolbar/export_bar.dart';
 import 'package:foledge/components/toolbar/pen_modal.dart';
 import 'package:foledge/components/toolbar/selection_bar.dart';
 import 'package:foledge/components/toolbar/size_picker.dart';
-import 'package:foledge/data/extensions/color_extensions.dart';
 import 'package:foledge/data/prefs.dart';
 import 'package:foledge/data/tools/_tool.dart';
 import 'package:foledge/data/tools/eraser.dart';
@@ -144,9 +143,6 @@ class _ToolbarState extends State<Toolbar> {
   Widget build(BuildContext context) {
     final colorScheme = ColorScheme.of(context);
 
-    final brightness = Theme.brightnessOf(context);
-    final invert = brightness == .dark;
-
     final currentColor = switch (widget.currentTool) {
       final Pen pen => pen.color,
       final Select select => select.getDominantStrokeColor(),
@@ -222,7 +218,6 @@ class _ToolbarState extends State<Toolbar> {
           axis: Axis.horizontal,
           setColor: widget.setColor,
           currentColor: currentColor,
-          invert: invert,
         ),
       ),
       Center(
@@ -303,7 +298,7 @@ class _ToolbarState extends State<Toolbar> {
                       onPressed: toggleColorOptions,
                       child: currentColor == null
                           ? const FaIcon(FontAwesomeIcons.palette, size: 18)
-                          : FaIcon(FontAwesomeIcons.palette, size: 18, color: currentColor.withInversion(invert)),
+                          : FaIcon(FontAwesomeIcons.palette, size: 18, color: currentColor),
                     ),
                     _DockDivider(),
                     _DockButton(

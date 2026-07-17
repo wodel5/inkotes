@@ -4,8 +4,6 @@ import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:foledge/components/canvas/_stroke.dart';
 import 'package:foledge/components/canvas/inner_canvas.dart';
-import 'package:foledge/components/canvas/invert_widget.dart';
-import 'package:foledge/data/extensions/color_extensions.dart';
 import 'package:foledge/data/file_manager/file_manager.dart';
 import 'package:foledge/data/is_this_a_test.dart';
 import 'package:foledge/data/routes.dart';
@@ -96,7 +94,6 @@ class _PreviewCardState extends State<PreviewCard> {
     final transitionDuration = Duration(
       milliseconds: disableAnimations ? 0 : 300,
     );
-    final invert = theme.brightness == .dark;
 
     final Widget card = MouseRegion(
       cursor: SystemMouseCursors.click,
@@ -115,9 +112,7 @@ class _PreviewCardState extends State<PreviewCard> {
                   children: [
                     Positioned.fill(
                       child: ColoredBox(
-                        color: InnerCanvas.defaultBackgroundColor.withInversion(
-                          invert,
-                        ),
+                        color: InnerCanvas.defaultBackgroundColor,
                       ),
                     ),
                     ListenableBuilder(
@@ -130,16 +125,13 @@ class _PreviewCardState extends State<PreviewCard> {
                             minWidth: double.infinity,
                             minHeight: 100,
                           ),
-                          child: InvertWidget(
-                            invert: invert,
-                            child: thumbnail.doesImageExist
-                                ? Image(
-                                    image: thumbnail.image!,
-                                    alignment: .topCenter,
-                                    fit: .cover,
-                                  )
-                                : const _FallbackThumbnail(),
-                          ),
+                          child: thumbnail.doesImageExist
+                              ? Image(
+                                  image: thumbnail.image!,
+                                  alignment: .topCenter,
+                                  fit: .cover,
+                                )
+                              : const _FallbackThumbnail(),
                         ),
                       ),
                     ),

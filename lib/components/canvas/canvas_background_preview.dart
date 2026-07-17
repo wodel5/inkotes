@@ -10,7 +10,6 @@ class CanvasBackgroundPreview extends StatelessWidget {
   const CanvasBackgroundPreview({
     super.key,
     required this.selected,
-    required this.invert,
     required this.backgroundColor,
     required this.backgroundPattern,
     required this.backgroundImage,
@@ -21,7 +20,6 @@ class CanvasBackgroundPreview extends StatelessWidget {
   });
 
   final bool selected;
-  final bool invert;
   final Color? backgroundColor;
   final CanvasBackgroundPattern backgroundPattern;
   final EditorImage? backgroundImage;
@@ -60,7 +58,6 @@ class CanvasBackgroundPreview extends StatelessWidget {
               child: CustomPaint(
                 size: canvasSize,
                 painter: CanvasBackgroundPainter(
-                  invert: invert,
                   backgroundColor: () {
                     if (backgroundImage != null) {
                       return Colors.white;

@@ -1,11 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:foledge/data/extensions/color_extensions.dart';
 import 'package:sbn/canvas_background_pattern.dart';
 
 class CanvasBackgroundPainter extends CustomPainter {
   const CanvasBackgroundPainter({
-    required this.invert,
     required this.backgroundColor,
     this.backgroundPattern = .none,
     required this.lineHeight,
@@ -15,7 +13,6 @@ class CanvasBackgroundPainter extends CustomPainter {
     this.preview = false,
   });
 
-  final bool invert;
   final Color backgroundColor;
 
   /// The pattern to use for the background. See [CanvasBackgroundPatterns].
@@ -34,7 +31,7 @@ class CanvasBackgroundPainter extends CustomPainter {
     final canvasRect = Offset.zero & size;
     final paint = Paint();
 
-    paint.color = backgroundColor.withInversion(invert);
+    paint.color = backgroundColor;
     canvas.drawRect(canvasRect, paint);
 
     paint.strokeWidth = lineThickness.toDouble();
@@ -70,7 +67,6 @@ class CanvasBackgroundPainter extends CustomPainter {
   @override
   bool shouldRepaint(CanvasBackgroundPainter oldDelegate) =>
       kDebugMode ||
-      oldDelegate.invert != invert ||
       oldDelegate.backgroundColor != backgroundColor ||
       oldDelegate.backgroundPattern != backgroundPattern ||
       oldDelegate.lineHeight != lineHeight ||

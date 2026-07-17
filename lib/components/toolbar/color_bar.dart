@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:foledge/components/theming/adaptive_alert_dialog.dart';
 import 'package:foledge/components/toolbar/color_option.dart';
-import 'package:foledge/data/extensions/color_extensions.dart';
 import 'package:foledge/data/prefs.dart';
 import 'package:foledge/i18n/strings.g.dart';
 
@@ -16,13 +15,11 @@ class ColorBar extends StatefulWidget {
     required this.axis,
     required this.setColor,
     required this.currentColor,
-    required this.invert,
   });
 
   final Axis axis;
   final ValueChanged<Color> setColor;
   final Color? currentColor;
-  final bool invert;
 
   static List<NamedColor> get colorPresets => normalColorOptions;
   static final List<NamedColor> normalColorOptions = [
@@ -186,7 +183,7 @@ class _ColorBarState extends State<ColorBar> {
               decoration: BoxDecoration(
                 color: Color(
                   int.parse(colorString),
-                ).withInversion(widget.invert),
+                ),
                 shape: .circle,
                 border: Border.all(
                   color: colorScheme.onSurface.withValues(alpha: 0.2),
@@ -212,7 +209,7 @@ class _ColorBarState extends State<ColorBar> {
           tooltip: ColorBar.findColorName(Color(int.parse(colorString))),
           child: DecoratedBox(
             decoration: BoxDecoration(
-              color: Color(int.parse(colorString)).withInversion(widget.invert),
+              color: Color(int.parse(colorString)),
               shape: .circle,
               border: Border.all(
                 color: colorScheme.onSurface.withValues(alpha: 0.2),
@@ -273,7 +270,7 @@ class _ColorBarState extends State<ColorBar> {
           tooltip: namedColor.name,
           child: DecoratedBox(
             decoration: BoxDecoration(
-              color: namedColor.color.withInversion(widget.invert),
+              color: namedColor.color,
               shape: .circle,
               border: Border.all(
                 color: colorScheme.onSurface.withValues(alpha: 0.2),
@@ -301,7 +298,7 @@ class _ColorBarState extends State<ColorBar> {
       builder: (BuildContext context) => _colorPickerDialog(context),
     );
     if (confirmChange ?? false) {
-      widget.setColor(pickedColor.withInversion(widget.invert));
+      widget.setColor(pickedColor);
     }
   }
 

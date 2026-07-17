@@ -55,8 +55,6 @@ class _InnerCanvasState extends State<InnerCanvas> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final brightness = theme.brightness;
-    final invert = brightness == .dark;
     final Color backgroundColor =
         widget.coreInfo.backgroundColor ?? InnerCanvas.defaultBackgroundColor;
 
@@ -69,7 +67,6 @@ class _InnerCanvasState extends State<InnerCanvas> {
     return RepaintBoundary(
       child: CustomPaint(
         painter: CanvasBackgroundPainter(
-          invert: invert,
           backgroundColor: () {
             if (page.backgroundImage != null) {
               return Colors.white;
@@ -91,7 +88,6 @@ class _InnerCanvasState extends State<InnerCanvas> {
         ),
         foregroundPainter: CanvasPainter(
           repaint: widget.redrawPageListenable,
-          invert: invert,
           strokes: page.strokes,
           laserStrokes: page.laserStrokes,
           currentStroke: widget.currentStroke,
