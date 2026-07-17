@@ -60,7 +60,7 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
 
     final previewSize = Size(
       CanvasBackgroundPreview.fixedWidth,
-      pageSize.height / pageSize.width * CanvasBackgroundPreview.fixedWidth,
+      CanvasBackgroundPreview.fixedWidth * 1.4,
     );
 
     return ScrollConfiguration(
@@ -69,7 +69,7 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
         dragDevices: PointerDeviceKind.values.toSet(),
       ),
       child: Padding(
-        padding: const .symmetric(horizontal: 16),
+        padding: const .symmetric(horizontal: 12),
         child: ListView(
           shrinkWrap: true,
           children: [
@@ -166,7 +166,7 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
                 children: [
                   for (final backgroundPattern in CanvasBackgroundPattern.values) ...[
                     if (backgroundPattern != CanvasBackgroundPattern.values.first)
-                      const SizedBox(width: 8),
+                      const SizedBox(width: 4),
                     Expanded(
                       child: Center(
                         child: InkWell(

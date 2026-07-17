@@ -31,7 +31,7 @@ class CanvasBackgroundPreview extends StatelessWidget {
     final colorScheme = ColorScheme.of(context);
     final previewSize = Size(
       fixedWidth,
-      pageSize.height / pageSize.width * fixedWidth,
+      fixedWidth * 1.4,
     );
     final canvasSize = pageSize / 2;
     return Container(
@@ -39,7 +39,7 @@ class CanvasBackgroundPreview extends StatelessWidget {
       height: previewSize.height,
       decoration: BoxDecoration(
         border: Border.all(
-          color: Colors.greenAccent
+          color: colorScheme.primary
               .withSaturation(selected ? 1 : 0)
               .withValues(alpha: selected ? 1 : 0.1),
           width: 2,

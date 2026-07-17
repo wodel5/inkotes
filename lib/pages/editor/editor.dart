@@ -1991,7 +1991,7 @@ class _MoreMenuOverlay extends StatelessWidget {
     final screenSize = MediaQuery.of(context).size;
 
     // 弹窗宽度由内容决定，但有最大限制
-    final maxWidth = (screenSize.width - 32).clamp(200.0, 320.0);
+    final maxWidth = 350.0;
 
     // 弹窗顶部位置（按钮下方）
     double top = buttonRect.bottom + 8;
