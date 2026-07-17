@@ -164,9 +164,27 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _showSettingsDialog() {
-    showDialog(
+    showGeneralDialog(
       context: context,
-      builder: (context) => const _SettingsDialog(),
+      barrierDismissible: true,
+      barrierLabel: 'Settings',
+      barrierColor: Colors.black26,
+      transitionDuration: const Duration(milliseconds: 250),
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return const _SettingsDialog();
+      },
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        return ScaleTransition(
+          scale: CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeOutCubic,
+          ),
+          child: FadeTransition(
+            opacity: animation,
+            child: child,
+          ),
+        );
+      },
     );
   }
 
