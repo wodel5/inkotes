@@ -138,8 +138,6 @@ class EditorState extends State<Editor> {
         return Eraser();
       case .select:
         return Select.currentSelect;
-      case .textEditing:
-        return Tool.textEditing;
       case .laserPointer:
         return LaserPointer.currentLaserPointer;
       default:
@@ -159,8 +157,6 @@ class EditorState extends State<Editor> {
   // used to prevent accidentally drawing when pinch zooming
   var lastSeenPointerCount = 0;
   Timer? _lastSeenPointerCountTimer;
-
-  ValueNotifier<QuillStruct?> quillFocus = ValueNotifier(null);
 
   /// The last non-Eraser [currentTool] value.
   late Tool _lastNonEraserTool = Pen.currentPen;
@@ -205,10 +201,6 @@ class EditorState extends State<Editor> {
       log.info('Loaded file as read-only: ${coreInfo.readOnlyReason}');
     }
 
-    for (int pageIndex = 0; pageIndex < coreInfo.pages.length; pageIndex++) {
-      listenToQuillChanges(coreInfo.pages[pageIndex].quill, pageIndex);
-    }
-
     if (coreInfo.isEmpty) {
       createPage(-1);
     } else {
@@ -222,19 +214,6 @@ class EditorState extends State<Editor> {
           image.onMiscChange = autosaveAfterDelay;
         }
       }
-    }
-
-    if (currentTool == Tool.textEditing) {
-      int pageIndex;
-      if (coreInfo.initialPageIndex != null) {
-        pageIndex = coreInfo.initialPageIndex!;
-      } else {
-        pageIndex = 0;
-      }
-      assert(pageIndex < coreInfo.pages.length);
-
-      quillFocus.value = coreInfo.pages[pageIndex].quill
-        ..focusNode.requestFocus();
     }
 
     setState(() {});
@@ -272,7 +251,6 @@ class EditorState extends State<Editor> {
     while (pageIndex >= coreInfo.pages.length - 1) {
       final page = EditorPage();
       coreInfo.pages.add(page);
-      listenToQuillChanges(page.quill, coreInfo.pages.length - 1);
     }
   }
 
@@ -520,9 +498,7 @@ class EditorState extends State<Editor> {
     dragPageIndex = onWhichPageIsFocalPoint(details.focalPoint);
     if (dragPageIndex == null) return false;
 
-    if (currentTool == Tool.textEditing) {
-      return false;
-    } else if (stows.editorFingerDrawing.value ||
+    if (stows.editorFingerDrawing.value ||
         currentPointerKind == PointerDeviceKind.stylus ||
         currentPointerKind == PointerDeviceKind.invertedStylus ||
         currentPressure != null) {
@@ -774,61 +750,6 @@ class EditorState extends State<Editor> {
       coreInfo.pages[image.pageIndex].images.remove(image);
     });
     autosaveAfterDelay();
-  }
-
-  void listenToQuillChanges(QuillStruct quill, int pageIndex) {
-    quill.changeSubscription?.cancel();
-    quill.changeSubscription = quill.controller.changes.listen((event) {
-      final undoRedoButtonsNeedUpdating = !history.canUndo || history.canRedo;
-      _addQuillChangeToHistory(
-        quill: quill,
-        pageIndex: pageIndex,
-        event: event,
-      );
-      createPage(pageIndex); // create empty last page
-      if (undoRedoButtonsNeedUpdating) {
-        setState(() {});
-      }
-      autosaveAfterDelay();
-    });
-    quill.focusNode.addListener(_onQuillFocusChange);
-  }
-
-  void _onQuillFocusChange() {
-    for (final page in coreInfo.pages) {
-      if (!page.quill.focusNode.hasFocus) continue;
-      quillFocus.value = page.quill;
-    }
-  }
-
-  void _addQuillChangeToHistory({
-    required QuillStruct quill,
-    required int pageIndex,
-    required flutter_quill.DocChange event,
-  }) {
-    final eventWasUndo = quill.controller.hasRedo;
-    if (eventWasUndo) return;
-
-    // the change subscription sometimes fires multiple times for the same change
-    // so compare the "before" of each change to merge them
-    if (history.canUndo && !history.canRedo) {
-      final lastChange = history.peekUndo();
-      if (lastChange.type == .quillChange &&
-          lastChange.pageIndex == pageIndex &&
-          lastChange.quillChange!.before == event.before) {
-        history.undo(); // remove the last change, to be replaced
-      }
-    }
-
-    history.recordChange(
-      EditorHistoryItem(
-        type: .quillChange,
-        pageIndex: pageIndex,
-        strokes: const [],
-        images: const [],
-        quillChange: event,
-      ),
-    );
   }
 
   void autosaveAfterDelay() {
@@ -1323,13 +1244,11 @@ class EditorState extends State<Editor> {
       pages: coreInfo.pages,
       initialPageIndex: coreInfo.initialPageIndex,
       pageBuilder: pageBuilder,
-      isTextEditing: () => currentTool == Tool.textEditing,
       placeholderPageBuilder: (BuildContext context, int pageIndex) {
         return Canvas(
           path: coreInfo.filePath,
           page: coreInfo.pages[pageIndex],
           pageIndex: 0,
-          textEditing: false,
           coreInfo: EditorCoreInfo.placeholder,
           currentStroke: null,
           currentStrokeDetectedShape: null,
@@ -1483,24 +1402,6 @@ class EditorState extends State<Editor> {
               }
             });
           },
-          quillFocus: quillFocus,
-          textEditing: currentTool == Tool.textEditing,
-          toggleTextEditing: () => setState(() {
-            if (currentTool == Tool.textEditing) {
-              currentTool = Pen.currentPen;
-              for (final page in coreInfo.pages) {
-                // unselect text, but maintain cursor position
-                page.quill.controller.moveCursorToPosition(
-                  page.quill.controller.selection.extentOffset,
-                );
-                page.quill.focusNode.unfocus();
-              }
-            } else {
-              currentTool = Tool.textEditing;
-              quillFocus.value = coreInfo.pages[currentPageIndex].quill
-                ..focusNode.requestFocus();
-            }
-          }),
           undo: undo,
           isUndoPossible: history.canUndo,
           redo: redo,
@@ -1753,7 +1654,6 @@ class EditorState extends State<Editor> {
       path: coreInfo.filePath,
       page: page,
       pageIndex: pageIndex,
-      textEditing: currentTool == Tool.textEditing,
       coreInfo: coreInfo,
       currentStroke: currentStroke,
       currentStrokeDetectedShape: null,
@@ -1813,7 +1713,6 @@ class EditorState extends State<Editor> {
           backgroundImage: page.backgroundImage?.copy()?..pageIndex += 1,
         );
         coreInfo.pages.insert(pageIndex + 1, newPage);
-        listenToQuillChanges(newPage.quill, pageIndex + 1);
         history.recordChange(
           EditorHistoryItem(
             type: .insertPage,
@@ -1849,7 +1748,6 @@ class EditorState extends State<Editor> {
     if (coreInfo.readOnly) return;
     final page = EditorPage();
     coreInfo.pages.insert(pageIndex + 1, page);
-    listenToQuillChanges(page.quill, pageIndex + 1);
     history.recordChange(
       EditorHistoryItem(
         type: .insertPage,

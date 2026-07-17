@@ -35,7 +35,6 @@ class CanvasGestureDetector extends StatefulWidget {
     required this.initialPageIndex,
     required this.pageBuilder,
     required this.placeholderPageBuilder,
-    required this.isTextEditing,
     TransformationController? transformationController,
   }) : _transformationController =
            transformationController ?? TransformationController();
@@ -64,8 +63,6 @@ class CanvasGestureDetector extends StatefulWidget {
   final Widget Function(BuildContext context, int pageIndex) pageBuilder;
   final Widget Function(BuildContext context, int pageIndex)
   placeholderPageBuilder;
-
-  final bool Function() isTextEditing;
 
   late final TransformationController _transformationController;
 
@@ -216,9 +213,6 @@ class CanvasGestureDetectorState extends State<CanvasGestureDetector> {
   void arrowKeyPan(AxisDirection direction, bool pressed) {
     _arrowKeyPanTimers.remove(direction)?.cancel();
     if (!pressed) return;
-
-    // arrow keys are used to navigate around text
-    if (widget.isTextEditing()) return;
 
     _arrowKeyPanNow(direction);
 
