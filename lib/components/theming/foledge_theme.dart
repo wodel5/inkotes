@@ -39,6 +39,10 @@ abstract class foledgeTheme {
     TargetPlatform platform,
   ) {
     return colorScheme.copyWith(
+      // 浅色模式下将 surface 改为 #F2F4F8
+      surface: colorScheme.brightness == Brightness.light
+          ? const Color(0xFFF2F4F8)
+          : colorScheme.surface,
       // Hack: Mimic Material 3 Expressive color schemes by making
       // surfaceContainer much closer to surface.
       // Remove this when Flutter supports M3E natively.

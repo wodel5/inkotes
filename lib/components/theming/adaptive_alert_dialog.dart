@@ -7,11 +7,13 @@ class AdaptiveAlertDialog extends StatelessWidget {
     required this.title,
     required this.content,
     required this.actions,
+    this.backgroundColor,
   });
 
   final Widget title;
   final Widget content;
   final List<CupertinoDialogAction> actions;
+  final Color? backgroundColor;
 
   List<Widget> get _materialActions => actions
       .map(
@@ -22,10 +24,12 @@ class AdaptiveAlertDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isLight = Theme.of(context).brightness == Brightness.light;
     return AlertDialog(
       title: title,
       content: content,
       actions: actions.isNotEmpty ? _materialActions : null,
+      backgroundColor: backgroundColor ?? (isLight ? const Color(0xFFF2F4F8) : null),
     );
   }
 }
