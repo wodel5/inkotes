@@ -234,10 +234,6 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
               t.editor.menu.lineHeight,
               style: TextTheme.of(context).titleMedium,
             ),
-            Text(
-              t.editor.menu.lineHeightDescription,
-              style: TextTheme.of(context).bodyMedium,
-            ),
             Row(
               children: [
                 Text(widget.coreInfo.lineHeight.toString()),

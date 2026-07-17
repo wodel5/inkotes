@@ -1,11 +1,9 @@
-import 'dart:io';
 import 'dart:ui';
 
 import 'package:collapsible/collapsible.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_quill/flutter_quill.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:keybinder/keybinder.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -15,7 +13,6 @@ import 'package:foledge/components/toolbar/export_bar.dart';
 import 'package:foledge/components/toolbar/pen_modal.dart';
 import 'package:foledge/components/toolbar/selection_bar.dart';
 import 'package:foledge/components/toolbar/size_picker.dart';
-import 'package:foledge/data/editor/page.dart';
 import 'package:foledge/data/extensions/color_extensions.dart';
 import 'package:foledge/data/prefs.dart';
 import 'package:foledge/data/tools/_tool.dart';
@@ -33,9 +30,6 @@ class Toolbar extends StatefulWidget {
     required this.setTool,
     required this.currentTool,
     required this.setColor,
-    required this.quillFocus,
-    required this.textEditing,
-    required this.toggleTextEditing,
     required this.undo,
     required this.isUndoPossible,
     required this.redo,
@@ -54,10 +48,6 @@ class Toolbar extends StatefulWidget {
   final ValueChanged<Tool> setTool;
   final Tool currentTool;
   final ValueChanged<Color> setColor;
-
-  final ValueNotifier<QuillStruct?> quillFocus;
-  final bool textEditing;
-  final VoidCallback toggleTextEditing;
 
   final VoidCallback undo;
   final bool isUndoPossible;
@@ -231,53 +221,6 @@ class _ToolbarState extends State<Toolbar> {
           invert: invert,
         ),
       ),
-      ValueListenableBuilder(
-        valueListenable: widget.quillFocus,
-        builder: (context, quill, _) {
-          final baseButtonStyle =
-              IconButtonTheme.of(context).style ?? const ButtonStyle();
-
-          final iconTheme = QuillIconTheme(
-            iconButtonUnselectedData: IconButtonData(
-              style: baseButtonStyle.copyWith(
-                backgroundColor: WidgetStateProperty.all(Colors.transparent),
-                foregroundColor: WidgetStateProperty.all(colorScheme.primary),
-              ),
-            ),
-            iconButtonSelectedData: IconButtonData(
-              style: baseButtonStyle.copyWith(
-                backgroundColor: WidgetStateProperty.all(colorScheme.primary),
-                foregroundColor: WidgetStateProperty.all(colorScheme.onPrimary),
-              ),
-            ),
-          );
-          return Collapsible(
-            axis: CollapsibleAxis.vertical,
-            maintainState: false,
-            collapsed: !widget.textEditing || quill == null,
-            child: quill != null
-                ? QuillSimpleToolbar(
-                    controller: quill.controller,
-                    config: QuillSimpleToolbarConfig(
-                      axis: Axis.horizontal,
-                      buttonOptions: QuillSimpleToolbarButtonOptions(
-                        base: QuillToolbarBaseButtonOptions(
-                          iconTheme: iconTheme,
-                        ),
-                      ),
-                      // scrollable on Android and iOS
-                      multiRowsDisplay: !Platform.isAndroid && !Platform.isIOS,
-                      showUndo: false,
-                      showRedo: false,
-                      showFontSize: false,
-                      showFontFamily: false,
-                      showClearFormat: false,
-                    ),
-                  )
-                : const SizedBox.shrink(),
-          );
-        },
-      ),
       Center(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(12, 4, 12, 8),
@@ -400,16 +343,6 @@ class _ToolbarState extends State<Toolbar> {
                         widget.pickPhoto();
                       },
                       child: const FaIcon(FontAwesomeIcons.solidImage, size: 18),
-                    ),
-                    _DockButton(
-                      selected: widget.textEditing,
-                      enabled: !widget.readOnly,
-                      onPressed: () {
-                        showColorOptions.value = false;
-                        showExportOptions.value = false;
-                        widget.toggleTextEditing();
-                      },
-                      child: const FaIcon(FontAwesomeIcons.t, size: 18),
                     ),
                     _DockDivider(),
                     _DockButton(

@@ -432,7 +432,6 @@ class _Translations$editor$menu$zh_Hans_CN extends Translations$editor$menu$en {
 	@override String get duplicatePage => '复制页面';
 	@override String get deletePage => '删除页面';
 	@override String get lineHeight => '行高';
-	@override String get lineHeightDescription => '同时控制已输入的笔记的文本大小';
 	@override String get lineThickness => '线条粗细';
 	@override String get lineThicknessDescription => '背景线条粗细';
 	@override String get backgroundImageFit => '背景图像拟合';

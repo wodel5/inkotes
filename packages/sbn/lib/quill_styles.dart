@@ -2,18 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:sbn/font_fallbacks.dart';
 
-typedef _ArgRecord = ({bool invert, Color secondary, int lineHeight});
+typedef _ArgRecord = ({bool invert, Color secondary});
 
 abstract class FolegeQuillStyles {
   static DefaultStyles get({
     required bool invert,
     required Color secondary,
-    required int lineHeight,
   }) {
     final _ArgRecord args = (
       invert: invert,
       secondary: secondary,
-      lineHeight: lineHeight,
     );
     if (_lastArgs == args) {
       return _cachedStyles;
@@ -23,7 +21,6 @@ abstract class FolegeQuillStyles {
     return _cachedStyles = _createStyles(
       invert: invert,
       secondary: secondary,
-      lineHeight: lineHeight,
     );
   }
 
@@ -34,38 +31,38 @@ abstract class FolegeQuillStyles {
   static DefaultStyles _createStyles({
     required bool invert,
     required Color secondary,
-    required int lineHeight,
   }) {
+    const double fixedFontSize = 20;
     final baseStyle = TextStyle(
       inherit: false,
       fontFamily: 'Neucha',
       fontFamilyFallback: foledgeHandwritingFontFallbacks,
       color: invert ? Colors.white : Colors.black,
-      fontSize: lineHeight * 1,
+      fontSize: fixedFontSize,
       height: 1 / 1,
       decoration: TextDecoration.none,
     );
     final textTheme = (
       bodyLarge: baseStyle.copyWith(
-        fontSize: lineHeight * 0.7,
+        fontSize: fixedFontSize * 0.7,
         height: 1 / 0.7,
       ),
       displayLarge: baseStyle.copyWith(
-        fontSize: lineHeight * 1.15,
+        fontSize: fixedFontSize * 1.15,
         height: 1 / 1.15,
         decoration: TextDecoration.underline,
         decorationColor: baseStyle.color?.withValues(alpha: 0.6),
         decorationThickness: 3,
       ),
       displayMedium: baseStyle.copyWith(
-        fontSize: lineHeight * 1,
+        fontSize: fixedFontSize * 1,
         height: 1 / 1,
         decoration: TextDecoration.underline,
         decorationColor: baseStyle.color?.withValues(alpha: 0.5),
         decorationThickness: 3,
       ),
       displaySmall: baseStyle.copyWith(
-        fontSize: lineHeight * 0.9,
+        fontSize: fixedFontSize * 0.9,
         height: 1 / 0.9,
         decoration: TextDecoration.underline,
         decorationColor: baseStyle.color?.withValues(alpha: 0.4),
@@ -135,7 +132,7 @@ abstract class FolegeQuillStyles {
         VerticalSpacing.zero,
         null,
       ),
-      small: TextStyle(fontSize: lineHeight * 0.4, height: 1 / 0.4),
+      small: TextStyle(fontSize: fixedFontSize * 0.4, height: 1 / 0.4),
       inlineCode: InlineCodeStyle(
         backgroundColor: Colors.grey.withValues(alpha: 0.2),
         radius: const .circular(3),
@@ -192,7 +189,7 @@ abstract class FolegeQuillStyles {
           fontFamilyFallback: foledgeMonoFontFallbacks,
         ),
         HorizontalSpacing.zero,
-        VerticalSpacing(-lineHeight * 0.16, lineHeight * 0.8),
+        VerticalSpacing(-fixedFontSize * 0.16, fixedFontSize * 0.8),
         VerticalSpacing.zero,
         BoxDecoration(
           color: Colors.grey.withValues(alpha: 0.2),

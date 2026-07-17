@@ -1,6 +1,5 @@
 import 'package:defer_pointer/defer_pointer.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_quill/flutter_quill.dart';
 import 'package:one_dollar_unistroke_recognizer/one_dollar_unistroke_recognizer.dart';
 import 'package:foledge/components/canvas/_canvas_background_painter.dart';
 import 'package:foledge/components/canvas/_canvas_painter.dart';
@@ -9,9 +8,7 @@ import 'package:foledge/components/canvas/canvas_image.dart';
 import 'package:foledge/components/canvas/image/editor_image.dart';
 import 'package:foledge/data/editor/editor_core_info.dart';
 import 'package:foledge/data/tools/select.dart';
-import 'package:foledge/i18n/strings.g.dart';
 import 'package:sbn/canvas_background_pattern.dart';
-import 'package:sbn/quill_styles.dart';
 
 class InnerCanvas extends StatefulWidget {
   const InnerCanvas({
@@ -21,7 +18,6 @@ class InnerCanvas extends StatefulWidget {
     required this.width,
     required this.height,
     this.showPageIndicator = true,
-    this.textEditing = false,
     required this.coreInfo,
     required this.currentStroke,
     required this.currentStrokeDetectedShape,
@@ -37,7 +33,6 @@ class InnerCanvas extends StatefulWidget {
   final double width;
   final double height;
   final bool showPageIndicator;
-  final bool textEditing;
   final EditorCoreInfo coreInfo;
   final Stroke? currentStroke;
   final RecognizedUnistroke? currentStrokeDetectedShape;
@@ -70,36 +65,6 @@ class _InnerCanvasState extends State<InnerCanvas> {
     }
 
     final page = widget.coreInfo.pages[widget.pageIndex];
-
-    final quillEditor = widget.coreInfo.pages.isNotEmpty
-        ? QuillEditor(
-            controller:
-                widget.coreInfo.pages[widget.pageIndex].quill.controller,
-            config: QuillEditorConfig(
-              customStyles: FolegeQuillStyles.get(
-                invert: invert,
-                secondary: colorScheme.secondary,
-                lineHeight: widget.coreInfo.lineHeight,
-              ),
-              scrollable: false,
-              autoFocus: false,
-              expands: true,
-              placeholder: widget.textEditing
-                  ? t.editor.quill.typeSomething
-                  : null,
-              showCursor: true,
-              keyboardAppearance: invert ? .dark : .light,
-              padding: .only(
-                top: widget.coreInfo.lineHeight * 1.2,
-                left: widget.coreInfo.lineHeight * 0.5,
-                right: widget.coreInfo.lineHeight * 0.5,
-                bottom: widget.coreInfo.lineHeight * 0.5,
-              ),
-            ),
-            scrollController: ScrollController(),
-            focusNode: widget.coreInfo.pages[widget.pageIndex].quill.focusNode,
-          )
-        : null;
 
     return RepaintBoundary(
       child: CustomPaint(
@@ -156,16 +121,6 @@ class _InnerCanvasState extends State<InnerCanvas> {
                     isBackground: true,
                     readOnly: true,
                   ),
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  width: widget.width,
-                  height: widget.height,
-                  child: IgnorePointer(
-                    ignoring: widget.coreInfo.readOnly || !widget.textEditing,
-                    child: quillEditor,
-                  ),
-                ),
                 for (int i = 0; i < page.images.length; i++)
                   CanvasImage(
                     filePath: widget.coreInfo.filePath,

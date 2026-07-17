@@ -702,9 +702,6 @@ class Translations$editor$menu$en {
 	/// en: 'Line height'
 	String get lineHeight => 'Line height';
 
-	/// en: 'Also controls the text size for typed notes'
-	String get lineHeightDescription => 'Also controls the text size for typed notes';
-
 	/// en: 'Line thickness'
 	String get lineThickness => 'Line thickness';
 

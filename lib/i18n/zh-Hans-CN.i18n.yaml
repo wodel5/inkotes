@@ -154,7 +154,6 @@ editor:
     duplicatePage: 复制页面
     deletePage: 删除页面
     lineHeight: 行高
-    lineHeightDescription: 同时控制已输入的笔记的文本大小
     lineThickness: 线条粗细
     lineThicknessDescription: 背景线条粗细
     backgroundImageFit: 背景图像拟合
