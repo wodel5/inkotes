@@ -1550,18 +1550,15 @@ class EditorState extends State<Editor> {
                       );
                     },
                   ),
-                  IconButton(
-                    icon: const AdaptiveIcon(
-                      icon: Icons.more_vert,
-                    ),
-                    onPressed: () {
-                      showModalBottomSheet(
-                        context: context,
-                        builder: (context) => bottomSheet(context),
-                        isScrollControlled: true,
-                        showDragHandle: true,
-                        backgroundColor: colorScheme.surface,
-                        constraints: const BoxConstraints(maxWidth: 500),
+                  Builder(
+                    builder: (context) {
+                      return IconButton(
+                        icon: const AdaptiveIcon(
+                          icon: Icons.more_vert,
+                        ),
+                        onPressed: () {
+                          _showMoreMenu(context);
+                        },
                       );
                     },
                   ),
@@ -1572,6 +1569,40 @@ class EditorState extends State<Editor> {
         ),
         body: body,
       ),
+    );
+  }
+
+  void _showMoreMenu(BuildContext context) {
+    final RenderBox button = context.findRenderObject() as RenderBox;
+    final buttonRect = button.localToGlobal(Offset.zero) & button.size;
+
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: 'MoreMenu',
+      barrierColor: Colors.black26,
+      transitionDuration: const Duration(milliseconds: 250),
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return _MoreMenuOverlay(
+          buttonRect: buttonRect,
+          child: bottomSheet(context),
+        );
+      },
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        return SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(0, -0.1),
+            end: Offset.zero,
+          ).animate(CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeOutCubic,
+          )),
+          child: FadeTransition(
+            opacity: animation,
+            child: child,
+          ),
+        );
+      },
     );
   }
 
@@ -1903,5 +1934,82 @@ class EditorState extends State<Editor> {
     } finally {
       coreInfo.dispose();
     }
+  }
+}
+
+class _MoreMenuOverlay extends StatelessWidget {
+  const _MoreMenuOverlay({
+    required this.buttonRect,
+    required this.child,
+  });
+
+  final Rect buttonRect;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final screenSize = MediaQuery.of(context).size;
+
+    // 弹窗宽度由内容决定，但有最大限制
+    final maxWidth = (screenSize.width - 32).clamp(200.0, 500.0);
+
+    // 弹窗顶部位置（按钮下方）
+    double top = buttonRect.bottom + 8;
+
+    // 弹窗右边缘对齐按钮右边缘
+    double left = buttonRect.right - maxWidth;
+
+    // 边界检查：确保不超出屏幕左右
+    if (left < 16) left = 16;
+    if (left + maxWidth > screenSize.width - 16) {
+      left = screenSize.width - maxWidth - 16;
+    }
+
+    // 边界检查：如果超出底部，显示在按钮上方
+    if (top + 400 > screenSize.height - 16) {
+      top = buttonRect.top - 400 - 8;
+    }
+
+    return Stack(
+      children: [
+        Positioned.fill(
+          child: GestureDetector(
+            onTap: () => Navigator.pop(context),
+            child: Container(color: Colors.transparent),
+          ),
+        ),
+        Positioned(
+          left: left,
+          top: top,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: maxWidth,
+              maxHeight: screenSize.height * 0.7,
+            ),
+            child: Material(
+              color: Colors.transparent,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: colorScheme.surface,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.15),
+                      blurRadius: 20,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: child,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }
