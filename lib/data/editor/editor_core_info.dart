@@ -160,6 +160,7 @@ class EditorCoreInfo {
         .toList();
 
     final Color? backgroundColor;
+    log.info('fromJson: json[b]=${json['b']} type=${json['b']?.runtimeType}');
     switch (json['b']) {
       case (final int value):
         backgroundColor = Color(value);
@@ -482,6 +483,8 @@ class EditorCoreInfo {
       'z': pages.map((EditorPage page) => page.toJson(assets)).toList(),
       'c': initialPageIndex,
     };
+
+    log.info('toJson: json[b]=${json['b']} type=${json['b']?.runtimeType}');
 
     return (json, assets);
   }

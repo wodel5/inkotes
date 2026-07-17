@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:foledge/components/canvas/_canvas_background_painter.dart';
-import 'package:foledge/components/canvas/canvas_image.dart';
-import 'package:foledge/components/canvas/image/editor_image.dart';
 import 'package:foledge/components/canvas/inner_canvas.dart';
 import 'package:foledge/data/extensions/color_extensions.dart';
 import 'package:sbn/canvas_background_pattern.dart';
@@ -12,23 +10,21 @@ class CanvasBackgroundPreview extends StatelessWidget {
     required this.selected,
     required this.backgroundColor,
     required this.backgroundPattern,
-    required this.backgroundImage,
-    this.overrideBoxFit,
     required this.pageSize,
     required this.lineHeight,
     required this.lineThickness,
+    required this.label,
   });
 
   final bool selected;
   final Color? backgroundColor;
   final CanvasBackgroundPattern backgroundPattern;
-  final EditorImage? backgroundImage;
-  final BoxFit? overrideBoxFit;
   final Size pageSize;
   final int lineHeight;
   final int lineThickness;
+  final String label;
 
-  static const double fixedWidth = 150;
+  static const double fixedWidth = 100;
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +39,7 @@ class CanvasBackgroundPreview extends StatelessWidget {
       height: previewSize.height,
       decoration: BoxDecoration(
         border: Border.all(
-          color: colorScheme.primary
+          color: Colors.greenAccent
               .withSaturation(selected ? 1 : 0)
               .withValues(alpha: selected ? 1 : 0.1),
           width: 2,
@@ -53,50 +49,52 @@ class CanvasBackgroundPreview extends StatelessWidget {
       child: ClipRRect(
         borderRadius: const .all(.circular(8)),
         child: Stack(
-          children: [
-            FittedBox(
-              child: CustomPaint(
-                size: canvasSize,
-                painter: CanvasBackgroundPainter(
-                  backgroundColor: () {
-                    if (backgroundImage != null) {
-                      return Colors.white;
-                    } else {
-                      return backgroundColor ??
-                          InnerCanvas.defaultBackgroundColor;
-                    }
-                  }(),
-                  backgroundPattern: () {
-                    if (backgroundImage != null) {
-                      return CanvasBackgroundPattern.none;
-                    } else {
-                      return backgroundPattern;
-                    }
-                  }(),
-                  lineHeight: lineHeight,
-                  lineThickness: lineThickness,
-                  primaryColor: colorScheme.primary
-                      .withSaturation(selected ? 1 : 0)
-                      .withValues(alpha: selected ? 1 : 0.5),
-                  secondaryColor: colorScheme.secondary
-                      .withSaturation(selected ? 1 : 0)
-                      .withValues(alpha: selected ? 1 : 0.5),
-                  preview: true,
+          fit: StackFit.expand,
+        children: [
+          FittedBox(
+            child: CustomPaint(
+              size: canvasSize,
+              painter: CanvasBackgroundPainter(
+                backgroundColor:
+                    backgroundColor ?? InnerCanvas.defaultBackgroundColor,
+                backgroundPattern: backgroundPattern,
+                lineHeight: lineHeight,
+                lineThickness: lineThickness,
+                primaryColor: colorScheme.primary
+                    .withSaturation(selected ? 1 : 0)
+                    .withValues(alpha: selected ? 1 : 0.5),
+                secondaryColor: colorScheme.secondary
+                    .withSaturation(selected ? 1 : 0)
+                    .withValues(alpha: selected ? 1 : 0.5),
+                preview: true,
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 4,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: SizedBox(
+                width: previewSize.width * 0.9,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: Text(
+                    label,
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                    style: TextStyle(
+                      color: colorScheme.onSurface,
+                      fontSize: 12,
+                    ),
+                  ),
                 ),
               ),
             ),
-            if (backgroundImage != null)
-              CanvasImage(
-                filePath: '',
-                image: backgroundImage!,
-                overrideBoxFit: overrideBoxFit,
-                pageSize: previewSize,
-                setAsBackground: null,
-                isBackground: true,
-                readOnly: true,
-              ),
-          ],
-        ),
+          ),
+        ],
+      ),
       ),
     );
   }
