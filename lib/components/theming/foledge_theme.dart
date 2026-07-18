@@ -65,7 +65,7 @@ abstract class _Components {
         ? typography.white
         : typography.black;
 
-    return textTheme;
+    return textTheme.apply(fontFamily: 'MiSans');
   }
 
   static const progressIndicatorTheme = ProgressIndicatorThemeData(

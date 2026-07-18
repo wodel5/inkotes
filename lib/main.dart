@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:args/args.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_sharing_intent/flutter_sharing_intent.dart';
 import 'package:flutter_sharing_intent/model/sharing_file.dart';
 import 'package:go_router/go_router.dart';
@@ -79,18 +78,6 @@ Future<void> appRunner(List<String> args) async {
   setLocale();
   stows.locale.addListener(setLocale);
   pdfrxFlutterInitialize();
-
-  LicenseRegistry.addLicense(() async* {
-    for (final licenseFile in const [
-      'assets/google_fonts/Atkinson_Hyperlegible_Next/OFL.txt',
-      'assets/google_fonts/Dekko/OFL.txt',
-      'assets/google_fonts/Fira_Mono/OFL.txt',
-      'assets/google_fonts/Neucha/OFL.txt',
-    ]) {
-      final license = await rootBundle.loadString(licenseFile);
-      yield LicenseEntryWithLineBreaks(const ['google_fonts'], license);
-    }
-  });
 
   runApp(TranslationProvider(child: const App()));
 }
