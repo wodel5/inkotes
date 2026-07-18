@@ -298,7 +298,7 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
                     page: _selectedPageIndex + 1,
                     totalPages: pages.length,
                   ),
-                  enabled: true,
+                  enabled: pages[_selectedPageIndex].isNotEmpty,
                   onTap: () {
                     widget.clearPage(_selectedPageIndex);
                     setState(() {});

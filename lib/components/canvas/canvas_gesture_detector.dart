@@ -638,6 +638,8 @@ class _PagesBuilder extends StatelessWidget {
     }
 
     children.add(const SizedBox.square(dimension: Editor.gapBetweenPages));
+    // 底部留出工具栏空间，防止最后一页被遮挡
+    children.add(const SizedBox(height: 100));
     return Column(children: children);
   }
 }

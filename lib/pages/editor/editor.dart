@@ -112,9 +112,6 @@ class EditorState extends State<Editor> {
 
   var history = EditorHistory();
 
-  bool _showAppBar = true;
-  double _lastPanY = 0;
-
   late bool needsNaming = false;
 
   late Tool _currentTool = () {
@@ -641,7 +638,6 @@ class EditorState extends State<Editor> {
         if (newStroke == null) return;
         if (newStroke.isEmpty) return;
 
-        createPage(newStroke.pageIndex);
         page.insertStroke(newStroke);
         history.recordChange(
           EditorHistoryItem(
@@ -709,17 +705,7 @@ class EditorState extends State<Editor> {
   }
 
   void _onTransformChanged() {
-    final currentY = _transformationController.value.getTranslation().y;
-    final delta = currentY - _lastPanY;
-    _lastPanY = currentY;
-
-    if (delta < -1) {
-      // Scrolling down (panning up) — hide AppBar
-      if (_showAppBar) setState(() => _showAppBar = false);
-    } else if (delta > 1) {
-      // Scrolling up (panning down) — show AppBar
-      if (!_showAppBar) setState(() => _showAppBar = true);
-    }
+    // AppBar 固定显示，不再自动隐藏
   }
 
   void onInteractionEnd(ScaleEndDetails details) {
@@ -1490,15 +1476,8 @@ class EditorState extends State<Editor> {
       },
       child: Scaffold(
         appBar: PreferredSize(
-          preferredSize: Size.fromHeight(_showAppBar ? kToolbarHeight : 0),
-          child: AnimatedSlide(
-            offset: _showAppBar ? Offset.zero : const Offset(0, -1),
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeOutCubic,
-            child: AnimatedOpacity(
-              opacity: _showAppBar ? 1.0 : 0.0,
-              duration: const Duration(milliseconds: 200),
-              child: AppBar(
+          preferredSize: Size.fromHeight(kToolbarHeight),
+          child: AppBar(
                 toolbarHeight: kToolbarHeight,
                 title: widget.customTitle != null
                     ? Text(widget.customTitle!)
@@ -1590,8 +1569,6 @@ class EditorState extends State<Editor> {
                 ],
               ),
             ),
-          ),
-        ),
         body: body,
       ),
     );
