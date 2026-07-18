@@ -204,7 +204,7 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
             Text(
               t.editor.pages,
               style: TextTheme.of(context).titleMedium,
@@ -215,7 +215,7 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 itemCount: pages.length,
-                separatorBuilder: (_, _) => const SizedBox(width: 4),
+                separatorBuilder: (_, _) => const SizedBox(width: 10),
                 itemBuilder: (context, pageIndex) {
                   final isSelected = pageIndex == _selectedPageIndex;
                   return GestureDetector(
@@ -240,10 +240,16 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
                           ),
                           child: ClipRRect(
                             borderRadius: const .all(.circular(8)),
-                            child: CanvasPreview(
-                              pageIndex: pageIndex,
-                              height: previewSize.height,
-                              coreInfo: widget.coreInfo,
+                            child: FittedBox(
+                              child: SizedBox(
+                                width: pages[pageIndex].size.width,
+                                height: pages[pageIndex].size.height,
+                                child: CanvasPreview(
+                                  pageIndex: pageIndex,
+                                  height: pages[pageIndex].size.height,
+                                  coreInfo: widget.coreInfo,
+                                ),
+                              ),
                             ),
                           ),
                         ),

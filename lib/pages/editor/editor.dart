@@ -2007,7 +2007,7 @@ class _MoreMenuOverlayState extends State<_MoreMenuOverlay> {
           child: ConstrainedBox(
             constraints: BoxConstraints(
               maxWidth: maxWidth,
-              maxHeight: screenSize.height * 0.9,
+              maxHeight: 630.0,
             ),
             child: Material(
               color: Colors.transparent,
