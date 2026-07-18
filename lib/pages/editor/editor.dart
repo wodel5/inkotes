@@ -26,7 +26,6 @@ import 'package:foledge/components/editor/read_only_banner.dart';
 import 'package:foledge/components/theming/adaptive_alert_dialog.dart';
 import 'package:foledge/components/theming/adaptive_icon.dart';
 import 'package:foledge/components/toolbar/editor_bottom_sheet.dart';
-import 'package:foledge/components/toolbar/editor_page_manager.dart';
 import 'package:foledge/components/toolbar/toolbar.dart';
 import 'package:foledge/data/editor/editor_core_info.dart';
 import 'package:foledge/data/editor/editor_exporter.dart';
@@ -1578,20 +1577,6 @@ class EditorState extends State<Editor> {
                       );
                     }),
                   ),
-                  IconButton(
-                    icon: const FaIcon(FontAwesomeIcons.borderAll),
-                    tooltip: t.editor.pages,
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => AdaptiveAlertDialog(
-                          title: Text(t.editor.pages),
-                          content: pageManager(context),
-                          actions: const [],
-                        ),
-                      );
-                    },
-                  ),
                   Builder(
                     builder: (context) {
                       return IconButton(
@@ -1695,21 +1680,64 @@ class EditorState extends State<Editor> {
         stows.lastLineThickness.value = lineThickness;
         autosaveAfterDelay();
       }),
-      removeBackgroundImage: () => setState(() {
+      clearPage: (pageIndex) {
+        clearPage(pageIndex);
+      },
+      insertPageAfter: insertPageAfter,
+      duplicatePage: (int pageIndex) => setState(() {
         if (coreInfo.readOnly) return;
-
-        final page = coreInfo.pages[currentPageIndex];
-        if (page.backgroundImage == null) return;
-        page.images.add(page.backgroundImage!);
-        page.backgroundImage = null;
-
+        final page = coreInfo.pages[pageIndex];
+        final newPage = page.copyWith(
+          strokes: page.strokes
+              .map((stroke) => stroke.copy()..pageIndex += 1)
+              .toList(),
+          images: page.images
+              .map((image) => image.copy()..pageIndex += 1)
+              .toList(),
+          quill: QuillStruct(
+            controller: flutter_quill.QuillController(
+              document: flutter_quill.Document.fromDelta(
+                page.quill.controller.document.toDelta(),
+              ),
+              selection: const TextSelection.collapsed(offset: 0),
+            ),
+            focusNode: FocusNode(debugLabel: 'Quill Focus Node'),
+          ),
+          backgroundImage: page.backgroundImage?.copy()?..pageIndex += 1,
+        );
+        coreInfo.pages.insert(pageIndex + 1, newPage);
+        history.recordChange(
+          EditorHistoryItem(
+            type: .insertPage,
+            pageIndex: pageIndex,
+            strokes: const [],
+            images: const [],
+            page: newPage,
+          ),
+        );
         autosaveAfterDelay();
       }),
-      redrawImage: () => setState(() {}),
-      clearPage: () {
-        clearPage(currentPageIndex);
-      },
-      clearAllPages: clearAllPages,
+      deletePage: (int pageIndex) => setState(() {
+        if (coreInfo.readOnly) return;
+        final page = coreInfo.pages.removeAt(pageIndex);
+        createPage(pageIndex - 1);
+        history.recordChange(
+          EditorHistoryItem(
+            type: .deletePage,
+            pageIndex: pageIndex,
+            strokes: const [],
+            images: const [],
+            page: page,
+          ),
+        );
+        autosaveAfterDelay();
+      }),
+      scrollToPage: (pageIndex) => CanvasGestureDetector.scrollToPage(
+        pageIndex: pageIndex,
+        pages: coreInfo.pages,
+        screenWidth: MediaQuery.sizeOf(context).width,
+        transformationController: _transformationController,
+      ),
       redrawAndSave: () => setState(() {
         if (coreInfo.readOnly) return;
         autosaveAfterDelay();
@@ -1754,68 +1782,6 @@ class EditorState extends State<Editor> {
       },
       currentTool: currentTool,
       currentScale: _transformationController.value.approxScale,
-    );
-  }
-
-  Widget pageManager(BuildContext context) {
-    return EditorPageManager(
-      coreInfo: coreInfo,
-      currentPageIndex: currentPageIndex,
-      redrawAndSave: () => setState(() {
-        if (coreInfo.readOnly) return;
-        autosaveAfterDelay();
-      }),
-      insertPageAfter: insertPageAfter,
-      duplicatePage: (int pageIndex) => setState(() {
-        if (coreInfo.readOnly) return;
-        final page = coreInfo.pages[pageIndex];
-        final newPage = page.copyWith(
-          strokes: page.strokes
-              .map((stroke) => stroke.copy()..pageIndex += 1)
-              .toList(),
-          images: page.images
-              .map((image) => image.copy()..pageIndex += 1)
-              .toList(),
-          quill: QuillStruct(
-            controller: flutter_quill.QuillController(
-              document: flutter_quill.Document.fromDelta(
-                page.quill.controller.document.toDelta(),
-              ),
-              selection: const TextSelection.collapsed(offset: 0),
-            ),
-            focusNode: FocusNode(debugLabel: 'Quill Focus Node'),
-          ),
-          backgroundImage: page.backgroundImage?.copy()?..pageIndex += 1,
-        );
-        coreInfo.pages.insert(pageIndex + 1, newPage);
-        history.recordChange(
-          EditorHistoryItem(
-            type: .insertPage,
-            pageIndex: pageIndex,
-            strokes: const [],
-            images: const [],
-            page: newPage,
-          ),
-        );
-        autosaveAfterDelay();
-      }),
-      clearPage: clearPage,
-      deletePage: (int pageIndex) => setState(() {
-        if (coreInfo.readOnly) return;
-        final page = coreInfo.pages.removeAt(pageIndex);
-        createPage(pageIndex - 1);
-        history.recordChange(
-          EditorHistoryItem(
-            type: .deletePage,
-            pageIndex: pageIndex,
-            strokes: const [],
-            images: const [],
-            page: page,
-          ),
-        );
-        autosaveAfterDelay();
-      }),
-      transformationController: _transformationController,
     );
   }
 
@@ -2041,7 +2007,7 @@ class _MoreMenuOverlayState extends State<_MoreMenuOverlay> {
           child: ConstrainedBox(
             constraints: BoxConstraints(
               maxWidth: maxWidth,
-              maxHeight: screenSize.height * 0.7,
+              maxHeight: screenSize.height * 0.9,
             ),
             child: Material(
               color: Colors.transparent,

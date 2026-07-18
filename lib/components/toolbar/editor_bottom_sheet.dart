@@ -1,9 +1,12 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:foledge/components/canvas/canvas_background_preview.dart';
+import 'package:foledge/components/canvas/canvas_preview.dart';
 import 'package:foledge/components/canvas/inner_canvas.dart';
 import 'package:foledge/data/editor/editor_core_info.dart';
 import 'package:foledge/data/editor/page.dart';
+import 'package:foledge/data/extensions/color_extensions.dart';
 import 'package:foledge/data/extensions/list_extensions.dart';
 import 'package:foledge/i18n/extensions/canvas_background_pattern_localized.dart';
 import 'package:foledge/i18n/strings.g.dart';
@@ -18,11 +21,12 @@ class EditorBottomSheet extends StatefulWidget {
     required this.setBackgroundColor,
     required this.setLineHeight,
     required this.setLineThickness,
-    required this.removeBackgroundImage,
-    required this.redrawImage,
     required this.clearPage,
-    required this.clearAllPages,
+    required this.insertPageAfter,
+    required this.duplicatePage,
+    required this.deletePage,
     required this.redrawAndSave,
+    required this.scrollToPage,
     required this.pickPhotos,
     required this.importPdf,
     required this.canRasterPdf,
@@ -34,11 +38,12 @@ class EditorBottomSheet extends StatefulWidget {
   final void Function(Color?) setBackgroundColor;
   final void Function(int) setLineHeight;
   final void Function(int) setLineThickness;
-  final VoidCallback removeBackgroundImage;
-  final VoidCallback redrawImage;
-  final VoidCallback clearPage;
-  final VoidCallback clearAllPages;
+  final void Function(int) clearPage;
+  final void Function(int) insertPageAfter;
+  final void Function(int) duplicatePage;
+  final void Function(int) deletePage;
   final VoidCallback redrawAndSave;
+  final void Function(int) scrollToPage;
   final Future<int> Function() pickPhotos;
   final Future<bool> Function() importPdf;
   final bool canRasterPdf;
@@ -48,6 +53,7 @@ class EditorBottomSheet extends StatefulWidget {
 }
 
 class _EditorBottomSheetState extends State<EditorBottomSheet> {
+  late int _selectedPageIndex = widget.currentPageIndex ?? 0;
 
   @override
   Widget build(BuildContext context) {
@@ -59,9 +65,13 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
       CanvasBackgroundPreview.fixedWidth * 1.4,
     );
 
+    final pages = widget.coreInfo.pages;
+    final isLastEmptyPage =
+        _selectedPageIndex == pages.length - 1 &&
+        pages[_selectedPageIndex].isEmpty;
+
     return ScrollConfiguration(
       behavior: ScrollConfiguration.of(context).copyWith(
-        // Enable drag scrolling on all devices (including mouse)
         dragDevices: PointerDeviceKind.values.toSet(),
       ),
       child: Padding(
@@ -111,8 +121,10 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
               height: previewSize.height,
               child: Row(
                 children: [
-                  for (final backgroundPattern in CanvasBackgroundPattern.values) ...[
-                    if (backgroundPattern != CanvasBackgroundPattern.values.first)
+                  for (final backgroundPattern
+                      in CanvasBackgroundPattern.values) ...[
+                    if (backgroundPattern !=
+                        CanvasBackgroundPattern.values.first)
                       const SizedBox(width: 4),
                     Expanded(
                       child: Center(
@@ -156,7 +168,9 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
                     min: 20,
                     max: 100,
                     divisions: 8,
-                    onChanged: widget.coreInfo.backgroundPattern == CanvasBackgroundPattern.none
+                    onChanged:
+                        widget.coreInfo.backgroundPattern ==
+                            CanvasBackgroundPattern.none
                         ? null
                         : (double value) => setState(() {
                               widget.setLineHeight(value.toInt());
@@ -179,7 +193,9 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
                     min: 1,
                     max: 5,
                     divisions: 4,
-                    onChanged: widget.coreInfo.backgroundPattern == CanvasBackgroundPattern.none
+                    onChanged:
+                        widget.coreInfo.backgroundPattern ==
+                            CanvasBackgroundPattern.none
                         ? null
                         : (double value) => setState(() {
                               widget.setLineThickness(value.toInt());
@@ -189,36 +205,120 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
               ],
             ),
             const SizedBox(height: 16),
+            Text(
+              t.editor.pages,
+              style: TextTheme.of(context).titleMedium,
+            ),
+            const SizedBox(height: 8),
+            SizedBox(
+              height: previewSize.height + 24,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemCount: pages.length,
+                separatorBuilder: (_, _) => const SizedBox(width: 4),
+                itemBuilder: (context, pageIndex) {
+                  final isSelected = pageIndex == _selectedPageIndex;
+                  return GestureDetector(
+                    onTap: () => setState(() {
+                      _selectedPageIndex = pageIndex;
+                    }),
+                    child: Column(
+                      children: [
+                        Container(
+                          width: previewSize.width,
+                          height: previewSize.height,
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .primary
+                                  .withSaturation(isSelected ? 1 : 0)
+                                  .withValues(alpha: isSelected ? 1 : 0.1),
+                              width: 2,
+                            ),
+                            borderRadius: const .all(.circular(8)),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: const .all(.circular(8)),
+                            child: CanvasPreview(
+                              pageIndex: pageIndex,
+                              height: previewSize.height,
+                              coreInfo: widget.coreInfo,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          '${pageIndex + 1}',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: isSelected
+                                ? Theme.of(context).colorScheme.primary
+                                : null,
+                            fontWeight: isSelected
+                                ? FontWeight.bold
+                                : FontWeight.normal,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 12),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                TextButton(
-                  onPressed: widget.coreInfo.isNotEmpty
-                      ? () {
-                          widget.clearPage();
-                          Navigator.pop(context);
-                        }
-                      : null,
-                  child: Text(
-                    t.editor.menu.clearPage(
-                      page: widget.currentPageIndex == null
-                          ? '?'
-                          : widget.currentPageIndex! + 1,
-                      totalPages: widget.coreInfo.pages.length,
-                    ),
-                  ),
+                _PageActionButton(
+                  icon: Icons.insert_page_break,
+                  label: t.editor.menu.insertPage,
+                  enabled: !widget.coreInfo.readOnly,
+                  onTap: () {
+                    widget.insertPageAfter(_selectedPageIndex);
+                    setState(() {
+                      _selectedPageIndex++;
+                    });
+                  },
                 ),
-                TextButton(
-                  onPressed: widget.coreInfo.isNotEmpty
-                      ? () {
-                          widget.clearAllPages();
-                          Navigator.pop(context);
-                        }
-                      : null,
-                  child: Text(t.editor.menu.clearAllPages),
+                _PageActionButton(
+                  icon: FontAwesomeIcons.solidCopy,
+                  label: t.editor.menu.duplicatePage,
+                  enabled: !widget.coreInfo.readOnly,
+                  onTap: () {
+                    widget.duplicatePage(_selectedPageIndex);
+                    setState(() {
+                      _selectedPageIndex++;
+                    });
+                  },
+                ),
+                _PageActionButton(
+                  icon: Icons.cleaning_services,
+                  label: t.editor.menu.clearPage(
+                    page: _selectedPageIndex + 1,
+                    totalPages: pages.length,
+                  ),
+                  enabled: !widget.coreInfo.readOnly && !isLastEmptyPage,
+                  onTap: () {
+                    widget.clearPage(_selectedPageIndex);
+                  },
+                ),
+                _PageActionButton(
+                  icon: FontAwesomeIcons.trashCan,
+                  label: t.editor.menu.deletePage,
+                  enabled: !widget.coreInfo.readOnly && !isLastEmptyPage,
+                  onTap: () {
+                    widget.deletePage(_selectedPageIndex);
+                    if (_selectedPageIndex >= pages.length) {
+                      setState(() {
+                        _selectedPageIndex = pages.length - 1;
+                      });
+                    }
+                  },
                 ),
               ],
             ),
+            const SizedBox(height: 8),
           ],
         ),
       ),
@@ -279,12 +379,62 @@ class _BackgroundColorButton extends StatelessWidget {
               ? Icon(
                   Icons.check,
                   size: 14,
-                  color: color == null ||
-                          (color!.computeLuminance() > 0.5)
+                  color: color == null || (color!.computeLuminance() > 0.5)
                       ? colorScheme.primary
                       : Colors.white,
                 )
               : null,
+        ),
+      ),
+    );
+  }
+}
+
+class _PageActionButton extends StatelessWidget {
+  const _PageActionButton({
+    required this.icon,
+    required this.label,
+    required this.enabled,
+    required this.onTap,
+  });
+
+  final Object icon;
+  final String label;
+  final bool enabled;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = ColorScheme.of(context);
+    final iconColor = enabled
+        ? colorScheme.onSurface
+        : colorScheme.onSurface.withValues(alpha: 0.3);
+    return InkWell(
+      borderRadius: const BorderRadius.all(Radius.circular(8)),
+      onTap: enabled ? onTap : null,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (icon is IconData)
+              Icon(icon as IconData, size: 18, color: iconColor)
+            else
+              FaIcon(icon as FaIconData, size: 18, color: iconColor),
+            const SizedBox(height: 2),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 10,
+                color: enabled
+                    ? colorScheme.onSurface
+                    : colorScheme.onSurface.withValues(alpha: 0.3),
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
         ),
       ),
     );
