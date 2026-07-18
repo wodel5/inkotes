@@ -66,9 +66,6 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
     );
 
     final pages = widget.coreInfo.pages;
-    final isLastEmptyPage =
-        _selectedPageIndex == pages.length - 1 &&
-        pages[_selectedPageIndex].isEmpty;
 
     return ScrollConfiguration(
       behavior: ScrollConfiguration.of(
@@ -276,7 +273,7 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
                 _PageActionButton(
                   icon: Icons.insert_page_break,
                   label: t.editor.menu.insertPage,
-                  enabled: !widget.coreInfo.readOnly,
+                  enabled: true,
                   onTap: () {
                     widget.insertPageAfter(_selectedPageIndex);
                     setState(() {
@@ -287,7 +284,7 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
                 _PageActionButton(
                   icon: FontAwesomeIcons.solidCopy,
                   label: t.editor.menu.duplicatePage,
-                  enabled: !widget.coreInfo.readOnly,
+                  enabled: true,
                   onTap: () {
                     widget.duplicatePage(_selectedPageIndex);
                     setState(() {
@@ -301,22 +298,23 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
                     page: _selectedPageIndex + 1,
                     totalPages: pages.length,
                   ),
-                  enabled: !widget.coreInfo.readOnly && !isLastEmptyPage,
+                  enabled: true,
                   onTap: () {
                     widget.clearPage(_selectedPageIndex);
+                    setState(() {});
                   },
                 ),
                 _PageActionButton(
                   icon: FontAwesomeIcons.trashCan,
                   label: t.editor.menu.deletePage,
-                  enabled: !widget.coreInfo.readOnly && !isLastEmptyPage,
+                  enabled: pages.length > 1,
                   onTap: () {
                     widget.deletePage(_selectedPageIndex);
-                    if (_selectedPageIndex >= pages.length) {
-                      setState(() {
+                    setState(() {
+                      if (_selectedPageIndex >= pages.length) {
                         _selectedPageIndex = pages.length - 1;
-                      });
-                    }
+                      }
+                    });
                   },
                 ),
               ],

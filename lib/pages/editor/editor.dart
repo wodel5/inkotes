@@ -1720,7 +1720,9 @@ class EditorState extends State<Editor> {
       deletePage: (int pageIndex) => setState(() {
         if (coreInfo.readOnly) return;
         final page = coreInfo.pages.removeAt(pageIndex);
-        createPage(pageIndex - 1);
+        if (coreInfo.pages.isEmpty) {
+          coreInfo.pages.add(EditorPage());
+        }
         history.recordChange(
           EditorHistoryItem(
             type: .deletePage,
@@ -1809,7 +1811,6 @@ class EditorState extends State<Editor> {
       final removedImages = page.images.toList();
       page.strokes.clear();
       page.images.clear();
-      removeExcessPages();
       history.recordChange(
         EditorHistoryItem(
           type: .erase,
