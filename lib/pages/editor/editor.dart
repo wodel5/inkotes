@@ -1979,11 +1979,28 @@ class EditorState extends State<Editor> {
   }
 }
 
-class _MoreMenuOverlay extends StatelessWidget {
+class _MoreMenuOverlay extends StatefulWidget {
   const _MoreMenuOverlay({required this.buttonRect, required this.child});
 
   final Rect buttonRect;
   final Widget child;
+
+  @override
+  State<_MoreMenuOverlay> createState() => _MoreMenuOverlayState();
+}
+
+class _MoreMenuOverlayState extends State<_MoreMenuOverlay> {
+  Orientation? _lastOrientation;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final currentOrientation = MediaQuery.of(context).orientation;
+    if (_lastOrientation != null && _lastOrientation != currentOrientation) {
+      Navigator.of(context).pop();
+    }
+    _lastOrientation = currentOrientation;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -1994,10 +2011,10 @@ class _MoreMenuOverlay extends StatelessWidget {
     final maxWidth = 350.0;
 
     // 弹窗顶部位置（按钮下方）
-    double top = buttonRect.bottom + 8;
+    double top = widget.buttonRect.bottom + 8;
 
     // 弹窗右边缘对齐按钮右边缘
-    double left = buttonRect.right - maxWidth;
+    double left = widget.buttonRect.right - maxWidth;
 
     // 边界检查：确保不超出屏幕左右
     if (left < 16) left = 16;
@@ -2007,7 +2024,7 @@ class _MoreMenuOverlay extends StatelessWidget {
 
     // 边界检查：如果超出底部，显示在按钮上方
     if (top + 400 > screenSize.height - 16) {
-      top = buttonRect.top - 400 - 8;
+      top = widget.buttonRect.top - 400 - 8;
     }
 
     return Stack(
@@ -2042,7 +2059,7 @@ class _MoreMenuOverlay extends StatelessWidget {
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(16),
-                  child: child,
+                  child: widget.child,
                 ),
               ),
             ),
