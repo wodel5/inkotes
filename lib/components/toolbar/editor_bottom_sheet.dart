@@ -1,12 +1,10 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:foledge/components/canvas/canvas_background_preview.dart';
-import 'package:foledge/components/canvas/canvas_image_dialog.dart';
 import 'package:foledge/components/canvas/inner_canvas.dart';
 import 'package:foledge/data/editor/editor_core_info.dart';
 import 'package:foledge/data/editor/page.dart';
 import 'package:foledge/data/extensions/list_extensions.dart';
-import 'package:foledge/i18n/extensions/box_fit_localized.dart';
 import 'package:foledge/i18n/extensions/canvas_background_pattern_localized.dart';
 import 'package:foledge/i18n/strings.g.dart';
 import 'package:sbn/canvas_background_pattern.dart';
@@ -50,13 +48,11 @@ class EditorBottomSheet extends StatefulWidget {
 }
 
 class _EditorBottomSheetState extends State<EditorBottomSheet> {
-  static const imageBoxFits = <BoxFit>[.fill, .cover, .contain];
 
   @override
   Widget build(BuildContext context) {
     final page = widget.coreInfo.pages.getOrNull(widget.currentPageIndex ?? -1);
     final pageSize = page?.size ?? EditorPage.defaultSize;
-    final backgroundImage = page?.backgroundImage;
 
     final previewSize = Size(
       CanvasBackgroundPreview.fixedWidth,
@@ -73,7 +69,6 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
         child: ListView(
           shrinkWrap: true,
           children: [
-            const SizedBox(height: 8),
             Row(
               children: [
                 Text(
@@ -82,55 +77,7 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
-            if (backgroundImage != null) ...[
-              Text(
-                t.editor.menu.backgroundImageFit,
-                style: TextTheme.of(context).titleMedium,
-              ),
-              SizedBox(
-                height: previewSize.height,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: imageBoxFits.length,
-                  separatorBuilder: (_, _) => const SizedBox(width: 8),
-                  itemBuilder: (context, index) {
-                    final boxFit = imageBoxFits[index];
-                    return InkWell(
-                      borderRadius: const .all(.circular(8)),
-                      onTap: () => setState(() {
-                        backgroundImage.backgroundFit = boxFit;
-                        widget.redrawAndSave();
-                      }),
-                      child: CanvasBackgroundPreview(
-                        selected: backgroundImage.backgroundFit == boxFit,
-                        backgroundColor:
-                            widget.coreInfo.backgroundColor ??
-                            InnerCanvas.defaultBackgroundColor,
-                        backgroundPattern:
-                            widget.coreInfo.backgroundPattern,
-                        pageSize: pageSize,
-                        lineHeight: widget.coreInfo.lineHeight,
-                        lineThickness: widget.coreInfo.lineThickness,
-                        label: boxFit.localizedName,
-                      ),
-                    );
-                  },
-                ),
-              ),
-              const SizedBox(height: 16),
-              CanvasImageDialog(
-                filePath: widget.coreInfo.filePath,
-                image: backgroundImage,
-                redrawImage: () => setState(() {
-                  widget.redrawImage();
-                }),
-                isBackground: true,
-                toggleAsBackground: widget.removeBackgroundImage,
-                singleRow: true,
-              ),
-              const SizedBox(height: 16),
-            ],
+            const SizedBox(height: 8),
             Row(
               children: [
                 Text(
