@@ -71,11 +71,11 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
         pages[_selectedPageIndex].isEmpty;
 
     return ScrollConfiguration(
-      behavior: ScrollConfiguration.of(context).copyWith(
-        dragDevices: PointerDeviceKind.values.toSet(),
-      ),
+      behavior: ScrollConfiguration.of(
+        context,
+      ).copyWith(dragDevices: PointerDeviceKind.values.toSet()),
       child: Padding(
-        padding: const .symmetric(horizontal: 12),
+        padding: const .symmetric(horizontal: 16, vertical: 0), // 弹窗左右内边距
         child: ListView(
           shrinkWrap: true,
           children: [
@@ -87,7 +87,7 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 8), // 标题"更多"下方间距
             Row(
               children: [
                 Text(
@@ -116,7 +116,7 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
                 ],
               ],
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 8), // 画纸类型标题与预览图之间间距
             SizedBox(
               height: previewSize.height,
               child: Row(
@@ -125,7 +125,7 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
                       in CanvasBackgroundPattern.values) ...[
                     if (backgroundPattern !=
                         CanvasBackgroundPattern.values.first)
-                      const SizedBox(width: 4),
+                      const SizedBox(width: 4), // 画纸预览卡片之间的间距
                     Expanded(
                       child: Center(
                         child: InkWell(
@@ -153,7 +153,7 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
                 ],
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 8), // 画纸预览图与行高之间间距
             Row(
               children: [
                 Text(
@@ -173,13 +173,14 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
                             CanvasBackgroundPattern.none
                         ? null
                         : (double value) => setState(() {
-                              widget.setLineHeight(value.toInt());
-                            }),
+                            widget.setLineHeight(value.toInt());
+                          }),
                   ),
                 ),
               ],
             ),
             Row(
+              // 行高与线条粗细之间无间距，紧挨着
               children: [
                 Text(
                   t.editor.menu.lineThickness,
@@ -198,24 +199,22 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
                             CanvasBackgroundPattern.none
                         ? null
                         : (double value) => setState(() {
-                              widget.setLineThickness(value.toInt());
-                            }),
+                            widget.setLineThickness(value.toInt());
+                          }),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 12),
-            Text(
-              t.editor.pages,
-              style: TextTheme.of(context).titleMedium,
-            ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 8), // 线条粗细与页面标题之间间距
+            Text(t.editor.pages, style: TextTheme.of(context).titleMedium),
+            const SizedBox(height: 8), // 页面标题与缩略图之间间距
             SizedBox(
               height: previewSize.height + 24,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 itemCount: pages.length,
-                separatorBuilder: (_, _) => const SizedBox(width: 10),
+                separatorBuilder: (_, _) =>
+                    const SizedBox(width: 10), // 页面缩略图之间的间距
                 itemBuilder: (context, pageIndex) {
                   final isSelected = pageIndex == _selectedPageIndex;
                   return GestureDetector(
@@ -229,9 +228,7 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
                           height: previewSize.height,
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .primary
+                              color: Theme.of(context).colorScheme.primary
                                   .withSaturation(isSelected ? 1 : 0)
                                   .withValues(alpha: isSelected ? 1 : 0.1),
                               width: 2,
@@ -272,7 +269,7 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
                 },
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8), // 缩略图与操作按钮之间间距
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -337,6 +334,7 @@ const _backgroundColorPresets = [
   Color(0xFFF0FFF0), // 浅绿
   Color(0xFFF0F7FF), // 浅蓝
   Color(0xFFF5F5F5), // 浅灰
+  Color(0xFF272735), // 深色
 ];
 
 class _BackgroundColorButton extends StatelessWidget {
