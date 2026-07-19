@@ -355,7 +355,7 @@ class _Translations$editor$penOptions$zh_Hans_CN extends Translations$editor$pen
 	final TranslationsZhHansCn _root; // ignore: unused_field
 
 	// Translations
-	@override String get size => '粗细';
+	@override String get size => '笔画粗细';
 }
 
 // Path: editor.colors

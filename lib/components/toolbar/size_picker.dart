@@ -12,7 +12,7 @@ class SizePicker extends StatefulWidget {
   State<SizePicker> createState() => _SizePickerState();
 
   static const double smallLength = 25;
-  static const double largeLength = 150;
+  static const double largeLength = 180;
 }
 
 String _prettyNum(double num) {
@@ -24,29 +24,20 @@ String _prettyNum(double num) {
 class _SizePickerState extends State<SizePicker> {
   @override
   Widget build(BuildContext context) {
+    final brightness = Theme.of(context).brightness;
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Flex(
       direction: widget.axis,
       mainAxisSize: .min,
       children: [
-        Column(
-          children: [
-            Text(
-              t.editor.penOptions.size,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8),
-                fontSize: 10,
-                height: 1,
-              ),
-            ),
-            Text(
-              _prettyNum(widget.pen.options.size),
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurface,
-                fontSize: 11,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
+        Text(
+          '${t.editor.penOptions.size} ${_prettyNum(widget.pen.options.size)}',
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8),
+            fontSize: 20,
+            height: 1,
+          ),
         ),
         const SizedBox(width: 8),
         SizedBox(
@@ -56,6 +47,9 @@ class _SizePickerState extends State<SizePicker> {
               trackShape: const RoundedRectSliderTrackShape(),
               trackHeight: 18,
               overlayShape: SliderComponentShape.noOverlay,
+              inactiveTrackColor: brightness == Brightness.light
+                  ? const Color(0xFF9999BB).withValues(alpha: 0.15)
+                  : colorScheme.surfaceContainerHighest.withValues(alpha: 0.6),
               thumbShape: const _RingThumbShape(visualRadius: 7, strokeWidth: 5.5),
               activeTickMarkColor: Colors.transparent,
               inactiveTickMarkColor: Colors.transparent,
@@ -106,6 +100,8 @@ class _RingThumbShape extends SliderComponentShape {
   }) {
     final canvas = context.canvas;
     final drawRadius = visualRadius - strokeWidth / 2;
+
+    // 白色圆环
     canvas.drawCircle(
       center,
       drawRadius,

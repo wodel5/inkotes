@@ -109,7 +109,7 @@ editor:
     pencil: 铅笔
     laserPointer: 激光笔
   penOptions:
-    size: 粗细
+    size: 笔画粗细
   colors:
     colorPicker: 选色器
     customBrightnessHue: 自定义 $b $h

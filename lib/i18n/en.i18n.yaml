@@ -109,7 +109,7 @@ editor:
     pencil: Pencil
     laserPointer: Laser pointer
   penOptions:
-    size: Size
+    size: Stroke size
   colors:
     colorPicker: Color picker
     customBrightnessHue: Custom $b $h

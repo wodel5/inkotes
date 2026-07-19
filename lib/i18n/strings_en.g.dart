@@ -543,8 +543,8 @@ class Translations$editor$penOptions$en {
 
 	// Translations
 
-	/// en: 'Size'
-	String get size => 'Size';
+	/// en: 'Stroke size'
+	String get size => 'Stroke size';
 }
 
 // Path: editor.colors
