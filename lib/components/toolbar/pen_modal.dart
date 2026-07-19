@@ -69,8 +69,22 @@ class _PenModalState extends State<PenModal> {
                 widget.setTool(value ? Pen.ballpointPen() : Pen.fountainPen());
               });
             },
-            activeColor: Theme.of(context).colorScheme.primary,
-            inactiveColor: Theme.of(context).colorScheme.primary,
+            activeColor: Theme.of(context).brightness == Brightness.dark
+                ? const Color(0xFFB2C5FF)
+                : Theme.of(context).colorScheme.primary,
+            inactiveColor: Theme.of(context).brightness == Brightness.dark
+                ? const Color(0xFFB2C5FF)
+                : Theme.of(context).colorScheme.primary,
+            thumb: Container(
+              width: 14,
+              height: 14,
+              decoration: BoxDecoration(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? const Color(0xFFE3E2E9)
+                    : Colors.white,
+                shape: BoxShape.circle,
+              ),
+            ),
             activeChild: Icon(
               IconData(0xec19, fontFamily: 'iconfont'),
               size: 16,

@@ -50,7 +50,13 @@ class _SizePickerState extends State<SizePicker> {
               inactiveTrackColor: brightness == Brightness.light
                   ? const Color(0xFF9999BB).withValues(alpha: 0.15)
                   : colorScheme.surfaceContainerHighest.withValues(alpha: 0.6),
+              activeTrackColor: brightness == Brightness.dark
+                  ? const Color(0xFFB2C5FF)
+                  : null,
               thumbShape: const _RingThumbShape(visualRadius: 7, strokeWidth: 5.5),
+              thumbColor: brightness == Brightness.dark
+                  ? const Color(0xFFE3E2E9)
+                  : Colors.white,
               activeTickMarkColor: Colors.transparent,
               inactiveTickMarkColor: Colors.transparent,
             ),
@@ -101,12 +107,14 @@ class _RingThumbShape extends SliderComponentShape {
     final canvas = context.canvas;
     final drawRadius = visualRadius - strokeWidth / 2;
 
-    // 白色圆环
+    // 圆环颜色
+    final thumbColor = sliderTheme.thumbColor ?? Colors.white;
+
     canvas.drawCircle(
       center,
       drawRadius,
       Paint()
-        ..color = Colors.white
+        ..color = thumbColor
         ..style = PaintingStyle.stroke
         ..strokeWidth = strokeWidth,
     );
