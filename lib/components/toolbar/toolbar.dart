@@ -79,8 +79,13 @@ class _ToolbarState extends State<Toolbar> {
   @override
   void initState() {
     _assignKeybindings();
+    stows.editorFingerDrawing.addListener(_onFingerDrawingChanged);
 
     super.initState();
+  }
+
+  void _onFingerDrawingChanged() {
+    if (mounted) setState(() {});
   }
 
   Keybinding? _ctrlF;
@@ -412,6 +417,7 @@ class _ToolbarState extends State<Toolbar> {
 
   @override
   void dispose() {
+    stows.editorFingerDrawing.removeListener(_onFingerDrawingChanged);
     _removeKeybindings();
     super.dispose();
   }
