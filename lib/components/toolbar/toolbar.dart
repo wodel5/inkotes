@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:collapsible/collapsible.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -362,7 +361,7 @@ class _ToolbarState extends State<Toolbar> {
                         showExportOptions.value = false;
                         stows.editorFingerDrawing.value = !stows.editorFingerDrawing.value;
                       },
-                      child: const Icon(CupertinoIcons.hand_draw, size: 18),
+                      child: Icon(const IconData(0xe7de, fontFamily: 'iconfont'), size: 18),
                     ),
                     _DockDivider(),
                     _DockButton(

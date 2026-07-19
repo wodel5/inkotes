@@ -125,7 +125,7 @@ class _SettingsContentState extends State<SettingsContent> {
               .settings
               .prefDescriptions
               .autoDisableFingerDrawingWhenStylusDetected,
-          icon: CupertinoIcons.hand_draw_fill,
+          icon: IconData(0xe7de, fontFamily: 'iconfont'),
           pref: stows.autoDisableFingerDrawingWhenStylusDetected,
         ),
         SettingsSwitch(

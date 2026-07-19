@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:foledge/components/toolbar/size_picker.dart';
 import 'package:foledge/data/tools/_tool.dart';
 import 'package:foledge/data/tools/highlighter.dart';
@@ -52,15 +51,12 @@ class _PenModalState extends State<PenModal> {
               shape: const CircleBorder(),
             ),
             tooltip: t.editor.pens.fountainPen,
-            icon: SvgPicture.asset(
-              'assets/images/scribble_fountain.svg',
-              width: 32,
-              height: 32 / 508 * 374,
-              theme: SvgTheme(
-                currentColor: Pen.currentPen.icon == Pen.fountainPenIcon
-                    ? ColorScheme.of(context).secondary
-                    : ColorScheme.of(context).onSurface,
-              ),
+            icon: Icon(
+              IconData(0xec18, fontFamily: 'iconfont'),
+              size: 32,
+              color: Pen.currentPen.icon == Pen.fountainPenIcon
+                  ? ColorScheme.of(context).secondary
+                  : ColorScheme.of(context).onSurface,
             ),
           ),
           const SizedBox.square(dimension: 8),
@@ -80,15 +76,12 @@ class _PenModalState extends State<PenModal> {
               shape: const CircleBorder(),
             ),
             tooltip: t.editor.pens.ballpointPen,
-            icon: SvgPicture.asset(
-              'assets/images/scribble_ballpoint.svg',
-              width: 32,
-              height: 32 / 508 * 374,
-              theme: SvgTheme(
-                currentColor: Pen.currentPen.icon == Pen.ballpointPenIcon
-                    ? ColorScheme.of(context).secondary
-                    : ColorScheme.of(context).onSurface,
-              ),
+            icon: Icon(
+              IconData(0xec19, fontFamily: 'iconfont'),
+              size: 32,
+              color: Pen.currentPen.icon == Pen.ballpointPenIcon
+                  ? ColorScheme.of(context).secondary
+                  : ColorScheme.of(context).onSurface,
             ),
           ),
         ],

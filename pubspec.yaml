@@ -155,6 +155,7 @@ flutter:
 
   assets:
     - assets/images/
+    - assets/iconfont.ttf
 
   # https://flutter.dev/assets-and-images/#resolution-aware
 
@@ -162,6 +163,10 @@ flutter:
   # https://flutter.dev/assets-and-images/#from-packages
 
   fonts:
+    - family: iconfont
+      fonts:
+        - asset: assets/iconfont.ttf
+
     - family: MiSans
       fonts:
         - asset: assets/fonts/MiSans/MiSans-Regular.ttf
