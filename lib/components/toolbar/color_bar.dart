@@ -33,41 +33,6 @@ class ColorBar extends StatefulWidget {
     (name: t.editor.colors.purple, color: Colors.purple),
     (name: t.editor.colors.pink, color: Colors.pink),
     (name: t.editor.colors.white, color: Colors.white),
-    ..._pastelColorOptions,
-  ];
-  static final List<NamedColor> _pastelColorOptions = [
-    (
-      name: t.editor.colors.pastelRed,
-      color: const Color.fromRGBO(255, 173, 173, 1),
-    ),
-    (
-      name: t.editor.colors.pastelOrange,
-      color: const Color.fromRGBO(255, 214, 165, 1),
-    ),
-    (
-      name: t.editor.colors.pastelYellow,
-      color: const Color.fromRGBO(253, 255, 182, 1),
-    ),
-    (
-      name: t.editor.colors.pastelGreen,
-      color: const Color.fromRGBO(202, 255, 191, 1),
-    ),
-    (
-      name: t.editor.colors.pastelCyan,
-      color: const Color.fromRGBO(155, 246, 255, 1),
-    ),
-    (
-      name: t.editor.colors.pastelBlue,
-      color: const Color.fromRGBO(160, 196, 255, 1),
-    ),
-    (
-      name: t.editor.colors.pastelPurple,
-      color: const Color.fromRGBO(189, 178, 255, 1),
-    ),
-    (
-      name: t.editor.colors.pastelPink,
-      color: const Color.fromRGBO(255, 198, 255, 1),
-    ),
   ];
   static final List<NamedColor> greyScaleColorOptions = [
     (name: t.editor.colors.black, color: Colors.black),
@@ -126,34 +91,6 @@ class ColorBar extends StatefulWidget {
     }
   }
 
-  /// Returns whether the color is now pinned.
-  static bool toggleColorPinned(String colorString) {
-    if (stows.pinnedColors.value.contains(colorString)) {
-      stows.pinnedColors.value.remove(colorString);
-      stows.recentColorsChronological.value.remove(colorString);
-      stows.recentColorsPositioned.value.remove(colorString);
-      if (stows.recentColorsChronological.value.length >= 5) {
-        // if full, replace oldest
-        final oldestColor = stows.recentColorsChronological.value.removeAt(0);
-        stows.recentColorsChronological.value.add(colorString);
-        final int oldestColorPosition = stows.recentColorsPositioned.value
-            .indexOf(oldestColor);
-        stows.recentColorsPositioned.value[oldestColorPosition] = colorString;
-      } else {
-        // not full, add to end
-        stows.recentColorsChronological.value.add(colorString);
-        stows.recentColorsPositioned.value.insert(0, colorString);
-      }
-      return false;
-    } else {
-      // add to pinned and remove from recent colors
-      stows.pinnedColors.value.add(colorString);
-      stows.recentColorsChronological.value.remove(colorString);
-      stows.recentColorsPositioned.value.remove(colorString);
-      return true;
-    }
-  }
-
   @override
   State<ColorBar> createState() => _ColorBarState();
 }
@@ -166,35 +103,7 @@ class _ColorBarState extends State<ColorBar> {
     final colorScheme = ColorScheme.of(context);
 
     final children = <Widget>[
-      // pinned colors
-      if (stows.pinnedColors.value.isNotEmpty) ...[
-        const ColorOptionSeparatorIcon(icon: Icons.pin_drop),
-        for (final colorString in stows.pinnedColors.value)
-          ColorOption(
-            isSelected:
-                widget.currentColor?.withAlpha(255).toARGB32() ==
-                int.parse(colorString),
-            enabled: widget.currentColor != null,
-            onTap: () => widget.setColor(Color(int.parse(colorString))),
-            onLongPress: () =>
-                setState(() => ColorBar.toggleColorPinned(colorString)),
-            tooltip: ColorBar.findColorName(Color(int.parse(colorString))),
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                color: Color(
-                  int.parse(colorString),
-                ),
-                shape: .circle,
-                border: Border.all(
-                  color: colorScheme.onSurface.withValues(alpha: 0.2),
-                  width: 1,
-                ),
-              ),
-            ),
-          ),
-      ],
-
-      const ColorOptionSeparatorIcon(icon: Icons.history),
+      const ColorOptionSeparatorIcon(icon: FontAwesomeIcons.clockRotateLeft),
 
       // recent colors
       for (final colorString in stows.recentColorsPositioned.value.reversed)
@@ -204,8 +113,6 @@ class _ColorBarState extends State<ColorBar> {
               int.parse(colorString),
           enabled: widget.currentColor != null,
           onTap: () => widget.setColor(Color(int.parse(colorString))),
-          onLongPress: () =>
-              setState(() => ColorBar.toggleColorPinned(colorString)),
           tooltip: ColorBar.findColorName(Color(int.parse(colorString))),
           child: DecoratedBox(
             decoration: BoxDecoration(
@@ -243,8 +150,6 @@ class _ColorBarState extends State<ColorBar> {
           ),
         ),
 
-      const ColorOptionSeparatorIcon(icon: Icons.palette),
-
       // custom color
       ColorOption(
         isSelected:
@@ -255,7 +160,7 @@ class _ColorBarState extends State<ColorBar> {
         tooltip: t.editor.colors.colorPicker,
         child: const DecoratedBox(
           decoration: BoxDecoration(color: Colors.transparent, shape: .circle),
-          child: Center(child: FaIcon(FontAwesomeIcons.droplet, size: 16)),
+          child: Center(child: FaIcon(FontAwesomeIcons.featherPointed, size: 16)),
         ),
       ),
 

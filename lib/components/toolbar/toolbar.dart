@@ -11,7 +11,6 @@ import 'package:foledge/components/toolbar/color_bar.dart';
 import 'package:foledge/components/toolbar/export_bar.dart';
 import 'package:foledge/components/toolbar/pen_modal.dart';
 import 'package:foledge/components/toolbar/selection_bar.dart';
-import 'package:foledge/components/toolbar/size_picker.dart';
 import 'package:foledge/data/prefs.dart';
 import 'package:foledge/data/tools/_tool.dart';
 import 'package:foledge/data/tools/eraser.dart';
@@ -180,35 +179,6 @@ class _ToolbarState extends State<Toolbar> {
         ),
       ),
       ValueListenableBuilder(
-        valueListenable: toolOptionsType,
-        builder: (context, toolOptionsType, _) {
-          return Collapsible(
-            axis: CollapsibleAxis.vertical,
-            maintainState: true,
-            collapsed: toolOptionsType == .hide,
-            child: switch (toolOptionsType) {
-              .hide => const SizedBox.square(dimension: SizePicker.smallLength),
-              .pen => PenModal(
-                getTool: () => Pen.currentPen,
-                setTool: widget.setTool,
-              ),
-              .highlighter => PenModal(
-                getTool: () => Highlighter.currentHighlighter,
-                setTool: widget.setTool,
-              ),
-              .pencil => PenModal(
-                getTool: () => Pencil.currentPencil,
-                setTool: widget.setTool,
-              ),
-              .select => SelectionBar(
-                duplicateSelection: widget.duplicateSelection,
-                deleteSelection: widget.deleteSelection,
-              ),
-            },
-          );
-        },
-      ),
-      ValueListenableBuilder(
         valueListenable: showColorOptions,
         builder: (context, showColorOptions, child) {
           return Collapsible(
@@ -243,9 +213,45 @@ class _ToolbarState extends State<Toolbar> {
                   ),
                 ),
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
+                child: IntrinsicWidth(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                    ValueListenableBuilder(
+                      valueListenable: toolOptionsType,
+                      builder: (context, toolOptionsType, _) {
+                        final isHidden = toolOptionsType == .hide;
+                        return AnimatedSize(
+                          duration: const Duration(milliseconds: 240),
+                          curve: Curves.easeOut,
+                          child: isHidden
+                              ? const SizedBox.shrink()
+                              : switch (toolOptionsType) {
+                                  .pen => PenModal(
+                                      getTool: () => Pen.currentPen,
+                                      setTool: widget.setTool,
+                                    ),
+                                  .highlighter => PenModal(
+                                      getTool: () => Highlighter.currentHighlighter,
+                                      setTool: widget.setTool,
+                                    ),
+                                  .pencil => PenModal(
+                                      getTool: () => Pencil.currentPencil,
+                                      setTool: widget.setTool,
+                                    ),
+                                  .select => SelectionBar(
+                                      duplicateSelection: widget.duplicateSelection,
+                                      deleteSelection: widget.deleteSelection,
+                                    ),
+                                  _ => const SizedBox.shrink(),
+                                },
+                        );
+                      },
+                    ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
                     _DockButton(
                       selected: widget.currentTool == Pen.currentPen,
                       enabled: !widget.readOnly,
@@ -401,11 +407,14 @@ class _ToolbarState extends State<Toolbar> {
                     ),
                   ],
                 ),
-              ),
-            ),
-          ),
-        ),
-      ),
+                ],  // Column children
+                ),  // Column
+                ),  // IntrinsicWidth
+              ),  // Container
+            ),  // BackdropFilter
+          ),  // ClipRRect
+        ),  // Padding
+      ),  // Center
     ];
 
     return Flex(

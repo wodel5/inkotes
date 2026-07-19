@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ColorOption extends StatelessWidget {
   const ColorOption({
@@ -60,22 +61,32 @@ class ColorOption extends StatelessWidget {
 class ColorOptionSeparatorIcon extends StatelessWidget {
   const ColorOptionSeparatorIcon({super.key, required this.icon});
 
-  final IconData icon;
+  final Object icon;
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = ColorScheme.of(context);
     return Padding(
       padding: const .symmetric(horizontal: 8, vertical: 4),
-      child: Icon(
-        icon,
-        size: 16,
-        color: Color.lerp(
-          colorScheme.onSurface,
-          colorScheme.primary,
-          0.2,
-        )!.withValues(alpha: 0.7),
-      ),
+      child: icon is IconData
+          ? Icon(
+              icon as IconData,
+              size: 16,
+              color: Color.lerp(
+                colorScheme.onSurface,
+                colorScheme.primary,
+                0.2,
+              )!.withValues(alpha: 0.7),
+            )
+          : FaIcon(
+              icon as FaIconData,
+              size: 16,
+              color: Color.lerp(
+                colorScheme.onSurface,
+                colorScheme.primary,
+                0.2,
+              )!.withValues(alpha: 0.7),
+            ),
     );
   }
 }
