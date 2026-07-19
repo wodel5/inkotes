@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
 import 'package:foledge/components/toolbar/size_picker.dart';
 import 'package:foledge/data/tools/_tool.dart';
 import 'package:foledge/data/tools/highlighter.dart';
 import 'package:foledge/data/tools/pen.dart';
 import 'package:foledge/data/tools/pencil.dart';
-import 'package:foledge/i18n/strings.g.dart';
 
 class PenModal extends StatefulWidget {
   const PenModal({super.key, required this.getTool, required this.setTool});
@@ -17,6 +17,31 @@ class PenModal extends StatefulWidget {
 }
 
 class _PenModalState extends State<PenModal> {
+  late ValueNotifier<bool> _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    final Tool currentTool = widget.getTool();
+    _controller = ValueNotifier(currentTool is Pen && currentTool.toolId != Pen.fountainPen().toolId);
+  }
+
+  @override
+  void didUpdateWidget(covariant PenModal oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final Tool currentTool = widget.getTool();
+    final bool isBallpoint = currentTool is Pen && currentTool.toolId != Pen.fountainPen().toolId;
+    if (_controller.value != isBallpoint) {
+      _controller.value = isBallpoint;
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final axis = Axis.horizontal;
@@ -34,54 +59,27 @@ class _PenModalState extends State<PenModal> {
       children: [
         SizePicker(axis: axis, pen: currentPen),
         if (currentPen is! Highlighter && currentPen is! Pencil) ...[
-          const SizedBox.square(dimension: 8),
-          IconButton(
-            onPressed: () => setState(() {
-              widget.setTool(Pen.fountainPen());
-            }),
-            style: TextButton.styleFrom(
-              foregroundColor: Pen.currentPen.icon == Pen.fountainPenIcon
-                  ? ColorScheme.of(context).secondary
-                  : ColorScheme.of(context).onSurface,
-              backgroundColor: Pen.currentPen.icon == Pen.fountainPenIcon
-                  ? Theme.of(
-                      context,
-                    ).colorScheme.secondary.withValues(alpha: 0.1)
-                  : Colors.transparent,
-              shape: const CircleBorder(),
-            ),
-            tooltip: t.editor.pens.fountainPen,
-            icon: Icon(
-              IconData(0xec18, fontFamily: 'iconfont'),
-              size: 32,
-              color: Pen.currentPen.icon == Pen.fountainPenIcon
-                  ? ColorScheme.of(context).secondary
-                  : ColorScheme.of(context).onSurface,
-            ),
-          ),
-          const SizedBox.square(dimension: 8),
-          IconButton(
-            onPressed: () => setState(() {
-              widget.setTool(Pen.ballpointPen());
-            }),
-            style: TextButton.styleFrom(
-              foregroundColor: Pen.currentPen.icon == Pen.ballpointPenIcon
-                  ? ColorScheme.of(context).secondary
-                  : ColorScheme.of(context).onSurface,
-              backgroundColor: Pen.currentPen.icon == Pen.ballpointPenIcon
-                  ? Theme.of(
-                      context,
-                    ).colorScheme.secondary.withValues(alpha: 0.1)
-                  : Colors.transparent,
-              shape: const CircleBorder(),
-            ),
-            tooltip: t.editor.pens.ballpointPen,
-            icon: Icon(
+          const SizedBox(width: 8),
+          AdvancedSwitch(
+            controller: _controller,
+            width: 50,
+            height: 18,
+            onChanged: (value) {
+              setState(() {
+                widget.setTool(value ? Pen.ballpointPen() : Pen.fountainPen());
+              });
+            },
+            activeColor: Theme.of(context).colorScheme.primary,
+            inactiveColor: Theme.of(context).colorScheme.primary,
+            activeChild: Icon(
               IconData(0xec19, fontFamily: 'iconfont'),
-              size: 32,
-              color: Pen.currentPen.icon == Pen.ballpointPenIcon
-                  ? ColorScheme.of(context).secondary
-                  : ColorScheme.of(context).onSurface,
+              size: 16,
+              color: Colors.black,
+            ),
+            inactiveChild: Icon(
+              IconData(0xec18, fontFamily: 'iconfont'),
+              size: 16,
+              color: Colors.black,
             ),
           ),
         ],
