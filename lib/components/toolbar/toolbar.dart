@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -75,13 +77,42 @@ class ToolbarState extends State<Toolbar> {
   ValueNotifier<bool> showExportOptions = ValueNotifier(false);
   ValueNotifier<bool> showColorOptions = ValueNotifier(false);
   ValueNotifier<ToolOptions> toolOptionsType = ValueNotifier(ToolOptions.hide);
+  Timer? _autoCollapseTimer;
+
+  void _startAutoCollapseTimer() {
+    _autoCollapseTimer?.cancel();
+    _autoCollapseTimer = Timer(const Duration(seconds: 3), () {
+      if (mounted) collapseAll();
+    });
+  }
+
+  void _resetAutoCollapseTimer() {
+    _autoCollapseTimer?.cancel();
+    _startAutoCollapseTimer();
+  }
+
+  bool get _hasActivePanel =>
+      showExportOptions.value ||
+      showColorOptions.value ||
+      toolOptionsType.value != ToolOptions.hide;
 
   @override
   void initState() {
     _assignKeybindings();
     stows.editorFingerDrawing.addListener(_onFingerDrawingChanged);
+    showExportOptions.addListener(_onPanelChanged);
+    showColorOptions.addListener(_onPanelChanged);
+    toolOptionsType.addListener(_onPanelChanged);
 
     super.initState();
+  }
+
+  void _onPanelChanged() {
+    if (_hasActivePanel) {
+      _startAutoCollapseTimer();
+    } else {
+      _autoCollapseTimer?.cancel();
+    }
   }
 
   void _onFingerDrawingChanged() {
@@ -144,9 +175,14 @@ class ToolbarState extends State<Toolbar> {
   }
 
   void collapseAll() {
+    _autoCollapseTimer?.cancel();
     showExportOptions.value = false;
     showColorOptions.value = false;
     toolOptionsType.value = ToolOptions.hide;
+  }
+
+  void resetAutoCollapseTimer() {
+    _resetAutoCollapseTimer();
   }
 
   @override
@@ -225,6 +261,7 @@ class ToolbarState extends State<Toolbar> {
                                     axis: Axis.horizontal,
                                     setColor: widget.setColor,
                                     currentColor: currentColor,
+                                    onInteraction: resetAutoCollapseTimer,
                                   ),
                                 )
                               : const SizedBox.shrink(),
@@ -246,14 +283,17 @@ class ToolbarState extends State<Toolbar> {
                                       .pen => PenModal(
                                           getTool: () => Pen.currentPen,
                                           setTool: widget.setTool,
+                                          onInteraction: resetAutoCollapseTimer,
                                         ),
                                       .highlighter => PenModal(
                                           getTool: () => Highlighter.currentHighlighter,
                                           setTool: widget.setTool,
+                                          onInteraction: resetAutoCollapseTimer,
                                         ),
                                       .pencil => PenModal(
                                           getTool: () => Pencil.currentPencil,
                                           setTool: widget.setTool,
+                                          onInteraction: resetAutoCollapseTimer,
                                         ),
                                       .select => SelectionBar(
                                           duplicateSelection: widget.duplicateSelection,
@@ -442,6 +482,10 @@ class ToolbarState extends State<Toolbar> {
 
   @override
   void dispose() {
+    _autoCollapseTimer?.cancel();
+    showExportOptions.removeListener(_onPanelChanged);
+    showColorOptions.removeListener(_onPanelChanged);
+    toolOptionsType.removeListener(_onPanelChanged);
     stows.editorFingerDrawing.removeListener(_onFingerDrawingChanged);
     _removeKeybindings();
     super.dispose();

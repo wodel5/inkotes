@@ -3,10 +3,11 @@ import 'package:foledge/data/tools/pen.dart';
 import 'package:foledge/i18n/strings.g.dart';
 
 class SizePicker extends StatefulWidget {
-  const SizePicker({super.key, required this.axis, required this.pen});
+  const SizePicker({super.key, required this.axis, required this.pen, this.onChanged});
 
   final Axis axis;
   final Pen pen;
+  final VoidCallback? onChanged;
 
   @override
   State<SizePicker> createState() => _SizePickerState();
@@ -69,6 +70,7 @@ class _SizePickerState extends State<SizePicker> {
                 setState(() {
                   widget.pen.options.size = value;
                 });
+                widget.onChanged?.call();
               },
             ),
           ),

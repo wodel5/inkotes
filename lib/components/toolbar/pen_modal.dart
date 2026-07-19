@@ -7,10 +7,11 @@ import 'package:foledge/data/tools/pen.dart';
 import 'package:foledge/data/tools/pencil.dart';
 
 class PenModal extends StatefulWidget {
-  const PenModal({super.key, required this.getTool, required this.setTool});
+  const PenModal({super.key, required this.getTool, required this.setTool, this.onInteraction});
 
   final Tool Function() getTool;
   final void Function(Pen) setTool;
+  final VoidCallback? onInteraction;
 
   @override
   State<PenModal> createState() => _PenModalState();
@@ -57,7 +58,7 @@ class _PenModalState extends State<PenModal> {
       direction: axis,
       mainAxisAlignment: .center,
       children: [
-        SizePicker(axis: axis, pen: currentPen),
+        SizePicker(axis: axis, pen: currentPen, onChanged: widget.onInteraction),
         if (currentPen is! Highlighter && currentPen is! Pencil) ...[
           const SizedBox(width: 8),
           AdvancedSwitch(
@@ -68,6 +69,7 @@ class _PenModalState extends State<PenModal> {
               setState(() {
                 widget.setTool(value ? Pen.ballpointPen() : Pen.fountainPen());
               });
+              widget.onInteraction?.call();
             },
             activeColor: Theme.of(context).brightness == Brightness.dark
                 ? const Color(0xFFB2C5FF)

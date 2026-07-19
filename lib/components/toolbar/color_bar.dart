@@ -15,11 +15,13 @@ class ColorBar extends StatefulWidget {
     required this.axis,
     required this.setColor,
     required this.currentColor,
+    this.onInteraction,
   });
 
   final Axis axis;
   final ValueChanged<Color> setColor;
   final Color? currentColor;
+  final VoidCallback? onInteraction;
 
   static List<NamedColor> get colorPresets => normalColorOptions;
   static final List<NamedColor> normalColorOptions = [
@@ -106,13 +108,16 @@ class _ColorBarState extends State<ColorBar> {
       const ColorOptionSeparatorIcon(icon: FontAwesomeIcons.clockRotateLeft),
 
       // recent colors
-      for (final colorString in stows.recentColorsPositioned.value.reversed)
+      for (final colorString in stows.recentColorsPositioned.value)
         ColorOption(
           isSelected:
               widget.currentColor?.withAlpha(255).toARGB32() ==
               int.parse(colorString),
           enabled: widget.currentColor != null,
-          onTap: () => widget.setColor(Color(int.parse(colorString))),
+          onTap: () {
+            widget.setColor(Color(int.parse(colorString)));
+            widget.onInteraction?.call();
+          },
           tooltip: ColorBar.findColorName(Color(int.parse(colorString))),
           child: DecoratedBox(
             decoration: BoxDecoration(
@@ -171,7 +176,10 @@ class _ColorBarState extends State<ColorBar> {
               widget.currentColor?.withAlpha(255).toARGB32() ==
               namedColor.color.toARGB32(),
           enabled: widget.currentColor != null,
-          onTap: () => widget.setColor(namedColor.color),
+          onTap: () {
+            widget.setColor(namedColor.color);
+            widget.onInteraction?.call();
+          },
           tooltip: namedColor.name,
           child: DecoratedBox(
             decoration: BoxDecoration(

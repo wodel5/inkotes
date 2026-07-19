@@ -507,7 +507,9 @@ class EditorState extends State<Editor> {
   }
 
   void onDrawStart(ScaleStartDetails details) {
-    _toolbarKey.currentState?.collapseAll();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _toolbarKey.currentState?.collapseAll();
+    });
     final page = coreInfo.pages[dragPageIndex!];
     final position = page.renderBox!.globalToLocal(details.focalPoint);
     history.canRedo = false;
