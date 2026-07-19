@@ -28,7 +28,7 @@ class Pen extends Tool {
   Pen.fountainPen()
     : name = t.editor.pens.fountainPen,
       sizeMin = 1,
-      sizeMax = 25,
+      sizeMax = 15,
       sizeStep = 1,
       icon = fountainPenIcon,
       options = stows.lastFountainPenOptions.value,
@@ -39,7 +39,7 @@ class Pen extends Tool {
   Pen.ballpointPen()
     : name = t.editor.pens.ballpointPen,
       sizeMin = 1,
-      sizeMax = 25,
+      sizeMax = 15,
       sizeStep = 1,
       icon = ballpointPenIcon,
       options = stows.lastBallpointPenOptions.value,

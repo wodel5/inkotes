@@ -8,9 +8,9 @@ class Highlighter extends Pen {
   Highlighter()
     : super(
         name: t.editor.pens.highlighter,
-        sizeMin: 10,
-        sizeMax: 100,
-        sizeStep: 10,
+        sizeMin: 5,
+        sizeMax: 50,
+        sizeStep: 5,
         icon: highlighterIcon,
         options: stows.lastHighlighterOptions.value,
         pressureEnabled: false,
