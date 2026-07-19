@@ -39,6 +39,7 @@ class Toolbar extends StatefulWidget {
     required this.exportAsSba,
     required this.exportAsPdf,
     required this.exportAsPng,
+    this.collapsePanels,
   });
 
   final bool readOnly;
@@ -64,12 +65,13 @@ class Toolbar extends StatefulWidget {
   final Future Function(BuildContext)? exportAsSba;
   final Future Function(BuildContext)? exportAsPdf;
   final Future Function(BuildContext)? exportAsPng;
+  final VoidCallback? collapsePanels;
 
   @override
-  State<Toolbar> createState() => _ToolbarState();
+  State<Toolbar> createState() => ToolbarState();
 }
 
-class _ToolbarState extends State<Toolbar> {
+class ToolbarState extends State<Toolbar> {
   ValueNotifier<bool> showExportOptions = ValueNotifier(false);
   ValueNotifier<bool> showColorOptions = ValueNotifier(false);
   ValueNotifier<ToolOptions> toolOptionsType = ValueNotifier(ToolOptions.hide);
@@ -139,6 +141,12 @@ class _ToolbarState extends State<Toolbar> {
 
   void toggleExportBar() {
     showExportOptions.value = !showExportOptions.value;
+  }
+
+  void collapseAll() {
+    showExportOptions.value = false;
+    showColorOptions.value = false;
+    toolOptionsType.value = ToolOptions.hide;
   }
 
   @override
@@ -495,6 +503,7 @@ class _DockButtonState extends State<_DockButton> {
           curve: Curves.easeOut,
           width: 40,
           height: 40,
+          margin: const EdgeInsets.symmetric(horizontal: 2),
           decoration: BoxDecoration(
             color: backgroundColor,
             borderRadius: BorderRadius.circular(10),

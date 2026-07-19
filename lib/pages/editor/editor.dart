@@ -95,6 +95,7 @@ class EditorState extends State<Editor> {
   late var coreInfo = EditorCoreInfo.placeholder;
 
   final _canvasGestureDetectorKey = GlobalKey<CanvasGestureDetectorState>();
+  final _toolbarKey = GlobalKey<ToolbarState>();
   final _transformationController = TransformationController();
   double get scrollY {
     final transformation = _transformationController.value;
@@ -506,6 +507,7 @@ class EditorState extends State<Editor> {
   }
 
   void onDrawStart(ScaleStartDetails details) {
+    _toolbarKey.currentState?.collapseAll();
     final page = coreInfo.pages[dragPageIndex!];
     final position = page.renderBox!.globalToLocal(details.focalPoint);
     history.canRedo = false;
@@ -1296,6 +1298,7 @@ class EditorState extends State<Editor> {
       child: SafeArea(
         bottom: true,
         child: Toolbar(
+          key: _toolbarKey,
           readOnly: coreInfo.readOnly,
           setTool: (tool) {
             currentTool = tool;
