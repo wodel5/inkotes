@@ -684,20 +684,20 @@ class Translations$editor$menu$en {
 
 	// Translations
 
-	/// en: 'Clear current page $page/$totalPages'
-	String clearPage({required Object page, required Object totalPages}) => 'Clear current page ${page}/${totalPages}';
-
 	/// en: 'Clear all pages'
 	String get clearAllPages => 'Clear all pages';
 
-	/// en: 'Insert page below'
-	String get insertPage => 'Insert page below';
+	/// en: 'Insert'
+	String get insertPage => 'Insert';
 
-	/// en: 'Duplicate page'
-	String get duplicatePage => 'Duplicate page';
+	/// en: 'Duplicate'
+	String get duplicatePage => 'Duplicate';
 
-	/// en: 'Delete page'
-	String get deletePage => 'Delete page';
+	/// en: 'Clear'
+	String get clearPage => 'Clear';
+
+	/// en: 'Delete'
+	String get deletePage => 'Delete';
 
 	/// en: 'Line height'
 	String get lineHeight => 'Line height';

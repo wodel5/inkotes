@@ -268,54 +268,73 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
             ),
             const SizedBox(height: 8), // 缩略图与操作按钮之间间距
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _PageActionButton(
-                  icon: Icons.insert_page_break,
-                  label: t.editor.menu.insertPage,
-                  enabled: true,
-                  onTap: () {
-                    widget.insertPageAfter(_selectedPageIndex);
-                    setState(() {
-                      _selectedPageIndex++;
-                    });
-                  },
-                ),
-                _PageActionButton(
-                  icon: FontAwesomeIcons.solidCopy,
-                  label: t.editor.menu.duplicatePage,
-                  enabled: true,
-                  onTap: () {
-                    widget.duplicatePage(_selectedPageIndex);
-                    setState(() {
-                      _selectedPageIndex++;
-                    });
-                  },
-                ),
-                _PageActionButton(
-                  icon: Icons.cleaning_services,
-                  label: t.editor.menu.clearPage(
-                    page: _selectedPageIndex + 1,
-                    totalPages: pages.length,
+                Expanded(
+                  child: AspectRatio(
+                    aspectRatio: 1.0,
+                    child: _PageActionButton(
+                      icon: Icons.insert_page_break,
+                      label: t.editor.menu.insertPage,
+                      enabled: true,
+                      onTap: () {
+                        widget.insertPageAfter(_selectedPageIndex);
+                        setState(() {
+                          _selectedPageIndex++;
+                        });
+                      },
+                    ),
                   ),
-                  enabled: pages[_selectedPageIndex].isNotEmpty,
-                  onTap: () {
-                    widget.clearPage(_selectedPageIndex);
-                    setState(() {});
-                  },
                 ),
-                _PageActionButton(
-                  icon: FontAwesomeIcons.trashCan,
-                  label: t.editor.menu.deletePage,
-                  enabled: pages.length > 1,
-                  onTap: () {
-                    widget.deletePage(_selectedPageIndex);
-                    setState(() {
-                      if (_selectedPageIndex >= pages.length) {
-                        _selectedPageIndex = pages.length - 1;
-                      }
-                    });
-                  },
+                const SizedBox(width: 12),
+                Expanded(
+                  child: AspectRatio(
+                    aspectRatio: 1.0,
+                    child: _PageActionButton(
+                      icon: FontAwesomeIcons.solidCopy,
+                      label: t.editor.menu.duplicatePage,
+                      enabled: true,
+                      onTap: () {
+                        widget.duplicatePage(_selectedPageIndex);
+                        setState(() {
+                          _selectedPageIndex++;
+                        });
+                      },
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: AspectRatio(
+                    aspectRatio: 1.0,
+                    child: _PageActionButton(
+                      icon: Icons.cleaning_services,
+                      label: t.editor.menu.clearPage,
+                      enabled: pages[_selectedPageIndex].isNotEmpty,
+                      onTap: () {
+                        widget.clearPage(_selectedPageIndex);
+                        setState(() {});
+                      },
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: AspectRatio(
+                    aspectRatio: 1.0,
+                    child: _PageActionButton(
+                      icon: FontAwesomeIcons.trashCan,
+                      label: t.editor.menu.deletePage,
+                      enabled: pages.length > 1,
+                      onTap: () {
+                        widget.deletePage(_selectedPageIndex);
+                        setState(() {
+                          if (_selectedPageIndex >= pages.length) {
+                            _selectedPageIndex = pages.length - 1;
+                          }
+                        });
+                      },
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -392,7 +411,7 @@ class _BackgroundColorButton extends StatelessWidget {
   }
 }
 
-class _PageActionButton extends StatelessWidget {
+class _PageActionButton extends StatefulWidget {
   const _PageActionButton({
     required this.icon,
     required this.label,
@@ -406,37 +425,66 @@ class _PageActionButton extends StatelessWidget {
   final VoidCallback onTap;
 
   @override
+  State<_PageActionButton> createState() => _PageActionButtonState();
+}
+
+class _PageActionButtonState extends State<_PageActionButton> {
+  bool _isHovering = false;
+  bool _isPressed = false;
+
+  @override
   Widget build(BuildContext context) {
     final colorScheme = ColorScheme.of(context);
-    final iconColor = enabled
+    final iconColor = widget.enabled
         ? colorScheme.onSurface
         : colorScheme.onSurface.withValues(alpha: 0.3);
-    return InkWell(
-      borderRadius: const BorderRadius.all(Radius.circular(8)),
-      onTap: enabled ? onTap : null,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (icon is IconData)
-              Icon(icon as IconData, size: 18, color: iconColor)
-            else
-              FaIcon(icon as FaIconData, size: 18, color: iconColor),
-            const SizedBox(height: 2),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 10,
-                color: enabled
-                    ? colorScheme.onSurface
-                    : colorScheme.onSurface.withValues(alpha: 0.3),
+
+    Color? bgColor;
+    if (_isPressed) {
+      bgColor = colorScheme.onSurface.withValues(alpha: 0.12);
+    } else if (_isHovering) {
+      bgColor = colorScheme.onSurface.withValues(alpha: 0.06);
+    }
+
+    return MouseRegion(
+      onEnter: widget.enabled ? (_) => setState(() => _isHovering = true) : null,
+      onExit: widget.enabled ? (_) => setState(() => _isHovering = false) : null,
+      child: GestureDetector(
+        onTapDown: widget.enabled ? (_) => setState(() => _isPressed = true) : null,
+        onTapUp: widget.enabled ? (_) => setState(() => _isPressed = false) : null,
+        onTapCancel: () => setState(() => _isPressed = false),
+        onTap: widget.enabled ? widget.onTap : null,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          decoration: BoxDecoration(
+            color: bgColor,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+              if (widget.icon is IconData)
+                Icon(widget.icon as IconData, size: 20, color: iconColor)
+              else
+                FaIcon(widget.icon as FaIconData, size: 20, color: iconColor),
+              const SizedBox(height: 2),
+              Text(
+                widget.label,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: widget.enabled
+                      ? colorScheme.onSurface
+                      : colorScheme.onSurface.withValues(alpha: 0.3),
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
+            ],
+          ),
+          ),
         ),
       ),
     );

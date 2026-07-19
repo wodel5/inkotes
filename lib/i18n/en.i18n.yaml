@@ -148,11 +148,11 @@ editor:
     delete: Delete
     duplicate: Duplicate
   menu:
-    clearPage: Clear current page $page/$totalPages
     clearAllPages: Clear all pages
-    insertPage: Insert page below
-    duplicatePage: Duplicate page
-    deletePage: Delete page
+    insertPage: Insert
+    duplicatePage: Duplicate
+    clearPage: Clear
+    deletePage: Delete
     lineHeight: Line height
     lineThickness: Line thickness
     backgroundImageFit: Background image fit

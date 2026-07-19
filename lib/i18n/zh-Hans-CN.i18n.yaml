@@ -148,11 +148,11 @@ editor:
     delete: 删除
     duplicate: 复制
   menu:
-    clearPage: 清除当前页面 $page/$totalPages
     clearAllPages: 清除全部页面
-    insertPage: 在下方插入页面
-    duplicatePage: 复制页面
-    deletePage: 删除页面
+    insertPage: 插入
+    duplicatePage: 复制
+    clearPage: 清空
+    deletePage: 删除
     lineHeight: 行高
     lineThickness: 线条粗细
     backgroundImageFit: 背景图像拟合
