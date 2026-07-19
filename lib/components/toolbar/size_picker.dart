@@ -54,7 +54,9 @@ class _SizePickerState extends State<SizePicker> {
           child: SliderTheme(
             data: SliderThemeData(
               trackShape: const RoundedRectSliderTrackShape(),
+              trackHeight: 18,
               overlayShape: SliderComponentShape.noOverlay,
+              thumbShape: const _RingThumbShape(visualRadius: 7, strokeWidth: 5.5),
               activeTickMarkColor: Colors.transparent,
               inactiveTickMarkColor: Colors.transparent,
             ),
@@ -72,6 +74,45 @@ class _SizePickerState extends State<SizePicker> {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _RingThumbShape extends SliderComponentShape {
+  const _RingThumbShape({required this.visualRadius, required this.strokeWidth});
+
+  final double visualRadius;
+  final double strokeWidth;
+
+  @override
+  Size getPreferredSize(bool isEnabled, bool isDiscrete) {
+    return Size.fromRadius(visualRadius);
+  }
+
+  @override
+  void paint(
+    PaintingContext context,
+    Offset center, {
+    required Animation<double> activationAnimation,
+    required Animation<double> enableAnimation,
+    required bool isDiscrete,
+    required TextPainter labelPainter,
+    required RenderBox parentBox,
+    required SliderThemeData sliderTheme,
+    TextDirection? textDirection,
+    required double value,
+    required double textScaleFactor,
+    required Size sizeWithOverflow,
+  }) {
+    final canvas = context.canvas;
+    final drawRadius = visualRadius - strokeWidth / 2;
+    canvas.drawCircle(
+      center,
+      drawRadius,
+      Paint()
+        ..color = Colors.white
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = strokeWidth,
     );
   }
 }
