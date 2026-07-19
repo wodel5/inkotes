@@ -1,6 +1,5 @@
 import 'dart:ui';
 
-import 'package:collapsible/collapsible.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -160,40 +159,6 @@ class _ToolbarState extends State<Toolbar> {
     }
 
     final bars = <Widget>[
-      ValueListenableBuilder(
-        valueListenable: showExportOptions,
-        builder: (context, showExportOptions, child) {
-          return Collapsible(
-            axis: CollapsibleAxis.vertical,
-            maintainState: true,
-            collapsed: !showExportOptions,
-            child: child!,
-          );
-        },
-        child: ExportBar(
-          axis: Axis.horizontal,
-          toggleExportBar: toggleExportBar,
-          exportAsSba: widget.exportAsSba,
-          exportAsPdf: widget.exportAsPdf,
-          exportAsPng: widget.exportAsPng,
-        ),
-      ),
-      ValueListenableBuilder(
-        valueListenable: showColorOptions,
-        builder: (context, showColorOptions, child) {
-          return Collapsible(
-            axis: CollapsibleAxis.vertical,
-            maintainState: true,
-            collapsed: !showColorOptions,
-            child: child!,
-          );
-        },
-        child: ColorBar(
-          axis: Axis.horizontal,
-          setColor: widget.setColor,
-          currentColor: currentColor,
-        ),
-      ),
       Center(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(12, 4, 12, 8),
@@ -219,6 +184,46 @@ class _ToolbarState extends State<Toolbar> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                     ValueListenableBuilder(
+                      valueListenable: showExportOptions,
+                      builder: (context, showExportOptions, _) {
+                        return AnimatedSize(
+                          duration: const Duration(milliseconds: 240),
+                          curve: Curves.easeOut,
+                          child: showExportOptions
+                              ? SizedBox(
+                                  height: 50,
+                                  child: ExportBar(
+                                    axis: Axis.horizontal,
+                                    toggleExportBar: toggleExportBar,
+                                    exportAsSba: widget.exportAsSba,
+                                    exportAsPdf: widget.exportAsPdf,
+                                    exportAsPng: widget.exportAsPng,
+                                  ),
+                                )
+                              : const SizedBox.shrink(),
+                        );
+                      },
+                    ),
+                    ValueListenableBuilder(
+                      valueListenable: showColorOptions,
+                      builder: (context, showColorOptions, _) {
+                        return AnimatedSize(
+                          duration: const Duration(milliseconds: 240),
+                          curve: Curves.easeOut,
+                          child: showColorOptions
+                              ? SizedBox(
+                                  height: 50,
+                                  child: ColorBar(
+                                    axis: Axis.horizontal,
+                                    setColor: widget.setColor,
+                                    currentColor: currentColor,
+                                  ),
+                                )
+                              : const SizedBox.shrink(),
+                        );
+                      },
+                    ),
+                    ValueListenableBuilder(
                       valueListenable: toolOptionsType,
                       builder: (context, toolOptionsType, _) {
                         final isHidden = toolOptionsType == .hide;
@@ -227,25 +232,28 @@ class _ToolbarState extends State<Toolbar> {
                           curve: Curves.easeOut,
                           child: isHidden
                               ? const SizedBox.shrink()
-                              : switch (toolOptionsType) {
-                                  .pen => PenModal(
-                                      getTool: () => Pen.currentPen,
-                                      setTool: widget.setTool,
-                                    ),
-                                  .highlighter => PenModal(
-                                      getTool: () => Highlighter.currentHighlighter,
-                                      setTool: widget.setTool,
-                                    ),
-                                  .pencil => PenModal(
-                                      getTool: () => Pencil.currentPencil,
-                                      setTool: widget.setTool,
-                                    ),
-                                  .select => SelectionBar(
-                                      duplicateSelection: widget.duplicateSelection,
-                                      deleteSelection: widget.deleteSelection,
-                                    ),
-                                  _ => const SizedBox.shrink(),
-                                },
+                              : SizedBox(
+                                  height: 50,
+                                  child: switch (toolOptionsType) {
+                                      .pen => PenModal(
+                                          getTool: () => Pen.currentPen,
+                                          setTool: widget.setTool,
+                                        ),
+                                      .highlighter => PenModal(
+                                          getTool: () => Highlighter.currentHighlighter,
+                                          setTool: widget.setTool,
+                                        ),
+                                      .pencil => PenModal(
+                                          getTool: () => Pencil.currentPencil,
+                                          setTool: widget.setTool,
+                                        ),
+                                      .select => SelectionBar(
+                                          duplicateSelection: widget.duplicateSelection,
+                                          deleteSelection: widget.deleteSelection,
+                                        ),
+                                      _ => const SizedBox.shrink(),
+                                    },
+                                ),
                         );
                       },
                     ),
