@@ -26,6 +26,7 @@ import 'package:foledge/components/editor/read_only_banner.dart';
 import 'package:foledge/components/theming/adaptive_alert_dialog.dart';
 import 'package:foledge/components/theming/adaptive_icon.dart';
 import 'package:foledge/components/toolbar/editor_bottom_sheet.dart';
+import 'package:foledge/components/toolbar/color_bar.dart';
 import 'package:foledge/components/toolbar/toolbar.dart';
 import 'package:foledge/data/editor/editor_core_info.dart';
 import 'package:foledge/data/editor/editor_exporter.dart';
@@ -935,42 +936,35 @@ class EditorState extends State<Editor> {
   void updateColorBar(Color color) {
     final newColorString = color.toARGB32().toString();
 
+    // 预设颜色不进入最近历史
+    if (ColorBar.colorPresets.any((c) => c.color.toARGB32() == color.toARGB32())) {
+      return;
+    }
+
     // migrate from old pref format
     if (stows.recentColorsChronological.value.length !=
         stows.recentColorsPositioned.value.length) {
-      log.info(
-        'MIGRATING recentColors: ${stows.recentColorsChronological.value.length} vs ${stows.recentColorsPositioned.value.length}',
-      );
       stows.recentColorsChronological.value = List.of(
         stows.recentColorsPositioned.value,
       );
     }
 
-    if (stows.pinnedColors.value.contains(newColorString)) {
-      // do nothing, color is already pinned
-    } else if (stows.recentColorsPositioned.value.contains(newColorString)) {
-      // if it's already a recent color, move it to the top
-      stows.recentColorsChronological.value.remove(newColorString);
-      stows.recentColorsChronological.value.add(newColorString);
-      stows.recentColorsChronological.notifyListeners();
-    } else {
-      if (stows.recentColorsPositioned.value.length >= 5) {
-        // if full, replace the oldest color with the new one
-        final removedColorString = stows.recentColorsChronological.value
-            .removeAt(0);
-        stows.recentColorsChronological.value.add(newColorString);
-        final int removedColorPosition = stows.recentColorsPositioned.value
-            .indexOf(removedColorString);
-        stows.recentColorsPositioned.value[removedColorPosition] =
-            newColorString;
-      } else {
-        // if not full, add the new color to the end
-        stows.recentColorsChronological.value.add(newColorString);
-        stows.recentColorsPositioned.value.insert(0, newColorString);
-      }
-      stows.recentColorsChronological.notifyListeners();
-      stows.recentColorsPositioned.notifyListeners();
+    // 如果已经在列表中，先移除
+    stows.recentColorsPositioned.value.remove(newColorString);
+    stows.recentColorsChronological.value.remove(newColorString);
+
+    // 插到最前面
+    stows.recentColorsPositioned.value.insert(0, newColorString);
+    stows.recentColorsChronological.value.add(newColorString);
+
+    // 超过5个，踢掉最后一个
+    if (stows.recentColorsPositioned.value.length > 5) {
+      stows.recentColorsPositioned.value.removeLast();
+      stows.recentColorsChronological.value.removeAt(0);
     }
+
+    stows.recentColorsChronological.notifyListeners();
+    stows.recentColorsPositioned.notifyListeners();
   }
 
   /// Prompts the user to pick photos from their device.
