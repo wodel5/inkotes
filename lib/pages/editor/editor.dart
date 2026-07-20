@@ -710,7 +710,7 @@ class EditorState extends State<Editor> {
   }
 
   void _onTransformChanged() {
-    // AppBar 固定显示，不再自动隐藏
+    _toolbarKey.currentState?.collapseAll();
   }
 
   void onInteractionEnd(ScaleEndDetails details) {
