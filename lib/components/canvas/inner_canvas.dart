@@ -107,53 +107,32 @@ class _InnerCanvasState extends State<InnerCanvas> {
           width: widget.width,
           height: widget.height,
           child: DeferredPointerHandler(
-            child: ValueListenableBuilder<EditorImage?>(
-              valueListenable: CanvasImage.activeImageNotifier,
-              builder: (context, activeImage, _) {
-                final images = page.images;
-
-                // Build all image widgets with stable keys for reordering
-                final imageWidgets = <Widget>[];
-                Widget? activeImageWidget;
-                for (int i = 0; i < images.length; i++) {
-                  final image = images[i];
-                  final imageWidget = CanvasImage(
-                    key: ValueKey('CanvasImage_${image.id}'),
+            child: Stack(
+              children: [
+                if (page.backgroundImage != null)
+                  CanvasImage(
                     filePath: widget.coreInfo.filePath,
-                    image: image,
+                    image: page.backgroundImage!,
+                    pageSize: Size(widget.width, widget.height),
+                    setAsBackground: null,
+                    isBackground: true,
+                    readOnly: true,
+                  ),
+                for (int i = 0; i < page.images.length; i++)
+                  CanvasImage(
+                    filePath: widget.coreInfo.filePath,
+                    image: page.images[i],
                     pageSize: Size(widget.width, widget.height),
                     setAsBackground: widget.setAsBackground,
                     readOnly:
                         widget.coreInfo.readOnly || !widget.currentToolIsSelect,
                     selected:
-                        widget.currentSelection?.images.contains(image) ??
+                        widget.currentSelection?.images.contains(
+                          page.images[i],
+                        ) ??
                         false,
-                  );
-                  if (image == activeImage) {
-                    activeImageWidget = imageWidget;
-                  } else {
-                    imageWidgets.add(imageWidget);
-                  }
-                }
-
-                return Stack(
-                  children: [
-                    if (page.backgroundImage != null)
-                      CanvasImage(
-                        filePath: widget.coreInfo.filePath,
-                        image: page.backgroundImage!,
-                        pageSize: Size(widget.width, widget.height),
-                        setAsBackground: null,
-                        isBackground: true,
-                        readOnly: true,
-                      ),
-                    // Non-active images in their normal order
-                    ...imageWidgets,
-                    // Active image on top so it's visible when overlapped
-                    if (activeImageWidget != null) activeImageWidget,
-                  ],
-                );
-              },
+                  ),
+              ],
             ),
           ),
         ),
