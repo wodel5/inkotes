@@ -397,8 +397,11 @@ class _CanvasImageResizeHandle extends StatelessWidget {
 
                     if (newWidth <= 0 || newHeight <= 0) return;
 
-                    // preserve aspect ratio if diagonal
+                    double newLeft;
+                    double newTop;
+
                     if (position.dx != 0 && position.dy != 0) {
+                      // Corner drag: preserve aspect ratio
                       final aspectRatio =
                           image.dstRect.width / image.dstRect.height;
                       if (newWidth / newHeight > aspectRatio) {
@@ -406,24 +409,69 @@ class _CanvasImageResizeHandle extends StatelessWidget {
                       } else {
                         newWidth = newHeight * aspectRatio;
                       }
-                    }
 
-                    // Calculate new image position (keep centered in frame)
-                    double newLeft = image.dstRect.left;
-                    double newTop = image.dstRect.top;
-                    if (position.dx < 0) {
-                      newLeft = parent.panStartRect.right - newWidth;
-                    }
-                    if (position.dy < 0) {
-                      newTop = parent.panStartRect.bottom - newHeight;
-                    }
+                      // Anchor point = opposite corner that stays fixed
+                      final anchorX = position.dx < 0
+                          ? parent.panStartRect.right
+                          : parent.panStartRect.left;
+                      final anchorY = position.dy < 0
+                          ? parent.panStartRect.bottom
+                          : parent.panStartRect.top;
 
-                    // Clamp to page bounds (frame must stay within page)
-                    final pageSize = parent.widget.pageSize;
-                    newLeft = newLeft.clamp(pad, max(pad, pageSize.width - newWidth - pad));
-                    newTop = newTop.clamp(pad, max(pad, pageSize.height - newHeight - pad));
-                    newWidth = newWidth.clamp(0.0, pageSize.width - newLeft - pad);
-                    newHeight = newHeight.clamp(0.0, pageSize.height - newTop - pad);
+                      // Available space from anchor toward drag direction
+                      final pageSize = parent.widget.pageSize;
+                      final maxWidth = position.dx < 0
+                          ? anchorX - pad
+                          : pageSize.width - pad - anchorX;
+                      final maxHeight = position.dy < 0
+                          ? anchorY - pad
+                          : pageSize.height - pad - anchorY;
+
+                      if (maxWidth <= 0 || maxHeight <= 0) return;
+
+                      // Clamp both axes uniformly so aspect ratio never breaks
+                      if (newWidth > maxWidth || newHeight > maxHeight) {
+                        final scale =
+                            min(maxWidth / newWidth, maxHeight / newHeight);
+                        newWidth *= scale;
+                        newHeight *= scale;
+                      }
+
+                      newLeft = position.dx < 0
+                          ? anchorX - newWidth
+                          : anchorX;
+                      newTop = position.dy < 0
+                          ? anchorY - newHeight
+                          : anchorY;
+                    } else {
+                      // Edge drag: free stretching with independent clamping
+                      newLeft = image.dstRect.left;
+                      newTop = image.dstRect.top;
+                      if (position.dx < 0) {
+                        newLeft = parent.panStartRect.right - newWidth;
+                      }
+                      if (position.dy < 0) {
+                        newTop = parent.panStartRect.bottom - newHeight;
+                      }
+
+                      final pageSize = parent.widget.pageSize;
+                      newLeft = newLeft.clamp(
+                        pad,
+                        max(pad, pageSize.width - newWidth - pad),
+                      );
+                      newTop = newTop.clamp(
+                        pad,
+                        max(pad, pageSize.height - newHeight - pad),
+                      );
+                      newWidth = newWidth.clamp(
+                        0.0,
+                        pageSize.width - newLeft - pad,
+                      );
+                      newHeight = newHeight.clamp(
+                        0.0,
+                        pageSize.height - newTop - pad,
+                      );
+                    }
 
                     if (newWidth <= 0 || newHeight <= 0) return;
 
