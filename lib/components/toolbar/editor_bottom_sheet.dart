@@ -322,7 +322,7 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
                   child: AspectRatio(
                     aspectRatio: 1.0,
                     child: _PageActionButton(
-                      icon: FontAwesomeIcons.trashCan,
+                      icon: FontAwesomeIcons.trash,
                       label: t.editor.menu.deletePage,
                       enabled: pages.length > 1,
                       onTap: () {

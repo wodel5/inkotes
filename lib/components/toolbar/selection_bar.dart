@@ -1,6 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:foledge/components/theming/adaptive_icon.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:foledge/i18n/strings.g.dart';
 
 class SelectionBar extends StatelessWidget {
@@ -26,9 +25,7 @@ class SelectionBar extends StatelessWidget {
             shape: const CircleBorder(),
           ),
           tooltip: t.editor.selectionBar.duplicate,
-          icon: const AdaptiveIcon(
-            icon: Icons.content_copy,
-          ),
+          icon: const FaIcon(FontAwesomeIcons.solidCopy, size: 18),
         ),
         IconButton(
           onPressed: deleteSelection,
@@ -38,9 +35,7 @@ class SelectionBar extends StatelessWidget {
             shape: const CircleBorder(),
           ),
           tooltip: t.editor.selectionBar.delete,
-          icon: const AdaptiveIcon(
-            icon: Icons.delete,
-          ),
+          icon: const FaIcon(FontAwesomeIcons.trash, size: 18),
         ),
       ],
     );
