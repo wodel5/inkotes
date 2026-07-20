@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:foledge/components/canvas/image/editor_image.dart';
 import 'package:foledge/data/extensions/change_notifier_extensions.dart';
+import 'package:foledge/data/tools/select.dart';
 
 class CanvasImage extends StatefulHookWidget {
   CanvasImage({
@@ -64,6 +65,7 @@ class _CanvasImageState extends State<CanvasImage> {
     if (value) {
       CanvasImage.activeListener
           .notifyListenersPlease(); // de-activate all other images
+      Select.currentSelect.unselect(); // clear stroke selection
     }
 
     _active = value;

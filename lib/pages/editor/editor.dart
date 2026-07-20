@@ -172,8 +172,16 @@ class EditorState extends State<Editor> {
     _initAsync();
     _assignKeybindings();
     _transformationController.addListener(_onTransformChanged);
+    CanvasImage.activeImageNotifier.addListener(_onActiveImageChanged);
 
     super.initState();
+  }
+
+  void _onActiveImageChanged() {
+    if (!mounted) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) setState(() {});
+    });
   }
 
   void _initAsync() async {
@@ -706,6 +714,11 @@ class EditorState extends State<Editor> {
         if (newStroke != null) page.laserStrokes.add(newStroke);
       }
     });
+
+    if (currentTool is Select && Select.currentSelect.doneSelecting &&
+        !Select.currentSelect.selectResult.isEmpty) {
+      _toolbarKey.currentState?.showSelectPanel();
+    }
 
     if (shouldSave) autosaveAfterDelay();
   }
@@ -1966,6 +1979,7 @@ class EditorState extends State<Editor> {
     _delayedSaveTimer?.cancel();
     _lastSeenPointerCountTimer?.cancel();
     _transformationController.removeListener(_onTransformChanged);
+    CanvasImage.activeImageNotifier.removeListener(_onActiveImageChanged);
 
     _removeKeybindings();
 

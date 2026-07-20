@@ -198,6 +198,16 @@ class ToolbarState extends State<Toolbar> {
     toolOptionsType.value = ToolOptions.hide;
   }
 
+  /// Shows the selection bar (called after a circle-select is completed).
+  void showSelectPanel() {
+    _autoCollapseTimer?.cancel();
+    showExportOptions.value = false;
+    showColorOptions.value = false;
+    if (toolOptionsType.value != ToolOptions.select) {
+      toolOptionsType.value = ToolOptions.select;
+    }
+  }
+
   void resetAutoCollapseTimer() {
     _resetAutoCollapseTimer();
   }
@@ -215,13 +225,10 @@ class ToolbarState extends State<Toolbar> {
     if (CanvasImage.activeImageNotifier.value != null) {
       // Show selection bar when an image is tap-activated
       toolOptionsType.value = .select;
-    } else if (widget.currentTool == Select.currentSelect) {
-      // Enable selection bar only when selection is done
-      toolOptionsType.value = Select.currentSelect.doneSelecting
-          ? .select
-          : .hide;
-    } else if (toolOptionsType.value == ToolOptions.select) {
-      // Active image was deactivated while not in Select tool → hide selection bar
+    } else if (toolOptionsType.value == ToolOptions.select &&
+        !(widget.currentTool == Select.currentSelect &&
+            Select.currentSelect.doneSelecting)) {
+      // Panel was shown but no longer has a reason (no active image, no Select selection)
       toolOptionsType.value = .hide;
     }
 
@@ -409,10 +416,17 @@ class ToolbarState extends State<Toolbar> {
                       selected: widget.currentTool is Select,
                       enabled: !widget.readOnly,
                       onPressed: () {
-                        toolOptionsType.value = .hide;
-                        showColorOptions.value = false;
-                        showExportOptions.value = false;
-                        widget.setTool(Select.currentSelect);
+                        if (widget.currentTool == Select.currentSelect) {
+                          toolOptionsType.value = toolOptionsType.value == .select
+                              ? .hide
+                              : .select;
+                        } else {
+                          Select.currentSelect.unselect();
+                          toolOptionsType.value = .hide;
+                          showColorOptions.value = false;
+                          showExportOptions.value = false;
+                          widget.setTool(Select.currentSelect);
+                        }
                       },
                       child: const FaIcon(FontAwesomeIcons.solidObjectGroup, size: 18),
                     ),
