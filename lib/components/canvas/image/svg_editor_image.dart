@@ -26,6 +26,7 @@ class SvgEditorImage extends EditorImage {
     super.srcRect,
     super.naturalSize,
     super.isThumbnail,
+    super.initialY,
   }) : assert(
          svgString != null || svgFile != null,
          'svgFile must be set if svgString is null',
@@ -139,9 +140,20 @@ class SvgEditorImage extends EditorImage {
       }
       if (dstRect.shortestSide == 0) {
         final Size dstSize = pageSize != null
-            ? EditorImage.resize(naturalSize, pageSize!)
+            ? EditorImage.resize(naturalSize, pageSize! * 0.8)
             : naturalSize;
-        dstRect = dstRect.topLeft & dstSize;
+        final double x = pageSize != null
+            ? (pageSize!.width - dstSize.width) / 2
+            : 0.0;
+        final double y = initialY ?? 0.0;
+        var left = x;
+        var top = y;
+        if (pageSize != null) {
+          const pad = 25.0;
+          left = left.clamp(pad, max(pad, pageSize!.width - dstSize.width - pad));
+          top = top.clamp(pad, max(pad, pageSize!.height - dstSize.height - pad));
+        }
+        dstRect = Rect.fromLTWH(left, top, dstSize.width, dstSize.height);
       }
     }
 

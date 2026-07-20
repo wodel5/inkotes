@@ -225,7 +225,12 @@ class _CanvasImageState extends State<CanvasImage> {
       width: max(widget.image.dstRect.width + handlePadding * 2, CanvasImage.minInteractiveSize),
       height: max(widget.image.dstRect.height + handlePadding * 2, CanvasImage.minInteractiveSize),
 
-      child: unpositioned,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.red, width: 2),
+        ),
+        child: unpositioned,
+      ),
     );
 
     return positioned;

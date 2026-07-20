@@ -986,6 +986,19 @@ class EditorState extends State<Editor> {
     // use the Select tool so that the user can move the new image
     currentTool = Select.currentSelect;
 
+    // Calculate the visible Y center on the current page
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    final pageTop = CanvasGestureDetector.getTopOfPage(
+      pageIndex: currentPageIndex,
+      pages: coreInfo.pages,
+      screenWidth: screenWidth,
+    );
+    final pageHeight = coreInfo.pages[currentPageIndex].size.height;
+    final visibleTop = (-scrollY - pageTop).clamp(0.0, pageHeight);
+    final screenHeight = MediaQuery.sizeOf(context).height;
+    final visibleBottom = (-scrollY + screenHeight - pageTop).clamp(0.0, pageHeight);
+    final visibleCenterY = ((visibleTop + visibleBottom) / 2).clamp(0.0, pageHeight);
+
     final images = [
       for (final _PhotoInfo photoInfo in photoInfos)
         if (photoInfo.extension == '.svg')
@@ -1000,6 +1013,7 @@ class EditorState extends State<Editor> {
             onMiscChange: autosaveAfterDelay,
             onLoad: () => setState(() {}),
             assetCache: coreInfo.assetCache,
+            initialY: visibleCenterY,
           )
         else
           PngEditorImage(
@@ -1013,6 +1027,7 @@ class EditorState extends State<Editor> {
             onMiscChange: autosaveAfterDelay,
             onLoad: () => setState(() {}),
             assetCache: coreInfo.assetCache,
+            initialY: visibleCenterY,
           ),
     ];
 

@@ -44,6 +44,7 @@ class PngEditorImage extends EditorImage {
     super.naturalSize,
     this.thumbnailBytes,
     super.isThumbnail,
+    super.initialY,
   });
 
   factory PngEditorImage.fromJson(
@@ -167,9 +168,20 @@ class PngEditorImage extends EditorImage {
       }
       if (dstRect.shortestSide == 0) {
         final Size dstSize = pageSize != null
-            ? EditorImage.resize(naturalSize, pageSize!)
+            ? EditorImage.resize(naturalSize, pageSize! * 0.8)
             : naturalSize;
-        dstRect = dstRect.topLeft & dstSize;
+        final double x = pageSize != null
+            ? (pageSize!.width - dstSize.width) / 2
+            : 0.0;
+        final double y = initialY ?? 0.0;
+        var left = x;
+        var top = y;
+        if (pageSize != null) {
+          const pad = 25.0;
+          left = left.clamp(pad, max(pad, pageSize!.width - dstSize.width - pad));
+          top = top.clamp(pad, max(pad, pageSize!.height - dstSize.height - pad));
+        }
+        dstRect = Rect.fromLTWH(left, top, dstSize.width, dstSize.height);
       }
     }
 

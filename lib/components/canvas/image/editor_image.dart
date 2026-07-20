@@ -84,6 +84,10 @@ sealed class EditorImage extends ChangeNotifier {
   /// If the image is new, it will be [active] (draggable) when loaded
   var newImage = false;
 
+  /// The initial Y position for newly inserted images.
+  /// If null, defaults to 0 (top of page).
+  double? initialY;
+
   /// The BoxFit used if this is a page's background image
   BoxFit backgroundFit;
 
@@ -104,6 +108,7 @@ sealed class EditorImage extends ChangeNotifier {
     this._dstRect = .zero,
     this.srcRect = .zero,
     this._isThumbnail = false,
+    this.initialY,
   }) : assert(extension.startsWith('.'));
 
   factory EditorImage.fromJson(
