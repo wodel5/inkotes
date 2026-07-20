@@ -58,6 +58,9 @@ class _ExportBarState extends State<ExportBar> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final buttonColor = isDark ? const Color(0xFF44495F) : null;
+
     final children = <Widget>[
       Text(t.editor.toolbar.exportAs),
       const SizedBox.square(dimension: 8),
@@ -65,6 +68,7 @@ class _ExportBarState extends State<ExportBar> {
         builder: (context) {
           return TextButton(
             onPressed: _onPressed(widget.exportAsSba, context),
+            style: TextButton.styleFrom(foregroundColor: buttonColor),
             child: _buttonChild(widget.exportAsSba, 'SBA'),
           );
         },
@@ -73,6 +77,7 @@ class _ExportBarState extends State<ExportBar> {
         builder: (context) {
           return TextButton(
             onPressed: _onPressed(widget.exportAsPdf, context),
+            style: TextButton.styleFrom(foregroundColor: buttonColor),
             child: _buttonChild(widget.exportAsPdf, 'PDF'),
           );
         },
@@ -81,6 +86,7 @@ class _ExportBarState extends State<ExportBar> {
         builder: (context) {
           return TextButton(
             onPressed: _onPressed(widget.exportAsPng, context),
+            style: TextButton.styleFrom(foregroundColor: buttonColor),
             child: _buttonChild(widget.exportAsPng, 'PNG'),
           );
         },
@@ -88,8 +94,8 @@ class _ExportBarState extends State<ExportBar> {
     ];
 
     return Center(
-      child: Padding(
-        padding: const .all(8),
+      child: SizedBox(
+        height: 34,
         child: SingleChildScrollView(
           scrollDirection: widget.axis,
           child: Flex(direction: widget.axis, children: children),

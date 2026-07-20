@@ -81,7 +81,7 @@ class ToolbarState extends State<Toolbar> {
 
   void _startAutoCollapseTimer() {
     _autoCollapseTimer?.cancel();
-    _autoCollapseTimer = Timer(const Duration(seconds: 3), () {
+    _autoCollapseTimer = Timer(const Duration(seconds: 5), () {
       if (mounted) collapseAll();
     });
   }
@@ -221,7 +221,7 @@ class ToolbarState extends State<Toolbar> {
                     width: 0.5,
                   ),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                 child: IntrinsicWidth(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -235,7 +235,7 @@ class ToolbarState extends State<Toolbar> {
                           curve: Curves.easeOut,
                           child: showExportOptions
                               ? SizedBox(
-                                  height: 50,
+                                  height: 40,
                                   child: ExportBar(
                                     axis: Axis.horizontal,
                                     toggleExportBar: toggleExportBar,
@@ -256,7 +256,7 @@ class ToolbarState extends State<Toolbar> {
                           curve: Curves.easeOut,
                           child: showColorOptions
                               ? SizedBox(
-                                  height: 50,
+                                  height: 40,
                                   child: ColorBar(
                                     axis: Axis.horizontal,
                                     setColor: widget.setColor,
@@ -278,7 +278,7 @@ class ToolbarState extends State<Toolbar> {
                           child: isHidden
                               ? const SizedBox.shrink()
                               : SizedBox(
-                                  height: 50,
+                                  height: 40,
                                   child: switch (toolOptionsType) {
                                       .pen => PenModal(
                                           getTool: () => Pen.currentPen,

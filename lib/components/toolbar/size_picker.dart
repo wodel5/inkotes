@@ -28,22 +28,26 @@ class _SizePickerState extends State<SizePicker> {
     final brightness = Theme.of(context).brightness;
     final colorScheme = Theme.of(context).colorScheme;
 
-    return Flex(
-      direction: widget.axis,
-      mainAxisSize: .min,
-      children: [
-        Text(
-          '${t.editor.penOptions.size} ${_prettyNum(widget.pen.options.size)}',
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8),
-            fontSize: 20,
-            height: 1,
+    return SizedBox(
+      height: 40,
+      child: Flex(
+        direction: widget.axis,
+        mainAxisSize: .min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            '${t.editor.penOptions.size} ${_prettyNum(widget.pen.options.size)}',
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8),
+              fontSize: 14,
+              height: 1,
+            ),
           ),
-        ),
-        const SizedBox(width: 8),
-        SizedBox(
-          width: SizePicker.largeLength,
-          child: SliderTheme(
+          const SizedBox(width: 8),
+          SizedBox(
+            width: SizePicker.largeLength,
+            child: SliderTheme(
             data: SliderThemeData(
               trackShape: const RoundedRectSliderTrackShape(),
               trackHeight: 18,
@@ -52,7 +56,7 @@ class _SizePickerState extends State<SizePicker> {
                   ? const Color(0xFF9999BB).withValues(alpha: 0.15)
                   : colorScheme.surfaceContainerHighest.withValues(alpha: 0.6),
               activeTrackColor: brightness == Brightness.dark
-                  ? const Color(0xFFB2C5FF)
+                  ? const Color(0xFF44495F)
                   : null,
               thumbShape: const _RingThumbShape(visualRadius: 7, strokeWidth: 5.5),
               thumbColor: brightness == Brightness.dark
@@ -76,6 +80,7 @@ class _SizePickerState extends State<SizePicker> {
           ),
         ),
       ],
+      ),
     );
   }
 }

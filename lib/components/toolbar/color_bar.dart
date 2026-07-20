@@ -131,13 +131,7 @@ class _ColorBarState extends State<ColorBar> {
           ),
         ),
       // placeholders for recent colors
-      for (
-        int i = 0;
-        i <
-            5 -
-                stows.recentColorsPositioned.value.length;
-        ++i
-      )
+      for (int i = 0; i < 5 - stows.recentColorsPositioned.value.length; ++i)
         ColorOption(
           isSelected: false,
           enabled: widget.currentColor != null,
@@ -165,7 +159,9 @@ class _ColorBarState extends State<ColorBar> {
         tooltip: t.editor.colors.colorPicker,
         child: const DecoratedBox(
           decoration: BoxDecoration(color: Colors.transparent, shape: .circle),
-          child: Center(child: FaIcon(FontAwesomeIcons.featherPointed, size: 16)),
+          child: Center(
+            child: FaIcon(FontAwesomeIcons.featherPointed, size: 16),
+          ),
         ),
       ),
 
@@ -195,12 +191,9 @@ class _ColorBarState extends State<ColorBar> {
     ];
 
     return Center(
-      child: Padding(
-        padding: const .all(8),
-        child: SingleChildScrollView(
-          scrollDirection: widget.axis,
-          child: Flex(direction: widget.axis, children: children),
-        ),
+      child: SingleChildScrollView(
+        scrollDirection: widget.axis,
+        child: Flex(direction: widget.axis, children: children),
       ),
     );
   }
