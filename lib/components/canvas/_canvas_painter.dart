@@ -25,6 +25,7 @@ class CanvasPainter extends CustomPainter {
     required this.totalPages,
     required this.currentScale,
     required this.defaultTextStyle,
+    required this.backgroundColor,
   });
 
   final List<Stroke> strokes;
@@ -38,12 +39,13 @@ class CanvasPainter extends CustomPainter {
   final int totalPages;
   final double currentScale;
   final TextStyle defaultTextStyle;
+  final Color backgroundColor;
 
   @override
   void paint(Canvas canvas, Size size) {
     final canvasRect = Offset.zero & size;
 
-    _drawHighlighterStrokes(canvas, canvasRect);
+    _drawHighlighterStrokes(canvas, canvasRect, backgroundColor);
     _drawNonHighlighterStrokes(canvas);
     for (final stroke in laserStrokes) _drawLaserStroke(canvas, stroke);
     _drawCurrentStroke(canvas);
@@ -62,6 +64,7 @@ class CanvasPainter extends CustomPainter {
         strokes.length != oldDelegate.strokes.length ||
         currentSelection != oldDelegate.currentSelection ||
         primaryColor != oldDelegate.primaryColor ||
+        backgroundColor != oldDelegate.backgroundColor ||
         page != oldDelegate.page ||
         showPageIndicator != oldDelegate.showPageIndicator ||
         pageIndex != oldDelegate.pageIndex ||
@@ -69,10 +72,11 @@ class CanvasPainter extends CustomPainter {
         currentScale != oldDelegate.currentScale;
   }
 
-  void _drawHighlighterStrokes(Canvas canvas, Rect canvasRect) {
+  void _drawHighlighterStrokes(Canvas canvas, Rect canvasRect, Color backgroundColor) {
+    final isDarkBackground = backgroundColor.toARGB32() == 0xFF272735;
     final layerPaint = Paint()
-      ..blendMode = BlendMode.darken
-      ..color = Colors.white.withAlpha(Highlighter.alpha);
+      ..blendMode = isDarkBackground ? BlendMode.lighten : BlendMode.darken
+      ..color = (isDarkBackground ? Colors.black : Colors.white).withAlpha(Highlighter.alpha);
     bool needToRestoreCanvasLayer = false;
 
     Color? lastColor;

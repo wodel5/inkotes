@@ -99,6 +99,7 @@ class _InnerCanvasState extends State<InnerCanvas> {
           totalPages: widget.coreInfo.pages.length,
           currentScale: widget.currentScale,
           defaultTextStyle: theme.textTheme.bodyMedium!,
+          backgroundColor: backgroundColor,
         ),
         isComplex: true,
         willChange: true,
