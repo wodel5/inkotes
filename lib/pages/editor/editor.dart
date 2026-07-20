@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:collapsible/collapsible.dart';
 import 'package:file_picker/file_picker.dart';
@@ -1347,9 +1348,20 @@ class EditorState extends State<Editor> {
               }).toList();
 
               final duplicatedImages = images.map((image) {
-                return image.copy()
+                final newImage = image.copy()
                   ..id = coreInfo.nextImageId++
                   ..dstRect.shift(duplicationFeedbackOffset);
+                // Clamp within page bounds so the red border frame stays inside the page
+                const pad = 25.0;
+                final r = newImage.dstRect;
+                final pageSize = coreInfo.pages[image.pageIndex].size;
+                newImage.dstRect = Rect.fromLTWH(
+                  r.left.clamp(pad, max(pad, pageSize.width - r.width - pad)),
+                  r.top.clamp(pad, max(pad, pageSize.height - r.height - pad)),
+                  r.width,
+                  r.height,
+                );
+                return newImage;
               }).toList();
 
               page.strokes.addAll(duplicatedStrokes);
@@ -1402,6 +1414,49 @@ class EditorState extends State<Editor> {
               );
               autosaveAfterDelay();
             });
+          },
+          onDuplicateActiveImage: () {
+            final image = CanvasImage.activeImageNotifier.value;
+            if (image == null) return;
+
+            setState(() {
+              final page = coreInfo.pages[image.pageIndex];
+              const duplicationFeedbackOffset = Offset(25, -25);
+
+              final duplicatedImage = image.copy()
+                ..id = coreInfo.nextImageId++
+                ..dstRect = image.dstRect.shift(duplicationFeedbackOffset);
+
+              // Clamp within page bounds so the red border frame stays inside the page
+              const pad = 25.0;
+              final r = duplicatedImage.dstRect;
+              final pageSize = page.size;
+              duplicatedImage.dstRect = Rect.fromLTWH(
+                r.left.clamp(pad, max(pad, pageSize.width - r.width - pad)),
+                r.top.clamp(pad, max(pad, pageSize.height - r.height - pad)),
+                r.width,
+                r.height,
+              );
+
+              page.images.add(duplicatedImage);
+
+              history.recordChange(
+                EditorHistoryItem(
+                  type: .draw,
+                  pageIndex: image.pageIndex,
+                  strokes: const [],
+                  images: [duplicatedImage],
+                ),
+              );
+              autosaveAfterDelay();
+            });
+          },
+          onDeleteActiveImage: () {
+            final image = CanvasImage.activeImageNotifier.value;
+            if (image == null) return;
+
+            onDeleteImage(image);
+            CanvasImage.activeImageNotifier.value = null;
           },
           setColor: (color) {
             setState(() {

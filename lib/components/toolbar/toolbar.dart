@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:keybinder/keybinder.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:foledge/components/canvas/canvas_image.dart';
 import 'package:foledge/components/theming/uni_icon.dart';
 import 'package:foledge/components/toolbar/color_bar.dart';
 import 'package:foledge/components/toolbar/export_bar.dart';
@@ -38,6 +39,8 @@ class Toolbar extends StatefulWidget {
     required this.paste,
     required this.duplicateSelection,
     required this.deleteSelection,
+    this.onDuplicateActiveImage,
+    this.onDeleteActiveImage,
     required this.exportAsSba,
     required this.exportAsPdf,
     required this.exportAsPng,
@@ -63,6 +66,10 @@ class Toolbar extends StatefulWidget {
 
   final VoidCallback duplicateSelection;
   final VoidCallback deleteSelection;
+
+  /// Callbacks for when an image is tap-activated (rather than Select-tool selection).
+  final VoidCallback? onDuplicateActiveImage;
+  final VoidCallback? onDeleteActiveImage;
 
   final Future Function(BuildContext)? exportAsSba;
   final Future Function(BuildContext)? exportAsPdf;
@@ -103,8 +110,18 @@ class ToolbarState extends State<Toolbar> {
     showExportOptions.addListener(_onPanelChanged);
     showColorOptions.addListener(_onPanelChanged);
     toolOptionsType.addListener(_onPanelChanged);
+    CanvasImage.activeImageNotifier.addListener(_onActiveImageChanged);
 
     super.initState();
+  }
+
+  void _onActiveImageChanged() {
+    if (!mounted) return;
+    // Defer setState to avoid calling it during build when a CanvasImage
+    // initializes its active state (e.g. new image insertion).
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) setState(() {});
+    });
   }
 
   void _onPanelChanged() {
@@ -195,11 +212,17 @@ class ToolbarState extends State<Toolbar> {
       _ => null,
     };
 
-    if (widget.currentTool == Select.currentSelect) {
+    if (CanvasImage.activeImageNotifier.value != null) {
+      // Show selection bar when an image is tap-activated
+      toolOptionsType.value = .select;
+    } else if (widget.currentTool == Select.currentSelect) {
       // Enable selection bar only when selection is done
       toolOptionsType.value = Select.currentSelect.doneSelecting
           ? .select
           : .hide;
+    } else if (toolOptionsType.value == ToolOptions.select) {
+      // Active image was deactivated while not in Select tool → hide selection bar
+      toolOptionsType.value = .hide;
     }
 
     final bars = <Widget>[
@@ -296,8 +319,12 @@ class ToolbarState extends State<Toolbar> {
                                           onInteraction: resetAutoCollapseTimer,
                                         ),
                                       .select => SelectionBar(
-                                          duplicateSelection: widget.duplicateSelection,
-                                          deleteSelection: widget.deleteSelection,
+                                          duplicateSelection: CanvasImage.activeImageNotifier.value != null
+                                              ? widget.onDuplicateActiveImage ?? widget.duplicateSelection
+                                              : widget.duplicateSelection,
+                                          deleteSelection: CanvasImage.activeImageNotifier.value != null
+                                              ? widget.onDeleteActiveImage ?? widget.deleteSelection
+                                              : widget.deleteSelection,
                                         ),
                                       _ => const SizedBox.shrink(),
                                     },
@@ -486,6 +513,7 @@ class ToolbarState extends State<Toolbar> {
     showExportOptions.removeListener(_onPanelChanged);
     showColorOptions.removeListener(_onPanelChanged);
     toolOptionsType.removeListener(_onPanelChanged);
+    CanvasImage.activeImageNotifier.removeListener(_onActiveImageChanged);
     stows.editorFingerDrawing.removeListener(_onFingerDrawingChanged);
     _removeKeybindings();
     super.dispose();

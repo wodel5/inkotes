@@ -31,6 +31,11 @@ class CanvasImage extends StatefulHookWidget {
   /// When notified, all [CanvasImages] will have their [active] property set to false.
   static var activeListener = ChangeNotifier();
 
+  /// Tracks the currently tap-activated image (if any), so the toolbar can show
+  /// the selection bar (duplicate/delete) for it.
+  static final ValueNotifier<EditorImage?> activeImageNotifier =
+      ValueNotifier(null);
+
   /// The minimum size of the interactive area for the image.
   static double minInteractiveSize = 50;
 
@@ -62,6 +67,7 @@ class _CanvasImageState extends State<CanvasImage> {
     }
 
     _active = value;
+    CanvasImage.activeImageNotifier.value = value ? widget.image : null;
 
     if (mounted) {
       try {
