@@ -8,6 +8,7 @@ import 'package:foledge/data/extensions/change_notifier_extensions.dart';
 
 class CanvasImage extends StatefulHookWidget {
   CanvasImage({
+    super.key,
     required this.filePath,
     required this.image,
     this.overrideBoxFit,
@@ -16,7 +17,7 @@ class CanvasImage extends StatefulHookWidget {
     this.isBackground = false,
     this.readOnly = false,
     this.selected = false,
-  }) : super(key: Key('CanvasImage$filePath/${image.id}'));
+  }) : assert(!isBackground || readOnly);
 
   /// The path to the note that this image is in.
   final String filePath;
@@ -96,6 +97,15 @@ class _CanvasImageState extends State<CanvasImage> {
     super.initState();
   }
 
+  @override
+  void didUpdateWidget(CanvasImage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Deactivate when the image becomes read-only (e.g. switching away from Select tool)
+    if (widget.readOnly && !oldWidget.readOnly) {
+      active = false;
+    }
+  }
+
   void disableActive() {
     active = false;
   }
@@ -105,7 +115,6 @@ class _CanvasImageState extends State<CanvasImage> {
     final colorScheme = ColorScheme.of(context);
 
     useListenable(widget.image);
-    if (widget.readOnly) active = false;
 
     final Widget unpositioned = IgnorePointer(
       ignoring: widget.readOnly,
