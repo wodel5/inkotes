@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:foledge/components/theming/adaptive_switch_list_tile.dart';
 import 'package:foledge/components/theming/uni_icon.dart';
-import 'package:foledge/pages/home/settings.dart';
 import 'package:stow/stow.dart';
 
 class SettingsSwitch extends StatefulWidget {
@@ -49,18 +48,11 @@ class _SettingsSwitchState extends State<SettingsSwitch> {
     icon ??= Icons.settings;
 
     return GestureDetector(
-      onLongPress: () {
-        SettingsPage.showResetDialog(
-          context: context,
-          pref: widget.pref,
-          prefTitle: widget.title,
-        );
-      },
       child: AdaptiveSwitchListTile(
         contentPadding: const .symmetric(vertical: 4, horizontal: 16),
         secondary: AnimatedSwitcher(
           duration: const Duration(milliseconds: 100),
-          child: UniIcon(icon, key: ValueKey(icon)),
+          child: UniIcon(icon, size: 26, key: ValueKey(icon)),
         ),
         title: Text(
           widget.title,

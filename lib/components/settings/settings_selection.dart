@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:foledge/components/settings/settings_dropdown.dart';
 import 'package:foledge/components/theming/adaptive_toggle_buttons.dart';
 import 'package:foledge/components/theming/uni_icon.dart';
-import 'package:foledge/pages/home/settings.dart';
 import 'package:stow/stow.dart';
 
 class SettingsSelection<T extends num> extends StatefulWidget {
@@ -96,17 +95,10 @@ class _SettingsSelectionState<T extends num>
         widget.pref.value =
             widget.options[(i + 1) % widget.options.length].value;
       },
-      onLongPress: () {
-        SettingsPage.showResetDialog(
-          context: context,
-          pref: widget.pref,
-          prefTitle: widget.title,
-        );
-      },
       contentPadding: const .symmetric(vertical: 4, horizontal: 16),
       leading: AnimatedSwitcher(
         duration: const Duration(milliseconds: 100),
-        child: UniIcon(icon, key: ValueKey(icon)),
+        child: UniIcon(icon, size: 26, key: ValueKey(icon)),
       ),
       title: Text(
         widget.title,

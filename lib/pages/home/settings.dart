@@ -1,48 +1,13 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:foledge/components/settings/settings_dropdown.dart';
 import 'package:foledge/components/settings/settings_selection.dart';
 import 'package:foledge/components/settings/settings_switch.dart';
-import 'package:foledge/components/theming/adaptive_alert_dialog.dart';
 import 'package:foledge/components/theming/adaptive_toggle_buttons.dart';
 import 'package:foledge/data/locales.dart';
 import 'package:foledge/data/prefs.dart';
 import 'package:foledge/i18n/strings.g.dart';
 import 'package:stow/stow.dart';
-
-abstract class SettingsPage {
-  static Future<bool?> showResetDialog({
-    required BuildContext context,
-    required Stow pref,
-    required String prefTitle,
-  }) async {
-    if (pref.value == pref.defaultValue) return null;
-    return await showDialog(
-      context: context,
-      builder: (context) => AdaptiveAlertDialog(
-        title: Text(t.settings.reset.title),
-        content: Text(prefTitle),
-        actions: [
-          CupertinoDialogAction(
-            onPressed: () {
-              Navigator.of(context).pop(false);
-            },
-            child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
-          ),
-          CupertinoDialogAction(
-            isDestructiveAction: true,
-            onPressed: () {
-              pref.value = pref.defaultValue;
-              Navigator.of(context).pop(true);
-            },
-            child: Text(t.settings.reset.button),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 abstract class _SettingsStows {
   static final appTheme = TransformedStow(
@@ -77,7 +42,7 @@ class _SettingsContentState extends State<SettingsContent> {
       children: [
         SettingsDropdown(
           title: t.settings.prefLabels.locale,
-          icon: FontAwesomeIcons.globe,
+          icon: Icons.language_rounded,
           pref: stows.locale,
           options: [
             ...AppLocaleUtils.supportedLocales.map((locale) {
@@ -95,9 +60,9 @@ class _SettingsContentState extends State<SettingsContent> {
           title: t.settings.prefLabels.appTheme,
           iconBuilder: (i) {
             if (i == ThemeMode.system.index) {
-              return FontAwesomeIcons.circleHalfStroke;
+              return Icons.brightness_auto_rounded;
             }
-            if (i == ThemeMode.light.index) return FontAwesomeIcons.solidSun;
+            if (i == ThemeMode.light.index) return Icons.brightness_high_rounded;
             if (i == ThemeMode.dark.index) return FontAwesomeIcons.solidMoon;
             return null;
           },
@@ -106,15 +71,15 @@ class _SettingsContentState extends State<SettingsContent> {
           options: [
             ToggleButtonsOption(
               ThemeMode.system.index,
-              FaIcon(FontAwesomeIcons.circleHalfStroke, size: 20),
+              const Icon(Icons.brightness_auto_rounded, size: 26),
             ),
             ToggleButtonsOption(
               ThemeMode.light.index,
-              FaIcon(FontAwesomeIcons.solidSun, size: 20),
+              const Icon(Icons.brightness_high_rounded, size: 26),
             ),
             ToggleButtonsOption(
               ThemeMode.dark.index,
-              FaIcon(FontAwesomeIcons.solidMoon, size: 20),
+              const FaIcon(FontAwesomeIcons.solidMoon, size: 20),
             ),
           ],
         ),
@@ -126,7 +91,7 @@ class _SettingsContentState extends State<SettingsContent> {
         ),
         SettingsSwitch(
           title: t.settings.prefLabels.autoSwitchPaperColor,
-          icon: Icons.palette_outlined,
+          icon: FontAwesomeIcons.circleHalfStroke,
           pref: stows.autoSwitchPaperColor,
         ),
         SettingsSwitch(

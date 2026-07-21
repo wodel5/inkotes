@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:foledge/components/theming/adaptive_toggle_buttons.dart';
 import 'package:foledge/components/theming/uni_icon.dart';
-import 'package:foledge/pages/home/settings.dart';
 import 'package:stow/stow.dart';
 import 'package:yaru/yaru.dart';
 
@@ -69,13 +68,6 @@ class _SettingsDropdownState<T> extends State<SettingsDropdown<T>> {
 
     return MergeSemantics(
       child: ListTile(
-        onLongPress: () {
-          SettingsPage.showResetDialog(
-            context: context,
-            pref: widget.pref,
-            prefTitle: widget.title,
-          );
-        },
         contentPadding: const .symmetric(vertical: 4, horizontal: 16),
         leading: AnimatedSwitcher(
           duration: const Duration(milliseconds: 100),
