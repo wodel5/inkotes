@@ -94,6 +94,7 @@ class EditorState extends State<Editor> {
   final log = Logger('EditorState');
 
   late var coreInfo = EditorCoreInfo.placeholder;
+  Brightness? _lastBrightness;
 
   final _canvasGestureDetectorKey = GlobalKey<CanvasGestureDetectorState>();
   final _toolbarKey = GlobalKey<ToolbarState>();
@@ -177,6 +178,33 @@ class EditorState extends State<Editor> {
     super.initState();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final currentBrightness = Theme.of(context).brightness;
+    if (_lastBrightness != null && _lastBrightness != currentBrightness) {
+      _autoApplyPaperColor(currentBrightness);
+    }
+    _lastBrightness = currentBrightness;
+  }
+
+  /// 根据自动切换开关和当前主题调整画纸颜色。
+  /// 仅当当前颜色是纯白(0xFFFFFFFF)或深色(0xFF272735)时才切换。
+  void _autoApplyPaperColor(Brightness brightness) {
+    if (!stows.autoSwitchPaperColor.value) return;
+    if (coreInfo.readOnly) return;
+    final currentColor = coreInfo.backgroundColor?.toARGB32();
+    const white = 0xFFFFFFFF;
+    const dark = 0xFF272735;
+    if (currentColor != white && currentColor != dark) return;
+    final targetColor = brightness == Brightness.dark ? dark : white;
+    if (currentColor == targetColor) return;
+    setState(() {
+      coreInfo.backgroundColor = Color(targetColor);
+    });
+    saveToFile(force: true);
+  }
+
   void _onActiveImageChanged() {
     if (!mounted) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -224,6 +252,7 @@ class EditorState extends State<Editor> {
     }
 
     setState(() {});
+    _autoApplyPaperColor(Theme.of(context).brightness);
   }
 
   Keybinding? _ctrlZ, _ctrlY, _ctrlShiftZ;
