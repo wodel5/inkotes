@@ -58,7 +58,7 @@ class _SizePickerState extends State<SizePicker> {
               activeTrackColor: brightness == Brightness.dark
                   ? const Color(0xFF44495F)
                   : null,
-              thumbShape: const _RingThumbShape(visualRadius: 7, strokeWidth: 5.5),
+              thumbShape: const RingThumbShape(visualRadius: 7, strokeWidth: 5.5),
               thumbColor: brightness == Brightness.dark
                   ? const Color(0xFFE3E2E9)
                   : Colors.white,
@@ -85,8 +85,8 @@ class _SizePickerState extends State<SizePicker> {
   }
 }
 
-class _RingThumbShape extends SliderComponentShape {
-  const _RingThumbShape({required this.visualRadius, required this.strokeWidth});
+class RingThumbShape extends SliderComponentShape {
+  const RingThumbShape({required this.visualRadius, required this.strokeWidth});
 
   final double visualRadius;
   final double strokeWidth;
@@ -125,5 +125,30 @@ class _RingThumbShape extends SliderComponentShape {
         ..style = PaintingStyle.stroke
         ..strokeWidth = strokeWidth,
     );
+  }
+}
+
+/// Smaller tick mark dots for sliders that keep divisions visible but less obtrusive.
+class SmallTickMarkShape extends SliderTickMarkShape {
+  const SmallTickMarkShape();
+
+  @override
+  Size getPreferredSize({required bool isEnabled, required SliderThemeData sliderTheme}) {
+    return const Size(4, 4);
+  }
+
+  @override
+  void paint(
+    PaintingContext context,
+    Offset center, {
+    required RenderBox parentBox,
+    required SliderThemeData sliderTheme,
+    required Animation<double> enableAnimation,
+    required Offset thumbCenter,
+    required bool isEnabled,
+    required TextDirection textDirection,
+  }) {
+    final paint = Paint()..color = sliderTheme.activeTickMarkColor ?? Colors.black;
+    context.canvas.drawCircle(center, 2, paint);
   }
 }

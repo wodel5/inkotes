@@ -118,7 +118,7 @@ class Pen extends Tool {
   static StrokeOptions get shapePenOptions =>
       defaultOptions.copyWith(smoothing: 0, streamline: 0);
   static StrokeOptions get highlighterOptions =>
-      defaultOptions.copyWith(size: 50);
+      defaultOptions.copyWith(size: 25);
   static StrokeOptions get pencilOptions => defaultOptions.copyWith(
     streamline: 0.1,
     start: StrokeEndOptions.start(taperEnabled: true, customTaper: 1),

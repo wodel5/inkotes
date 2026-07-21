@@ -1760,13 +1760,13 @@ class EditorState extends State<Editor> {
         if (coreInfo.readOnly) return;
         coreInfo.lineHeight = lineHeight;
         stows.lastLineHeight.value = lineHeight;
-        autosaveAfterDelay();
+        saveToFile(force: true);
       }),
       setLineThickness: (lineThickness) => setState(() {
         if (coreInfo.readOnly) return;
         coreInfo.lineThickness = lineThickness;
         stows.lastLineThickness.value = lineThickness;
-        autosaveAfterDelay();
+        saveToFile(force: true);
       }),
       clearPage: (pageIndex) {
         clearPage(pageIndex);

@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:foledge/components/canvas/canvas_background_preview.dart';
 import 'package:foledge/components/canvas/canvas_preview.dart';
 import 'package:foledge/components/canvas/inner_canvas.dart';
+import 'package:foledge/components/toolbar/size_picker.dart';
 import 'package:foledge/data/editor/editor_core_info.dart';
 import 'package:foledge/data/editor/page.dart';
 import 'package:foledge/data/extensions/color_extensions.dart';
@@ -189,18 +190,36 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
                   style: TextTheme.of(context).titleMedium,
                 ),
                 Expanded(
-                  child: Slider(
-                    value: widget.coreInfo.lineHeight.toDouble(),
-                    min: 20,
-                    max: 100,
-                    divisions: 8,
-                    onChanged:
-                        widget.coreInfo.backgroundPattern ==
-                            CanvasBackgroundPattern.none
-                        ? null
-                        : (double value) => setState(() {
-                            widget.setLineHeight(value.toInt());
-                          }),
+                  child: SliderTheme(
+                    data: SliderThemeData(
+                      trackShape: const RoundedRectSliderTrackShape(),
+                      trackHeight: 18,
+                      overlayShape: SliderComponentShape.noOverlay,
+                      inactiveTrackColor: Theme.of(context).brightness == Brightness.light
+                          ? const Color(0xFF9999BB).withValues(alpha: 0.15)
+                          : Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.6),
+                      activeTrackColor: Theme.of(context).brightness == Brightness.dark
+                          ? const Color(0xFF44495F)
+                          : null,
+                      thumbShape: const RingThumbShape(visualRadius: 7, strokeWidth: 5.5),
+                      thumbColor: Theme.of(context).brightness == Brightness.dark
+                          ? const Color(0xFFE3E2E9)
+                          : Colors.white,
+                      tickMarkShape: const SmallTickMarkShape(),
+                    ),
+                    child: Slider(
+                      value: widget.coreInfo.lineHeight.toDouble(),
+                      min: 20,
+                      max: 100,
+                      divisions: 8,
+                      onChanged:
+                          widget.coreInfo.backgroundPattern ==
+                              CanvasBackgroundPattern.none
+                          ? null
+                          : (double value) => setState(() {
+                              widget.setLineHeight(value.toInt());
+                            }),
+                    ),
                   ),
                 ),
               ],
@@ -218,18 +237,36 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
                   style: TextTheme.of(context).titleMedium,
                 ),
                 Expanded(
-                  child: Slider(
-                    value: widget.coreInfo.lineThickness.toDouble(),
-                    min: 1,
-                    max: 5,
-                    divisions: 4,
-                    onChanged:
-                        widget.coreInfo.backgroundPattern ==
-                            CanvasBackgroundPattern.none
-                        ? null
-                        : (double value) => setState(() {
-                            widget.setLineThickness(value.toInt());
-                          }),
+                  child: SliderTheme(
+                    data: SliderThemeData(
+                      trackShape: const RoundedRectSliderTrackShape(),
+                      trackHeight: 18,
+                      overlayShape: SliderComponentShape.noOverlay,
+                      inactiveTrackColor: Theme.of(context).brightness == Brightness.light
+                          ? const Color(0xFF9999BB).withValues(alpha: 0.15)
+                          : Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.6),
+                      activeTrackColor: Theme.of(context).brightness == Brightness.dark
+                          ? const Color(0xFF44495F)
+                          : null,
+                      thumbShape: const RingThumbShape(visualRadius: 7, strokeWidth: 5.5),
+                      thumbColor: Theme.of(context).brightness == Brightness.dark
+                          ? const Color(0xFFE3E2E9)
+                          : Colors.white,
+                      tickMarkShape: const SmallTickMarkShape(),
+                    ),
+                    child: Slider(
+                      value: widget.coreInfo.lineThickness.toDouble(),
+                      min: 1,
+                      max: 5,
+                      divisions: 4,
+                      onChanged:
+                          widget.coreInfo.backgroundPattern ==
+                              CanvasBackgroundPattern.none
+                          ? null
+                          : (double value) => setState(() {
+                              widget.setLineThickness(value.toInt());
+                            }),
+                    ),
                   ),
                 ),
               ],
