@@ -277,6 +277,7 @@ class _Translations$settings$prefLabels$zh_Hans_CN extends Translations$settings
 	@override String get locale => '应用语言';
 	@override String get appTheme => '应用主题';
 	@override String get autoDisableFingerDrawingWhenStylusDetected => '自动禁用手指绘图';
+	@override String get autoSwitchPaperColor => '自动切换画纸颜色';
 	@override String get printPageIndicators => '打印页码';
 	@override String get autosave => '自动保存';
 }
@@ -288,9 +289,6 @@ class _Translations$settings$prefDescriptions$zh_Hans_CN extends Translations$se
 	final TranslationsZhHansCn _root; // ignore: unused_field
 
 	// Translations
-	@override String get autoDisableFingerDrawingWhenStylusDetected => '当检测到手写笔时关闭手指绘图';
-	@override String get printPageIndicators => '在导出中显示页码';
-	@override String get autosave => '短暂延迟后自动保存，或永不保存';
 }
 
 // Path: settings.accentColorPicker

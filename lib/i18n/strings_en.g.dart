@@ -417,6 +417,9 @@ class Translations$settings$prefLabels$en {
 	/// en: 'Auto-disable finger drawing'
 	String get autoDisableFingerDrawingWhenStylusDetected => 'Auto-disable finger drawing';
 
+	/// en: 'Auto-switch paper color'
+	String get autoSwitchPaperColor => 'Auto-switch paper color';
+
 	/// en: 'Print page indicators'
 	String get printPageIndicators => 'Print page indicators';
 
@@ -431,15 +434,6 @@ class Translations$settings$prefDescriptions$en {
 	final Translations _root; // ignore: unused_field
 
 	// Translations
-
-	/// en: 'Turn off finger drawing when a stylus is detected'
-	String get autoDisableFingerDrawingWhenStylusDetected => 'Turn off finger drawing when a stylus is detected';
-
-	/// en: 'Show page indicators in exports'
-	String get printPageIndicators => 'Show page indicators in exports';
-
-	/// en: 'Auto-save after a short delay, or never'
-	String get autosave => 'Auto-save after a short delay, or never';
 }
 
 // Path: settings.accentColorPicker

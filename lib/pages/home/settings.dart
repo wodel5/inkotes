@@ -121,27 +121,21 @@ class _SettingsContentState extends State<SettingsContent> {
         SettingsSwitch(
           title:
               t.settings.prefLabels.autoDisableFingerDrawingWhenStylusDetected,
-          subtitle: t
-              .settings
-              .prefDescriptions
-              .autoDisableFingerDrawingWhenStylusDetected,
           icon: IconData(0xe7de, fontFamily: 'iconfont'),
           pref: stows.autoDisableFingerDrawingWhenStylusDetected,
         ),
         SettingsSwitch(
-          title: t.settings.prefLabels.printPageIndicators,
-          subtitle: t.settings.prefDescriptions.printPageIndicators,
-          icon: FontAwesomeIcons.hashtag,
-          pref: stows.printPageIndicators,
-        ),
-        SettingsSwitch(
-          title: '自动切换画纸颜色',
+          title: t.settings.prefLabels.autoSwitchPaperColor,
           icon: Icons.palette_outlined,
           pref: stows.autoSwitchPaperColor,
         ),
+        SettingsSwitch(
+          title: t.settings.prefLabels.printPageIndicators,
+          icon: FontAwesomeIcons.hashtag,
+          pref: stows.printPageIndicators,
+        ),
         SettingsSelection(
           title: t.settings.prefLabels.autosave,
-          subtitle: t.settings.prefDescriptions.autosave,
           icon: FontAwesomeIcons.solidFloppyDisk,
           pref: stows.autosaveDelay,
           optionsWidth: 60,

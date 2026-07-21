@@ -77,12 +77,10 @@ settings:
     locale: Language
     appTheme: App theme
     autoDisableFingerDrawingWhenStylusDetected: Auto-disable finger drawing
+    autoSwitchPaperColor: Auto-switch paper color
     printPageIndicators: Print page indicators
     autosave: Auto-save
   prefDescriptions:
-    autoDisableFingerDrawingWhenStylusDetected: Turn off finger drawing when a stylus is detected
-    printPageIndicators: Show page indicators in exports
-    autosave: Auto-save after a short delay, or never
   accentColorPicker:
     pickAColor: Pick a color
   reset:
