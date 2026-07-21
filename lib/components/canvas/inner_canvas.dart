@@ -44,7 +44,7 @@ class InnerCanvas extends StatefulWidget {
 
   final double currentScale;
 
-  static const defaultBackgroundColor = Color(0xFFFCFCFC);
+  static const defaultBackgroundColor = Color(0xFFFFFFFF);
 
   @override
   State<InnerCanvas> createState() => _InnerCanvasState();

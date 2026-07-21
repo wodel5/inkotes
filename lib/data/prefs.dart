@@ -71,6 +71,12 @@ class Stows {
     volatile: !_isOnMainIsolate,
   );
 
+  final autoSwitchPaperColor = PlainStow(
+    'autoSwitchPaperColor',
+    false,
+    volatile: !_isOnMainIsolate,
+  );
+
   final maxImageSize = PlainStow<double>(
     'maxImageSize',
     2000,

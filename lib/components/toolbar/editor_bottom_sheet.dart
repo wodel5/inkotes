@@ -117,14 +117,6 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
                   style: TextTheme.of(context).titleMedium,
                 ),
                 const Spacer(),
-                _BackgroundColorButton(
-                  color: null,
-                  label: t.editor.menu.defaultColor,
-                  isSelected: widget.coreInfo.backgroundColor == null,
-                  onTap: () => setState(() {
-                    widget.setBackgroundColor(null);
-                  }),
-                ),
                 for (final preset in _backgroundColorPresets) ...[
                   const SizedBox(width: 6),
                   _BackgroundColorButton(
@@ -383,11 +375,11 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
 }
 
 const _backgroundColorPresets = [
+  Color(0xFFFFFFFF), // 纯白
+  Color(0xFF272735), // 深色
   Color(0xFFFFFBF0), // 暖白
   Color(0xFFF0FFF0), // 浅绿
   Color(0xFFF0F7FF), // 浅蓝
-  Color(0xFFF5F5F5), // 浅灰
-  Color(0xFF272735), // 深色
 ];
 
 class _BackgroundColorButton extends StatelessWidget {

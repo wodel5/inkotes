@@ -101,14 +101,28 @@ class EditorCoreInfo {
   @visibleForTesting
   EditorCoreInfo({required this.filePath, this.readOnlyReason})
     : nextImageId = 0,
-      backgroundColor = stows.lastBackgroundColor.value != null
-          ? Color(stows.lastBackgroundColor.value!)
-          : null,
+      backgroundColor = _initialBackgroundColor(),
       backgroundPattern = stows.lastBackgroundPattern.value,
       lineHeight = stows.lastLineHeight.value,
       lineThickness = stows.lastLineThickness.value,
       pages = [],
       assetCache = AssetCache();
+
+  /// Returns the background color for a new note based on the current theme.
+  static Color? _initialBackgroundColor() {
+    final isDark = () {
+      try {
+        final mode = stows.appTheme.value;
+        if (mode == ThemeMode.dark) return true;
+        if (mode == ThemeMode.light) return false;
+        return WidgetsBinding.instance.platformDispatcher
+            .platformBrightness == Brightness.dark;
+      } catch (_) {
+        return false;
+      }
+    }();
+    return isDark ? const Color(0xFF272735) : const Color(0xFFFFFFFF);
+  }
 
   EditorCoreInfo._({
     required this.filePath,
@@ -330,9 +344,8 @@ class EditorCoreInfo {
       }
     }
 
-    // add a page if there are no pages,
-    // or if the last page is not empty
-    if (pages.isEmpty || pages.last.isNotEmpty && !onlyFirstPage) {
+    // add a page if there are no pages
+    if (pages.isEmpty) {
       pages.add(EditorPage(size: fallbackPageSize));
     }
 

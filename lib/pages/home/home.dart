@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:collapsible/collapsible.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -16,7 +15,6 @@ import 'package:foledge/components/home/grid_folders.dart';
 import 'package:foledge/components/home/masonry_files.dart';
 import 'package:foledge/components/home/move_note_button.dart';
 import 'package:foledge/components/home/rename_note_button.dart';
-import 'package:foledge/components/theming/adaptive_alert_dialog.dart';
 import 'package:foledge/data/file_manager/file_manager.dart';
 import 'package:foledge/data/prefs.dart';
 import 'package:foledge/data/routes.dart';
@@ -163,7 +161,7 @@ class _HomePageState extends State<HomePage> {
     findChildren();
   }
 
-  void _showSettingsDialog() {
+  void _showSettingsOverlay(BuildContext context, Rect buttonRect) {
     showGeneralDialog(
       context: context,
       barrierDismissible: true,
@@ -171,18 +169,17 @@ class _HomePageState extends State<HomePage> {
       barrierColor: Colors.black26,
       transitionDuration: const Duration(milliseconds: 250),
       pageBuilder: (context, animation, secondaryAnimation) {
-        return const _SettingsDialog();
+        return _SettingsOverlay(buttonRect: buttonRect);
       },
       transitionBuilder: (context, animation, secondaryAnimation, child) {
-        return ScaleTransition(
-          scale: CurvedAnimation(
-            parent: animation,
-            curve: Curves.easeOutCubic,
+        return SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(0, -0.1),
+            end: Offset.zero,
+          ).animate(
+            CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
           ),
-          child: FadeTransition(
-            opacity: animation,
-            child: child,
-          ),
+          child: FadeTransition(opacity: animation, child: child),
         );
       },
     );
@@ -290,9 +287,16 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           // Settings button
-          IconButton(
-            icon: const FaIcon(FontAwesomeIcons.gear),
-            onPressed: _showSettingsDialog,
+          Builder(
+            builder: (context) => IconButton(
+              icon: const FaIcon(FontAwesomeIcons.gear),
+              onPressed: () {
+                final RenderBox button =
+                    context.findRenderObject() as RenderBox;
+                final buttonRect = button.localToGlobal(Offset.zero) & button.size;
+                _showSettingsOverlay(context, buttonRect);
+              },
+            ),
           ),
         ],
       ),
@@ -531,22 +535,72 @@ class _NoFiles extends StatelessWidget {
   }
 }
 
-class _SettingsDialog extends StatelessWidget {
-  const _SettingsDialog();
+class _SettingsOverlay extends StatefulWidget {
+  const _SettingsOverlay({required this.buttonRect});
+
+  final Rect buttonRect;
+
+  @override
+  State<_SettingsOverlay> createState() => _SettingsOverlayState();
+}
+
+class _SettingsOverlayState extends State<_SettingsOverlay> {
+  Orientation? _lastOrientation;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final currentOrientation = MediaQuery.of(context).orientation;
+    if (_lastOrientation != null && _lastOrientation != currentOrientation) {
+      Navigator.of(context).pop();
+    }
+    _lastOrientation = currentOrientation;
+  }
 
   @override
   Widget build(BuildContext context) {
-    return AdaptiveAlertDialog(
-      title: Text(t.home.titles.settings),
-      content: SizedBox(
-        width: 450,
-        height: 500,
-        child: const SettingsContent(),
-      ),
-      actions: [
-        CupertinoDialogAction(
-          onPressed: () => Navigator.of(context).pop(),
-          child: Text(t.common.done),
+    final screenSize = MediaQuery.of(context).size;
+
+    const maxWidth = 350.0;
+    const maxHeight = 500.0;
+
+    double top = widget.buttonRect.bottom + 8;
+    double left = widget.buttonRect.right - maxWidth;
+
+    if (left < 16) left = 16;
+    if (left + maxWidth > screenSize.width - 16) {
+      left = screenSize.width - maxWidth - 16;
+    }
+    if (top + maxHeight > screenSize.height - 16) {
+      top = widget.buttonRect.top - maxHeight - 8;
+    }
+
+    return Stack(
+      children: [
+        Positioned.fill(
+          child: GestureDetector(
+            onTap: () => Navigator.pop(context),
+            child: Container(color: Colors.transparent),
+          ),
+        ),
+        Positioned(
+          left: left,
+          top: top,
+          child: Card(
+            margin: EdgeInsets.zero,
+            elevation: 8,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: SizedBox(
+              width: maxWidth,
+              height: maxHeight,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: const SettingsContent(),
+              ),
+            ),
+          ),
         ),
       ],
     );

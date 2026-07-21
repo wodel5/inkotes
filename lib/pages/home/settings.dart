@@ -73,7 +73,7 @@ class _SettingsContentState extends State<SettingsContent> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
+    return Column(
       children: [
         SettingsDropdown(
           title: t.settings.prefLabels.locale,
@@ -133,6 +133,11 @@ class _SettingsContentState extends State<SettingsContent> {
           subtitle: t.settings.prefDescriptions.printPageIndicators,
           icon: FontAwesomeIcons.hashtag,
           pref: stows.printPageIndicators,
+        ),
+        SettingsSwitch(
+          title: '自动切换画纸颜色',
+          icon: Icons.palette_outlined,
+          pref: stows.autoSwitchPaperColor,
         ),
         SettingsSelection(
           title: t.settings.prefLabels.autosave,
