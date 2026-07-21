@@ -13,6 +13,7 @@ Future<Color?> showColorPickerDialog({
 }) async {
   return showDialog<Color>(
     context: context,
+    barrierDismissible: true,
     builder: (BuildContext context) => ColorPickerDialog(
       initialColor: initialColor,
       title: title,

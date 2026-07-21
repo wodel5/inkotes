@@ -150,9 +150,7 @@ class _ColorBarState extends State<ColorBar> {
 
       // custom color
       ColorOption(
-        isSelected:
-            widget.currentColor?.withAlpha(255).toARGB32() ==
-            pickedColor.toARGB32(),
+        isSelected: false,
         enabled: true,
         onTap: () => openColorPicker(context),
         tooltip: t.editor.colors.colorPicker,
