@@ -446,6 +446,9 @@ class Translations$settings$accentColorPicker$en {
 
 	/// en: 'Pick a color'
 	String get pickAColor => 'Pick a color';
+
+	/// en: 'Custom color'
+	String get customColor => 'Custom color';
 }
 
 // Path: settings.reset

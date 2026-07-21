@@ -201,7 +201,7 @@ class _ColorBarState extends State<ColorBar> {
     final Color? newColor = await showColorPickerDialog(
       context: context,
       initialColor: pickedColor,
-      title: t.settings.accentColorPicker.pickAColor,
+      title: t.settings.accentColorPicker.customColor,
       allowOpacity: true,
     );
     if (newColor != null) {

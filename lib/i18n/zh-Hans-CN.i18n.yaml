@@ -83,6 +83,7 @@ settings:
   prefDescriptions:
   accentColorPicker:
     pickAColor: 选取颜色
+    customColor: 自定义颜色
   reset:
     title: 重置此设置？
     button: 重置

@@ -8,7 +8,7 @@ export 'widgets/color_picker_dialog.dart';
 export 'widgets/palette.dart';
 export 'widgets/rainbow_slider.dart';
 export 'widgets/alpha_slider.dart';
-export 'widgets/color_inputs.dart';
+
 export 'widgets/color_tile.dart';
 
 // Utils

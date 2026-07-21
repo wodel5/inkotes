@@ -83,6 +83,7 @@ settings:
   prefDescriptions:
   accentColorPicker:
     pickAColor: Pick a color
+    customColor: Custom color
   reset:
     title: Reset this setting?
     button: Reset

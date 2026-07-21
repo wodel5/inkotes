@@ -299,6 +299,8 @@ class _Translations$settings$accentColorPicker$zh_Hans_CN extends Translations$s
 
 	// Translations
 	@override String get pickAColor => '选取颜色';
+
+	@override String get customColor => '自定义颜色';
 }
 
 // Path: settings.reset

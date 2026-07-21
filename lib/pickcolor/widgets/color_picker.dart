@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'alpha_slider.dart';
-import 'color_inputs.dart';
-import 'gradient_alpha_input.dart';
 import 'palette.dart';
 import 'rainbow_slider.dart';
 
@@ -15,18 +13,15 @@ const double _kDefaultHorizontalPadding = 12.0;
 /// - 2D color palette for saturation/brightness
 /// - Rainbow/hue slider
 /// - Alpha/opacity slider
-/// - Hex color input
 class ColorPicker extends StatefulWidget {
   final Color color;
   final ValueChanged<Color> onColorChanged;
   final VoidCallback? onColorChangeStart;
   final VoidCallback? onColorChangeEnd;
   final bool allowOpacity;
-  final EdgeInsets? inputsPadding;
   final EdgeInsets? slidersPadding;
   final double? paletteHeight;
   final bool readOnly;
-  final bool showToolbar;
 
   const ColorPicker({
     super.key,
@@ -35,11 +30,9 @@ class ColorPicker extends StatefulWidget {
     this.onColorChangeStart,
     this.onColorChangeEnd,
     this.allowOpacity = true,
-    this.inputsPadding,
     this.slidersPadding,
     this.paletteHeight,
     this.readOnly = false,
-    this.showToolbar = true,
   });
 
   @override
@@ -53,7 +46,6 @@ class _ColorPickerState extends State<ColorPicker> {
   late double rainbowPosition;
   late Offset palettePosition;
 
-  final FocusNode alphaFocusNode = FocusNode();
   final ValueNotifier<int> _dragTick = ValueNotifier<int>(0);
 
   @override
@@ -82,7 +74,6 @@ class _ColorPickerState extends State<ColorPicker> {
 
   @override
   void dispose() {
-    alphaFocusNode.dispose();
     _dragTick.dispose();
     super.dispose();
   }
@@ -95,46 +86,6 @@ class _ColorPickerState extends State<ColorPicker> {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        // Toolbar (hex/opacity inputs)
-        if (widget.showToolbar)
-          Padding(
-            padding:
-                widget.inputsPadding ??
-                const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Expanded(
-                  child: ColorHexInput(
-                    color: color,
-                    readOnly: widget.readOnly,
-                    allowAlpha: false,
-                    onColorChanged: (Color value) {
-                      setState(() {
-                        color = value.withValues(alpha: opacity);
-                        rainbowPosition = RainbowSlider.getPosition(color);
-                        rainbowColor = RainbowSlider.getColor(rainbowPosition);
-                        palettePosition = Palette.getPosition(color);
-                      });
-                      widget.onColorChanged(color);
-                      widget.onColorChangeEnd?.call();
-                    },
-                  ),
-                ),
-                const SizedBox(width: 16),
-                GradientAlphaInput(
-                  focus: alphaFocusNode,
-                  color: color,
-                  readOnly: widget.readOnly || !widget.allowOpacity,
-                  label: 'Opacity',
-                  onValueUpdate: (Color value) =>
-                      _commitColor(value, fireEnd: true),
-                  onDragUpdate: (Color value) => _liveColor(value),
-                  onDragEnd: widget.onColorChangeEnd,
-                ),
-              ],
-            ),
-          ),
         // Palette
         ClipRect(
           child: ConstrainedBox(
@@ -247,27 +198,5 @@ class _ColorPickerState extends State<ColorPicker> {
         ),
       ],
     );
-  }
-
-  void _liveColor(Color value) {
-    color = value;
-    opacity = color.a;
-    rainbowPosition = RainbowSlider.getPosition(color);
-    rainbowColor = RainbowSlider.getColor(rainbowPosition);
-    palettePosition = Palette.getPosition(color);
-    _tick();
-    widget.onColorChanged(color);
-  }
-
-  void _commitColor(Color value, {bool fireEnd = false}) {
-    setState(() {
-      color = value;
-      opacity = color.a;
-      rainbowPosition = RainbowSlider.getPosition(color);
-      rainbowColor = RainbowSlider.getColor(rainbowPosition);
-      palettePosition = Palette.getPosition(color);
-    });
-    widget.onColorChanged(color);
-    if (fireEnd) widget.onColorChangeEnd?.call();
   }
 }

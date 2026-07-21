@@ -64,13 +64,25 @@ class _ColorPickerDialogState extends State<ColorPickerDialog> {
       child: AlertDialog(
         contentPadding: EdgeInsets.zero,
         content: SizedBox(
-          width: 320,
-          height: 450,
+          width: 340,
+          height: 400,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              // Title bar
+              Padding(
+                padding: const EdgeInsets.all(12),
+                child: Text(
+                  widget.title,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
               Expanded(
-                child: ColorPickerPanel(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: ColorPickerPanel(
                   color: selectedColor,
                   onColorChanged: (Color color) {
                     setState(() {
@@ -78,10 +90,10 @@ class _ColorPickerDialogState extends State<ColorPickerDialog> {
                     });
                   },
                   allowOpacity: widget.allowOpacity,
-                  maxWidth: 320,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                  maxWidth: 340,
                 ),
               ),
+            ),
               // Dialog actions
               Container(
                 padding: const EdgeInsets.only(
@@ -110,7 +122,7 @@ class _ColorPickerDialogState extends State<ColorPickerDialog> {
                         ),
                       ),
                       onPressed: () => Navigator.of(context).pop(),
-                      child: Text('Cancel'),
+                      child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
                     ),
                     const SizedBox(width: 8),
                     TextButton(
@@ -125,7 +137,7 @@ class _ColorPickerDialogState extends State<ColorPickerDialog> {
                       onPressed: () {
                         Navigator.of(context).pop(selectedColor);
                       },
-                      child: const Text('OK'),
+                      child: Text(MaterialLocalizations.of(context).okButtonLabel),
                     ),
                   ],
                 ),
