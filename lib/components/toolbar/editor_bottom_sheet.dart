@@ -132,7 +132,7 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
             ),
             const SizedBox(height: 8), // 画纸类型标题与预览图之间间距
             SizedBox(
-              height: previewSize.height,
+              height: previewSize.height + 24,
               child: Row(
                 children: [
                   for (final backgroundPattern
@@ -142,24 +142,33 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
                       const SizedBox(width: 4), // 画纸预览卡片之间的间距
                     Expanded(
                       child: Center(
-                        child: InkWell(
-                          borderRadius: const .all(.circular(8)),
-                          onTap: () => setState(() {
-                            widget.setBackgroundPattern(backgroundPattern);
-                          }),
-                          child: CanvasBackgroundPreview(
-                            selected:
-                                widget.coreInfo.backgroundPattern ==
-                                backgroundPattern,
-                            backgroundColor:
-                                widget.coreInfo.backgroundColor ??
-                                InnerCanvas.defaultBackgroundColor,
-                            backgroundPattern: backgroundPattern,
-                            pageSize: pageSize,
-                            lineHeight: widget.coreInfo.lineHeight,
-                            lineThickness: widget.coreInfo.lineThickness,
-                            label: backgroundPattern.localizedName,
-                          ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            InkWell(
+                              borderRadius: const .all(.circular(8)),
+                              onTap: () => setState(() {
+                                widget.setBackgroundPattern(backgroundPattern);
+                              }),
+                              child: CanvasBackgroundPreview(
+                                selected:
+                                    widget.coreInfo.backgroundPattern ==
+                                    backgroundPattern,
+                                backgroundColor:
+                                    widget.coreInfo.backgroundColor ??
+                                    InnerCanvas.defaultBackgroundColor,
+                                backgroundPattern: backgroundPattern,
+                                pageSize: pageSize,
+                                lineHeight: widget.coreInfo.lineHeight,
+                                lineThickness: widget.coreInfo.lineThickness,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              backgroundPattern.localizedName,
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                          ],
                         ),
                       ),
                     ),

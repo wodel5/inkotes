@@ -13,7 +13,6 @@ class CanvasBackgroundPreview extends StatelessWidget {
     required this.pageSize,
     required this.lineHeight,
     required this.lineThickness,
-    required this.label,
   });
 
   final bool selected;
@@ -22,7 +21,6 @@ class CanvasBackgroundPreview extends StatelessWidget {
   final Size pageSize;
   final int lineHeight;
   final int lineThickness;
-  final String label;
 
   static const double fixedWidth = 100;
 
@@ -67,29 +65,6 @@ class CanvasBackgroundPreview extends StatelessWidget {
                     .withSaturation(selected ? 1 : 0)
                     .withValues(alpha: selected ? 1 : 0.5),
                 preview: true,
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: 4,
-            left: 0,
-            right: 0,
-            child: Center(
-              child: SizedBox(
-                width: previewSize.width * 0.9,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4),
-                  child: Text(
-                    label,
-                    textAlign: TextAlign.center,
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                    style: TextStyle(
-                      color: colorScheme.onSurface,
-                      fontSize: 12,
-                    ),
-                  ),
-                ),
               ),
             ),
           ),
