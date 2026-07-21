@@ -158,7 +158,10 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
                   style: TextTheme.of(context).titleMedium,
                 ),
                 const SizedBox(width: 12),
-                Text(widget.coreInfo.lineHeight.toString()),
+                Text(
+                  widget.coreInfo.lineHeight.toString(),
+                  style: TextTheme.of(context).titleMedium,
+                ),
                 Expanded(
                   child: Slider(
                     value: widget.coreInfo.lineHeight.toDouble(),
@@ -184,7 +187,10 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
                   style: TextTheme.of(context).titleMedium,
                 ),
                 const SizedBox(width: 12),
-                Text(widget.coreInfo.lineThickness.toString()),
+                Text(
+                  widget.coreInfo.lineThickness.toString(),
+                  style: TextTheme.of(context).titleMedium,
+                ),
                 Expanded(
                   child: Slider(
                     value: widget.coreInfo.lineThickness.toDouble(),
@@ -429,62 +435,54 @@ class _PageActionButton extends StatefulWidget {
 }
 
 class _PageActionButtonState extends State<_PageActionButton> {
-  bool _isHovering = false;
   bool _isPressed = false;
 
   @override
   Widget build(BuildContext context) {
+    final brightness = Theme.of(context).brightness;
+    final pressColor = brightness == Brightness.dark
+        ? const Color(0xFFB2C5FF)
+        : const Color(0xFF4A5E92);
+
+    final usePressColor = _isPressed && widget.enabled;
     final colorScheme = ColorScheme.of(context);
-    final iconColor = widget.enabled
-        ? colorScheme.onSurface
-        : colorScheme.onSurface.withValues(alpha: 0.3);
+    final iconColor = !widget.enabled
+        ? colorScheme.onSurface.withValues(alpha: 0.3)
+        : usePressColor
+            ? pressColor
+            : colorScheme.onSurface;
+    final textColor = !widget.enabled
+        ? colorScheme.onSurface.withValues(alpha: 0.3)
+        : usePressColor
+            ? pressColor
+            : colorScheme.onSurface;
 
-    Color? bgColor;
-    if (_isPressed) {
-      bgColor = colorScheme.onSurface.withValues(alpha: 0.12);
-    } else if (_isHovering) {
-      bgColor = colorScheme.onSurface.withValues(alpha: 0.06);
-    }
-
-    return MouseRegion(
-      onEnter: widget.enabled ? (_) => setState(() => _isHovering = true) : null,
-      onExit: widget.enabled ? (_) => setState(() => _isHovering = false) : null,
-      child: GestureDetector(
-        onTapDown: widget.enabled ? (_) => setState(() => _isPressed = true) : null,
-        onTapUp: widget.enabled ? (_) => setState(() => _isPressed = false) : null,
-        onTapCancel: () => setState(() => _isPressed = false),
-        onTap: widget.enabled ? widget.onTap : null,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 150),
-          decoration: BoxDecoration(
-            color: bgColor,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-          child: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-              if (widget.icon is IconData)
-                Icon(widget.icon as IconData, size: 20, color: iconColor)
-              else
-                FaIcon(widget.icon as FaIconData, size: 20, color: iconColor),
-              const SizedBox(height: 2),
-              Text(
-                widget.label,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: widget.enabled
-                      ? colorScheme.onSurface
-                      : colorScheme.onSurface.withValues(alpha: 0.3),
-                ),
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-          ),
-          ),
+    return GestureDetector(
+      onTapDown: widget.enabled ? (_) => setState(() => _isPressed = true) : null,
+      onTapUp: widget.enabled ? (_) => setState(() => _isPressed = false) : null,
+      onTapCancel: () => setState(() => _isPressed = false),
+      onTap: widget.enabled ? widget.onTap : null,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+            if (widget.icon is IconData)
+              Icon(widget.icon as IconData, size: 20, color: iconColor)
+            else
+              FaIcon(widget.icon as FaIconData, size: 20, color: iconColor),
+            const SizedBox(height: 2),
+            Text(
+              widget.label,
+              style: TextStyle(fontSize: 12, color: textColor),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
         ),
       ),
     );
