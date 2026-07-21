@@ -417,9 +417,12 @@ class ToolbarState extends State<Toolbar> {
                       enabled: !widget.readOnly,
                       onPressed: () {
                         if (widget.currentTool == Select.currentSelect) {
-                          toolOptionsType.value = toolOptionsType.value == .select
-                              ? .hide
-                              : .select;
+                          if (toolOptionsType.value == .select) {
+                            toolOptionsType.value = .hide;
+                          } else if (Select.currentSelect.doneSelecting ||
+                              CanvasImage.activeImageNotifier.value != null) {
+                            toolOptionsType.value = .select;
+                          }
                         } else {
                           Select.currentSelect.unselect();
                           toolOptionsType.value = .hide;
