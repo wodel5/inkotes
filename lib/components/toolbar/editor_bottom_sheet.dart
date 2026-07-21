@@ -54,6 +54,31 @@ class EditorBottomSheet extends StatefulWidget {
 
 class _EditorBottomSheetState extends State<EditorBottomSheet> {
   late int _selectedPageIndex = widget.currentPageIndex ?? 0;
+  final _pageScrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollToSelectedPage();
+    });
+  }
+
+  void _scrollToSelectedPage() {
+    if (!mounted || _pageScrollController.hasClients == false) return;
+    final offset = _selectedPageIndex * (CanvasBackgroundPreview.fixedWidth + 10);
+    _pageScrollController.animateTo(
+      offset.clamp(0, _pageScrollController.position.maxScrollExtent),
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOut,
+    );
+  }
+
+  @override
+  void dispose() {
+    _pageScrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -214,6 +239,7 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
             SizedBox(
               height: previewSize.height + 24,
               child: ListView.separated(
+                controller: _pageScrollController,
                 scrollDirection: Axis.horizontal,
                 itemCount: pages.length,
                 separatorBuilder: (_, _) =>
@@ -221,9 +247,13 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
                 itemBuilder: (context, pageIndex) {
                   final isSelected = pageIndex == _selectedPageIndex;
                   return GestureDetector(
-                    onTap: () => setState(() {
-                      _selectedPageIndex = pageIndex;
-                    }),
+                    onTap: () {
+                      setState(() {
+                        _selectedPageIndex = pageIndex;
+                      });
+                      widget.scrollToPage(pageIndex);
+                      _scrollToSelectedPage();
+                    },
                     child: Column(
                       children: [
                         Container(
