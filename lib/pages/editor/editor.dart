@@ -1776,23 +1776,51 @@ class EditorState extends State<Editor> {
         );
         autosaveAfterDelay();
       }),
-      deletePage: (int pageIndex) => setState(() {
-        if (coreInfo.readOnly) return;
-        final page = coreInfo.pages.removeAt(pageIndex);
-        if (coreInfo.pages.isEmpty) {
-          coreInfo.pages.add(EditorPage());
-        }
-        history.recordChange(
-          EditorHistoryItem(
-            type: .deletePage,
-            pageIndex: pageIndex,
-            strokes: const [],
-            images: const [],
-            page: page,
-          ),
+      deletePage: (int pageIndex) {
+        setState(() {
+          if (coreInfo.readOnly) return;
+          final page = coreInfo.pages.removeAt(pageIndex);
+          if (coreInfo.pages.isEmpty) {
+            coreInfo.pages.add(EditorPage());
+          }
+          history.recordChange(
+            EditorHistoryItem(
+              type: .deletePage,
+              pageIndex: pageIndex,
+              strokes: const [],
+              images: const [],
+              page: page,
+            ),
+          );
+          autosaveAfterDelay();
+        });
+        // 下一页往上顶（与 Saber 一致的逻辑）
+        final targetIndex = pageIndex < coreInfo.pages.length
+            ? pageIndex
+            : coreInfo.pages.length - 1;
+        CanvasGestureDetector.scrollToPage(
+          pageIndex: targetIndex,
+          pages: coreInfo.pages,
+          screenWidth: MediaQuery.sizeOf(context).width,
+          transformationController: _transformationController,
         );
-        autosaveAfterDelay();
-      }),
+        // 删除的是最后一页 → 再往下滑到底部
+        if (pageIndex >= coreInfo.pages.length) {
+          final state = _canvasGestureDetectorKey.currentState;
+          if (state == null) return;
+          final totalH = CanvasGestureDetector.getTopOfPage(
+            pageIndex: coreInfo.pages.length,
+            pages: coreInfo.pages,
+            screenWidth: state.containerBounds.maxWidth,
+          ) + 16;
+          final targetY = state.containerBounds.maxHeight - totalH;
+          final currentY = _transformationController.value.getTranslation().y;
+          state.bypassTopClamping();
+          _transformationController.value.leftTranslateByDouble(
+            0, targetY - currentY, 0, 1,
+          );
+        }
+      },
       scrollToPage: (pageIndex) => CanvasGestureDetector.scrollToPage(
         pageIndex: pageIndex,
         pages: coreInfo.pages,

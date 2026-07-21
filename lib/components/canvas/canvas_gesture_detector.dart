@@ -143,6 +143,15 @@ class CanvasGestureDetector extends StatefulWidget {
 class CanvasGestureDetectorState extends State<CanvasGestureDetector> {
   late var containerBounds = const BoxConstraints();
 
+  /// If true, the next onTransformChanged call will skip the top-edge clamping.
+  /// Used by the editor to set a positive translationY without it being canceled.
+  bool _bypassTopClamping = false;
+
+  /// Called by the editor to allow a one-time positive translation (e.g. after page deletion).
+  void bypassTopClamping() {
+    _bypassTopClamping = true;
+  }
+
   /// If zooming is locked, this is the zoom level.
   /// Otherwise, this is null.
   late double? zoomLockedValue = stows.lastZoomLock.value
@@ -395,7 +404,9 @@ class CanvasGestureDetectorState extends State<CanvasGestureDetector> {
         adjustmentX = minX - translation.x;
       }
 
-      if (translation.y > 0) {
+      if (_bypassTopClamping) {
+        _bypassTopClamping = false; // one-shot
+      } else if (translation.y > 0) {
         adjustmentY = -translation.y;
       }
     }
