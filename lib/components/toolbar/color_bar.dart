@@ -1,11 +1,10 @@
-import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:foledge/components/theming/adaptive_alert_dialog.dart';
 import 'package:foledge/components/toolbar/color_option.dart';
 import 'package:foledge/data/prefs.dart';
 import 'package:foledge/i18n/strings.g.dart';
+import 'package:foledge/pickcolor/pickcolor.dart';
 
 typedef NamedColor = ({String name, Color color});
 
@@ -199,33 +198,15 @@ class _ColorBarState extends State<ColorBar> {
   }
 
   void openColorPicker(BuildContext context) async {
-    final bool? confirmChange = await showDialog(
+    final Color? newColor = await showColorPickerDialog(
       context: context,
-      builder: (BuildContext context) => _colorPickerDialog(context),
+      initialColor: pickedColor,
+      title: t.settings.accentColorPicker.pickAColor,
+      allowOpacity: true,
     );
-    if (confirmChange ?? false) {
-      widget.setColor(pickedColor);
+    if (newColor != null) {
+      pickedColor = newColor;
+      widget.setColor(newColor);
     }
   }
-
-  Widget _colorPickerDialog(BuildContext context) => AdaptiveAlertDialog(
-    title: Text(t.settings.accentColorPicker.pickAColor),
-    content: SingleChildScrollView(
-      child: ColorPicker(
-        color: pickedColor,
-        pickersEnabled: const {ColorPickerType.wheel: true},
-        onColorChanged: (Color color) {
-          pickedColor = color;
-        },
-      ),
-    ),
-    actions: [
-      CupertinoDialogAction(
-        child: Text(MaterialLocalizations.of(context).saveButtonLabel),
-        onPressed: () {
-          Navigator.of(context).pop(true);
-        },
-      ),
-    ],
-  );
 }
