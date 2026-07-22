@@ -357,7 +357,7 @@ class ToolbarState extends State<Toolbar> {
                           widget.setTool(Pen.currentPen);
                         }
                       },
-                      child: UniIcon(Pen.currentPen.icon, size: 18),
+                      child: UniIcon(Pen.currentPen.icon, size: 20),
                     ),
                     _DockButton(
                       selected: widget.currentTool == Pencil.currentPencil,
@@ -374,7 +374,7 @@ class ToolbarState extends State<Toolbar> {
                           widget.setTool(Pencil.currentPencil);
                         }
                       },
-                      child: const FaIcon(Pencil.pencilIcon, size: 18),
+                      child: const FaIcon(Pencil.pencilIcon, size: 20),
                     ),
                     _DockButton(
                       selected: widget.currentTool == Highlighter.currentHighlighter,
@@ -391,14 +391,14 @@ class ToolbarState extends State<Toolbar> {
                           widget.setTool(Highlighter.currentHighlighter);
                         }
                       },
-                      child: const FaIcon(Highlighter.highlighterIcon, size: 18),
+                      child: const FaIcon(Highlighter.highlighterIcon, size: 20),
                     ),
                     _DockButton(
                       enabled: !widget.readOnly && widget.currentTool is! LaserPointer && widget.currentTool is! Eraser,
                       onPressed: toggleColorOptions,
                       child: currentColor == null
-                          ? const FaIcon(FontAwesomeIcons.palette, size: 18)
-                          : FaIcon(FontAwesomeIcons.palette, size: 18, color: currentColor),
+                          ? const FaIcon(FontAwesomeIcons.palette, size: 20)
+                          : FaIcon(FontAwesomeIcons.palette, size: 20, color: currentColor),
                     ),
                     _DockDivider(),
                     _DockButton(
@@ -431,7 +431,7 @@ class ToolbarState extends State<Toolbar> {
                           widget.setTool(Select.currentSelect);
                         }
                       },
-                      child: const FaIcon(FontAwesomeIcons.solidObjectGroup, size: 18),
+                      child: const FaIcon(FontAwesomeIcons.solidObjectGroup, size: 20),
                     ),
                     _DockButton(
                       selected: widget.currentTool is Eraser,
@@ -441,7 +441,7 @@ class ToolbarState extends State<Toolbar> {
                         showExportOptions.value = false;
                         toggleEraser();
                       },
-                      child: const FaIcon(FontAwesomeIcons.eraser, size: 18),
+                      child: const FaIcon(FontAwesomeIcons.eraser, size: 20),
                     ),
                     _DockDivider(),
                     _DockButton(
@@ -451,7 +451,7 @@ class ToolbarState extends State<Toolbar> {
                         showExportOptions.value = false;
                         widget.pickPhoto();
                       },
-                      child: const FaIcon(FontAwesomeIcons.solidImage, size: 18),
+                      child: const FaIcon(FontAwesomeIcons.solidImage, size: 20),
                     ),
                     if (widget.canRasterPdf)
                       _DockButton(
@@ -461,7 +461,7 @@ class ToolbarState extends State<Toolbar> {
                           showExportOptions.value = false;
                           await widget.importPdf();
                         },
-                        child: const FaIcon(FontAwesomeIcons.solidFilePdf, size: 18),
+                        child: const FaIcon(FontAwesomeIcons.solidFilePdf, size: 20),
                       ),
                     _DockDivider(),
                     _DockButton(
@@ -472,7 +472,7 @@ class ToolbarState extends State<Toolbar> {
                         showExportOptions.value = false;
                         stows.editorFingerDrawing.value = !stows.editorFingerDrawing.value;
                       },
-                      child: Icon(const IconData(0xe7de, fontFamily: 'iconfont'), size: 18),
+                      child: Icon(const IconData(0xe7de, fontFamily: 'iconfont'), size: 20),
                     ),
                     _DockDivider(),
                     _DockButton(
@@ -484,7 +484,7 @@ class ToolbarState extends State<Toolbar> {
                       },
                       child: Transform.scale(
                         scaleX: -1,
-                        child: const FaIcon(FontAwesomeIcons.share, size: 18),
+                        child: const FaIcon(FontAwesomeIcons.share, size: 20),
                       ),
                     ),
                     _DockButton(
@@ -494,7 +494,7 @@ class ToolbarState extends State<Toolbar> {
                         showExportOptions.value = false;
                         widget.redo();
                       },
-                      child: const FaIcon(FontAwesomeIcons.share, size: 18),
+                      child: const FaIcon(FontAwesomeIcons.share, size: 20),
                     ),
                     _DockDivider(),
                     _DockButton(
@@ -503,7 +503,7 @@ class ToolbarState extends State<Toolbar> {
                         showColorOptions.value = false;
                         toggleExportBar();
                       },
-                      child: const FaIcon(FontAwesomeIcons.shareNodes, size: 18),
+                      child: const FaIcon(FontAwesomeIcons.shareNodes, size: 20),
                     ),
                   ],
                 ),
@@ -599,7 +599,7 @@ class _DockButtonState extends State<_DockButton> {
           ),
           child: Center(
             child: IconTheme(
-              data: IconThemeData(color: iconColor, size: 18),
+              data: IconThemeData(color: iconColor, size: 20),
               child: widget.child,
             ),
           ),
