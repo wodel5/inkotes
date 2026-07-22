@@ -487,10 +487,15 @@ class _HomePageState extends State<HomePage> {
             bottom: 0,
             child: SafeArea(
               top: false,
-              child: Opacity(
-                opacity: selectedFiles.value.isEmpty ? 0 : 1,
-                child: IgnorePointer(
-                  ignoring: selectedFiles.value.isEmpty,
+              child: AnimatedSlide(
+                offset: selectedFiles.value.isEmpty ? const Offset(0, 1) : Offset.zero,
+                duration: const Duration(milliseconds: 250),
+                curve: Curves.easeOutCubic,
+                child: AnimatedOpacity(
+                  opacity: selectedFiles.value.isEmpty ? 0 : 1,
+                  duration: const Duration(milliseconds: 200),
+                  child: IgnorePointer(
+                    ignoring: selectedFiles.value.isEmpty,
                   child: Center(
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(12, 4, 12, 8),
@@ -557,6 +562,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
+            ),
             ),
           ),
           ],

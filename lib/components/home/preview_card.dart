@@ -160,22 +160,7 @@ class _PreviewCardState extends State<PreviewCard> {
                       ),
                       child: GestureDetector(
                         onTap: _toggleCardSelection,
-                        child: DecoratedBox(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: .topCenter,
-                              end: .bottomCenter,
-                              colors: [
-                                colorScheme.surface.withValues(alpha: 0.2),
-                                colorScheme.surface.withValues(alpha: 0.8),
-                                colorScheme.surface.withValues(alpha: 1),
-                              ],
-                            ),
-                          ),
-                          child: ColoredBox(
-                            color: colorScheme.primary.withValues(alpha: 0.05),
-                          ),
-                        ),
+                        child: const SizedBox.expand(),
                       ),
                     ),
                   ),
