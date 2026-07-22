@@ -519,21 +519,23 @@ class _HomePageState extends State<HomePage> {
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  if (selectedFiles.value.length == 1)
-                                    _HomeDockButton(
-                                      icon: FontAwesomeIcons.squarePen,
-                                      onPressed: () {
-                                        showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return _RenameNoteDialog(
-                                              existingPath: selectedFiles.value.first,
-                                              unselectNotes: () => selectedFiles.value = [],
+                                  _HomeDockButton(
+                                    icon: FontAwesomeIcons.squarePen,
+                                    enabled: selectedFiles.value.length == 1,
+                                    onPressed: selectedFiles.value.length == 1
+                                        ? () {
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return _RenameNoteDialog(
+                                                  existingPath: selectedFiles.value.first,
+                                                  unselectNotes: () => selectedFiles.value = [],
+                                                );
+                                              },
                                             );
-                                          },
-                                        );
-                                      },
-                                    ),
+                                          }
+                                        : null,
+                                  ),
                                   _HomeDockButton(
                                     icon: FontAwesomeIcons.trash,
                                     onPressed: () async {
@@ -548,8 +550,22 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                   _HomeDockButton(
                                     icon: FontAwesomeIcons.shareNodes,
+                                    enabled: selectedFiles.value.isNotEmpty,
+                                    onPressed: selectedFiles.value.isNotEmpty
+                                        ? () {
+                                            // TODO: implement export
+                                          }
+                                        : null,
+                                  ),
+                                  _HomeDockButton(
+                                    icon: FontAwesomeIcons.checkDouble,
+                                    selected: selectedFiles.value.isNotEmpty && selectedFiles.value.length == filePaths.length,
                                     onPressed: () {
-                                      // TODO: implement export
+                                      if (selectedFiles.value.length == filePaths.length) {
+                                        selectedFiles.value = [];
+                                      } else {
+                                        selectedFiles.value = List.from(filePaths);
+                                      }
                                     },
                                   ),
                                 ],
@@ -804,10 +820,14 @@ class _HomeDockButton extends StatefulWidget {
   const _HomeDockButton({
     required this.icon,
     required this.onPressed,
+    this.enabled = true,
+    this.selected = false,
   });
 
   final Object icon;
   final VoidCallback? onPressed;
+  final bool enabled;
+  final bool selected;
 
   @override
   State<_HomeDockButton> createState() => _HomeDockButtonState();
@@ -821,10 +841,18 @@ class _HomeDockButtonState extends State<_HomeDockButton> {
     final colorScheme = ColorScheme.of(context);
     final brightness = Theme.of(context).brightness;
 
-    final iconColor = colorScheme.onSurface;
+    final iconColor = !widget.enabled
+        ? colorScheme.onSurface.withValues(alpha: 0.3)
+        : widget.selected
+            ? colorScheme.primary
+            : colorScheme.onSurface;
 
     Color? backgroundColor;
-    if (_pressing) {
+    if (widget.selected) {
+      backgroundColor = brightness == Brightness.light
+          ? colorScheme.primary.withValues(alpha: 0.15)
+          : colorScheme.primary.withValues(alpha: 0.25);
+    } else if (_pressing && widget.enabled) {
       backgroundColor = brightness == Brightness.light
           ? Colors.grey.withValues(alpha: 0.2)
           : Colors.white.withValues(alpha: 0.1);
