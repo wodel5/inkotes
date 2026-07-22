@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:collapsible/collapsible.dart';
 import 'package:file_picker/file_picker.dart';
@@ -449,46 +450,87 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: Column(
+      body: Stack(
         children: [
-          // Folder path breadcrumb
-          if (currentPath != null)
-            _PathBreadcrumb(
-              path: currentPath!,
-              onTap: (path) {
-                currentPath = path.isEmpty ? null : path;
-                findChildren();
-              },
+          Positioned.fill(
+            child: Column(
+              children: [
+                if (currentPath != null)
+                  _PathBreadcrumb(
+                    path: currentPath!,
+                    onTap: (path) {
+                      currentPath = path.isEmpty ? null : path;
+                      findChildren();
+                    },
+                  ),
+                Expanded(
+                  child: _isSearching ? _buildSearchResults() : _buildBody(crossAxisCount),
+                ),
+              ],
             ),
-          // Main content
-          Expanded(
-            child: _isSearching ? _buildSearchResults() : _buildBody(crossAxisCount),
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: SafeArea(
+              top: false,
+              child: Opacity(
+                opacity: selectedFiles.value.isEmpty ? 0 : 1,
+                child: IgnorePointer(
+                  ignoring: selectedFiles.value.isEmpty,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(12, 4, 12, 8),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                        child: Container(
+                          height: 44,
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).brightness == Brightness.light
+                                ? const Color(0xFF9999BB).withValues(alpha: 0.15)
+                                : Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.6),
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                              color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.3),
+                              width: 0.5,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Collapsible(
+                                axis: CollapsibleAxis.vertical,
+                                collapsed: selectedFiles.value.length != 1,
+                                child: RenameNoteButton(
+                                  existingPath: selectedFiles.value.isEmpty
+                                      ? ''
+                                      : selectedFiles.value.first,
+                                  unselectNotes: () => selectedFiles.value = [],
+                                ),
+                              ),
+                              MoveNoteButton(
+                                filesToMove: selectedFiles.value,
+                                unselectNotes: () => selectedFiles.value = [],
+                              ),
+                              DeleteNoteButton(
+                                filesToDelete: selectedFiles.value,
+                                unselectNotes: () => selectedFiles.value = [],
+                              ),
+                              ExportNoteButton(selectedFiles: selectedFiles.value),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ),
         ],
       ),
-      persistentFooterButtons: selectedFiles.value.isEmpty
-          ? null
-          : [
-              Collapsible(
-                axis: CollapsibleAxis.vertical,
-                collapsed: selectedFiles.value.length != 1,
-                child: RenameNoteButton(
-                  existingPath: selectedFiles.value.isEmpty
-                      ? ''
-                      : selectedFiles.value.first,
-                  unselectNotes: () => selectedFiles.value = [],
-                ),
-              ),
-              MoveNoteButton(
-                filesToMove: selectedFiles.value,
-                unselectNotes: () => selectedFiles.value = [],
-              ),
-              DeleteNoteButton(
-                filesToDelete: selectedFiles.value,
-                unselectNotes: () => selectedFiles.value = [],
-              ),
-              ExportNoteButton(selectedFiles: selectedFiles.value),
-            ],
     );
   }
 
