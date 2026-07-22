@@ -45,6 +45,12 @@ class _HomePageState extends State<HomePage> {
 
   final ValueNotifier<List<String>> selectedFiles = ValueNotifier([]);
 
+  // Search state
+  var _isSearching = false;
+  final _searchController = TextEditingController();
+  List<String> _searchResults = [];
+  List<String> _allFiles = [];
+
   @override
   void initState() {
     findChildren();
@@ -63,6 +69,7 @@ class _HomePageState extends State<HomePage> {
   void dispose() {
     selectedFiles.removeListener(_setState);
     fileWriteSubscription?.cancel();
+    _searchController.dispose();
     super.dispose();
   }
 
@@ -161,6 +168,42 @@ class _HomePageState extends State<HomePage> {
     findChildren();
   }
 
+  void _startSearch() {
+    setState(() {
+      _isSearching = true;
+      _searchController.clear();
+      _searchResults = [];
+    });
+    FileManager.getAllFiles().then((files) {
+      _allFiles = files;
+    });
+  }
+
+  void _stopSearch() {
+    setState(() {
+      _isSearching = false;
+      _searchController.clear();
+      _searchResults = [];
+      _allFiles = [];
+    });
+  }
+
+  void _onSearchQueryChanged(String query) {
+    final q = query.toLowerCase().trim();
+    setState(() {
+      if (q.isEmpty) {
+        _searchResults = [];
+      } else {
+        _searchResults = _allFiles
+            .where((file) {
+              final name = file.split('/').last.toLowerCase();
+              return name.contains(q);
+            })
+            .toList();
+      }
+    });
+  }
+
   void _showSettingsOverlay(BuildContext context, Rect buttonRect) {
     showGeneralDialog(
       context: context,
@@ -220,82 +263,184 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: kToolbarHeight,
-        title: Text(
-          t.home.titles.appName,
-          style: TextStyle(
-            color: colorScheme.onSurface,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
         titleSpacing: 24,
+        title: Stack(
+          alignment: Alignment.centerLeft,
+          children: [
+            // App title (fades out when searching)
+            AnimatedOpacity(
+              opacity: _isSearching ? 0 : 1,
+              duration: const Duration(milliseconds: 300),
+              child: Text(
+                t.home.titles.appName,
+                style: TextStyle(
+                  color: colorScheme.onSurface,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            // Search field (scales in from right when searching)
+            AnimatedScale(
+              scale: _isSearching ? 1 : 0,
+              alignment: Alignment.centerRight,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeOutCubic,
+              child: AnimatedOpacity(
+                opacity: _isSearching ? 1 : 0,
+                duration: const Duration(milliseconds: 300),
+                child: TextField(
+                  controller: _searchController,
+                  autofocus: _isSearching,
+                  decoration: InputDecoration(
+                    hintText: t.home.searchNotes,
+                    border: InputBorder.none,
+                    filled: false,
+                    isDense: true,
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                  onChanged: _onSearchQueryChanged,
+                ),
+              ),
+            ),
+          ],
+        ),
         actionsPadding: const EdgeInsets.only(right: 24),
         actions: [
-          // Add button - popup menu
-          Builder(
-            builder: (context) => IconButton(
-              icon: const FaIcon(FontAwesomeIcons.plus),
-              onPressed: () {
-                final RenderBox button =
-                    context.findRenderObject() as RenderBox;
-                final buttonRect = button.localToGlobal(Offset.zero) & button.size;
-                final position = RelativeRect.fromLTRB(
-                  buttonRect.left - buttonRect.width,
-                  buttonRect.top + buttonRect.height,
-                  buttonRect.left - buttonRect.width,
-                  buttonRect.top + buttonRect.height,
-                );
-                showMenu(
-                  context: context,
-                  position: position,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(kYaruContainerRadius),
+          SizedBox(
+            width: 200,
+            child: Stack(
+              alignment: Alignment.centerRight,
+              children: [
+                // Normal buttons row
+                IgnorePointer(
+                  ignoring: _isSearching,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Add button (fades out when searching)
+                      AnimatedOpacity(
+                        opacity: _isSearching ? 0 : 1,
+                        duration: const Duration(milliseconds: 300),
+                        child: Builder(
+                          builder: (context) => IconButton(
+                            icon: const FaIcon(FontAwesomeIcons.plus),
+                            onPressed: () {
+                              final RenderBox button =
+                                  context.findRenderObject() as RenderBox;
+                              final buttonRect = button.localToGlobal(Offset.zero) & button.size;
+                              final position = RelativeRect.fromLTRB(
+                                buttonRect.left - buttonRect.width,
+                                buttonRect.top + buttonRect.height,
+                                buttonRect.left - buttonRect.width,
+                                buttonRect.top + buttonRect.height,
+                              );
+                              showMenu(
+                                context: context,
+                                position: position,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(kYaruContainerRadius),
+                                ),
+                                items: [
+                                  PopupMenuItem(
+                                    value: 'create',
+                                    child: ListTile(
+                                      leading: const FaIcon(FontAwesomeIcons.fileCirclePlus),
+                                      title: Text(t.home.create.newNote, style: const TextStyle(fontSize: 16)),
+                                      dense: true,
+                                      contentPadding: EdgeInsets.zero,
+                                    ),
+                                  ),
+                                  PopupMenuItem(
+                                    value: 'pdf',
+                                    child: ListTile(
+                                      leading: const FaIcon(FontAwesomeIcons.solidFilePdf),
+                                      title: Text(t.home.importPdf, style: const TextStyle(fontSize: 16)),
+                                      dense: true,
+                                      contentPadding: EdgeInsets.zero,
+                                    ),
+                                  ),
+                                ],
+                              ).then((value) async {
+                                if (value == 'create') {
+                                  final router = GoRouter.of(context);
+                                  final path = currentPath;
+                                  final newFilePath = await FileManager.newFilePath(
+                                    '${path ?? ''}/',
+                                  );
+                                  if (!mounted) return;
+                                  router.push(RoutePaths.editFilePath(newFilePath));
+                                } else if (value == 'pdf') {
+                                  _importPdf();
+                                }
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                      // Search button (fades out when searching)
+                      AnimatedOpacity(
+                        opacity: _isSearching ? 0 : 1,
+                        duration: const Duration(milliseconds: 300),
+                        child: IconButton(
+                          icon: const FaIcon(FontAwesomeIcons.magnifyingGlass),
+                          onPressed: _startSearch,
+                        ),
+                      ),
+                      // Trash button (fades out when searching)
+                      AnimatedOpacity(
+                        opacity: _isSearching ? 0 : 1,
+                        duration: const Duration(milliseconds: 300),
+                        child: Builder(
+                          builder: (context) => IconButton(
+                            icon: const Icon(Icons.auto_delete_rounded),
+                            onPressed: () {
+                              // TODO: trash
+                            },
+                          ),
+                        ),
+                      ),
+                      // Settings button (fades out when searching)
+                      AnimatedOpacity(
+                        opacity: _isSearching ? 0 : 1,
+                        duration: const Duration(milliseconds: 300),
+                        child: Builder(
+                          builder: (context) => IconButton(
+                            icon: const FaIcon(FontAwesomeIcons.gear),
+                            onPressed: () {
+                              final RenderBox button =
+                                  context.findRenderObject() as RenderBox;
+                              final buttonRect = button.localToGlobal(Offset.zero) & button.size;
+                              _showSettingsOverlay(context, buttonRect);
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  items: [
-                    PopupMenuItem(
-                      value: 'create',
-                      child: ListTile(
-                        leading: const FaIcon(FontAwesomeIcons.fileCirclePlus),
-                        title: Text(t.home.create.newNote, style: const TextStyle(fontSize: 16)),
-                        dense: true,
-                        contentPadding: EdgeInsets.zero,
+                ),
+                // Close button (starts at search button position, slides right when searching)
+                AnimatedSlide(
+                  offset: _isSearching ? Offset.zero : const Offset(-3, 0),
+                  duration: const Duration(milliseconds: 300),
+                  child: AnimatedScale(
+                    scale: _isSearching ? 1 : 0,
+                    alignment: Alignment.centerLeft,
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeOutCubic,
+                    child: AnimatedOpacity(
+                      opacity: _isSearching ? 1 : 0,
+                      duration: const Duration(milliseconds: 300),
+                      child: IgnorePointer(
+                        ignoring: !_isSearching,
+                        child: IconButton(
+                          icon: const FaIcon(FontAwesomeIcons.xmark, color: Colors.red),
+                          onPressed: _stopSearch,
+                        ),
                       ),
                     ),
-                    PopupMenuItem(
-                      value: 'pdf',
-                      child: ListTile(
-                        leading: const FaIcon(FontAwesomeIcons.solidFilePdf),
-                        title: Text(t.home.importPdf, style: const TextStyle(fontSize: 16)),
-                        dense: true,
-                        contentPadding: EdgeInsets.zero,
-                      ),
-                    ),
-                  ],
-                ).then((value) async {
-                  if (value == 'create') {
-                    final router = GoRouter.of(context);
-                    final path = currentPath;
-                    final newFilePath = await FileManager.newFilePath(
-                      '${path ?? ''}/',
-                    );
-                    if (!mounted) return;
-                    router.push(RoutePaths.editFilePath(newFilePath));
-                  } else if (value == 'pdf') {
-                    _importPdf();
-                  }
-                });
-              },
-            ),
-          ),
-          // Settings button
-          Builder(
-            builder: (context) => IconButton(
-              icon: const FaIcon(FontAwesomeIcons.gear),
-              onPressed: () {
-                final RenderBox button =
-                    context.findRenderObject() as RenderBox;
-                final buttonRect = button.localToGlobal(Offset.zero) & button.size;
-                _showSettingsOverlay(context, buttonRect);
-              },
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -313,7 +458,7 @@ class _HomePageState extends State<HomePage> {
             ),
           // Main content
           Expanded(
-            child: _buildBody(crossAxisCount),
+            child: _isSearching ? _buildSearchResults() : _buildBody(crossAxisCount),
           ),
         ],
       ),
@@ -340,6 +485,35 @@ class _HomePageState extends State<HomePage> {
               ),
               ExportNoteButton(selectedFiles: selectedFiles.value),
             ],
+    );
+  }
+
+  Widget _buildSearchResults() {
+    if (_searchResults.isEmpty && _searchController.text.isNotEmpty) {
+      return Center(
+        child: Text(t.home.searchNoResults),
+      );
+    }
+
+    final colorScheme = ColorScheme.of(context);
+    final crossAxisCount = MediaQuery.sizeOf(context).width ~/ 300 + 1;
+
+    if (_searchResults.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return CustomScrollView(
+      slivers: [
+        SliverSafeArea(
+          top: false,
+          minimum: const EdgeInsets.only(bottom: 70),
+          sliver: MasonryFiles(
+            crossAxisCount: crossAxisCount,
+            files: _searchResults,
+            selectedFiles: selectedFiles,
+          ),
+        ),
+      ],
     );
   }
 

@@ -16,6 +16,8 @@ home:
   welcome: 欢迎使用锋页笔记
   noFiles: 未找到文件
   noPreviewAvailable: 无可用预览
+  searchNotes: 搜索笔记
+  searchNoResults: 未找到笔记
   createNewNote: 点击 + 按钮新建一个笔记
   backFolder: 回到上一个文件夹
   rootDirectory: 根目录

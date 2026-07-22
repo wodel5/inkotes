@@ -83,6 +83,12 @@ class Translations$home$en {
 	/// en: 'No preview available'
 	String get noPreviewAvailable => 'No preview available';
 
+	/// en: 'Search notes'
+	String get searchNotes => 'Search notes';
+
+	/// en: 'No notes found'
+	String get searchNoResults => 'No notes found';
+
 	/// en: 'Tap the + button to create a new note'
 	String get createNewNote => 'Tap the + button to create a new note';
 

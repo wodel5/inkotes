@@ -65,6 +65,11 @@ class _Translations$home$zh_Hans_CN extends Translations$home$en {
 	@override String get welcome => '欢迎使用锋页笔记';
 	@override String get noFiles => '未找到文件';
 	@override String get noPreviewAvailable => '无可用预览';
+
+	@override String get searchNotes => '搜索笔记';
+
+	@override String get searchNoResults => '未找到笔记';
+
 	@override String get createNewNote => '点击 + 按钮新建一个笔记';
 	@override String get backFolder => '回到上一个文件夹';
 	@override String get rootDirectory => '根目录';
