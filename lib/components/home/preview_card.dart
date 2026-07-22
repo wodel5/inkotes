@@ -17,12 +17,18 @@ class PreviewCard extends StatefulWidget {
     required this.toggleSelection,
     required this.selected,
     required this.isAnythingSelected,
+    required this.thumbnailHeight,
   }) : super(key: ValueKey('PreviewCard$filePath'));
 
   final String filePath;
   final bool selected;
   final bool isAnythingSelected;
   final void Function(String, bool) toggleSelection;
+  final double thumbnailHeight;
+
+  static const double titleHeight = 48;
+  static const double dateHeight = 24;
+  static const double thumbnailAspectRatio = 0.6; // width:height
 
   @override
   State<PreviewCard> createState() => _PreviewCardState();
@@ -43,14 +49,6 @@ class _PreviewCardState extends State<PreviewCard> {
   }
 
   @override
-  void didUpdateWidget(covariant PreviewCard oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.selected != oldWidget.selected) {
-      expanded.value = widget.selected;
-    }
-  }
-
-  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 
@@ -58,12 +56,19 @@ class _PreviewCardState extends State<PreviewCard> {
       '${widget.filePath}${Editor.extension}.p',
     );
     if (isThisATest) {
-      // Avoid FileImages in tests
       thumbnail.image = imageFile.existsSync()
           ? MemoryImage(imageFile.readAsBytesSync())
           : null;
     } else {
       thumbnail.image = FileImage(imageFile);
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant PreviewCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.selected != oldWidget.selected) {
+      expanded.value = widget.selected;
     }
   }
 
@@ -94,6 +99,26 @@ class _PreviewCardState extends State<PreviewCard> {
     });
   }
 
+  String _formatEditedDate() {
+    final file = FileManager.getFile('${widget.filePath}${Editor.extension}');
+    if (!file.existsSync()) return '';
+
+    final modified = file.lastModifiedSync();
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final modifiedDay = DateTime(modified.year, modified.month, modified.day);
+    final timeStr =
+        '${modified.hour.toString().padLeft(2, '0')}:${modified.minute.toString().padLeft(2, '0')}';
+
+    if (modifiedDay == today) {
+      return '${t.home.today} $timeStr';
+    } else if (modifiedDay == today.subtract(const Duration(days: 1))) {
+      return '${t.home.yesterday} $timeStr';
+    } else {
+      return '${modified.year}/${modified.month.toString().padLeft(2, '0')}/${modified.day.toString().padLeft(2, '0')} $timeStr';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -101,6 +126,96 @@ class _PreviewCardState extends State<PreviewCard> {
     final disableAnimations = MediaQuery.disableAnimationsOf(context);
     final transitionDuration = Duration(
       milliseconds: disableAnimations ? 0 : 300,
+    );
+
+    // 缩略图：固定 0.6:1 宽高比
+    final thumbnailWidget = SizedBox(
+      height: widget.thumbnailHeight,
+      child: ClipRRect(
+        borderRadius: const BorderRadius.all(
+          Radius.circular(kYaruContainerRadius),
+        ),
+        child: Stack(
+          children: [
+            const Positioned.fill(
+              child: ColoredBox(
+                color: InnerCanvas.defaultBackgroundColor,
+              ),
+            ),
+            ListenableBuilder(
+              listenable: thumbnail,
+              builder: (context, _) => AnimatedSwitcher(
+                duration: const Duration(milliseconds: 300),
+                child: ConstrainedBox(
+                  key: ValueKey(thumbnail.updateCount),
+                  constraints: const BoxConstraints(
+                    minWidth: double.infinity,
+                    minHeight: 100,
+                  ),
+                  child: thumbnail.doesImageExist
+                      ? Image(
+                          image: thumbnail.image!,
+                          alignment: Alignment.topCenter,
+                          fit: BoxFit.cover,
+                        )
+                      : const _FallbackThumbnail(),
+                ),
+              ),
+            ),
+            Positioned.fill(
+              child: ValueListenableBuilder(
+                valueListenable: expanded,
+                builder: (context, expanded, child) => AnimatedOpacity(
+                  opacity: expanded ? 1 : 0,
+                  duration: const Duration(milliseconds: 200),
+                  child: IgnorePointer(
+                    ignoring: !expanded,
+                    child: child!,
+                  ),
+                ),
+                child: GestureDetector(
+                  onTap: _toggleCardSelection,
+                  child: const SizedBox.expand(),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    // 标题：固定 2 行高（48px），文字居中
+    final titleWidget = SizedBox(
+      height: PreviewCard.titleHeight,
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Text(
+            widget.filePath.substring(widget.filePath.lastIndexOf('/') + 1),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ),
+    );
+
+    // 日期：固定 1 行高（24px），文字居中
+    final dateWidget = SizedBox(
+      height: PreviewCard.dateHeight,
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Text(
+            _formatEditedDate(),
+            style: TextStyle(
+              fontSize: 11,
+              color: colorScheme.onSurface.withValues(alpha: 0.6),
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ),
     );
 
     final Widget card = MouseRegion(
@@ -111,71 +226,9 @@ class _PreviewCardState extends State<PreviewCard> {
         onLongPress: _toggleCardSelection,
         child: Column(
           children: [
-            Expanded(
-              child: ClipRRect(
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(kYaruContainerRadius),
-                ),
-                child: Stack(
-                  children: [
-                    Positioned.fill(
-                      child: ColoredBox(
-                        color: InnerCanvas.defaultBackgroundColor,
-                      ),
-                    ),
-                    ListenableBuilder(
-                      listenable: thumbnail,
-                      builder: (context, _) => AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 300),
-                        child: ConstrainedBox(
-                          key: ValueKey(thumbnail.updateCount),
-                          constraints: const BoxConstraints(
-                            minWidth: double.infinity,
-                            minHeight: 100,
-                          ),
-                          child: thumbnail.doesImageExist
-                              ? Image(
-                                  image: thumbnail.image!,
-                                  alignment: .topCenter,
-                                  fit: .cover,
-                                )
-                              : const _FallbackThumbnail(),
-                        ),
-                      ),
-                    ),
-                    Positioned.fill(
-                    left: -1,
-                    top: -1,
-                    right: -1,
-                    bottom: -1,
-                    child: ValueListenableBuilder(
-                      valueListenable: expanded,
-                      builder: (context, expanded, child) => AnimatedOpacity(
-                        opacity: expanded ? 1 : 0,
-                        duration: const Duration(milliseconds: 200),
-                        child: IgnorePointer(
-                          ignoring: !expanded,
-                          child: child!,
-                        ),
-                      ),
-                      child: GestureDetector(
-                        onTap: _toggleCardSelection,
-                        child: const SizedBox.expand(),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              ),
-            ),
-            Padding(
-              padding: const .all(8),
-              child: Text(
-                widget.filePath.substring(widget.filePath.lastIndexOf('/') + 1),
-                maxLines: 2,
-                overflow: .ellipsis,
-              ),
-            ),
+            thumbnailWidget,
+            titleWidget,
+            dateWidget,
           ],
         ),
       ),
@@ -233,10 +286,10 @@ class _FallbackThumbnail extends StatelessWidget {
         child: Text(
           t.home.noPreviewAvailable,
           style: TextTheme.of(context).bodyMedium?.copyWith(
-            color: Stroke.defaultColor.withValues(alpha: 0.7),
-            fontStyle: FontStyle.italic,
-          ),
-          textAlign: .center,
+                color: Stroke.defaultColor.withValues(alpha: 0.7),
+                fontStyle: FontStyle.italic,
+              ),
+          textAlign: TextAlign.center,
         ),
       ),
     );
@@ -259,8 +312,8 @@ class _ThumbnailState extends ChangeNotifier {
   }
 
   bool get doesImageExist => switch (image) {
-    (final FileImage fileImage) => fileImage.file.existsSync(),
-    null => false,
-    _ => true,
-  };
+        (final FileImage fileImage) => fileImage.file.existsSync(),
+        null => false,
+        _ => true,
+      };
 }

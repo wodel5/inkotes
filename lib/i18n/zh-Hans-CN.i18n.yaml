@@ -16,6 +16,9 @@ home:
   welcome: 欢迎使用锋页笔记
   noFiles: 未找到文件
   noPreviewAvailable: 无可用预览
+  editedAt: 编辑于$date
+  today: 今天
+  yesterday: 昨天
   searchNotes: 搜索笔记
   searchNoResults: 未找到笔记
   createNewNote: 点击 + 按钮新建一个笔记

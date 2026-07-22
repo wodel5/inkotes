@@ -65,6 +65,9 @@ class _Translations$home$zh_Hans_CN extends Translations$home$en {
 	@override String get welcome => '欢迎使用锋页笔记';
 	@override String get noFiles => '未找到文件';
 	@override String get noPreviewAvailable => '无可用预览';
+	@override String editedAt(String date) => '编辑于$date';
+	@override String get today => '今天';
+	@override String get yesterday => '昨天';
 
 	@override String get searchNotes => '搜索笔记';
 

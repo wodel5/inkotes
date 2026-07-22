@@ -83,6 +83,15 @@ class Translations$home$en {
 	/// en: 'No preview available'
 	String get noPreviewAvailable => 'No preview available';
 
+	/// en: 'Edited $date'
+	String editedAt(String date) => 'Edited $date';
+
+	/// en: 'Today'
+	String get today => 'Today';
+
+	/// en: 'Yesterday'
+	String get yesterday => 'Yesterday';
+
 	/// en: 'Search notes'
 	String get searchNotes => 'Search notes';
 

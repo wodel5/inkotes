@@ -16,6 +16,9 @@ home:
   welcome: Welcome to Foledge Notes
   noFiles: No files found
   noPreviewAvailable: No preview available
+  editedAt: Edited $date
+  today: Today
+  yesterday: Yesterday
   searchNotes: Search notes
   searchNoResults: No notes found
   createNewNote: Tap the + button to create a new note

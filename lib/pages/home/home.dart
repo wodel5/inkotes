@@ -261,7 +261,8 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = ColorScheme.of(context);
-    final crossAxisCount = MediaQuery.sizeOf(context).width ~/ 300 + 1;
+    final isLandscape = MediaQuery.sizeOf(context).width > MediaQuery.sizeOf(context).height;
+    final crossAxisCount = isLandscape ? 4 : 2;
     useOnListenableChange(stows.browseSortMetric, findChildren);
 
     return GestureDetector(
