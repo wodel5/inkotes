@@ -264,7 +264,14 @@ class _HomePageState extends State<HomePage> {
     final crossAxisCount = MediaQuery.sizeOf(context).width ~/ 300 + 1;
     useOnListenableChange(stows.browseSortMetric, findChildren);
 
-    return Scaffold(
+    return GestureDetector(
+      onTap: () {
+        if (selectedFiles.value.isNotEmpty) {
+          selectedFiles.value = [];
+        }
+      },
+      behavior: HitTestBehavior.translucent,
+      child: Scaffold(
       appBar: AppBar(
         toolbarHeight: kToolbarHeight,
         titleSpacing: 24,
@@ -329,6 +336,7 @@ class _HomePageState extends State<HomePage> {
                           builder: (context) => IconButton(
                             icon: const FaIcon(FontAwesomeIcons.plus),
                             onPressed: () {
+                              selectedFiles.value = [];
                               final RenderBox button =
                                   context.findRenderObject() as RenderBox;
                               final buttonRect = button.localToGlobal(Offset.zero) & button.size;
@@ -387,7 +395,10 @@ class _HomePageState extends State<HomePage> {
                         duration: const Duration(milliseconds: 300),
                         child: IconButton(
                           icon: const FaIcon(FontAwesomeIcons.magnifyingGlass),
-                          onPressed: _startSearch,
+                          onPressed: () {
+                            selectedFiles.value = [];
+                            _startSearch();
+                          },
                         ),
                       ),
                       // Trash button (fades out when searching)
@@ -398,6 +409,7 @@ class _HomePageState extends State<HomePage> {
                           builder: (context) => IconButton(
                             icon: const Icon(Icons.auto_delete_rounded),
                             onPressed: () {
+                              selectedFiles.value = [];
                               // TODO: trash
                             },
                           ),
@@ -411,6 +423,7 @@ class _HomePageState extends State<HomePage> {
                           builder: (context) => IconButton(
                             icon: const FaIcon(FontAwesomeIcons.gear),
                             onPressed: () {
+                              selectedFiles.value = [];
                               final RenderBox button =
                                   context.findRenderObject() as RenderBox;
                               final buttonRect = button.localToGlobal(Offset.zero) & button.size;
@@ -546,7 +559,8 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
-        ],
+          ],
+        ),
       ),
     );
   }

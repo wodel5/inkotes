@@ -43,6 +43,14 @@ class _PreviewCardState extends State<PreviewCard> {
   }
 
   @override
+  void didUpdateWidget(covariant PreviewCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.selected != oldWidget.selected) {
+      expanded.value = widget.selected;
+    }
+  }
+
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 
