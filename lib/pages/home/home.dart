@@ -48,6 +48,7 @@ class _HomePageState extends State<HomePage> {
   // Search state
   var _isSearching = false;
   final _searchController = TextEditingController();
+  final _searchFocusNode = FocusNode();
   List<String> _searchResults = [];
   List<String> _allFiles = [];
 
@@ -70,6 +71,7 @@ class _HomePageState extends State<HomePage> {
     selectedFiles.removeListener(_setState);
     fileWriteSubscription?.cancel();
     _searchController.dispose();
+    _searchFocusNode.dispose();
     super.dispose();
   }
 
@@ -174,12 +176,14 @@ class _HomePageState extends State<HomePage> {
       _searchController.clear();
       _searchResults = [];
     });
+    _searchFocusNode.requestFocus();
     FileManager.getAllFiles().then((files) {
       _allFiles = files;
     });
   }
 
   void _stopSearch() {
+    _searchFocusNode.unfocus();
     setState(() {
       _isSearching = false;
       _searchController.clear();
@@ -290,7 +294,7 @@ class _HomePageState extends State<HomePage> {
                 duration: const Duration(milliseconds: 300),
                 child: TextField(
                   controller: _searchController,
-                  autofocus: _isSearching,
+                  focusNode: _searchFocusNode,
                   decoration: InputDecoration(
                     hintText: t.home.searchNotes,
                     border: InputBorder.none,
