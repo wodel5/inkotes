@@ -220,50 +220,51 @@ class _PreviewCardState extends State<PreviewCard> {
 
     final Widget card = MouseRegion(
       cursor: SystemMouseCursors.click,
-      child: GestureDetector(
-        onTap: widget.isAnythingSelected ? _toggleCardSelection : null,
-        onSecondaryTap: _toggleCardSelection,
-        onLongPress: _toggleCardSelection,
-        child: Column(
-          children: [
-            thumbnailWidget,
-            titleWidget,
-            dateWidget,
-          ],
-        ),
+      child: Column(
+        children: [
+          thumbnailWidget,
+          titleWidget,
+          dateWidget,
+        ],
       ),
     );
 
-    return ValueListenableBuilder(
-      valueListenable: expanded,
-      builder: (context, expanded, _) {
-        return OpenContainer(
-          clipBehavior: Clip.none,
-          closedColor: Theme.of(context).brightness == Brightness.light
-              ? const Color(0xFFE8EAED)
-              : const Color(0xFF111115),
-          closedShape: RoundedRectangleBorder(
-            side: BorderSide(
-              color: expanded
-                  ? colorScheme.primary
-                  : Theme.of(context).brightness == Brightness.light
-                      ? const Color(0xFFD0D5DD)
-                      : const Color(0xFF2C2C2E),
-              width: kYaruFocusBorderWidth,
+    return GestureDetector(
+      onTap: widget.isAnythingSelected ? _toggleCardSelection : null,
+      onSecondaryTap: _toggleCardSelection,
+      onLongPress: _toggleCardSelection,
+      behavior: HitTestBehavior.opaque,
+      child: ValueListenableBuilder(
+        valueListenable: expanded,
+        builder: (context, expanded, _) {
+          return OpenContainer(
+            clipBehavior: Clip.none,
+            closedColor: Theme.of(context).brightness == Brightness.light
+                ? const Color(0xFFE8EAED)
+                : const Color(0xFF111115),
+            closedShape: RoundedRectangleBorder(
+              side: BorderSide(
+                color: expanded
+                    ? colorScheme.primary
+                    : Theme.of(context).brightness == Brightness.light
+                        ? const Color(0xFFD0D5DD)
+                        : const Color(0xFF2C2C2E),
+                width: kYaruFocusBorderWidth,
+              ),
+              borderRadius: const .all(.circular(kYaruContainerRadius)),
             ),
-            borderRadius: const .all(.circular(kYaruContainerRadius)),
-          ),
-          closedElevation: 0,
-          closedBuilder: (context, action) => card,
-          openColor: colorScheme.surface,
-          openBuilder: (context, action) => Editor(path: widget.filePath),
-          transitionDuration: transitionDuration,
-          routeSettings: RouteSettings(
-            name: RoutePaths.editFilePath(widget.filePath),
-          ),
-          onClosed: (_) => _refreshThumbnailAfterDelay(),
+            closedElevation: 0,
+            closedBuilder: (context, action) => card,
+            openColor: colorScheme.surface,
+            openBuilder: (context, action) => Editor(path: widget.filePath),
+            transitionDuration: transitionDuration,
+            routeSettings: RouteSettings(
+              name: RoutePaths.editFilePath(widget.filePath),
+            ),
+            onClosed: (_) => _refreshThumbnailAfterDelay(),
         );
-      },
+        },
+      ),
     );
   }
 

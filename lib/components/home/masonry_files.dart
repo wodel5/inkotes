@@ -48,7 +48,7 @@ class _MasonryFilesState extends State<MasonryFiles> {
     final cardHeight = thumbnailHeight + PreviewCard.titleHeight + PreviewCard.dateHeight;
 
     return SliverPadding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 60),
       sliver: SliverGrid(
         delegate: SliverChildBuilderDelegate(
           (context, index) {

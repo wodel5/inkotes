@@ -521,7 +521,7 @@ class _HomePageState extends State<HomePage> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   _HomeDockButton(
-                                    icon: FontAwesomeIcons.squarePen,
+                                    icon: FontAwesomeIcons.penToSquare,
                                     enabled: selectedFiles.value.length == 1,
                                     onPressed: selectedFiles.value.length == 1
                                         ? () {
