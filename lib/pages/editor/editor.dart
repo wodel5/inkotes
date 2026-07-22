@@ -1574,10 +1574,10 @@ class EditorState extends State<Editor> {
               case .waitingToSave:
                 assert(!didPop);
                 saveToFile(); // trigger save now
-                snackBarNeedsToSaveBeforeExiting();
+                _waitForSaveAndPop();
               case .saving:
                 assert(!didPop);
-                snackBarNeedsToSaveBeforeExiting();
+                _waitForSaveAndPop();
               case .saved:
                 break;
             }
@@ -1716,11 +1716,18 @@ class EditorState extends State<Editor> {
     );
   }
 
-  void snackBarNeedsToSaveBeforeExiting() {
-    if (!mounted) return;
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(t.editor.needsToSaveBeforeExiting)));
+  void _waitForSaveAndPop() {
+    void listener() {
+      if (savingState.value == .saved) {
+        savingState.removeListener(listener);
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            Navigator.of(context).pop();
+          }
+        });
+      }
+    }
+    savingState.addListener(listener);
   }
 
   Widget bottomSheet(BuildContext context) {

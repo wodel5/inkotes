@@ -119,7 +119,7 @@ class _Translations$editor$zh_Hans_CN extends Translations$editor$en {
 	@override String get pages => '页面管理';
 	@override String get more => '更多';
 	@override String get untitled => '未命名';
-	@override String get needsToSaveBeforeExiting => '正在保存您的更改... 完成后您可以安全地退出编辑器';
+	@override String get needsToSaveBeforeExiting => '正在保存您的更改...';
 }
 
 // Path: home.titles
