@@ -1,6 +1,11 @@
+import 'dart:ui';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:foledge/components/canvas/inner_canvas.dart';
 import 'package:foledge/components/home/preview_card.dart';
+import 'package:foledge/components/theming/adaptive_alert_dialog.dart';
 import 'package:foledge/data/file_manager/file_manager.dart';
 import 'package:foledge/i18n/strings.g.dart';
 import 'package:foledge/pages/editor/editor.dart';
@@ -16,6 +21,7 @@ class TrashPage extends StatefulWidget {
 class _TrashPageState extends State<TrashPage> {
   List<String> _trashedFiles = [];
   bool _isLoading = true;
+  final List<String> _selectedFiles = [];
 
   @override
   void initState() {
@@ -34,6 +40,68 @@ class _TrashPageState extends State<TrashPage> {
     }
   }
 
+  void _toggleSelection(String filePath) {
+    setState(() {
+      if (_selectedFiles.contains(filePath)) {
+        _selectedFiles.remove(filePath);
+      } else {
+        _selectedFiles.add(filePath);
+      }
+    });
+  }
+
+  bool get _isAnythingSelected => _selectedFiles.isNotEmpty;
+
+  Future<void> _restoreSelected() async {
+    for (final file in _selectedFiles) {
+      await FileManager.restoreFromTrash(file);
+    }
+    setState(() => _selectedFiles.clear());
+    await _loadTrashedFiles();
+  }
+
+  Future<void> _deleteSelected() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AdaptiveAlertDialog(
+        title: Text(t.home.trash.confirmPermanentDelete),
+        content: const SizedBox.shrink(),
+        actions: [
+          CupertinoDialogAction(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(t.common.cancel),
+          ),
+          CupertinoDialogAction(
+            isDestructiveAction: true,
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(t.home.trash.delete),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      for (final file in _selectedFiles) {
+        final hasOld = FileManager.doesFileExist(file + Editor.extensionOldJson);
+        final ext = hasOld ? Editor.extensionOldJson : Editor.extension;
+        await FileManager.deleteFile(file + ext);
+      }
+      setState(() => _selectedFiles.clear());
+      await _loadTrashedFiles();
+    }
+  }
+
+  void _selectAll() {
+    setState(() {
+      if (_selectedFiles.length == _trashedFiles.length) {
+        _selectedFiles.clear();
+      } else {
+        _selectedFiles.clear();
+        _selectedFiles.addAll(_trashedFiles);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.sizeOf(context).width;
@@ -45,7 +113,6 @@ class _TrashPageState extends State<TrashPage> {
         (screenWidth - horizontalPadding - spacing * (crossAxisCount - 1)) /
             crossAxisCount;
 
-    // 与主页 MasonryFiles 完全一致
     final thumbnailHeight = cardWidth * PreviewCard.thumbnailAspectRatio;
     final cardHeight = thumbnailHeight + PreviewCard.titleHeight + PreviewCard.dateHeight;
 
@@ -53,35 +120,115 @@ class _TrashPageState extends State<TrashPage> {
       appBar: AppBar(
         title: Text(t.home.trash.title),
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _trashedFiles.isEmpty
-              ? _buildEmptyState()
-              : CustomScrollView(
-                  slivers: [
-                    SliverPadding(
-                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 60),
-                      sliver: SliverGrid(
-                        delegate: SliverChildBuilderDelegate(
-                          (context, index) {
-                            final file = _trashedFiles[index];
-                            return _TrashCard(
-                              filePath: file,
-                              thumbnailHeight: thumbnailHeight,
-                            );
-                          },
-                          childCount: _trashedFiles.length,
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : _trashedFiles.isEmpty
+                    ? _buildEmptyState()
+                    : GestureDetector(
+                        onTap: _isAnythingSelected
+                            ? () => setState(() => _selectedFiles.clear())
+                            : null,
+                        behavior: HitTestBehavior.translucent,
+                        child: CustomScrollView(
+                          slivers: [
+                            SliverPadding(
+                              padding: const EdgeInsets.fromLTRB(16, 8, 16, 60),
+                              sliver: SliverGrid(
+                                delegate: SliverChildBuilderDelegate(
+                                  (context, index) {
+                                    final file = _trashedFiles[index];
+                                    return _TrashCard(
+                                      filePath: file,
+                                      thumbnailHeight: thumbnailHeight,
+                                      selected: _selectedFiles.contains(file),
+                                      isAnythingSelected: _isAnythingSelected,
+                                      onToggleSelection: () => _toggleSelection(file),
+                                    );
+                                  },
+                                  childCount: _trashedFiles.length,
+                                ),
+                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: crossAxisCount,
+                                  mainAxisSpacing: spacing,
+                                  crossAxisSpacing: spacing,
+                                  childAspectRatio: cardWidth / cardHeight,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: crossAxisCount,
-                          mainAxisSpacing: spacing,
-                          crossAxisSpacing: spacing,
-                          childAspectRatio: cardWidth / cardHeight,
+                      ),
+          ),
+          // 底部 dock 栏
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: SafeArea(
+              top: false,
+              child: AnimatedSlide(
+                offset: _isAnythingSelected ? Offset.zero : const Offset(0, 1),
+                duration: const Duration(milliseconds: 250),
+                curve: Curves.easeOutCubic,
+                child: AnimatedOpacity(
+                  opacity: _isAnythingSelected ? 1 : 0,
+                  duration: const Duration(milliseconds: 200),
+                  child: IgnorePointer(
+                    ignoring: !_isAnythingSelected,
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(12, 4, 12, 8),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).brightness == Brightness.light
+                                    ? const Color(0xFF9999BB).withValues(alpha: 0.15)
+                                    : Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.6),
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                  color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.3),
+                                  width: 0.5,
+                                ),
+                              ),
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                              child: IntrinsicWidth(
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    _DockButton(
+                                      icon: FontAwesomeIcons.rotateLeft,
+                                      onPressed: _restoreSelected,
+                                    ),
+                                    _DockButton(
+                                      icon: FontAwesomeIcons.trash,
+                                      onPressed: _deleteSelected,
+                                    ),
+                                    _DockButton(
+                                      icon: FontAwesomeIcons.checkDouble,
+                                      selected: _selectedFiles.isNotEmpty && _selectedFiles.length == _trashedFiles.length,
+                                      onPressed: _selectAll,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                  ],
+                  ),
                 ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -119,18 +266,39 @@ class _TrashPageState extends State<TrashPage> {
   }
 }
 
-/// 与主页 PreviewCard 完全一致的卡片
-class _TrashCard extends StatelessWidget {
+/// 与主页 PreviewCard 完全一致的卡片，支持选择模式
+class _TrashCard extends StatefulWidget {
   const _TrashCard({
     required this.filePath,
     required this.thumbnailHeight,
+    required this.selected,
+    required this.isAnythingSelected,
+    required this.onToggleSelection,
   });
 
   final String filePath;
   final double thumbnailHeight;
+  final bool selected;
+  final bool isAnythingSelected;
+  final VoidCallback onToggleSelection;
+
+  @override
+  State<_TrashCard> createState() => _TrashCardState();
+}
+
+class _TrashCardState extends State<_TrashCard> {
+  bool _expanded = false;
+
+  @override
+  void didUpdateWidget(covariant _TrashCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.selected != oldWidget.selected) {
+      setState(() => _expanded = widget.selected);
+    }
+  }
 
   String _formatEditedDate() {
-    final file = FileManager.getFile('${filePath}${Editor.extension}');
+    final file = FileManager.getFile('${widget.filePath}${Editor.extension}');
     if (!file.existsSync()) return '';
 
     final modified = file.lastModifiedSync();
@@ -152,10 +320,11 @@ class _TrashCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final brightness = Theme.of(context).brightness;
 
     // 缩略图
     final thumbnailWidget = SizedBox(
-      height: thumbnailHeight,
+      height: widget.thumbnailHeight,
       child: ClipRRect(
         borderRadius: const BorderRadius.all(
           Radius.circular(kYaruContainerRadius),
@@ -170,7 +339,7 @@ class _TrashCard extends StatelessWidget {
             Builder(
               builder: (context) {
                 final imageFile = FileManager.getFile(
-                  '${filePath}${Editor.extension}.p',
+                  '${widget.filePath}${Editor.extension}.p',
                 );
                 if (imageFile.existsSync()) {
                   return Image(
@@ -185,6 +354,20 @@ class _TrashCard extends StatelessWidget {
                 return const _FallbackThumbnail();
               },
             ),
+            // 选中蒙版
+            Positioned.fill(
+              child: AnimatedOpacity(
+                opacity: _expanded ? 1 : 0,
+                duration: const Duration(milliseconds: 200),
+                child: IgnorePointer(
+                  ignoring: !_expanded,
+                  child: GestureDetector(
+                    onTap: widget.onToggleSelection,
+                    child: const SizedBox.expand(),
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -197,7 +380,7 @@ class _TrashCard extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: Text(
-            filePath.substring(filePath.lastIndexOf('/') + 1),
+            widget.filePath.substring(widget.filePath.lastIndexOf('/') + 1),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
@@ -224,28 +407,106 @@ class _TrashCard extends StatelessWidget {
       ),
     );
 
-    // 卡片：与主页 PreviewCard 的 OpenContainer 视觉一致
-    return Material(
-      color: Theme.of(context).brightness == Brightness.light
-          ? const Color(0xFFE8EAED)
-          : const Color(0xFF111115),
-      shape: RoundedRectangleBorder(
-        side: BorderSide(
-          color: Theme.of(context).brightness == Brightness.light
-              ? const Color(0xFFD0D5DD)
-              : const Color(0xFF2C2C2E),
-          width: kYaruFocusBorderWidth,
+    // 卡片
+    return GestureDetector(
+      onTap: widget.isAnythingSelected ? widget.onToggleSelection : null,
+      onLongPress: widget.onToggleSelection,
+      behavior: HitTestBehavior.opaque,
+      child: Material(
+        color: brightness == Brightness.light
+            ? const Color(0xFFE8EAED)
+            : const Color(0xFF111115),
+        shape: RoundedRectangleBorder(
+          side: BorderSide(
+            color: _expanded
+                ? colorScheme.primary
+                : brightness == Brightness.light
+                    ? const Color(0xFFD0D5DD)
+                    : const Color(0xFF2C2C2E),
+            width: kYaruFocusBorderWidth,
+          ),
+          borderRadius: const BorderRadius.all(
+            Radius.circular(kYaruContainerRadius),
+          ),
         ),
-        borderRadius: const BorderRadius.all(
-          Radius.circular(kYaruContainerRadius),
+        child: Column(
+          children: [
+            thumbnailWidget,
+            titleWidget,
+            dateWidget,
+          ],
         ),
       ),
-      child: Column(
-        children: [
-          thumbnailWidget,
-          titleWidget,
-          dateWidget,
-        ],
+    );
+  }
+}
+
+/// dock 栏按钮，与主页 _HomeDockButton 一致
+class _DockButton extends StatefulWidget {
+  const _DockButton({
+    required this.icon,
+    required this.onPressed,
+    this.selected = false,
+    this.enabled = true,
+  });
+
+  final Object icon;
+  final VoidCallback? onPressed;
+  final bool selected;
+  final bool enabled;
+
+  @override
+  State<_DockButton> createState() => _DockButtonState();
+}
+
+class _DockButtonState extends State<_DockButton> {
+  bool _pressing = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = ColorScheme.of(context);
+    final brightness = Theme.of(context).brightness;
+
+    final iconColor = !widget.enabled
+        ? colorScheme.onSurface.withValues(alpha: 0.3)
+        : widget.selected
+            ? colorScheme.primary
+            : colorScheme.onSurface;
+
+    Color? backgroundColor;
+    if (widget.selected) {
+      backgroundColor = brightness == Brightness.light
+          ? colorScheme.primary.withValues(alpha: 0.15)
+          : colorScheme.primary.withValues(alpha: 0.25);
+    } else if (_pressing && widget.enabled) {
+      backgroundColor = brightness == Brightness.light
+          ? Colors.grey.withValues(alpha: 0.2)
+          : Colors.white.withValues(alpha: 0.1);
+    }
+
+    return GestureDetector(
+      onTapDown: widget.onPressed != null ? (_) => setState(() => _pressing = true) : null,
+      onTapUp: widget.onPressed != null ? (_) => setState(() => _pressing = false) : null,
+      onTapCancel: () => setState(() => _pressing = false),
+      onTap: widget.onPressed,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        curve: Curves.easeOut,
+        width: 40,
+        height: 40,
+        margin: const EdgeInsets.symmetric(horizontal: 2),
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Center(
+          child: IconTheme(
+            data: IconThemeData(color: iconColor, size: 20),
+            child: widget.icon is IconData
+                ? Icon(widget.icon as IconData)
+                : FaIcon(widget.icon as FaIconData),
+          ),
+        ),
       ),
     );
   }

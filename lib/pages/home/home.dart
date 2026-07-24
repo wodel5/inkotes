@@ -21,7 +21,6 @@ import 'package:foledge/data/routes.dart';
 import 'package:foledge/i18n/strings.g.dart';
 import 'package:foledge/pages/editor/editor.dart';
 import 'package:foledge/pages/home/settings.dart';
-import 'package:foledge/pages/home/trash_page.dart';
 
 class HomePage extends StatefulHookWidget {
   const HomePage({super.key});
@@ -546,13 +545,10 @@ class _HomePageState extends State<HomePage> {
                                   _HomeDockButton(
                                     icon: FontAwesomeIcons.trash,
                                     onPressed: () async {
-                                      await showDialog(
-                                        context: context,
-                                        builder: (context) => _DeleteNoteDialog(
-                                          filesToDelete: selectedFiles.value,
-                                          unselectNotes: () => selectedFiles.value = [],
-                                        ),
-                                      );
+                                      for (final file in selectedFiles.value) {
+                                        await FileManager.markAsTrashed(file);
+                                      }
+                                      selectedFiles.value = [];
                                     },
                                   ),
                                   _HomeDockButton(
