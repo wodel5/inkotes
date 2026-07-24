@@ -72,6 +72,9 @@ class EditorCoreInfo {
   int lineThickness;
   List<EditorPage> pages;
 
+  /// Whether this note is in the trash.
+  bool isTrashed;
+
   /// Stores the current page index so that it can be restored when the file is reloaded.
   int? initialPageIndex;
 
@@ -106,6 +109,7 @@ class EditorCoreInfo {
       lineHeight = stows.lastLineHeight.value,
       lineThickness = stows.lastLineThickness.value,
       pages = [],
+      isTrashed = false,
       assetCache = AssetCache();
 
   /// Returns the background color for a new note based on the current theme.
@@ -135,6 +139,7 @@ class EditorCoreInfo {
     required this.pages,
     required this.initialPageIndex,
     required AssetCache? assetCache,
+    this.isTrashed = false,
   }) : assetCache = assetCache ?? AssetCache() {
     _handleEmptyImageIds();
   }
@@ -211,6 +216,7 @@ class EditorCoreInfo {
         ),
         initialPageIndex: json['c'] as int?,
         assetCache: assetCache,
+        isTrashed: json['tr'] as bool? ?? false,
       )
       .._migrateOldStrokesAndImages(
         fileVersion: fileVersion,
@@ -235,6 +241,7 @@ class EditorCoreInfo {
        lineHeight = stows.lastLineHeight.value,
        lineThickness = stows.lastLineThickness.value,
        pages = [],
+       isTrashed = false,
        assetCache = AssetCache() {
     _migrateOldStrokesAndImages(
       fileVersion: 0,
@@ -393,6 +400,24 @@ class EditorCoreInfo {
     );
   }
 
+  /// Quickly checks if a file is trashed without loading the full content.
+  /// Returns `false` if the file doesn't exist or can't be read.
+  static Future<bool> isFileTrashed(String path) async {
+    final bsonBytes = await FileManager.readFile(path + Editor.extension);
+    if (bsonBytes == null) return false;
+
+    try {
+      final bsonBinary = BsonBinary.from(bsonBytes);
+      final json = BsonCodec.deserialize(bsonBinary);
+      if (json is Map<String, dynamic>) {
+        return json['tr'] as bool? ?? false;
+      }
+    } catch (e) {
+      // If we can't parse, assume not trashed
+    }
+    return false;
+  }
+
   @visibleForTesting
   static Future<EditorCoreInfo> loadFromFileContents({
     String? jsonString,
@@ -495,6 +520,7 @@ class EditorCoreInfo {
       'lt': lineThickness,
       'z': pages.map((EditorPage page) => page.toJson(assets)).toList(),
       'c': initialPageIndex,
+      'tr': isTrashed,
     };
 
     log.info('toJson: json[b]=${json['b']} type=${json['b']?.runtimeType}');

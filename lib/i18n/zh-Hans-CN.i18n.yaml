@@ -67,6 +67,15 @@ home:
     deleteName: 删除 $f
     delete: 删除
     alsoDeleteContents: 同时删除此文件夹中的所有笔记
+  trash:
+    title: 回收站
+    empty: 回收站为空
+    emptyDescription: 删除的笔记会显示在这里
+    restore: 恢复
+    delete: 彻底删除
+    emptyTrash: 清空回收站
+    confirmEmptyTrash: 确定要清空回收站吗？此操作不可撤销。
+    confirmPermanentDelete: 确定要彻底删除此笔记吗？此操作不可撤销。
   sort:
     sortBy(OUTDATED): 按...排序
     nameAToZ(OUTDATED): 姓名（A-Z）
@@ -85,7 +94,7 @@ settings:
     autoSwitchPaperColor: 自动切换画纸颜色
     printPageIndicators: 打印页码
     autosave: 自动保存
-  prefDescriptions:
+  prefDescriptions: {}
   accentColorPicker:
     pickAColor: 选取颜色
     customColor: 自定义颜色

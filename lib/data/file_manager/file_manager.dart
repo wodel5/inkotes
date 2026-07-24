@@ -13,6 +13,7 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:foledge/components/home/sort_button.dart';
+import 'package:foledge/data/editor/editor_core_info.dart';
 import 'package:foledge/data/prefs.dart';
 import 'package:foledge/i18n/strings.g.dart';
 import 'package:foledge/pages/editor/editor.dart';
@@ -699,6 +700,83 @@ class FileManager {
           (String file) => !Editor.isReservedPath(file),
         ) // filter out reserved file names
         .toList();
+  }
+
+  /// Marks a file as trashed by setting the isTrashed flag to true.
+  static Future<void> markAsTrashed(String filePath) async {
+    filePath = _sanitisePath(filePath);
+    final coreInfo = await EditorCoreInfo.loadFromFilePath(filePath);
+    coreInfo.isTrashed = true;
+    final (bson, assets) = coreInfo.saveToBinary(
+      currentPageIndex: coreInfo.initialPageIndex,
+    );
+    final filePathWithExt = filePath + Editor.extension;
+    await Future.wait([
+      writeFile(filePathWithExt, bson, awaitWrite: true),
+      for (int i = 0; i < assets.length; ++i)
+        assets
+            .getBytes(i)
+            .then(
+              (bytes) => writeFile(
+                '$filePathWithExt.$i',
+                bytes,
+                awaitWrite: true,
+              ),
+            ),
+    ]);
+    broadcastFileWrite(FileOperationType.write, filePath);
+  }
+
+  /// Restores a file from trash by setting the isTrashed flag to false.
+  static Future<void> restoreFromTrash(String filePath) async {
+    filePath = _sanitisePath(filePath);
+    final coreInfo = await EditorCoreInfo.loadFromFilePath(filePath);
+    coreInfo.isTrashed = false;
+    final (bson, assets) = coreInfo.saveToBinary(
+      currentPageIndex: coreInfo.initialPageIndex,
+    );
+    final filePathWithExt = filePath + Editor.extension;
+    await Future.wait([
+      writeFile(filePathWithExt, bson, awaitWrite: true),
+      for (int i = 0; i < assets.length; ++i)
+        assets
+            .getBytes(i)
+            .then(
+              (bytes) => writeFile(
+                '$filePathWithExt.$i',
+                bytes,
+                awaitWrite: true,
+              ),
+            ),
+    ]);
+    broadcastFileWrite(FileOperationType.write, filePath);
+  }
+
+  /// Returns a list of all trashed files.
+  static Future<List<String>> getTrashedFiles() async {
+    final allFiles = await getAllFiles();
+    final trashedFiles = <String>[];
+
+    for (final file in allFiles) {
+      final isTrashed = await EditorCoreInfo.isFileTrashed(file);
+      if (isTrashed) {
+        trashedFiles.add(file);
+      }
+    }
+
+    return trashedFiles;
+  }
+
+  /// Returns a filtered list of files, excluding trashed files.
+  static Future<List<String>> filterOutTrashed(List<String> files) async {
+    final result = <String>[];
+    for (final file in files) {
+      final isTrashed = await EditorCoreInfo.isFileTrashed(file);
+      if (!isTrashed) {
+        result.add(file);
+      }
+    }
+    return result;
   }
 
   /// Returns whether the [filePath] is a directory or file.

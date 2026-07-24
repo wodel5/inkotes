@@ -65,14 +65,11 @@ class _Translations$home$zh_Hans_CN extends Translations$home$en {
 	@override String get welcome => '欢迎使用锋页笔记';
 	@override String get noFiles => '未找到文件';
 	@override String get noPreviewAvailable => '无可用预览';
-	@override String editedAt(String date) => '编辑于$date';
+	@override String editedAt({required Object date}) => '编辑于${date}';
 	@override String get today => '今天';
 	@override String get yesterday => '昨天';
-
 	@override String get searchNotes => '搜索笔记';
-
 	@override String get searchNoResults => '未找到笔记';
-
 	@override String get createNewNote => '点击 + 按钮新建一个笔记';
 	@override String get backFolder => '回到上一个文件夹';
 	@override String get rootDirectory => '根目录';
@@ -83,6 +80,7 @@ class _Translations$home$zh_Hans_CN extends Translations$home$en {
 	@override late final _Translations$home$deleteNoteDialog$zh_Hans_CN deleteNoteDialog = _Translations$home$deleteNoteDialog$zh_Hans_CN._(_root);
 	@override late final _Translations$home$renameFolder$zh_Hans_CN renameFolder = _Translations$home$renameFolder$zh_Hans_CN._(_root);
 	@override late final _Translations$home$deleteFolder$zh_Hans_CN deleteFolder = _Translations$home$deleteFolder$zh_Hans_CN._(_root);
+	@override late final _Translations$home$trash$zh_Hans_CN trash = _Translations$home$trash$zh_Hans_CN._(_root);
 	@override late final _Translations$home$sort$zh_Hans_CN sort = _Translations$home$sort$zh_Hans_CN._(_root);
 }
 
@@ -95,7 +93,6 @@ class _Translations$settings$zh_Hans_CN extends Translations$settings$en {
 	// Translations
 	@override late final _Translations$settings$prefCategories$zh_Hans_CN prefCategories = _Translations$settings$prefCategories$zh_Hans_CN._(_root);
 	@override late final _Translations$settings$prefLabels$zh_Hans_CN prefLabels = _Translations$settings$prefLabels$zh_Hans_CN._(_root);
-	@override late final _Translations$settings$prefDescriptions$zh_Hans_CN prefDescriptions = _Translations$settings$prefDescriptions$zh_Hans_CN._(_root);
 	@override late final _Translations$settings$accentColorPicker$zh_Hans_CN accentColorPicker = _Translations$settings$accentColorPicker$zh_Hans_CN._(_root);
 	@override late final _Translations$settings$reset$zh_Hans_CN reset = _Translations$settings$reset$zh_Hans_CN._(_root);
 	@override String get autosaveDisabled => '禁用';
@@ -249,6 +246,23 @@ class _Translations$home$deleteFolder$zh_Hans_CN extends Translations$home$delet
 	@override String get alsoDeleteContents => '同时删除此文件夹中的所有笔记';
 }
 
+// Path: home.trash
+class _Translations$home$trash$zh_Hans_CN extends Translations$home$trash$en {
+	_Translations$home$trash$zh_Hans_CN._(TranslationsZhHansCn root) : this._root = root, super.internal(root);
+
+	final TranslationsZhHansCn _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => '回收站';
+	@override String get empty => '回收站为空';
+	@override String get emptyDescription => '删除的笔记会显示在这里';
+	@override String get restore => '恢复';
+	@override String get delete => '彻底删除';
+	@override String get emptyTrash => '清空回收站';
+	@override String get confirmEmptyTrash => '确定要清空回收站吗？此操作不可撤销。';
+	@override String get confirmPermanentDelete => '确定要彻底删除此笔记吗？此操作不可撤销。';
+}
+
 // Path: home.sort
 class _Translations$home$sort$zh_Hans_CN extends Translations$home$sort$en {
 	_Translations$home$sort$zh_Hans_CN._(TranslationsZhHansCn root) : this._root = root, super.internal(root);
@@ -290,15 +304,6 @@ class _Translations$settings$prefLabels$zh_Hans_CN extends Translations$settings
 	@override String get autosave => '自动保存';
 }
 
-// Path: settings.prefDescriptions
-class _Translations$settings$prefDescriptions$zh_Hans_CN extends Translations$settings$prefDescriptions$en {
-	_Translations$settings$prefDescriptions$zh_Hans_CN._(TranslationsZhHansCn root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHansCn _root; // ignore: unused_field
-
-	// Translations
-}
-
 // Path: settings.accentColorPicker
 class _Translations$settings$accentColorPicker$zh_Hans_CN extends Translations$settings$accentColorPicker$en {
 	_Translations$settings$accentColorPicker$zh_Hans_CN._(TranslationsZhHansCn root) : this._root = root, super.internal(root);
@@ -307,7 +312,6 @@ class _Translations$settings$accentColorPicker$zh_Hans_CN extends Translations$s
 
 	// Translations
 	@override String get pickAColor => '选取颜色';
-
 	@override String get customColor => '自定义颜色';
 }
 

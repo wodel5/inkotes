@@ -67,6 +67,15 @@ home:
     deleteName: Delete $f
     delete: Delete
     alsoDeleteContents: Also delete all notes inside this folder
+  trash:
+    title: Trash
+    empty: Trash is empty
+    emptyDescription: Deleted notes will appear here
+    restore: Restore
+    delete: Delete permanently
+    emptyTrash: Empty trash
+    confirmEmptyTrash: Are you sure you want to empty the trash? This cannot be undone.
+    confirmPermanentDelete: Are you sure you want to permanently delete this note? This cannot be undone.
   sort:
     sortBy: Sort by
     nameAToZ: Name (A-Z)
@@ -85,7 +94,7 @@ settings:
     autoSwitchPaperColor: Auto-switch paper color
     printPageIndicators: Print page indicators
     autosave: Auto-save
-  prefDescriptions:
+  prefDescriptions: {}
   accentColorPicker:
     pickAColor: Pick a color
     customColor: Custom color

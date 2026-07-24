@@ -21,6 +21,7 @@ import 'package:foledge/data/routes.dart';
 import 'package:foledge/i18n/strings.g.dart';
 import 'package:foledge/pages/editor/editor.dart';
 import 'package:foledge/pages/home/settings.dart';
+import 'package:foledge/pages/home/trash_page.dart';
 
 class HomePage extends StatefulHookWidget {
   const HomePage({super.key});
@@ -116,12 +117,14 @@ class _HomePageState extends State<HomePage> {
     if (currentPath == null) {
       // Root level: show recent files + folders
       final recentFiles = await FileManager.getRecentlyAccessed();
+      // Filter out trashed files
+      final nonTrashedFiles = await FileManager.filterOutTrashed(recentFiles);
       filePaths.clear();
-      if (recentFiles.isEmpty) {
+      if (nonTrashedFiles.isEmpty) {
         failed = true;
       } else {
         failed = false;
-        filePaths.addAll(recentFiles);
+        filePaths.addAll(nonTrashedFiles);
       }
 
       // Get folders at root
@@ -143,9 +146,12 @@ class _HomePageState extends State<HomePage> {
       } else {
         failed = false;
         filePaths.clear();
-        filePaths.addAll([
+        final allFiles = [
           for (final filePath in children.files) "${currentPath!}/$filePath",
-        ]);
+        ];
+        // Filter out trashed files
+        final nonTrashedFiles = await FileManager.filterOutTrashed(allFiles);
+        filePaths.addAll(nonTrashedFiles);
         folders = children.directories;
       }
     }
@@ -411,7 +417,7 @@ class _HomePageState extends State<HomePage> {
                             icon: const Icon(Icons.auto_delete_rounded),
                             onPressed: () {
                               selectedFiles.value = [];
-                              // TODO: trash
+                              context.push(RoutePaths.trash);
                             },
                           ),
                         ),
@@ -1029,18 +1035,7 @@ class _DeleteNoteDialogState extends State<_DeleteNoteDialog> {
               ? () async {
                   await Future.wait([
                     for (final String filePath in widget.filesToDelete)
-                      Future.value(
-                        FileManager.doesFileExist(
-                          filePath + Editor.extensionOldJson,
-                        ),
-                      ).then(
-                        (oldExtension) => FileManager.deleteFile(
-                          filePath +
-                              (oldExtension
-                                  ? Editor.extensionOldJson
-                                  : Editor.extension),
-                        ),
-                      ),
+                      FileManager.markAsTrashed(filePath),
                   ]);
                   if (context.mounted) Navigator.of(context).pop();
                   widget.unselectNotes();

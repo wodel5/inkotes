@@ -84,7 +84,7 @@ class Translations$home$en {
 	String get noPreviewAvailable => 'No preview available';
 
 	/// en: 'Edited $date'
-	String editedAt(String date) => 'Edited $date';
+	String editedAt({required Object date}) => 'Edited ${date}';
 
 	/// en: 'Today'
 	String get today => 'Today';
@@ -117,6 +117,7 @@ class Translations$home$en {
 	late final Translations$home$deleteNoteDialog$en deleteNoteDialog = Translations$home$deleteNoteDialog$en.internal(_root);
 	late final Translations$home$renameFolder$en renameFolder = Translations$home$renameFolder$en.internal(_root);
 	late final Translations$home$deleteFolder$en deleteFolder = Translations$home$deleteFolder$en.internal(_root);
+	late final Translations$home$trash$en trash = Translations$home$trash$en.internal(_root);
 	late final Translations$home$sort$en sort = Translations$home$sort$en.internal(_root);
 }
 
@@ -129,7 +130,6 @@ class Translations$settings$en {
 	// Translations
 	late final Translations$settings$prefCategories$en prefCategories = Translations$settings$prefCategories$en.internal(_root);
 	late final Translations$settings$prefLabels$en prefLabels = Translations$settings$prefLabels$en.internal(_root);
-	late final Translations$settings$prefDescriptions$en prefDescriptions = Translations$settings$prefDescriptions$en.internal(_root);
 	late final Translations$settings$accentColorPicker$en accentColorPicker = Translations$settings$accentColorPicker$en.internal(_root);
 	late final Translations$settings$reset$en reset = Translations$settings$reset$en.internal(_root);
 
@@ -373,6 +373,39 @@ class Translations$home$deleteFolder$en {
 	String get alsoDeleteContents => 'Also delete all notes inside this folder';
 }
 
+// Path: home.trash
+class Translations$home$trash$en {
+	Translations$home$trash$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Trash'
+	String get title => 'Trash';
+
+	/// en: 'Trash is empty'
+	String get empty => 'Trash is empty';
+
+	/// en: 'Deleted notes will appear here'
+	String get emptyDescription => 'Deleted notes will appear here';
+
+	/// en: 'Restore'
+	String get restore => 'Restore';
+
+	/// en: 'Delete permanently'
+	String get delete => 'Delete permanently';
+
+	/// en: 'Empty trash'
+	String get emptyTrash => 'Empty trash';
+
+	/// en: 'Are you sure you want to empty the trash? This cannot be undone.'
+	String get confirmEmptyTrash => 'Are you sure you want to empty the trash? This cannot be undone.';
+
+	/// en: 'Are you sure you want to permanently delete this note? This cannot be undone.'
+	String get confirmPermanentDelete => 'Are you sure you want to permanently delete this note? This cannot be undone.';
+}
+
 // Path: home.sort
 class Translations$home$sort$en {
 	Translations$home$sort$en.internal(this._root);
@@ -440,15 +473,6 @@ class Translations$settings$prefLabels$en {
 
 	/// en: 'Auto-save'
 	String get autosave => 'Auto-save';
-}
-
-// Path: settings.prefDescriptions
-class Translations$settings$prefDescriptions$en {
-	Translations$settings$prefDescriptions$en.internal(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
 }
 
 // Path: settings.accentColorPicker

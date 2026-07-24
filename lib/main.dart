@@ -21,6 +21,7 @@ import 'package:foledge/data/tools/stroke_properties.dart';
 import 'package:foledge/i18n/strings.g.dart';
 import 'package:foledge/pages/editor/editor.dart';
 import 'package:foledge/pages/home/home.dart';
+import 'package:foledge/pages/home/trash_page.dart';
 
 import 'package:worker_manager/worker_manager.dart';
 
@@ -110,6 +111,10 @@ class App extends StatefulWidget {
           path: state.uri.queryParameters['path'],
           pdfPath: state.uri.queryParameters['pdfPath'],
         ),
+      ),
+      GoRoute(
+        path: RoutePaths.trash,
+        builder: (context, state) => const TrashPage(),
       ),
     ],
   );
