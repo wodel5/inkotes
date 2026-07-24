@@ -26,12 +26,12 @@ import 'package:worker_manager/worker_manager.dart';
 
 
 Future<void> main(List<String> args) async {
+  WidgetsFlutterBinding.ensureInitialized();
   FlavorConfig.setupFromEnvironment();
   await appRunner(args);
 }
 
 Future<void> appRunner(List<String> args) async {
-  WidgetsFlutterBinding.ensureInitialized();
 
   final parser = ArgParser()..addFlag('verbose', abbr: 'v', negatable: false);
   final parsedArgs = parser.parse(args);
