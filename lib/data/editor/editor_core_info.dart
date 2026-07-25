@@ -18,9 +18,9 @@ import 'package:foledge/data/flavor_config.dart';
 import 'package:foledge/data/prefs.dart';
 import 'package:foledge/data/tools/stroke_properties.dart';
 import 'package:foledge/pages/editor/editor.dart';
-import 'package:sbn/canvas_background_pattern.dart';
-import 'package:sbn/has_size.dart';
-import 'package:sbn/read_only_reason.dart';
+import 'package:foledge/core/canvas_background_pattern.dart';
+import 'package:foledge/core/has_size.dart';
+import 'package:foledge/core/read_only_reason.dart';
 import 'package:worker_manager/worker_manager.dart';
 
 class EditorCoreInfo {

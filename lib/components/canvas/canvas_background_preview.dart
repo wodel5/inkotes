@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:foledge/components/canvas/_canvas_background_painter.dart';
 import 'package:foledge/components/canvas/inner_canvas.dart';
 import 'package:foledge/data/extensions/color_extensions.dart';
-import 'package:sbn/canvas_background_pattern.dart';
+import 'package:foledge/core/canvas_background_pattern.dart';
 
 class CanvasBackgroundPreview extends StatelessWidget {
   const CanvasBackgroundPreview({

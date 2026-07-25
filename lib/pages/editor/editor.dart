@@ -45,7 +45,7 @@ import 'package:foledge/data/tools/pen.dart';
 import 'package:foledge/data/tools/pencil.dart';
 import 'package:foledge/data/tools/select.dart';
 import 'package:foledge/i18n/strings.g.dart';
-import 'package:sbn/change.dart';
+import 'package:foledge/core/change.dart';
 import 'package:super_clipboard/super_clipboard.dart';
 
 typedef _PhotoInfo = ({Uint8List bytes, String extension});

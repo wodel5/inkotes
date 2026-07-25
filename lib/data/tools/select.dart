@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:foledge/components/canvas/_stroke.dart';
 import 'package:foledge/components/canvas/image/editor_image.dart';
 import 'package:foledge/data/tools/_tool.dart';
-import 'package:sbn/tool_id.dart';
+import 'package:foledge/core/tool_id.dart';
 
 class Select extends Tool {
   Select._();

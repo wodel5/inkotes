@@ -8,7 +8,7 @@ import 'package:foledge/components/canvas/canvas_image.dart';
 import 'package:foledge/components/canvas/image/editor_image.dart';
 import 'package:foledge/data/editor/editor_core_info.dart';
 import 'package:foledge/data/tools/select.dart';
-import 'package:sbn/canvas_background_pattern.dart';
+import 'package:foledge/core/canvas_background_pattern.dart';
 
 class InnerCanvas extends StatefulWidget {
   const InnerCanvas({

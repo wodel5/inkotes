@@ -7,8 +7,8 @@ plugins {
 
 android {
     namespace = "com.notes.foledge"
-    compileSdk = 35
-    ndkVersion = 35
+    compileSdk = 36
+    ndkVersion = "27.0.12077973"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17

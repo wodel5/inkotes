@@ -12,7 +12,7 @@ import 'package:foledge/components/canvas/inner_canvas.dart';
 import 'package:foledge/components/canvas/pencil_shader.dart';
 import 'package:foledge/data/editor/editor_exporter.dart';
 import 'package:foledge/data/tools/laser_pointer.dart';
-import 'package:sbn/has_size.dart';
+import 'package:foledge/core/has_size.dart';
 
 typedef CanvasKey = GlobalKey<State<InnerCanvas>>;
 

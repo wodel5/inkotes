@@ -1,7 +1,7 @@
 import 'package:collapsible/collapsible.dart';
 import 'package:flutter/material.dart';
 import 'package:foledge/i18n/strings.g.dart';
-import 'package:sbn/read_only_reason.dart';
+import 'package:foledge/core/read_only_reason.dart';
 
 /// A banner that tells the user why the note is read-only.
 /// If [reason] is null, an empty widget is returned.

@@ -7,7 +7,7 @@ import 'package:foledge/data/editor/page.dart';
 import 'package:foledge/data/extensions/list_extensions.dart';
 import 'package:foledge/data/tools/_tool.dart';
 import 'package:foledge/data/tools/pen.dart';
-import 'package:sbn/tool_id.dart';
+import 'package:foledge/core/tool_id.dart';
 
 class LaserPointer extends Tool {
   LaserPointer._();

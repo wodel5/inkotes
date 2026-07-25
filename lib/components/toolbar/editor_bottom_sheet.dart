@@ -11,7 +11,7 @@ import 'package:foledge/data/extensions/color_extensions.dart';
 import 'package:foledge/data/extensions/list_extensions.dart';
 import 'package:foledge/i18n/extensions/canvas_background_pattern_localized.dart';
 import 'package:foledge/i18n/strings.g.dart';
-import 'package:sbn/canvas_background_pattern.dart';
+import 'package:foledge/core/canvas_background_pattern.dart';
 
 class EditorBottomSheet extends StatefulWidget {
   const EditorBottomSheet({

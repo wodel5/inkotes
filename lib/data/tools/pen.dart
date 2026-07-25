@@ -8,7 +8,7 @@ import 'package:foledge/data/tools/_tool.dart';
 import 'package:foledge/data/tools/highlighter.dart';
 import 'package:foledge/data/tools/pencil.dart';
 import 'package:foledge/i18n/strings.g.dart';
-import 'package:sbn/tool_id.dart';
+import 'package:foledge/core/tool_id.dart';
 
 class Pen extends Tool {
   @protected

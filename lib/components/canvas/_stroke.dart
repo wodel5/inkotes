@@ -10,8 +10,8 @@ import 'package:foledge/components/canvas/_circle_stroke.dart';
 import 'package:foledge/components/canvas/_rectangle_stroke.dart';
 import 'package:foledge/data/extensions/list_extensions.dart';
 import 'package:foledge/data/extensions/point_extensions.dart';
-import 'package:sbn/has_size.dart';
-import 'package:sbn/tool_id.dart';
+import 'package:foledge/core/has_size.dart';
+import 'package:foledge/core/tool_id.dart';
 
 class Stroke {
   static final log = Logger('Stroke');
