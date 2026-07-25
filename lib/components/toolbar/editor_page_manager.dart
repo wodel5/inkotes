@@ -114,10 +114,7 @@ class _EditorPageManagerState extends State<EditorPageManager> {
                         }),
                       ),
                       IconButton(
-                        tooltip: t.editor.menu.clearPage(
-                          page: pageIndex + 1,
-                          totalPages: widget.coreInfo.pages.length,
-                        ),
+                        tooltip: t.editor.menu.clearPage,
                         icon: const Icon(Icons.cleaning_services),
                         onPressed: isEmptyLastPage
                             ? null

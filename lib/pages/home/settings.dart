@@ -86,7 +86,7 @@ class _SettingsContentState extends State<SettingsContent> {
         SettingsSwitch(
           title:
               t.settings.prefLabels.autoDisableFingerDrawingWhenStylusDetected,
-          icon: IconData(0xe7de, fontFamily: 'iconfont'),
+          icon: const IconData(0xe7de, fontFamily: 'iconfont'),
           pref: stows.autoDisableFingerDrawingWhenStylusDetected,
         ),
         SettingsSwitch(

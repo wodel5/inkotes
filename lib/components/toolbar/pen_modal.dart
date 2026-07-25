@@ -78,12 +78,12 @@ class _PenModalState extends State<PenModal> {
             size: const Size(14, 14),
             painter: _RingPainter(),
           ),
-          activeChild: Icon(
+          activeChild: const Icon(
             IconData(0xec19, fontFamily: 'iconfont'),
             size: 20,
             color: Color(0xFFE3E2E9),
           ),
-          inactiveChild: Icon(
+          inactiveChild: const Icon(
             IconData(0xec18, fontFamily: 'iconfont'),
             size: 20,
             color: Color(0xFFE3E2E9),
