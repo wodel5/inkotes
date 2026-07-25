@@ -1307,8 +1307,6 @@ class EditorState extends State<Editor> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = ColorScheme.of(context);
-
     final Widget canvas = CanvasGestureDetector(
       key: _canvasGestureDetectorKey,
       filePath: coreInfo.filePath,

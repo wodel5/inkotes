@@ -447,13 +447,11 @@ class _DockButton extends StatefulWidget {
     required this.icon,
     required this.onPressed,
     this.selected = false,
-    this.enabled = true,
   });
 
   final Object icon;
   final VoidCallback? onPressed;
   final bool selected;
-  final bool enabled;
 
   @override
   State<_DockButton> createState() => _DockButtonState();
@@ -467,18 +465,16 @@ class _DockButtonState extends State<_DockButton> {
     final colorScheme = ColorScheme.of(context);
     final brightness = Theme.of(context).brightness;
 
-    final iconColor = !widget.enabled
-        ? colorScheme.onSurface.withValues(alpha: 0.3)
-        : widget.selected
-            ? colorScheme.primary
-            : colorScheme.onSurface;
+    final iconColor = widget.selected
+        ? colorScheme.primary
+        : colorScheme.onSurface;
 
     Color? backgroundColor;
     if (widget.selected) {
       backgroundColor = brightness == Brightness.light
           ? colorScheme.primary.withValues(alpha: 0.15)
           : colorScheme.primary.withValues(alpha: 0.25);
-    } else if (_pressing && widget.enabled) {
+    } else if (_pressing) {
       backgroundColor = brightness == Brightness.light
           ? Colors.grey.withValues(alpha: 0.2)
           : Colors.white.withValues(alpha: 0.1);

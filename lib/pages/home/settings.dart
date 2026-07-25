@@ -7,7 +7,6 @@ import 'package:foledge/components/theming/adaptive_toggle_buttons.dart';
 import 'package:foledge/data/locales.dart';
 import 'package:foledge/data/prefs.dart';
 import 'package:foledge/i18n/strings.g.dart';
-import 'package:stow/stow.dart';
 
 abstract class _SettingsStows {
   static final appTheme = TransformedStow(
