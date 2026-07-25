@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
-import 'font_fallbacks.dart';
+import 'package:foledge/components/theming/font_fallbacks.dart';
 
 typedef _ArgRecord = ({bool invert, Color secondary});
 

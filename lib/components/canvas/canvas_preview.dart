@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:foledge/components/canvas/inner_canvas.dart';
 import 'package:foledge/data/editor/editor_core_info.dart';
 import 'package:foledge/data/editor/page.dart';
-import 'package:foledge/data/extensions/list_extensions.dart';
+import 'package:foledge/data/extensions/collection_extensions.dart';
 import 'package:foledge/data/prefs.dart';
 
 class CanvasPreview extends StatelessWidget implements PreferredSizeWidget {

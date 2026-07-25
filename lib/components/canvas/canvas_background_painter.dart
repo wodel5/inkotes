@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:foledge/core/canvas_background_pattern.dart';
+import 'package:foledge/data/models/canvas_background_pattern.dart';
 
 class CanvasBackgroundPainter extends CustomPainter {
   const CanvasBackgroundPainter({

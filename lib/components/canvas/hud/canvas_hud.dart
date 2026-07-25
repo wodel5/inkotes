@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:foledge/components/canvas/hud/canvas_zoom_indicator.dart';
-import 'package:foledge/data/extensions/matrix4_extensions.dart';
+import 'package:foledge/data/extensions/math_extensions.dart';
 
 class CanvasHud extends HookWidget {
   const CanvasHud({

@@ -4,8 +4,8 @@ import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:one_dollar_unistroke_recognizer/one_dollar_unistroke_recognizer.dart';
 import 'package:perfect_freehand/perfect_freehand.dart';
-import 'package:foledge/components/canvas/_stroke.dart';
-import 'package:foledge/core/has_size.dart';
+import 'package:foledge/components/canvas/stroke.dart';
+import 'package:foledge/data/models/has_size.dart';
 
 class CircleStroke extends Stroke {
   Offset center;

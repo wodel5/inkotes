@@ -1,9 +1,9 @@
 import 'dart:ui';
 
-import 'package:foledge/components/canvas/_stroke.dart';
+import 'package:foledge/components/canvas/stroke.dart';
 
-import 'package:foledge/data/tools/_tool.dart';
-import 'package:foledge/core/tool_id.dart';
+import 'package:foledge/data/tools/tool.dart';
+import 'package:foledge/data/models/tool_id.dart';
 
 double square(double x) => x * x;
 double sqrDistanceBetween(Offset p1, Offset p2) =>

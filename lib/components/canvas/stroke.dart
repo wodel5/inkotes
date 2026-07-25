@@ -6,12 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:one_dollar_unistroke_recognizer/one_dollar_unistroke_recognizer.dart';
 import 'package:perfect_freehand/perfect_freehand.dart';
-import 'package:foledge/components/canvas/_circle_stroke.dart';
-import 'package:foledge/components/canvas/_rectangle_stroke.dart';
-import 'package:foledge/data/extensions/list_extensions.dart';
-import 'package:foledge/data/extensions/point_extensions.dart';
-import 'package:foledge/core/has_size.dart';
-import 'package:foledge/core/tool_id.dart';
+import 'package:foledge/components/canvas/circle_stroke.dart';
+import 'package:foledge/components/canvas/rectangle_stroke.dart';
+import 'package:foledge/data/extensions/collection_extensions.dart';
+import 'package:foledge/data/extensions/math_extensions.dart';
+import 'package:foledge/data/models/has_size.dart';
+import 'package:foledge/data/models/tool_id.dart';
 
 class Stroke {
   static final log = Logger('Stroke');

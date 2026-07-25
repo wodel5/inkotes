@@ -1,13 +1,8 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
-import 'dart:math';
+import 'dart:math' show max;
 
 import 'package:collapsible/collapsible.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart' show kDebugMode;
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_quill/flutter_quill.dart' as flutter_quill;
@@ -15,40 +10,40 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:keybinder/keybinder.dart';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
-import 'package:pdfrx/pdfrx.dart';
-import 'package:foledge/components/canvas/_asset_cache.dart';
-import 'package:foledge/components/canvas/_stroke.dart';
 import 'package:foledge/components/canvas/canvas.dart';
 import 'package:foledge/components/canvas/canvas_gesture_detector.dart';
 import 'package:foledge/components/canvas/canvas_image.dart';
-import 'package:foledge/components/canvas/image/editor_image.dart';
 import 'package:foledge/components/canvas/save_indicator.dart';
-import 'package:foledge/components/editor/read_only_banner.dart';
+import 'package:foledge/pages/editor/widgets/read_only_banner.dart';
 import 'package:foledge/components/theming/adaptive_alert_dialog.dart';
 import 'package:foledge/components/theming/adaptive_icon.dart';
 import 'package:foledge/components/toolbar/editor_bottom_sheet.dart';
-import 'package:foledge/components/toolbar/color_bar.dart';
 import 'package:foledge/components/toolbar/toolbar.dart';
 import 'package:foledge/data/editor/editor_core_info.dart';
-import 'package:foledge/data/editor/editor_exporter.dart';
 import 'package:foledge/data/editor/editor_history.dart';
 import 'package:foledge/data/editor/page.dart';
-import 'package:foledge/data/extensions/change_notifier_extensions.dart';
-import 'package:foledge/data/extensions/matrix4_extensions.dart';
+import 'package:foledge/data/extensions/flutter_extensions.dart';
 import 'package:foledge/data/file_manager/file_manager.dart';
 import 'package:foledge/data/prefs.dart';
-import 'package:foledge/data/tools/_tool.dart';
+import 'package:foledge/data/tools/tool.dart';
 import 'package:foledge/data/tools/eraser.dart';
 import 'package:foledge/data/tools/highlighter.dart';
 import 'package:foledge/data/tools/laser_pointer.dart';
 import 'package:foledge/data/tools/pen.dart';
 import 'package:foledge/data/tools/pencil.dart';
 import 'package:foledge/data/tools/select.dart';
+import 'package:foledge/components/canvas/stroke.dart';
+import 'package:foledge/components/canvas/image/editor_image.dart';
+import 'package:foledge/components/toolbar/color_bar.dart';
+import 'package:foledge/data/extensions/math_extensions.dart';
 import 'package:foledge/i18n/strings.g.dart';
-import 'package:foledge/core/change.dart';
-import 'package:super_clipboard/super_clipboard.dart';
-
-typedef _PhotoInfo = ({Uint8List bytes, String extension});
+import 'package:foledge/data/models/change.dart';
+import 'package:foledge/data/models/read_only_reason.dart';
+import 'package:foledge/pages/editor/editor_constants.dart';
+import 'package:foledge/pages/editor/mixins/editor_drawing_mixin.dart';
+import 'package:foledge/pages/editor/mixins/editor_file_mixin.dart';
+import 'package:foledge/pages/editor/mixins/editor_history_mixin.dart';
+import 'package:foledge/pages/editor/mixins/editor_import_export_mixin.dart';
 
 class Editor extends StatefulWidget {
   Editor({super.key, String? path, this.customTitle, this.pdfPath})
@@ -59,38 +54,32 @@ class Editor extends StatefulWidget {
 
   final Future<String> initialPath;
   final bool needsNaming;
-
   final String? customTitle;
   final String? pdfPath;
 
-  /// The file extension used by the app.
-  /// Files with this extension are
-  /// encoded in BSON format.
-  static const extension = '.sbn2';
+  /// Delegated to [EditorConstants] for use in mixins without circular imports.
+  static const extension = EditorConstants.extension;
+  static const extensionOldJson = EditorConstants.extensionOldJson;
+  static const double gapBetweenPages = EditorConstants.gapBetweenPages;
 
-  /// The old file extension used by the app.
-  /// Files with this extension are
-  /// encoded in JSON format.
-  static const extensionOldJson = '.sbn';
-
-  static const double gapBetweenPages = 16;
-
-  /// Returns true if [path] belongs to a hidden file
-  /// used by other functions of the app
   static bool isReservedPath(String path) {
     return _reservedFilePaths.any((regex) => regex.hasMatch(path));
   }
 
   static final _reservedFilePaths = <RegExp>[];
-
-  /// Whether the platform can rasterize a pdf
-  static var canRasterPdf = true;
+  static bool get canRasterPdf => EditorConstants.canRasterPdf;
+  static set canRasterPdf(bool value) => EditorConstants.canRasterPdf = value;
 
   @override
   State<Editor> createState() => EditorState();
 }
 
-class EditorState extends State<Editor> {
+class EditorState extends State<Editor>
+    with
+        EditorHistoryMixin<Editor>,
+        EditorDrawingMixin<Editor>,
+        EditorFileMixin<Editor>,
+        EditorImportExportMixin<Editor> {
   final log = Logger('EditorState');
 
   late var coreInfo = EditorCoreInfo.placeholder;
@@ -99,6 +88,7 @@ class EditorState extends State<Editor> {
   final _canvasGestureDetectorKey = GlobalKey<CanvasGestureDetectorState>();
   final _toolbarKey = GlobalKey<ToolbarState>();
   final _transformationController = TransformationController();
+
   double get scrollY {
     final transformation = _transformationController.value;
     final scale = transformation.approxScale;
@@ -114,9 +104,7 @@ class EditorState extends State<Editor> {
     }
   }
 
-  var history = EditorHistory();
-
-  late bool needsNaming = false;
+  late bool needsNaming = widget.needsNaming;
 
   late Tool _currentTool = () {
     switch (stows.lastTool.value) {
@@ -151,31 +139,76 @@ class EditorState extends State<Editor> {
     stows.lastTool.value = tool.toolId;
   }
 
-  ValueNotifier<SavingState> savingState = ValueNotifier(SavingState.saved);
-  Timer? _delayedSaveTimer;
-
-  // used to prevent accidentally drawing when pinch zooming
-  var lastSeenPointerCount = 0;
-  Timer? _lastSeenPointerCountTimer;
-
-  /// The last non-Eraser [currentTool] value.
   late Tool _lastNonEraserTool = Pen.currentPen;
 
-  /// If the stylus button is pressed, or was pressed, during the current draw gesture.
-  ///
-  /// For now, this also includes when an [PointerDeviceKind.inverseStylus] is
-  /// used since the stylus rear-end and stylus button currently act the same.
-  /// If we add customized button bindings, we may have to separate this again.
-  var stylusButtonWasPressed = false;
+  // --- Mixin abstract implementations ---
+
+  @override
+  GlobalKey<ToolbarState> get toolbarKey => _toolbarKey;
+
+  @override
+  TransformationController get transformationController =>
+      _transformationController;
+
+  @override
+  Tool get lastNonEraserTool => _lastNonEraserTool;
+  @override
+  set lastNonEraserTool(Tool tool) => _lastNonEraserTool = tool;
+
+  late int _lastCurrentPageIndex = coreInfo.initialPageIndex ?? 0;
+  @override
+  int get currentPageIndex {
+    if (!mounted) return _lastCurrentPageIndex;
+
+    final screenWidth = MediaQuery.sizeOf(context).width;
+
+    return _lastCurrentPageIndex = getPageIndexFromScrollPosition(
+      scrollY: -scrollY,
+      screenWidth: screenWidth,
+      pages: coreInfo.pages,
+    );
+  }
+
+  @override
+  void onMoveImage(EditorImage image, Rect offset) {
+    history.recordChange(
+      EditorHistoryItem(
+        type: EditorHistoryItemType.move,
+        pageIndex: image.pageIndex,
+        strokes: [],
+        images: [image],
+        offset: offset,
+      ),
+    );
+    setState(() {});
+    autosaveAfterDelay();
+  }
+
+  @override
+  void onDeleteImage(EditorImage image) {
+    history.recordChange(
+      EditorHistoryItem(
+        type: EditorHistoryItemType.erase,
+        pageIndex: image.pageIndex,
+        strokes: [],
+        images: [image],
+      ),
+    );
+    setState(() {
+      coreInfo.pages[image.pageIndex].images.remove(image);
+    });
+    autosaveAfterDelay();
+  }
+
+  // --- Lifecycle ---
 
   @override
   void initState() {
+    super.initState();
     _initAsync();
     _assignKeybindings();
     _transformationController.addListener(_onTransformChanged);
     CanvasImage.activeImageNotifier.addListener(_onActiveImageChanged);
-
-    super.initState();
   }
 
   @override
@@ -183,26 +216,9 @@ class EditorState extends State<Editor> {
     super.didChangeDependencies();
     final currentBrightness = Theme.of(context).brightness;
     if (_lastBrightness != null && _lastBrightness != currentBrightness) {
-      _autoApplyPaperColor(currentBrightness);
+      autoApplyPaperColor(currentBrightness);
     }
     _lastBrightness = currentBrightness;
-  }
-
-  /// 根据自动切换开关和当前主题调整画纸颜色。
-  /// 仅当当前颜色是纯白(0xFFFFFFFF)或深色(0xFF272735)时才切换。
-  void _autoApplyPaperColor(Brightness brightness) {
-    if (!stows.autoSwitchPaperColor.value) return;
-    if (coreInfo.readOnly) return;
-    final currentColor = coreInfo.backgroundColor?.toARGB32();
-    const white = 0xFFFFFFFF;
-    const dark = 0xFF272735;
-    if (currentColor != white && currentColor != dark) return;
-    final targetColor = brightness == Brightness.dark ? dark : white;
-    if (currentColor == targetColor) return;
-    setState(() {
-      coreInfo.backgroundColor = Color(targetColor);
-    });
-    saveToFile(force: true);
   }
 
   void _onActiveImageChanged() {
@@ -223,37 +239,18 @@ class EditorState extends State<Editor> {
       );
     }
 
-    await _loadCoreInfo(filePath);
+    await loadCoreInfo(filePath);
 
     if (widget.pdfPath != null) {
       await importPdfFromFilePath(widget.pdfPath!);
     }
   }
 
-  Future _loadCoreInfo(String filePath) async {
-    coreInfo = await EditorCoreInfo.loadFromFilePath(filePath);
-    if (coreInfo.readOnly) {
-      log.info('Loaded file as read-only: ${coreInfo.readOnlyReason}');
-    }
-
-    if (coreInfo.isEmpty) {
-      createPage(-1);
-    } else {
-      for (final page in coreInfo.pages) {
-        page.backgroundImage?.onMoveImage = onMoveImage;
-        page.backgroundImage?.onDeleteImage = onDeleteImage;
-        page.backgroundImage?.onMiscChange = autosaveAfterDelay;
-        for (final image in page.images) {
-          image.onMoveImage = onMoveImage;
-          image.onDeleteImage = onDeleteImage;
-          image.onMiscChange = autosaveAfterDelay;
-        }
-      }
-    }
-
-    setState(() {});
-    _autoApplyPaperColor(Theme.of(context).brightness);
+  void _onTransformChanged() {
+    _toolbarKey.currentState?.collapseAll();
   }
+
+  // --- Keybindings ---
 
   Keybinding? _ctrlZ, _ctrlY, _ctrlShiftZ;
   void _assignKeybindings() {
@@ -281,714 +278,15 @@ class EditorState extends State<Editor> {
     if (_ctrlShiftZ != null) Keybinder.remove(_ctrlShiftZ!);
   }
 
-  /// Creates pages until the given page index exists,
-  /// plus an extra blank page
-  void createPage(int pageIndex) {
-    while (pageIndex >= coreInfo.pages.length - 1) {
-      final page = EditorPage();
-      coreInfo.pages.add(page);
-    }
-  }
-
-  void removeExcessPages() {
-    bool removedAPage = false;
-
-    // remove excess pages if all pages >= this one are empty
-    for (int i = coreInfo.pages.length - 1; i >= 1; --i) {
-      final thisPage = coreInfo.pages[i];
-      final prevPage = coreInfo.pages[i - 1];
-      if (thisPage.isEmpty && prevPage.isEmpty) {
-        final page = coreInfo.pages.removeAt(i);
-        page.dispose();
-        removedAPage = true;
-      } else {
-        break;
-      }
-    }
-
-    if (removedAPage) {
-      // scroll to the last page (only if we're below the last page)
-
-      final scrollY = this.scrollY;
-      late final topOfLastPage = -CanvasGestureDetector.getTopOfPage(
-        pageIndex: coreInfo.pages.length - 1,
-        pages: coreInfo.pages,
-        screenWidth: MediaQuery.sizeOf(context).width,
-      );
-      final bottomOfLastPage = -CanvasGestureDetector.getTopOfPage(
-        pageIndex: coreInfo.pages.length,
-        pages: coreInfo.pages,
-        screenWidth: MediaQuery.sizeOf(context).width,
-      );
-
-      if (scrollY < bottomOfLastPage) {
-        _transformationController.value = Matrix4.translationValues(
-          0,
-          // Slight upwards offset so that the page is not flush with the top of the screen
-          topOfLastPage + 50,
-          0,
-        );
-      }
-    }
-  }
-
-  void undo([EditorHistoryItem? item]) {
-    if (item == null) {
-      if (!history.canUndo) return;
-
-      // if we disabled redo, re-enable it
-      if (!history.canRedo) {
-        // no redo is possible, so clear the redo stack
-        history.clearRedo();
-        // don't disable redoing anymore
-        history.canRedo = true;
-      }
-
-      item = history.undo();
-    }
-
-    setState(() {
-      switch (item!.type) {
-        case .draw:
-          for (final stroke in item.strokes) {
-            coreInfo.pages[stroke.pageIndex].strokes.remove(stroke);
-          }
-          for (final image in item.images) {
-            coreInfo.pages[image.pageIndex].images.remove(image);
-          }
-          removeExcessPages();
-
-        case .erase:
-          for (final stroke in item.strokes) {
-            createPage(stroke.pageIndex);
-            coreInfo.pages[stroke.pageIndex].insertStroke(stroke);
-          }
-          for (final image in item.images) {
-            createPage(image.pageIndex);
-            coreInfo.pages[image.pageIndex].images.add(image);
-            image.newImage = true;
-          }
-
-        case .deletePage:
-          // make sure we already have a (blank/otherwise) page at this index
-          createPage(item.pageIndex - 1);
-
-          // insert the page at the correct index
-          coreInfo.pages.insert(item.pageIndex, item.page!);
-
-          // fix the page indices of all pages after this one
-          for (int i = item.pageIndex + 1; i < coreInfo.pages.length; ++i) {
-            final page = coreInfo.pages[i];
-            page.updatePageIndex(i);
-          }
-
-        case .insertPage:
-          // remove the page at the given index
-          coreInfo.pages.removeAt(item.pageIndex);
-
-          // fix the page indices of all pages after this one
-          for (int i = item.pageIndex; i < coreInfo.pages.length; ++i) {
-            final page = coreInfo.pages[i];
-            page.updatePageIndex(i);
-          }
-
-        case .move:
-          for (final stroke in item.strokes) {
-            stroke.shift(Offset(-item.offset!.left, -item.offset!.top));
-          }
-          final select = Select.currentSelect;
-          if (select.doneSelecting) {
-            select.selectResult.path = select.selectResult.path.shift(
-              Offset(-item.offset!.left, -item.offset!.top),
-            );
-          }
-          for (final image in item.images) {
-            image.dstRect = .fromLTRB(
-              image.dstRect.left - item.offset!.left,
-              image.dstRect.top - item.offset!.top,
-              image.dstRect.right - item.offset!.right,
-              image.dstRect.bottom - item.offset!.bottom,
-            );
-          }
-
-        case .quillChange:
-          final quill = coreInfo.pages[item.pageIndex].quill;
-          quill.controller.undo();
-
-        case .quillUndoneChange:
-          final quill = coreInfo.pages[item.pageIndex].quill;
-          quill.controller.redo();
-
-        case .changeColor:
-          for (final stroke in item.strokes) {
-            stroke.color = item.colorChange![stroke]!.previous;
-          }
-
-        case .backgroundPattern:
-          coreInfo.backgroundPattern = item.backgroundPatternChange!.previous;
-      }
-
-      if (item.type != .move) {
-        Select.currentSelect.unselect();
-      }
-    });
-
-    autosaveAfterDelay();
-  }
-
-  void redo() {
-    if (!history.canRedo) return;
-    final item = history.redo();
-
-    switch (item.type) {
-      case .draw:
-        undo(item.copyWith(type: .erase));
-      case .erase:
-        undo(item.copyWith(type: .draw));
-      case .deletePage:
-        undo(item.copyWith(type: .insertPage));
-      case .insertPage:
-        undo(item.copyWith(type: .deletePage));
-      case .move:
-        undo(
-          item.copyWith(
-            offset: .fromLTRB(
-              -item.offset!.left,
-              -item.offset!.top,
-              -item.offset!.right,
-              -item.offset!.bottom,
-            ),
-          ),
-        );
-      case .quillChange:
-        undo(item.copyWith(type: .quillUndoneChange));
-      case .quillUndoneChange: // this will never happen
-        throw Exception('history should not contain quillUndoneChange items');
-      case .changeColor:
-        undo(
-          item.copyWith(
-            colorChange: item.colorChange!.map(
-              (key, value) => MapEntry(key, value.reverse()),
-            ),
-          ),
-        );
-      case .backgroundPattern:
-        undo(
-          item.copyWith(
-            backgroundPatternChange: item.backgroundPatternChange!.reverse(),
-          ),
-        );
-    }
-  }
-
-  int? onWhichPageIsFocalPoint(Offset focalPoint) {
-    for (int i = 0; i < coreInfo.pages.length; ++i) {
-      if (coreInfo.pages[i].renderBox == null) continue;
-      final pageBounds = Offset.zero & coreInfo.pages[i].size;
-      if (pageBounds.contains(
-        coreInfo.pages[i].renderBox!.globalToLocal(focalPoint),
-      ))
-        return i;
-    }
-    return null;
-  }
-
-  /// The position of the previous draw gesture event.
-  /// Used to move a selection.
-  Offset previousPosition = .zero;
-
-  /// The total offset of the current move gesture.
-  /// Used to record a move in the history.
-  Offset moveOffset = .zero;
-
-  var isHovering = true;
-  int? dragPageIndex;
-  PointerDeviceKind? currentPointerKind;
-  double? currentPressure;
-  bool isDrawGesture(ScaleStartDetails details) {
-    if (coreInfo.readOnly) return false;
-
-    CanvasImage.activeListener
-        .notifyListenersPlease(); // un-select active image
-
-    _lastSeenPointerCountTimer?.cancel();
-    if (lastSeenPointerCount >= 2) {
-      // was a zoom gesture, ignore
-      lastSeenPointerCount = lastSeenPointerCount;
-      return false;
-    } else if (details.pointerCount >= 2) {
-      // is a zoom gesture, remove accidental stroke
-      if (lastSeenPointerCount == 1 &&
-          stows.editorFingerDrawing.value &&
-          (currentTool is Pen || currentTool is Eraser)) {
-        final item = history.removeAccidentalStroke();
-        if (item != null) undo(item);
-      }
-      lastSeenPointerCount = details.pointerCount;
-      return false;
-    } else {
-      // is a stroke
-      lastSeenPointerCount = details.pointerCount;
-    }
-
-    dragPageIndex = onWhichPageIsFocalPoint(details.focalPoint);
-    if (dragPageIndex == null) return false;
-
-    if (stows.editorFingerDrawing.value ||
-        currentPointerKind == PointerDeviceKind.stylus ||
-        currentPointerKind == PointerDeviceKind.invertedStylus ||
-        currentPressure != null) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  void onDrawStart(ScaleStartDetails details) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _toolbarKey.currentState?.collapseAll();
-    });
-    final page = coreInfo.pages[dragPageIndex!];
-    final position = page.renderBox!.globalToLocal(details.focalPoint);
-    history.canRedo = false;
-
-    if (currentTool is Pen) {
-      // 检查起始点是否在画纸范围内
-      final pageSize = page.size;
-      if (position.dx < 0 ||
-          position.dx > pageSize.width ||
-          position.dy < 0 ||
-          position.dy > pageSize.height) {
-        return; // 起始点在画纸外，不创建笔画
-      }
-      (currentTool as Pen).onDragStart(
-        position,
-        page,
-        dragPageIndex!,
-        currentPressure,
-      );
-    } else if (currentTool is Eraser) {
-      for (final stroke in (currentTool as Eraser).checkForOverlappingStrokes(
-        position,
-        page.strokes,
-      )) {
-        page.strokes.remove(stroke);
-      }
-      removeExcessPages();
-    } else if (currentTool is Select) {
-      final select = currentTool as Select;
-      if (select.doneSelecting &&
-          select.selectResult.pageIndex == dragPageIndex! &&
-          select.selectResult.path.contains(position)) {
-        // drag selection in onDrawUpdate
-      } else {
-        select.onDragStart(position, dragPageIndex!);
-        history.canRedo = true; // selection doesn't affect history
-      }
-    } else if (currentTool is LaserPointer) {
-      (currentTool as LaserPointer).onDragStart(position, page, dragPageIndex!);
-    }
-
-    previousPosition = position;
-    moveOffset = .zero;
-
-    if (currentTool is! Select) {
-      Select.currentSelect.unselect();
-    }
-
-    // setState to let canvas know about currentStroke
-    setState(() {});
-  }
-
-  void onDrawUpdate(ScaleUpdateDetails details) {
-    final page = coreInfo.pages[dragPageIndex!];
-    final position = page.renderBox!.globalToLocal(details.focalPoint);
-    final offset = position - previousPosition;
-
-    if (currentTool is Pen) {
-      final pageSize = page.size;
-      // 检查点是否在画纸范围内
-      if (position.dx >= 0 &&
-          position.dx <= pageSize.width &&
-          position.dy >= 0 &&
-          position.dy <= pageSize.height) {
-        // 如果当前没有笔画，创建新笔画
-        if (Pen.currentStroke == null) {
-          (currentTool as Pen).onDragStart(
-            position,
-            page,
-            dragPageIndex!,
-            currentPressure,
-          );
-          setState(() {}); // 触发重建，让 Canvas 拿到新的 currentStroke
-        }
-        (currentTool as Pen).onDragUpdate(position, currentPressure);
-      } else {
-        // 点超出画纸范围，结束当前笔画
-        final stroke = (currentTool as Pen).onDragEnd();
-        if (stroke != null) {
-          page.insertStroke(stroke);
-          history.recordChange(
-            EditorHistoryItem(
-              type: .draw,
-              pageIndex: dragPageIndex!,
-              strokes: [stroke],
-              images: const [],
-            ),
-          );
-        }
-        autosaveAfterDelay();
-      }
-      page.redrawStrokes();
-    } else if (currentTool is Eraser) {
-      for (final stroke in (currentTool as Eraser).checkForOverlappingStrokes(
-        position,
-        page.strokes,
-      )) {
-        page.strokes.remove(stroke);
-      }
-      page.redrawStrokes();
-      removeExcessPages();
-    } else if (currentTool is Select) {
-      final select = currentTool as Select;
-      if (select.doneSelecting) {
-        for (final stroke in select.selectResult.strokes) {
-          stroke.shift(offset);
-        }
-        for (final image in select.selectResult.images) {
-          image.dstRect = image.dstRect.shift(offset);
-        }
-        select.selectResult.path = select.selectResult.path.shift(offset);
-      } else {
-        select.onDragUpdate(position);
-      }
-      page.redrawStrokes();
-    } else if (currentTool is LaserPointer) {
-      (currentTool as LaserPointer).onDragUpdate(position);
-      page.redrawStrokes();
-    }
-    previousPosition = position;
-    moveOffset += offset;
-  }
-
-  void onDrawEnd(ScaleEndDetails details) {
-    final page = coreInfo.pages[dragPageIndex!];
-    bool shouldSave = true;
-    setState(() {
-      if (currentTool is Pen) {
-        final newStroke = (currentTool as Pen).onDragEnd();
-        // 如果在onDrawUpdate中已经结束了笔画（点超出画纸范围），newStroke会是null
-        if (newStroke == null) return;
-        if (newStroke.isEmpty) return;
-
-        page.insertStroke(newStroke);
-        history.recordChange(
-          EditorHistoryItem(
-            type: .draw,
-            pageIndex: dragPageIndex!,
-            strokes: [newStroke],
-            images: [],
-          ),
-        );
-      } else if (currentTool is Eraser) {
-        final erased = (currentTool as Eraser).onDragEnd();
-        if (stylusButtonWasPressed) {
-          // restore previous tool
-          stylusButtonWasPressed = false;
-          currentTool = _lastNonEraserTool;
-        }
-        if (erased.isEmpty) return;
-        history.recordChange(
-          EditorHistoryItem(
-            type: .erase,
-            pageIndex: dragPageIndex!,
-            strokes: erased,
-            images: [],
-          ),
-        );
-      } else if (currentTool is Select) {
-        if (moveOffset == .zero) return;
-        final select = currentTool as Select;
-        if (select.doneSelecting) {
-          history.recordChange(
-            EditorHistoryItem(
-              type: .move,
-              pageIndex: dragPageIndex!,
-              strokes: select.selectResult.strokes,
-              images: select.selectResult.images,
-              offset: .fromLTRB(
-                moveOffset.dx,
-                moveOffset.dy,
-                moveOffset.dx,
-                moveOffset.dy,
-              ),
-            ),
-          );
-        } else {
-          shouldSave = false;
-          select.onDragEnd(page.strokes, page.images);
-
-          if (select.selectResult.isEmpty) {
-            Select.currentSelect.unselect();
-          }
-        }
-      } else if (currentTool is LaserPointer) {
-        shouldSave = false;
-        final newStroke = (currentTool as LaserPointer).onDragEnd(
-          page.redrawStrokes,
-          (Stroke stroke) {
-            page.laserStrokes.remove(stroke);
-          },
-        );
-        if (newStroke != null) page.laserStrokes.add(newStroke);
-      }
-    });
-
-    if (currentTool is Select && Select.currentSelect.doneSelecting &&
-        !Select.currentSelect.selectResult.isEmpty) {
-      _toolbarKey.currentState?.showSelectPanel();
-    }
-
-    if (shouldSave) autosaveAfterDelay();
-  }
-
-  void _onTransformChanged() {
-    _toolbarKey.currentState?.collapseAll();
-  }
-
-  void onInteractionEnd(ScaleEndDetails details) {
-    // reset after 1ms to keep track of the same gesture only
-    _lastSeenPointerCountTimer?.cancel();
-    _lastSeenPointerCountTimer = Timer(const Duration(milliseconds: 10), () {
-      lastSeenPointerCount = 0;
-    });
-  }
-
-  void updatePointerData(PointerDeviceKind kind, double? pressure) {
-    currentPointerKind = kind;
-    currentPressure = pressure;
-  }
-
-  void onHovering() {
-    isHovering = true;
-  }
-
-  void onHoveringEnd() {
-    isHovering = false;
-  }
-
-  void onStylusButtonChanged(bool buttonIsPressed) {
-    stylusButtonWasPressed |= buttonIsPressed;
-
-    if (!isHovering) return;
-    if (buttonIsPressed) {
-      // button pressed while hovering, switch to Eraser
-      if (currentTool is! Eraser) {
-        currentTool = Eraser();
-      }
-    } else {
-      // button was released while hovering, switch back to non-Eraser
-      if (currentTool is Eraser) {
-        currentTool = _lastNonEraserTool;
-      }
-    }
-
-    if (mounted) setState(() {});
-  }
-
-  void onMoveImage(EditorImage image, Rect offset) {
-    history.recordChange(
-      EditorHistoryItem(
-        type: .move,
-        pageIndex: image.pageIndex,
-        strokes: [],
-        images: [image],
-        offset: offset,
-      ),
-    );
-    // setState to update undo button
-    setState(() {});
-    autosaveAfterDelay();
-  }
-
-  void onDeleteImage(EditorImage image) {
-    history.recordChange(
-      EditorHistoryItem(
-        type: .erase,
-        pageIndex: image.pageIndex,
-        strokes: [],
-        images: [image],
-      ),
-    );
-    setState(() {
-      coreInfo.pages[image.pageIndex].images.remove(image);
-    });
-    autosaveAfterDelay();
-  }
-
-  void autosaveAfterDelay() {
-    if (history.isCurrentStateSaved) return cancelAutosaveAndMarkSaved();
-
-    late final void Function() callback;
-
-    void startTimer() {
-      _delayedSaveTimer?.cancel();
-      if (stows.autosaveDelay.value < 0) return;
-      _delayedSaveTimer = Timer(
-        Duration(milliseconds: stows.autosaveDelay.value),
-        callback,
-      );
-    }
-
-    callback = () {
-      if (Pen.currentStroke != null) {
-        // don't save yet if the pen is currently drawing
-        startTimer();
-        return;
-      }
-      saveToFile();
-    };
-
-    savingState.value = .waitingToSave;
-    startTimer();
-  }
-
-  void cancelAutosaveAndMarkSaved() {
-    _delayedSaveTimer?.cancel();
-    savingState.value = .saved;
-    history.markLastChangeAsSaved();
-  }
-
-  Future<void> saveToFile({bool force = false}) async {
-    if (coreInfo.readOnly) return;
-
-    switch (savingState.value) {
-      case .saved:
-        if (!force) return;
-        savingState.value = .waitingToSave;
-        break;
-      case .saving:
-        log.warning('saveToFile() called while already saving');
-        return;
-      case .waitingToSave:
-        break;
-    }
-    _delayedSaveTimer?.cancel();
-    savingState.value = .saving;
-    if (!force && history.isCurrentStateSaved) return cancelAutosaveAndMarkSaved();
-
-    await _renameFileNow();
-
-    final filePath = coreInfo.filePath + Editor.extension;
-    final Uint8List bson;
-    final OrderedAssetCache assets;
-    coreInfo.assetCache.allowRemovingAssets = false;
-    try {
-      (bson, assets) = coreInfo.saveToBinary(
-        currentPageIndex: currentPageIndex,
-      );
-    } finally {
-      coreInfo.assetCache.allowRemovingAssets = true;
-    }
-    try {
-      await Future.wait([
-        FileManager.writeFile(filePath, bson, awaitWrite: true),
-        for (int i = 0; i < assets.length; ++i)
-          assets
-              .getBytes(i)
-              .then(
-                (bytes) => FileManager.writeFile(
-                  '$filePath.$i',
-                  bytes,
-                  awaitWrite: true,
-                ),
-              ),
-        FileManager.removeUnusedAssets(filePath, numAssets: assets.length),
-      ]);
-      savingState.value = .saved;
-      history.markLastChangeAsSaved();
-    } catch (e, st) {
-      log.severe('Failed to save file: $e', e, st);
-      savingState.value = .waitingToSave;
-      if (kDebugMode) rethrow;
-      return;
-    }
-
-    if (!mounted) return;
-    final page = coreInfo.pages.first;
-    final previewHeight = page.previewHeight(lineHeight: coreInfo.lineHeight);
-    final thumbnailSize = Size(720, 720 * previewHeight / page.size.width);
-    final thumbnail = await EditorExporter.screenshotPage(
-      coreInfo: coreInfo,
-      pageIndex: 0,
-      rasterizeAllStrokes: true,
-      targetSize: thumbnailSize,
-      cropHeight: previewHeight,
-      pixelRatio: 1,
-    );
-    final thumbnailPng = await thumbnail.toByteData(format: .png);
-    thumbnail.dispose();
-    await FileManager.writeFile(
-      // Note that this ends with .sbn2.p
-      '$filePath.p',
-      thumbnailPng!.buffer.asUint8List(),
-      awaitWrite: true,
-    );
-  }
-
-  late final _filenameFormKey = GlobalKey<FormState>();
-  late final filenameTextEditingController = TextEditingController();
-  Timer? _renameTimer;
-  void renameFile([String? _]) {
-    _renameTimer?.cancel();
-    _renameTimer = Timer(const Duration(seconds: 5), _renameFileNow);
-  }
-
-  Future<void> _renameFileNow() async {
-    final newName = filenameTextEditingController.text.trim();
-    if (newName == coreInfo.fileName) return;
-
-    if (_filenameFormKey.currentState?.validate() ??
-        _validateFilenameTextField(newName) == null) {
-      coreInfo.filePath = await FileManager.moveFile(
-        coreInfo.filePath + Editor.extension,
-        newName.trim() + Editor.extension,
-      );
-      coreInfo.filePath = coreInfo.filePath.substring(
-        0,
-        coreInfo.filePath.lastIndexOf(Editor.extension),
-      );
-      needsNaming = false;
-    }
-
-    final actualName = coreInfo.fileName;
-    if (actualName != newName) {
-      // update text field if renamed differently
-      filenameTextEditingController.value = filenameTextEditingController.value
-          .copyWith(
-            text: actualName,
-            selection: TextSelection.fromPosition(
-              TextPosition(offset: actualName.length),
-            ),
-            composing: TextRange.empty,
-          );
-    }
-  }
-
-  String? _validateFilenameTextField(String? newName) {
-    if (newName == null) return null;
-    return FileManager.validateFilename(newName);
-  }
+  // --- Color ---
 
   void updateColorBar(Color color) {
     final newColorString = color.toARGB32().toString();
 
-    // 预设颜色不进入最近历史
     if (ColorBar.colorPresets.any((c) => c.color.toARGB32() == color.toARGB32())) {
       return;
     }
 
-    // migrate from old pref format
     if (stows.recentColorsChronological.value.length !=
         stows.recentColorsPositioned.value.length) {
       stows.recentColorsChronological.value = List.of(
@@ -996,15 +294,12 @@ class EditorState extends State<Editor> {
       );
     }
 
-    // 如果已经在列表中，先移除
     stows.recentColorsPositioned.value.remove(newColorString);
     stows.recentColorsChronological.value.remove(newColorString);
 
-    // 插到最前面
     stows.recentColorsPositioned.value.insert(0, newColorString);
     stows.recentColorsChronological.value.add(newColorString);
 
-    // 超过5个，踢掉最后一个
     if (stows.recentColorsPositioned.value.length > 5) {
       stows.recentColorsPositioned.value.removeLast();
       stows.recentColorsChronological.value.removeAt(0);
@@ -1014,296 +309,61 @@ class EditorState extends State<Editor> {
     stows.recentColorsPositioned.notifyListeners();
   }
 
-  /// Prompts the user to pick photos from their device.
-  /// Returns the number of photos picked.
-  ///
-  /// If [photoInfos] is provided, it will be used instead of the file picker.
-  Future<int> _pickPhotos([List<_PhotoInfo>? photoInfos]) async {
-    if (coreInfo.readOnly) return 0;
+  // --- Page index ---
 
-    final currentPageIndex = this.currentPageIndex;
+  @visibleForTesting
+  static int getPageIndexFromScrollPosition({
+    required double scrollY,
+    required double screenWidth,
+    required List<EditorPage> pages,
+  }) {
+    for (int pageIndex = 0; pageIndex < pages.length; pageIndex++) {
+      final bottomOfPage = CanvasGestureDetector.getTopOfPage(
+        pageIndex: pageIndex + 1,
+        pages: pages,
+        screenWidth: screenWidth,
+      );
 
-    photoInfos ??= await _pickPhotosWithFilePicker();
-    if (photoInfos.isEmpty) return 0;
+      if (scrollY < bottomOfPage) {
+        return pageIndex;
+      }
+    }
+    return pages.length - 1;
+  }
 
-    // use the Select tool so that the user can move the new image
-    currentTool = Select.currentSelect;
+  // --- Version dialog ---
 
-    // Calculate the visible Y center on the current page
-    final screenWidth = MediaQuery.sizeOf(context).width;
-    final pageTop = CanvasGestureDetector.getTopOfPage(
-      pageIndex: currentPageIndex,
-      pages: coreInfo.pages,
-      screenWidth: screenWidth,
-    );
-    final pageHeight = coreInfo.pages[currentPageIndex].size.height;
-    final visibleTop = (-scrollY - pageTop).clamp(0.0, pageHeight);
-    final screenHeight = MediaQuery.sizeOf(context).height;
-    final visibleBottom = (-scrollY + screenHeight - pageTop).clamp(0.0, pageHeight);
-    final visibleCenterY = ((visibleTop + visibleBottom) / 2).clamp(0.0, pageHeight);
-
-    final images = [
-      for (final _PhotoInfo photoInfo in photoInfos)
-        if (photoInfo.extension == '.svg')
-          SvgEditorImage(
-            id: coreInfo.nextImageId++,
-            svgString: utf8.decode(photoInfo.bytes),
-            svgFile: null,
-            pageIndex: currentPageIndex,
-            pageSize: coreInfo.pages[currentPageIndex].size,
-            onMoveImage: onMoveImage,
-            onDeleteImage: onDeleteImage,
-            onMiscChange: autosaveAfterDelay,
-            onLoad: () => setState(() {}),
-            assetCache: coreInfo.assetCache,
-            initialY: visibleCenterY,
-          )
-        else
-          PngEditorImage(
-            id: coreInfo.nextImageId++,
-            extension: photoInfo.extension,
-            imageProvider: MemoryImage(photoInfo.bytes),
-            pageIndex: currentPageIndex,
-            pageSize: coreInfo.pages[currentPageIndex].size,
-            onMoveImage: onMoveImage,
-            onDeleteImage: onDeleteImage,
-            onMiscChange: autosaveAfterDelay,
-            onLoad: () => setState(() {}),
-            assetCache: coreInfo.assetCache,
-            initialY: visibleCenterY,
+  Future<void> showVersionTooNewDialog() async {
+    final disableReadOnly =
+        await showDialog(
+          context: context,
+          builder: (context) => AdaptiveAlertDialog(
+            title: Text(t.editor.versionTooNew.title),
+            content: Text(t.editor.versionTooNew.subtitle),
+            actions: [
+              CupertinoDialogAction(
+                child: Text(t.common.cancel),
+                onPressed: () => Navigator.pop(context, false),
+              ),
+              CupertinoDialogAction(
+                child: Text(t.editor.versionTooNew.allowEditing),
+                onPressed: () => Navigator.pop(context, true),
+              ),
+            ],
           ),
-    ];
+        ) ??
+        false;
 
-    history.recordChange(
-      EditorHistoryItem(
-        type: .draw,
-        pageIndex: currentPageIndex,
-        strokes: [],
-        images: images,
-      ),
-    );
-    createPage(currentPageIndex);
-    coreInfo.pages[currentPageIndex].images.addAll(images);
-    autosaveAfterDelay();
+    if (!mounted) return;
+    if (!disableReadOnly) return;
 
-    return images.length;
-  }
-
-  Future<List<_PhotoInfo>> _pickPhotosWithFilePicker() async {
-    final FilePickerResult? result = await FilePicker.pickFiles(
-      type: FileType.custom,
-      // Taken from
-      // https://github.com/brendan-duncan/image/blob/main/doc/formats.md
-      // (plus .svg)
-      allowedExtensions: [
-        'jpg',
-        'jpeg',
-        'png',
-        'gif',
-        'tiff',
-        'bmp',
-        'tga',
-        'ico',
-        'pvrtc',
-        'svg',
-        'webp',
-        'psd',
-        'exr',
-      ],
-      allowMultiple: true,
-      withData: true,
-    );
-    if (result == null) return const [];
-
-    return [
-      for (final PlatformFile file in result.files)
-        if (file.bytes != null && file.extension != null)
-          (bytes: file.bytes!, extension: '.${file.extension}'),
-    ];
-  }
-
-  /// Prompts the user to pick a PDF to import.
-  /// Returns whether a PDF was picked.
-  Future<bool> importPdf() async {
-    if (coreInfo.readOnly) return false;
-    if (!Editor.canRasterPdf) return false;
-
-    final FilePickerResult? result = await FilePicker.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['pdf'],
-      allowMultiple: false,
-      withData: false,
-    );
-    if (result == null) return false;
-
-    final PlatformFile file = result.files.single;
-    return importPdfFromFilePath(file.path!);
-  }
-
-  Future<bool> importPdfFromFilePath(String path) async {
-    final pdfDocument = await coreInfo.assetCache.pdfDocumentCache.load(path);
-
-    final emptyPage = coreInfo.pages.removeLast();
-    assert(emptyPage.isEmpty);
-
-    for (final pdfPage in pdfDocument.pages) {
-      assert(pdfPage.pageNumber >= 1, 'pdfrx page numbers start at 1');
-
-      // resize to [defaultWidth] to keep pen sizes consistent
-      final pageSize = Size(
-        EditorPage.defaultWidth,
-        EditorPage.defaultWidth * pdfPage.height / pdfPage.width,
-      );
-
-      final page = EditorPage(
-        size: pageSize,
-        backgroundImage: PdfEditorImage(
-          id: coreInfo.nextImageId++,
-          pdfBytes: null,
-          pdfFile: File(path),
-          pdfPage: pdfPage.pageNumber - 1,
-          pageIndex: coreInfo.pages.length,
-          pageSize: pageSize,
-          naturalSize: pdfPage.size,
-          onMoveImage: onMoveImage,
-          onDeleteImage: onDeleteImage,
-          onMiscChange: autosaveAfterDelay,
-          onLoad: () => setState(() {}),
-          assetCache: coreInfo.assetCache,
-        ),
-      );
-      coreInfo.pages.add(page);
-      // TODO(adil192): Group multiple pages into one atomic change
-      history.recordChange(
-        EditorHistoryItem(
-          type: .insertPage,
-          pageIndex: coreInfo.pages.length - 1,
-          strokes: const [],
-          images: const [],
-          page: page,
-        ),
-      );
-    }
-
-    coreInfo.pages.add(emptyPage);
-    if (mounted) setState(() {});
-
-    autosaveAfterDelay();
-
-    return true;
-  }
-
-  Future paste() async {
-    /// Maps image formats to their file extension.
-    const Map<SimpleFileFormat, String> formats = {
-      Formats.jpeg: '.jpeg',
-      Formats.png: '.png',
-      Formats.gif: '.gif',
-      Formats.tiff: '.tiff',
-      Formats.bmp: '.bmp',
-      Formats.ico: '.ico',
-      Formats.svg: '.svg',
-      Formats.webp: '.webp',
-    };
-
-    final reader = await SystemClipboard.instance?.read();
-    if (reader == null) return;
-
-    final List<_PhotoInfo> photoInfos = [];
-    final List<ReadProgress> progresses = [];
-
-    for (final format in formats.keys) {
-      if (!reader.canProvide(format)) continue;
-      final progress = reader.getFile(format, (file) async {
-        final stream = file.getStream();
-        final List<int> bytes = [];
-        await for (final chunk in stream) {
-          bytes.addAll(chunk);
-        }
-        if (bytes.isEmpty) {
-          log.warning('Pasted empty file: $file (${formats[format]})');
-          return;
-        }
-
-        String extension;
-        if (file.fileName != null) {
-          extension = file.fileName!.substring(file.fileName!.lastIndexOf('.'));
-        } else {
-          extension = formats[format]!;
-        }
-
-        photoInfos.add((
-          bytes: Uint8List.fromList(bytes),
-          extension: extension,
-        ));
-      });
-      if (progress != null) progresses.add(progress);
-    }
-
-    while (progresses.isNotEmpty) {
-      progresses.removeWhere((progress) => progress.fraction.value == 1);
-      await Future.delayed(const Duration(milliseconds: 50));
-    }
-
-    await _pickPhotos(photoInfos);
-  }
-
-  Future exportAsPdf(BuildContext context) async {
-    final pdf = await EditorExporter.generatePdf(coreInfo, context);
-    final bytes = await pdf.save();
-    if (!context.mounted) return;
-    await FileManager.exportFile(
-      '${coreInfo.fileName}.pdf',
-      bytes,
-      context: context,
-    );
-  }
-
-  /// Exports the current note as an SBA (foledge Archive) file.
-  Future exportAsSba(BuildContext context) async {
-    final sba = await coreInfo.saveToSba(currentPageIndex: currentPageIndex);
-    if (!context.mounted) return;
-    await FileManager.exportFile(
-      '${coreInfo.fileName}.sba',
-      sba,
-      context: context,
-    );
-  }
-
-  /// Exports the current page as a PNG image file.
-  ///
-  /// This captures the canvas natively via [EditorExporter.screenshotPage],
-  /// which guarantees the correct background color and omits UI elements
-  /// like selection bounds or the text cursor. It computes a dynamic [pixelRatio]
-  /// to ensure high quality while averting Out-Of-Memory exceptions on large canvases.
-  Future exportAsPng(BuildContext context) async {
-    final page = coreInfo.pages[currentPageIndex];
-
-    const maxRasterizableSize = 3000.0;
-    var targetPixelRatio = maxRasterizableSize / page.size.longestSide;
-    if (targetPixelRatio > 1) targetPixelRatio = 1;
-
-    try {
-      final image = await EditorExporter.screenshotPage(
-        coreInfo: coreInfo,
-        pageIndex: currentPageIndex,
-        rasterizeAllStrokes: true,
-        pixelRatio: targetPixelRatio,
-      );
-      final pngBytes = await image.toByteData(format: .png);
-      image.dispose();
-
-      if (!context.mounted) return;
-      await FileManager.exportFile(
-        '${coreInfo.fileName}_page_${currentPageIndex + 1}.png',
-        pngBytes!.buffer.asUint8List(),
-        isImage: true,
-        context: context,
-      );
-    } catch (e, st) {
-      log.severe('Failed to export PNG', e, st);
+    if (coreInfo.readOnlyReason == ReadOnlyReason.versionTooNew) {
+      coreInfo.readOnlyReason = null;
+      if (mounted) setState(() {});
     }
   }
+
+  // --- Build ---
 
   @override
   Widget build(BuildContext context) {
@@ -1344,7 +404,7 @@ class EditorState extends State<Editor> {
 
     final readonlyBanner = ReadOnlyBanner(
       coreInfo.readOnlyReason,
-      action: coreInfo.readOnlyReason == .versionTooNew
+      action: coreInfo.readOnlyReason == ReadOnlyReason.versionTooNew
           ? showVersionTooNewDialog
           : null,
     );
@@ -1391,13 +451,12 @@ class EditorState extends State<Editor> {
                 final newImage = image.copy()
                   ..id = coreInfo.nextImageId++
                   ..dstRect.shift(duplicationFeedbackOffset);
-                // Clamp within page bounds so the red border frame stays inside the page
                 const pad = 25.0;
                 final r = newImage.dstRect;
                 final pageSize = coreInfo.pages[image.pageIndex].size;
                 newImage.dstRect = Rect.fromLTWH(
-                  r.left.clamp(pad, max(pad, pageSize.width - r.width - pad)),
-                  r.top.clamp(pad, max(pad, pageSize.height - r.height - pad)),
+                  r.left.clamp(pad, max(pad, pageSize.width - r.width - pad)).toDouble(),
+                  r.top.clamp(pad, max(pad, pageSize.height - r.height - pad)).toDouble(),
                   r.width,
                   r.height,
                 );
@@ -1415,7 +474,7 @@ class EditorState extends State<Editor> {
 
               history.recordChange(
                 EditorHistoryItem(
-                  type: .draw,
+                  type: EditorHistoryItemType.draw,
                   pageIndex: select.selectResult.pageIndex,
                   strokes: duplicatedStrokes,
                   images: duplicatedImages,
@@ -1426,9 +485,7 @@ class EditorState extends State<Editor> {
           },
           deleteSelection: () {
             final select = currentTool as Select;
-            if (!select.doneSelecting) {
-              return;
-            }
+            if (!select.doneSelecting) return;
 
             setState(() {
               final page = coreInfo.pages[select.selectResult.pageIndex];
@@ -1446,7 +503,7 @@ class EditorState extends State<Editor> {
 
               history.recordChange(
                 EditorHistoryItem(
-                  type: .erase,
+                  type: EditorHistoryItemType.erase,
                   pageIndex: strokes.first.pageIndex,
                   strokes: strokes,
                   images: images,
@@ -1467,13 +524,12 @@ class EditorState extends State<Editor> {
                 ..id = coreInfo.nextImageId++
                 ..dstRect = image.dstRect.shift(duplicationFeedbackOffset);
 
-              // Clamp within page bounds so the red border frame stays inside the page
               const pad = 25.0;
               final r = duplicatedImage.dstRect;
               final pageSize = page.size;
               duplicatedImage.dstRect = Rect.fromLTWH(
-                r.left.clamp(pad, max(pad, pageSize.width - r.width - pad)),
-                r.top.clamp(pad, max(pad, pageSize.height - r.height - pad)),
+                r.left.clamp(pad, max(pad, pageSize.width - r.width - pad)).toDouble(),
+                r.top.clamp(pad, max(pad, pageSize.height - r.height - pad)).toDouble(),
                 r.width,
                 r.height,
               );
@@ -1482,7 +538,7 @@ class EditorState extends State<Editor> {
 
               history.recordChange(
                 EditorHistoryItem(
-                  type: .draw,
+                  type: EditorHistoryItemType.draw,
                   pageIndex: image.pageIndex,
                   strokes: const [],
                   images: [duplicatedImage],
@@ -1509,7 +565,6 @@ class EditorState extends State<Editor> {
               } else if (currentTool is Pen) {
                 (currentTool as Pen).color = color;
               } else if (currentTool is Select) {
-                // Changes color of selected strokes
                 final select = currentTool as Select;
                 if (select.doneSelecting) {
                   final strokes = select.selectResult.strokes;
@@ -1525,7 +580,7 @@ class EditorState extends State<Editor> {
 
                   history.recordChange(
                     EditorHistoryItem(
-                      type: .changeColor,
+                      type: EditorHistoryItemType.changeColor,
                       pageIndex: strokes.first.pageIndex,
                       strokes: strokes,
                       colorChange: colorChange,
@@ -1541,9 +596,9 @@ class EditorState extends State<Editor> {
           isUndoPossible: history.canUndo,
           redo: redo,
           isRedoPossible: history.canRedo,
-          pickPhoto: _pickPhotos,
+          pickPhoto: pickPhotos,
           importPdf: importPdf,
-          canRasterPdf: Editor.canRasterPdf,
+          canRasterPdf: EditorConstants.canRasterPdf,
           paste: paste,
           exportAsSba: exportAsSba,
           exportAsPdf: exportAsPdf,
@@ -1564,19 +619,18 @@ class EditorState extends State<Editor> {
     return ValueListenableBuilder(
       valueListenable: savingState,
       builder: (context, savingState, child) {
-        // don't allow user to go back until saving is done
         return PopScope(
-          canPop: savingState == .saved,
+          canPop: savingState == SavingState.saved,
           onPopInvokedWithResult: (didPop, _) {
             switch (savingState) {
-              case .waitingToSave:
+              case SavingState.waitingToSave:
                 assert(!didPop);
-                saveToFile(); // trigger save now
+                saveToFile();
                 _waitForSaveAndPop();
-              case .saving:
+              case SavingState.saving:
                 assert(!didPop);
                 _waitForSaveAndPop();
-              case .saved:
+              case SavingState.saved:
                 break;
             }
           },
@@ -1591,7 +645,7 @@ class EditorState extends State<Editor> {
                 title: widget.customTitle != null
                     ? Text(widget.customTitle!)
                     : Form(
-                        key: _filenameFormKey,
+                        key: filenameFormKey,
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         child: TextFormField(
                           decoration: const InputDecoration(
@@ -1600,7 +654,10 @@ class EditorState extends State<Editor> {
                           controller: filenameTextEditingController,
                           onChanged: renameFile,
                           autofocus: needsNaming,
-                          validator: _validateFilenameTextField,
+                          validator: (v) {
+                            if (v == null) return null;
+                            return FileManager.validateFilename(v);
+                          },
                         ),
                       ),
                 leading: SaveIndicator(
@@ -1608,7 +665,6 @@ class EditorState extends State<Editor> {
                   triggerSave: saveToFile,
                 ),
                 actions: [
-                  // Zoom lock
                   Builder(
                     builder: (context) {
                       final gestureDetector =
@@ -1630,7 +686,6 @@ class EditorState extends State<Editor> {
                       );
                     },
                   ),
-                  // Single finger pan lock
                   Builder(
                     builder: (context) {
                       final gestureDetector =
@@ -1716,7 +771,7 @@ class EditorState extends State<Editor> {
 
   void _waitForSaveAndPop() {
     void listener() {
-      if (savingState.value == .saved) {
+      if (savingState.value == SavingState.saved) {
         savingState.removeListener(listener);
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (mounted) {
@@ -1741,7 +796,7 @@ class EditorState extends State<Editor> {
         stows.lastBackgroundPattern.value = pattern;
         history.recordChange(
           EditorHistoryItem(
-            type: .backgroundPattern,
+            type: EditorHistoryItemType.backgroundPattern,
             pageIndex: currentPageIndex,
             backgroundPatternChange: Change(
               previous: previous,
@@ -1801,7 +856,7 @@ class EditorState extends State<Editor> {
         coreInfo.pages.insert(pageIndex + 1, newPage);
         history.recordChange(
           EditorHistoryItem(
-            type: .insertPage,
+            type: EditorHistoryItemType.insertPage,
             pageIndex: pageIndex,
             strokes: const [],
             images: const [],
@@ -1819,7 +874,7 @@ class EditorState extends State<Editor> {
           }
           history.recordChange(
             EditorHistoryItem(
-              type: .deletePage,
+              type: EditorHistoryItemType.deletePage,
               pageIndex: pageIndex,
               strokes: const [],
               images: const [],
@@ -1828,7 +883,6 @@ class EditorState extends State<Editor> {
           );
           autosaveAfterDelay();
         });
-        // 下一页往上顶（与 Saber 一致的逻辑）
         final targetIndex = pageIndex < coreInfo.pages.length
             ? pageIndex
             : coreInfo.pages.length - 1;
@@ -1838,7 +892,6 @@ class EditorState extends State<Editor> {
           screenWidth: MediaQuery.sizeOf(context).width,
           transformationController: _transformationController,
         );
-        // 删除的是最后一页 → 再往下滑到底部
         if (pageIndex >= coreInfo.pages.length) {
           final state = _canvasGestureDetectorKey.currentState;
           if (state == null) return;
@@ -1865,7 +918,7 @@ class EditorState extends State<Editor> {
         if (coreInfo.readOnly) return;
         autosaveAfterDelay();
       }),
-      pickPhotos: _pickPhotos,
+      pickPhotos: pickPhotos,
       importPdf: importPdf,
       canRasterPdf: Editor.canRasterPdf,
     );
@@ -1889,16 +942,14 @@ class EditorState extends State<Editor> {
         if (selectResult.pageIndex != pageIndex) return null;
         return selectResult;
       }(),
-      setAsBackground: (EditorImage image) {
+      setAsBackground: (image) {
         if (page.backgroundImage != null) {
-          // restore previous background image as normal image
           page.images.add(page.backgroundImage!);
         }
         page.images.remove(image);
         page.backgroundImage = image;
 
-        CanvasImage.activeListener
-            .notifyListenersPlease(); // un-select active image
+        CanvasImage.activeListener.notifyListenersPlease();
 
         autosaveAfterDelay();
         setState(() {});
@@ -1908,144 +959,19 @@ class EditorState extends State<Editor> {
     );
   }
 
-  void insertPageAfter(int pageIndex) => setState(() {
-    if (coreInfo.readOnly) return;
-    final page = EditorPage();
-    coreInfo.pages.insert(pageIndex + 1, page);
-    history.recordChange(
-      EditorHistoryItem(
-        type: .insertPage,
-        pageIndex: pageIndex + 1,
-        strokes: const [],
-        images: const [],
-        page: page,
-      ),
-    );
-    autosaveAfterDelay();
-  });
-
-  void clearPage(int pageIndex) {
-    if (coreInfo.readOnly) return;
-    final page = coreInfo.pages[pageIndex];
-    setState(() {
-      final removedStrokes = page.strokes.toList();
-      final removedImages = page.images.toList();
-      page.strokes.clear();
-      page.images.clear();
-      history.recordChange(
-        EditorHistoryItem(
-          type: .erase,
-          pageIndex: pageIndex,
-          strokes: removedStrokes,
-          images: removedImages,
-        ),
-      );
-      autosaveAfterDelay();
-    });
-  }
-
-  void clearAllPages() {
-    if (coreInfo.readOnly) return;
-    setState(() {
-      final removedStrokes = <Stroke>[];
-      final removedImages = <EditorImage>[];
-      for (final page in coreInfo.pages) {
-        removedStrokes.addAll(page.strokes);
-        removedImages.addAll(page.images);
-        page.strokes.clear();
-        page.images.clear();
-      }
-      removeExcessPages();
-      history.recordChange(
-        EditorHistoryItem(
-          type: .erase,
-          pageIndex: 0,
-          strokes: removedStrokes,
-          images: removedImages,
-        ),
-      );
-    });
-    autosaveAfterDelay();
-  }
-
-  Future<void> showVersionTooNewDialog() async {
-    final disableReadOnly =
-        await showDialog(
-          context: context,
-          builder: (context) => AdaptiveAlertDialog(
-            title: Text(t.editor.versionTooNew.title),
-            content: Text(t.editor.versionTooNew.subtitle),
-            actions: [
-              CupertinoDialogAction(
-                child: Text(t.common.cancel),
-                onPressed: () => Navigator.pop(context, false),
-              ),
-              CupertinoDialogAction(
-                child: Text(t.editor.versionTooNew.allowEditing),
-                onPressed: () => Navigator.pop(context, true),
-              ),
-            ],
-          ),
-        ) ??
-        false;
-
-    if (!mounted) return;
-    if (!disableReadOnly) return;
-
-    if (coreInfo.readOnlyReason == .versionTooNew) {
-      coreInfo.readOnlyReason = null;
-      if (mounted) setState(() {});
-    }
-  }
-
-  late int _lastCurrentPageIndex = coreInfo.initialPageIndex ?? 0;
-
-  /// The index of the page that is currently centered on screen.
-  int get currentPageIndex {
-    if (!mounted) return _lastCurrentPageIndex;
-
-    final screenWidth = MediaQuery.sizeOf(context).width;
-
-    return _lastCurrentPageIndex = getPageIndexFromScrollPosition(
-      scrollY: -scrollY,
-      screenWidth: screenWidth,
-      pages: coreInfo.pages,
-    );
-  }
-
-  @visibleForTesting
-  static int getPageIndexFromScrollPosition({
-    required double scrollY,
-    required double screenWidth,
-    required List<EditorPage> pages,
-  }) {
-    for (int pageIndex = 0; pageIndex < pages.length; pageIndex++) {
-      final bottomOfPage = CanvasGestureDetector.getTopOfPage(
-        pageIndex: pageIndex + 1, // top of next page
-        pages: pages,
-        screenWidth: screenWidth,
-      );
-
-      if (scrollY < bottomOfPage) {
-        return pageIndex;
-      }
-    }
-    // below the last page
-    return pages.length - 1;
-  }
+  // --- Dispose ---
 
   @override
   void dispose() {
     unawaited(_cleanUpAsync());
 
-    _delayedSaveTimer?.cancel();
-    _lastSeenPointerCountTimer?.cancel();
+    delayedSaveTimer?.cancel();
+    lastSeenPointerCountTimer?.cancel();
     _transformationController.removeListener(_onTransformChanged);
     CanvasImage.activeImageNotifier.removeListener(_onActiveImageChanged);
 
     _removeKeybindings();
 
-    // manually save pen properties since the listeners don't fire if a property is changed
     stows.lastFountainPenOptions.notifyListeners();
     stows.lastBallpointPenOptions.notifyListeners();
     stows.lastHighlighterOptions.notifyListeners();
@@ -2056,9 +982,9 @@ class EditorState extends State<Editor> {
 
   Future<void> _cleanUpAsync() async {
     try {
-      if (_renameTimer?.isActive ?? false) {
-        _renameTimer!.cancel();
-        await _renameFileNow();
+      if (renameTimer?.isActive ?? false) {
+        renameTimer!.cancel();
+        await renameFileNow();
         filenameTextEditingController.dispose();
       }
       await saveToFile();
@@ -2096,22 +1022,15 @@ class _MoreMenuOverlayState extends State<_MoreMenuOverlay> {
     final colorScheme = Theme.of(context).colorScheme;
     final screenSize = MediaQuery.of(context).size;
 
-    // 弹窗宽度由内容决定，但有最大限制
     final maxWidth = 350.0;
 
-    // 弹窗顶部位置（按钮下方）
     double top = widget.buttonRect.bottom + 8;
-
-    // 弹窗右边缘对齐按钮右边缘
     double left = widget.buttonRect.right - maxWidth;
 
-    // 边界检查：确保不超出屏幕左右
     if (left < 16) left = 16;
     if (left + maxWidth > screenSize.width - 16) {
       left = screenSize.width - maxWidth - 16;
     }
-
-    // 边界检查：如果超出底部，显示在按钮上方
     if (top + 400 > screenSize.height - 16) {
       top = widget.buttonRect.top - 400 - 8;
     }

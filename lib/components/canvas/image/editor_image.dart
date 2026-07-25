@@ -12,7 +12,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
 import 'package:pdfrx/pdfrx.dart';
-import 'package:foledge/components/canvas/_asset_cache.dart';
+import 'package:foledge/components/canvas/asset_cache.dart';
 import 'package:foledge/components/canvas/canvas_image.dart';
 import 'package:foledge/data/file_manager/file_manager.dart';
 import 'package:foledge/data/prefs.dart';

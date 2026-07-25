@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
 import 'package:foledge/components/toolbar/size_picker.dart';
-import 'package:foledge/data/tools/_tool.dart';
+import 'package:foledge/data/tools/tool.dart';
 import 'package:foledge/data/tools/highlighter.dart';
 import 'package:foledge/data/tools/pen.dart';
 import 'package:foledge/data/tools/pencil.dart';

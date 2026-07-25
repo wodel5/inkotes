@@ -8,7 +8,7 @@ import 'package:foledge/components/common/dock_button.dart';
 import 'package:foledge/components/common/fallback_thumbnail.dart';
 import 'package:foledge/components/home/preview_card.dart';
 import 'package:foledge/components/theming/adaptive_alert_dialog.dart';
-import 'package:foledge/data/extensions/date_extensions.dart';
+import 'package:foledge/data/extensions/collection_extensions.dart';
 import 'package:foledge/data/file_manager/file_manager.dart';
 import 'package:foledge/i18n/strings.g.dart';
 import 'package:foledge/pages/editor/editor.dart';

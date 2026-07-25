@@ -14,7 +14,7 @@ import 'package:foledge/components/toolbar/export_bar.dart';
 import 'package:foledge/components/toolbar/pen_modal.dart';
 import 'package:foledge/components/toolbar/selection_bar.dart';
 import 'package:foledge/data/prefs.dart';
-import 'package:foledge/data/tools/_tool.dart';
+import 'package:foledge/data/tools/tool.dart';
 import 'package:foledge/data/tools/eraser.dart';
 import 'package:foledge/data/tools/highlighter.dart';
 import 'package:foledge/data/tools/laser_pointer.dart';

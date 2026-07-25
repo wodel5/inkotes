@@ -5,14 +5,14 @@ import 'dart:ui' show FragmentShader;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
-import 'package:foledge/components/canvas/_asset_cache.dart';
-import 'package:foledge/components/canvas/_stroke.dart';
+import 'package:foledge/components/canvas/asset_cache.dart';
+import 'package:foledge/components/canvas/stroke.dart';
 import 'package:foledge/components/canvas/image/editor_image.dart';
 import 'package:foledge/components/canvas/inner_canvas.dart';
 import 'package:foledge/components/canvas/pencil_shader.dart';
 import 'package:foledge/data/editor/editor_exporter.dart';
 import 'package:foledge/data/tools/laser_pointer.dart';
-import 'package:foledge/core/has_size.dart';
+import 'package:foledge/data/models/has_size.dart';
 
 typedef CanvasKey = GlobalKey<State<InnerCanvas>>;
 

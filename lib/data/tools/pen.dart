@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:perfect_freehand/perfect_freehand.dart';
-import 'package:foledge/components/canvas/_stroke.dart';
+import 'package:foledge/components/canvas/stroke.dart';
 import 'package:foledge/data/editor/page.dart';
 import 'package:foledge/data/prefs.dart';
-import 'package:foledge/data/tools/_tool.dart';
+import 'package:foledge/data/tools/tool.dart';
 import 'package:foledge/data/tools/highlighter.dart';
 import 'package:foledge/data/tools/pencil.dart';
 import 'package:foledge/i18n/strings.g.dart';
-import 'package:foledge/core/tool_id.dart';
+import 'package:foledge/data/models/tool_id.dart';
 
 class Pen extends Tool {
   @protected

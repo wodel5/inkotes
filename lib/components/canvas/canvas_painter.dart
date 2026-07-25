@@ -3,9 +3,9 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:path_drawing/path_drawing.dart';
-import 'package:foledge/components/canvas/_circle_stroke.dart';
-import 'package:foledge/components/canvas/_rectangle_stroke.dart';
-import 'package:foledge/components/canvas/_stroke.dart';
+import 'package:foledge/components/canvas/circle_stroke.dart';
+import 'package:foledge/components/canvas/rectangle_stroke.dart';
+import 'package:foledge/components/canvas/stroke.dart';
 import 'package:foledge/data/editor/page.dart';
 import 'package:foledge/data/tools/highlighter.dart';
 import 'package:foledge/data/tools/laser_pointer.dart';

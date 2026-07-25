@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:foledge/data/prefs.dart';
-import 'package:foledge/core/tool_id.dart';
+import 'package:foledge/data/models/tool_id.dart';
 
 abstract class Tool {
   @protected

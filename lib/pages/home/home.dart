@@ -1,8 +1,6 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -14,14 +12,15 @@ import 'package:foledge/components/common/dock_button.dart';
 import 'package:foledge/components/common/glassmorphism_dock.dart';
 import 'package:foledge/components/home/grid_folders.dart';
 import 'package:foledge/components/home/masonry_files.dart';
-import 'package:foledge/components/theming/adaptive_alert_dialog.dart';
-import 'package:foledge/components/theming/adaptive_text_field.dart';
 import 'package:foledge/data/file_manager/file_manager.dart';
 import 'package:foledge/data/prefs.dart';
 import 'package:foledge/data/routes.dart';
 import 'package:foledge/i18n/strings.g.dart';
 import 'package:foledge/pages/editor/editor.dart';
-import 'package:foledge/pages/home/settings.dart';
+import 'package:foledge/pages/home/widgets/no_files.dart';
+import 'package:foledge/pages/home/widgets/path_breadcrumb.dart';
+import 'package:foledge/pages/home/widgets/rename_note_dialog.dart';
+import 'package:foledge/pages/home/widgets/settings_overlay.dart';
 
 class HomePage extends StatefulHookWidget {
   const HomePage({super.key});
@@ -222,7 +221,7 @@ class _HomePageState extends State<HomePage> {
       barrierColor: Colors.black26,
       transitionDuration: const Duration(milliseconds: 250),
       pageBuilder: (context, animation, secondaryAnimation) {
-        return _SettingsOverlay(buttonRect: buttonRect);
+        return SettingsOverlay(buttonRect: buttonRect);
       },
       transitionBuilder: (context, animation, secondaryAnimation, child) {
         return SlideTransition(
@@ -475,8 +474,9 @@ class _HomePageState extends State<HomePage> {
             child: Column(
               children: [
                 if (currentPath != null)
-                  _PathBreadcrumb(
+                  PathBreadcrumb(
                     path: currentPath!,
+                    rootLabel: t.home.rootDirectory,
                     onTap: (path) {
                       currentPath = path.isEmpty ? null : path;
                       findChildren();
@@ -519,7 +519,7 @@ class _HomePageState extends State<HomePage> {
                                             showDialog(
                                               context: context,
                                               builder: (BuildContext context) {
-                                                return _RenameNoteDialog(
+                                                return RenameNoteDialog(
                                                   existingPath: selectedFiles.value.first,
                                                   unselectNotes: () => selectedFiles.value = [],
                                                 );
@@ -668,7 +668,7 @@ class _HomePageState extends State<HomePage> {
         // Empty state at root
         if (filePaths.isEmpty && folders.isEmpty && currentPath != null)
           const SliverSafeArea(
-            sliver: SliverToBoxAdapter(child: _NoFiles()),
+            sliver: SliverToBoxAdapter(child: NoFiles()),
           ),
       ],
     );
@@ -702,322 +702,6 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-    );
-  }
-}
-
-class _PathBreadcrumb extends StatelessWidget {
-  const _PathBreadcrumb({required this.path, required this.onTap});
-
-  final String path;
-  final void Function(String path) onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final segments = path.split('/').where((s) => s.isNotEmpty).toList();
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          children: [
-            GestureDetector(
-              onTap: () => onTap(''),
-              child: Text(
-                t.home.rootDirectory,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.primary,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-            for (int i = 0; i < segments.length; i++) ...[
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 4),
-                child: Icon(Icons.chevron_right, size: 16),
-              ),
-              GestureDetector(
-                onTap: () => onTap('/${segments.sublist(0, i + 1).join('/')}'),
-                child: Text(
-                  segments[i],
-                  style: TextStyle(
-                    color: i == segments.length - 1
-                        ? Theme.of(context).colorScheme.onSurface
-                        : Theme.of(context).colorScheme.primary,
-                    fontWeight: i == segments.length - 1
-                        ? FontWeight.w600
-                        : FontWeight.w500,
-                  ),
-                ),
-              ),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _NoFiles extends StatelessWidget {
-  const _NoFiles();
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.folder_open,
-              size: 64,
-              color: Theme.of(context)
-                  .colorScheme
-                  .onSurface
-                  .withValues(alpha: 0.3),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              t.home.noFiles,
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onSurface
-                        .withValues(alpha: 0.5),
-                  ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _SettingsOverlay extends StatefulWidget {
-  const _SettingsOverlay({required this.buttonRect});
-
-  final Rect buttonRect;
-
-  @override
-  State<_SettingsOverlay> createState() => _SettingsOverlayState();
-}
-
-class _RenameNoteDialog extends StatefulWidget {
-  const _RenameNoteDialog({
-    required this.existingPath,
-    required this.unselectNotes,
-  });
-
-  final String existingPath;
-  final void Function() unselectNotes;
-
-  @override
-  State<_RenameNoteDialog> createState() => _RenameNoteDialogState();
-}
-
-class _RenameNoteDialogState extends State<_RenameNoteDialog> {
-  final _formKey = GlobalKey<FormState>();
-  final _controller = TextEditingController();
-
-  late final parentFolder = widget.existingPath.substring(
-    0,
-    widget.existingPath.lastIndexOf('/') + 1,
-  );
-  late final oldName = widget.existingPath.substring(
-    widget.existingPath.lastIndexOf('/') + 1,
-  );
-
-  String? validateNoteName(String? noteName) {
-    if (noteName == null) return t.home.renameNote.noteNameEmpty;
-    final error = FileManager.validateFilename(noteName);
-    if (error != null) return error;
-    if (noteName != oldName && doesFileExist(noteName)) {
-      return t.home.renameNote.noteNameExists;
-    }
-    return null;
-  }
-
-  bool doesFileExist(String noteName) {
-    final file = File(parentFolder + noteName);
-    return file.existsSync();
-  }
-
-  Future renameNote(String newName) async {
-    await FileManager.moveFile(
-      widget.existingPath + Editor.extension,
-      newName + Editor.extension,
-    );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _controller.text = oldName;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AdaptiveAlertDialog(
-      title: Text(t.home.renameNote.renameNote),
-      content: Form(
-        key: _formKey,
-        autovalidateMode: AutovalidateMode.onUserInteraction,
-        child: AdaptiveTextField(
-          controller: _controller,
-          keyboardType: TextInputType.text,
-          textInputAction: TextInputAction.done,
-          focusOrder: const NumericFocusOrder(1),
-          placeholder: t.home.renameNote.noteName,
-          prefixIcon: const Icon(Icons.edit_square),
-          validator: validateNoteName,
-        ),
-      ),
-      actions: [
-        CupertinoDialogAction(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          child: Text(t.common.cancel),
-        ),
-        CupertinoDialogAction(
-          onPressed: () async {
-            if (!_formKey.currentState!.validate()) return;
-            if (_controller.text != oldName) {
-              await renameNote(_controller.text);
-            }
-            if (!context.mounted) return;
-            Navigator.of(context).pop();
-            widget.unselectNotes();
-          },
-          child: Text(t.home.renameNote.rename),
-        ),
-      ],
-    );
-  }
-}
-
-class _DeleteNoteDialog extends StatefulWidget {
-  const _DeleteNoteDialog({
-    required this.filesToDelete,
-    required this.unselectNotes,
-  });
-
-  final List<String> filesToDelete;
-  final void Function() unselectNotes;
-
-  @override
-  State<_DeleteNoteDialog> createState() => _DeleteNoteDialogState();
-}
-
-class _DeleteNoteDialogState extends State<_DeleteNoteDialog> {
-  var deleteAllowed = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return AdaptiveAlertDialog(
-      title: widget.filesToDelete.length < 5
-          ? Text(
-              t.home.deleteNoteDialog.deleteName(
-                f: widget.filesToDelete.join(', '),
-              ),
-            )
-          : Text(
-              t.home.deleteNoteDialog.deleteNotes(
-                n: widget.filesToDelete.length,
-              ),
-            ),
-      content: CheckboxListTile.adaptive(
-        value: deleteAllowed,
-        onChanged: (value) => setState(() => deleteAllowed = value!),
-        controlAffinity: .leading,
-        title: Text(
-          t.home.deleteNoteDialog.confirmDelete(n: widget.filesToDelete.length),
-        ),
-      ),
-      actions: [
-        CupertinoDialogAction(
-          onPressed: () => Navigator.of(context).pop(),
-          child: Text(t.common.cancel),
-        ),
-        CupertinoDialogAction(
-          onPressed: deleteAllowed
-              ? () async {
-                  await Future.wait([
-                    for (final String filePath in widget.filesToDelete)
-                      FileManager.markAsTrashed(filePath),
-                  ]);
-                  if (context.mounted) Navigator.of(context).pop();
-                  widget.unselectNotes();
-                }
-              : null,
-          isDestructiveAction: true,
-          child: Text(t.home.deleteNoteDialog.delete),
-        ),
-      ],
-    );
-  }
-}
-
-class _SettingsOverlayState extends State<_SettingsOverlay> {
-  Orientation? _lastOrientation;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final currentOrientation = MediaQuery.of(context).orientation;
-    if (_lastOrientation != null && _lastOrientation != currentOrientation) {
-      Navigator.of(context).pop();
-    }
-    _lastOrientation = currentOrientation;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
-
-    const maxWidth = 350.0;
-    const maxHeight = 500.0;
-
-    double top = widget.buttonRect.bottom + 8;
-    double left = widget.buttonRect.right - maxWidth;
-
-    if (left < 16) left = 16;
-    if (left + maxWidth > screenSize.width - 16) {
-      left = screenSize.width - maxWidth - 16;
-    }
-    if (top + maxHeight > screenSize.height - 16) {
-      top = widget.buttonRect.top - maxHeight - 8;
-    }
-
-    return Stack(
-      children: [
-        Positioned.fill(
-          child: GestureDetector(
-            onTap: () => Navigator.pop(context),
-            child: Container(color: Colors.transparent),
-          ),
-        ),
-        Positioned(
-          left: left,
-          top: top,
-          child: Card(
-            margin: EdgeInsets.zero,
-            elevation: 8,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: SizedBox(
-              width: maxWidth,
-              height: maxHeight,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: const SettingsContent(),
-              ),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

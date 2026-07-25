@@ -9,8 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
-import 'package:foledge/components/canvas/_asset_cache.dart';
-import 'package:foledge/components/canvas/_stroke.dart';
+import 'package:foledge/components/canvas/asset_cache.dart';
+import 'package:foledge/components/canvas/stroke.dart';
 import 'package:foledge/components/canvas/image/editor_image.dart';
 import 'package:foledge/data/editor/page.dart';
 import 'package:foledge/data/file_manager/file_manager.dart';
@@ -18,9 +18,9 @@ import 'package:foledge/data/flavor_config.dart';
 import 'package:foledge/data/prefs.dart';
 import 'package:foledge/data/tools/stroke_properties.dart';
 import 'package:foledge/pages/editor/editor.dart';
-import 'package:foledge/core/canvas_background_pattern.dart';
-import 'package:foledge/core/has_size.dart';
-import 'package:foledge/core/read_only_reason.dart';
+import 'package:foledge/data/models/canvas_background_pattern.dart';
+import 'package:foledge/data/models/has_size.dart';
+import 'package:foledge/data/models/read_only_reason.dart';
 import 'package:worker_manager/worker_manager.dart';
 
 class EditorCoreInfo {

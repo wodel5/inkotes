@@ -1,14 +1,14 @@
 import 'package:defer_pointer/defer_pointer.dart';
 import 'package:flutter/material.dart';
 import 'package:one_dollar_unistroke_recognizer/one_dollar_unistroke_recognizer.dart';
-import 'package:foledge/components/canvas/_canvas_background_painter.dart';
-import 'package:foledge/components/canvas/_canvas_painter.dart';
-import 'package:foledge/components/canvas/_stroke.dart';
+import 'package:foledge/components/canvas/canvas_background_painter.dart';
+import 'package:foledge/components/canvas/canvas_painter.dart';
+import 'package:foledge/components/canvas/stroke.dart';
 import 'package:foledge/components/canvas/canvas_image.dart';
 import 'package:foledge/components/canvas/image/editor_image.dart';
 import 'package:foledge/data/editor/editor_core_info.dart';
 import 'package:foledge/data/tools/select.dart';
-import 'package:foledge/core/canvas_background_pattern.dart';
+import 'package:foledge/data/models/canvas_background_pattern.dart';
 
 class InnerCanvas extends StatefulWidget {
   const InnerCanvas({

@@ -4,7 +4,7 @@ import 'package:foledge/components/home/delete_folder_button.dart';
 import 'package:foledge/components/home/new_folder_dialog.dart';
 import 'package:foledge/components/home/rename_folder_button.dart';
 import 'package:foledge/components/theming/adaptive_icon.dart';
-import 'package:foledge/data/extensions/list_extensions.dart';
+import 'package:foledge/data/extensions/collection_extensions.dart';
 import 'package:foledge/i18n/strings.g.dart';
 
 class GridFolders extends StatelessWidget {

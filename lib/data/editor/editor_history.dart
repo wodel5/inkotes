@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
-import 'package:foledge/components/canvas/_stroke.dart';
+import 'package:foledge/components/canvas/stroke.dart';
 import 'package:foledge/components/canvas/image/editor_image.dart';
 import 'package:foledge/data/editor/page.dart';
-import 'package:foledge/core/canvas_background_pattern.dart';
-import 'package:foledge/core/change.dart';
+import 'package:foledge/data/models/canvas_background_pattern.dart';
+import 'package:foledge/data/models/change.dart';
 
 class EditorHistory {
   static const maxHistoryLength = 100;

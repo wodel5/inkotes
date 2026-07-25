@@ -4,7 +4,7 @@ import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:foledge/components/canvas/inner_canvas.dart';
 import 'package:foledge/components/common/fallback_thumbnail.dart';
-import 'package:foledge/data/extensions/date_extensions.dart';
+import 'package:foledge/data/extensions/collection_extensions.dart';
 import 'package:foledge/data/file_manager/file_manager.dart';
 import 'package:foledge/data/is_this_a_test.dart';
 import 'package:foledge/data/routes.dart';

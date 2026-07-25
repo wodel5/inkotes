@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:one_dollar_unistroke_recognizer/one_dollar_unistroke_recognizer.dart';
-import 'package:foledge/components/canvas/_stroke.dart';
+import 'package:foledge/components/canvas/stroke.dart';
 import 'package:foledge/components/canvas/image/editor_image.dart';
 import 'package:foledge/components/canvas/inner_canvas.dart';
 import 'package:foledge/data/editor/editor_core_info.dart';
 import 'package:foledge/data/editor/page.dart';
-import 'package:foledge/data/tools/_tool.dart';
+import 'package:foledge/data/tools/tool.dart';
 import 'package:foledge/data/tools/select.dart';
-import 'package:foledge/core/tool_id.dart';
+import 'package:foledge/data/models/tool_id.dart';
 
 class Canvas extends StatelessWidget {
   const Canvas({
