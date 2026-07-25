@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:ui';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,6 +10,8 @@ import 'package:go_router/go_router.dart';
 import 'package:yaru/yaru.dart';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
+import 'package:foledge/components/common/dock_button.dart';
+import 'package:foledge/components/common/glassmorphism_dock.dart';
 import 'package:foledge/components/home/grid_folders.dart';
 import 'package:foledge/components/home/masonry_files.dart';
 import 'package:foledge/components/theming/adaptive_alert_dialog.dart';
@@ -505,27 +506,12 @@ class _HomePageState extends State<HomePage> {
                   child: Center(
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(12, 4, 12, 8),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: BackdropFilter(
-                          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).brightness == Brightness.light
-                                  ? const Color(0xFF9999BB).withValues(alpha: 0.15)
-                                  : Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.6),
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(
-                                color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.3),
-                                width: 0.5,
-                              ),
-                            ),
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                            child: IntrinsicWidth(
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  _HomeDockButton(
+                      child: GlassmorphismDock(
+                        child: IntrinsicWidth(
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                                  DockButton(
                                     icon: FontAwesomeIcons.penToSquare,
                                     enabled: selectedFiles.value.length == 1,
                                     onPressed: selectedFiles.value.length == 1
@@ -542,7 +528,7 @@ class _HomePageState extends State<HomePage> {
                                           }
                                         : null,
                                   ),
-                                  _HomeDockButton(
+                                  DockButton(
                                     icon: FontAwesomeIcons.trash,
                                     onPressed: () async {
                                       for (final file in selectedFiles.value) {
@@ -551,7 +537,7 @@ class _HomePageState extends State<HomePage> {
                                       selectedFiles.value = [];
                                     },
                                   ),
-                                  _HomeDockButton(
+                                  DockButton(
                                     icon: FontAwesomeIcons.shareNodes,
                                     enabled: selectedFiles.value.isNotEmpty,
                                     onPressed: selectedFiles.value.isNotEmpty
@@ -560,7 +546,7 @@ class _HomePageState extends State<HomePage> {
                                           }
                                         : null,
                                   ),
-                                  _HomeDockButton(
+                                  DockButton(
                                     icon: FontAwesomeIcons.checkDouble,
                                     selected: selectedFiles.value.isNotEmpty && selectedFiles.value.length == filePaths.length,
                                     onPressed: () {
@@ -582,8 +568,6 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-            ),
-          ),
           ],
         ),
       ),
@@ -817,76 +801,6 @@ class _SettingsOverlay extends StatefulWidget {
 
   @override
   State<_SettingsOverlay> createState() => _SettingsOverlayState();
-}
-
-class _HomeDockButton extends StatefulWidget {
-  const _HomeDockButton({
-    required this.icon,
-    required this.onPressed,
-    this.enabled = true,
-    this.selected = false,
-  });
-
-  final Object icon;
-  final VoidCallback? onPressed;
-  final bool enabled;
-  final bool selected;
-
-  @override
-  State<_HomeDockButton> createState() => _HomeDockButtonState();
-}
-
-class _HomeDockButtonState extends State<_HomeDockButton> {
-  bool _pressing = false;
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = ColorScheme.of(context);
-    final brightness = Theme.of(context).brightness;
-
-    final iconColor = !widget.enabled
-        ? colorScheme.onSurface.withValues(alpha: 0.3)
-        : widget.selected
-            ? colorScheme.primary
-            : colorScheme.onSurface;
-
-    Color? backgroundColor;
-    if (widget.selected) {
-      backgroundColor = brightness == Brightness.light
-          ? colorScheme.primary.withValues(alpha: 0.15)
-          : colorScheme.primary.withValues(alpha: 0.25);
-    } else if (_pressing && widget.enabled) {
-      backgroundColor = brightness == Brightness.light
-          ? Colors.grey.withValues(alpha: 0.2)
-          : Colors.white.withValues(alpha: 0.1);
-    }
-
-    return GestureDetector(
-      onTapDown: widget.onPressed != null ? (_) => setState(() => _pressing = true) : null,
-      onTapUp: widget.onPressed != null ? (_) => setState(() => _pressing = false) : null,
-      onTapCancel: () => setState(() => _pressing = false),
-      onTap: widget.onPressed,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
-        curve: Curves.easeOut,
-        width: 40,
-        height: 40,
-        margin: const EdgeInsets.symmetric(horizontal: 2),
-        decoration: BoxDecoration(
-          color: backgroundColor,
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Center(
-          child: IconTheme(
-            data: IconThemeData(color: iconColor, size: 20),
-            child: widget.icon is IconData
-                ? Icon(widget.icon as IconData)
-                : FaIcon(widget.icon as FaIconData),
-          ),
-        ),
-      ),
-    );
-  }
 }
 
 class _RenameNoteDialog extends StatefulWidget {

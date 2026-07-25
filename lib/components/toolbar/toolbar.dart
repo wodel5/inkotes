@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -8,6 +6,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:keybinder/keybinder.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:foledge/components/canvas/canvas_image.dart';
+import 'package:foledge/components/common/dock_button.dart';
+import 'package:foledge/components/common/glassmorphism_dock.dart';
 import 'package:foledge/components/theming/uni_icon.dart';
 import 'package:foledge/components/toolbar/color_bar.dart';
 import 'package:foledge/components/toolbar/export_bar.dart';
@@ -236,23 +236,8 @@ class ToolbarState extends State<Toolbar> {
       Center(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(12, 4, 12, 8),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).brightness == Brightness.light
-                      ? const Color(0xFF9999BB).withValues(alpha: 0.15)
-                      : colorScheme.surfaceContainerHighest.withValues(alpha: 0.6),
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    color: colorScheme.outlineVariant.withValues(alpha: 0.3),
-                    width: 0.5,
-                  ),
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                child: IntrinsicWidth(
+          child: GlassmorphismDock(
+            child: IntrinsicWidth(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -342,7 +327,7 @@ class ToolbarState extends State<Toolbar> {
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                    _DockButton(
+                    DockButton(
                       selected: widget.currentTool == Pen.currentPen,
                       enabled: !widget.readOnly,
                       onPressed: () {
@@ -359,7 +344,7 @@ class ToolbarState extends State<Toolbar> {
                       },
                       child: UniIcon(Pen.currentPen.icon, size: 20),
                     ),
-                    _DockButton(
+                    DockButton(
                       selected: widget.currentTool == Pencil.currentPencil,
                       enabled: !widget.readOnly,
                       onPressed: () {
@@ -376,7 +361,7 @@ class ToolbarState extends State<Toolbar> {
                       },
                       child: const FaIcon(Pencil.pencilIcon, size: 20),
                     ),
-                    _DockButton(
+                    DockButton(
                       selected: widget.currentTool == Highlighter.currentHighlighter,
                       enabled: !widget.readOnly,
                       onPressed: () {
@@ -393,7 +378,7 @@ class ToolbarState extends State<Toolbar> {
                       },
                       child: const FaIcon(Highlighter.highlighterIcon, size: 20),
                     ),
-                    _DockButton(
+                    DockButton(
                       enabled: !widget.readOnly && widget.currentTool is! LaserPointer && widget.currentTool is! Eraser,
                       onPressed: toggleColorOptions,
                       child: currentColor == null
@@ -401,7 +386,7 @@ class ToolbarState extends State<Toolbar> {
                           : FaIcon(FontAwesomeIcons.palette, size: 20, color: currentColor),
                     ),
                     _DockDivider(),
-                    _DockButton(
+                    DockButton(
                       selected: widget.currentTool == LaserPointer.currentLaserPointer,
                       enabled: true,
                       onPressed: () {
@@ -412,7 +397,7 @@ class ToolbarState extends State<Toolbar> {
                       },
                       child: const Icon(Symbols.stylus_laser_pointer),
                     ),
-                    _DockButton(
+                    DockButton(
                       selected: widget.currentTool is Select,
                       enabled: !widget.readOnly,
                       onPressed: () {
@@ -433,7 +418,7 @@ class ToolbarState extends State<Toolbar> {
                       },
                       child: const FaIcon(FontAwesomeIcons.solidObjectGroup, size: 20),
                     ),
-                    _DockButton(
+                    DockButton(
                       selected: widget.currentTool is Eraser,
                       enabled: !widget.readOnly,
                       onPressed: () {
@@ -444,7 +429,7 @@ class ToolbarState extends State<Toolbar> {
                       child: const FaIcon(FontAwesomeIcons.eraser, size: 20),
                     ),
                     _DockDivider(),
-                    _DockButton(
+                    DockButton(
                       enabled: !widget.readOnly,
                       onPressed: () {
                         showColorOptions.value = false;
@@ -454,7 +439,7 @@ class ToolbarState extends State<Toolbar> {
                       child: const FaIcon(FontAwesomeIcons.solidImage, size: 20),
                     ),
                     if (widget.canRasterPdf)
-                      _DockButton(
+                      DockButton(
                         enabled: !widget.readOnly,
                         onPressed: () async {
                           showColorOptions.value = false;
@@ -464,7 +449,7 @@ class ToolbarState extends State<Toolbar> {
                         child: const FaIcon(FontAwesomeIcons.solidFilePdf, size: 20),
                       ),
                     _DockDivider(),
-                    _DockButton(
+                    DockButton(
                       selected: stows.editorFingerDrawing.value,
                       enabled: !widget.readOnly,
                       onPressed: () {
@@ -475,7 +460,7 @@ class ToolbarState extends State<Toolbar> {
                       child: Icon(const IconData(0xe7de, fontFamily: 'iconfont'), size: 20),
                     ),
                     _DockDivider(),
-                    _DockButton(
+                    DockButton(
                       enabled: !widget.readOnly && widget.isUndoPossible,
                       onPressed: () {
                         showColorOptions.value = false;
@@ -487,7 +472,7 @@ class ToolbarState extends State<Toolbar> {
                         child: const FaIcon(FontAwesomeIcons.share, size: 20),
                       ),
                     ),
-                    _DockButton(
+                    DockButton(
                       enabled: !widget.readOnly && widget.isRedoPossible,
                       onPressed: () {
                         showColorOptions.value = false;
@@ -497,7 +482,7 @@ class ToolbarState extends State<Toolbar> {
                       child: const FaIcon(FontAwesomeIcons.share, size: 20),
                     ),
                     _DockDivider(),
-                    _DockButton(
+                    DockButton(
                       enabled: !widget.readOnly,
                       onPressed: () {
                         showColorOptions.value = false;
@@ -510,9 +495,7 @@ class ToolbarState extends State<Toolbar> {
                 ],  // Column children
                 ),  // Column
                 ),  // IntrinsicWidth
-              ),  // Container
-            ),  // BackdropFilter
-          ),  // ClipRRect
+          ),  // GlassmorphismDock
         ),  // Padding
       ),  // Center
     ];
@@ -538,75 +521,6 @@ class ToolbarState extends State<Toolbar> {
 }
 
 enum ToolOptions { hide, pen, highlighter, pencil, select }
-
-class _DockButton extends StatefulWidget {
-  const _DockButton({
-    required this.child,
-    this.selected = false,
-    this.enabled = true,
-    this.onPressed,
-  });
-
-  final Widget child;
-  final bool selected;
-  final bool enabled;
-  final VoidCallback? onPressed;
-
-  @override
-  State<_DockButton> createState() => _DockButtonState();
-}
-
-class _DockButtonState extends State<_DockButton> {
-  bool _pressing = false;
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = ColorScheme.of(context);
-    final brightness = Theme.of(context).brightness;
-
-    final iconColor = !widget.enabled
-        ? colorScheme.onSurface.withValues(alpha: 0.3)
-        : widget.selected
-            ? colorScheme.primary
-            : colorScheme.onSurface;
-
-    // 选中状态的背景色
-    Color? backgroundColor;
-    if (widget.selected) {
-      backgroundColor = brightness == Brightness.light
-          ? colorScheme.primary.withValues(alpha: 0.15)
-          : colorScheme.primary.withValues(alpha: 0.25);
-    } else if (_pressing) {
-      backgroundColor = brightness == Brightness.light
-          ? Colors.grey.withValues(alpha: 0.2)
-          : Colors.white.withValues(alpha: 0.1);
-    }
-
-    return GestureDetector(
-        onTapDown: widget.enabled ? (_) => setState(() => _pressing = true) : null,
-        onTapUp: widget.enabled ? (_) => setState(() => _pressing = false) : null,
-        onTapCancel: () => setState(() => _pressing = false),
-        onTap: widget.enabled ? widget.onPressed : null,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 150),
-          curve: Curves.easeOut,
-          width: 40,
-          height: 40,
-          margin: const EdgeInsets.symmetric(horizontal: 2),
-          decoration: BoxDecoration(
-            color: backgroundColor,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Center(
-            child: IconTheme(
-              data: IconThemeData(color: iconColor, size: 20),
-              child: widget.child,
-            ),
-          ),
-        ),
-    );
-  }
-}
 
 class _DockDivider extends StatelessWidget {
   @override

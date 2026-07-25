@@ -2,12 +2,12 @@ import 'dart:async';
 
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
-import 'package:foledge/components/canvas/_stroke.dart';
 import 'package:foledge/components/canvas/inner_canvas.dart';
+import 'package:foledge/components/common/fallback_thumbnail.dart';
+import 'package:foledge/data/extensions/date_extensions.dart';
 import 'package:foledge/data/file_manager/file_manager.dart';
 import 'package:foledge/data/is_this_a_test.dart';
 import 'package:foledge/data/routes.dart';
-import 'package:foledge/i18n/strings.g.dart';
 import 'package:foledge/pages/editor/editor.dart';
 import 'package:yaru/yaru.dart';
 
@@ -104,19 +104,7 @@ class _PreviewCardState extends State<PreviewCard> {
     if (!file.existsSync()) return '';
 
     final modified = file.lastModifiedSync();
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final modifiedDay = DateTime(modified.year, modified.month, modified.day);
-    final timeStr =
-        '${modified.hour.toString().padLeft(2, '0')}:${modified.minute.toString().padLeft(2, '0')}';
-
-    if (modifiedDay == today) {
-      return '${t.home.today} $timeStr';
-    } else if (modifiedDay == today.subtract(const Duration(days: 1))) {
-      return '${t.home.yesterday} $timeStr';
-    } else {
-      return '${modified.year}/${modified.month.toString().padLeft(2, '0')}/${modified.day.toString().padLeft(2, '0')} $timeStr';
-    }
+    return formatEditedDate(modified);
   }
 
   @override
@@ -158,7 +146,7 @@ class _PreviewCardState extends State<PreviewCard> {
                           alignment: Alignment.topCenter,
                           fit: BoxFit.cover,
                         )
-                      : const _FallbackThumbnail(),
+                      : const FallbackThumbnail(),
                 ),
               ),
             ),
@@ -276,27 +264,6 @@ class _PreviewCardState extends State<PreviewCard> {
     _refreshThumbnailTimer?.cancel();
     fileWriteSubscription?.cancel();
     super.dispose();
-  }
-}
-
-class _FallbackThumbnail extends StatelessWidget {
-  const _FallbackThumbnail();
-
-  @override
-  Widget build(BuildContext context) {
-    return ColoredBox(
-      color: InnerCanvas.defaultBackgroundColor,
-      child: Center(
-        child: Text(
-          t.home.noPreviewAvailable,
-          style: TextTheme.of(context).bodyMedium?.copyWith(
-                color: Stroke.defaultColor.withValues(alpha: 0.7),
-                fontStyle: FontStyle.italic,
-              ),
-          textAlign: TextAlign.center,
-        ),
-      ),
-    );
   }
 }
 

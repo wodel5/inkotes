@@ -4,8 +4,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:foledge/components/canvas/inner_canvas.dart';
+import 'package:foledge/components/common/dock_button.dart';
+import 'package:foledge/components/common/fallback_thumbnail.dart';
 import 'package:foledge/components/home/preview_card.dart';
 import 'package:foledge/components/theming/adaptive_alert_dialog.dart';
+import 'package:foledge/data/extensions/date_extensions.dart';
 import 'package:foledge/data/file_manager/file_manager.dart';
 import 'package:foledge/i18n/strings.g.dart';
 import 'package:foledge/pages/editor/editor.dart';
@@ -201,15 +204,15 @@ class _TrashPageState extends State<TrashPage> {
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    _DockButton(
+                                    DockButton(
                                       icon: FontAwesomeIcons.rotateLeft,
                                       onPressed: _restoreSelected,
                                     ),
-                                    _DockButton(
+                                    DockButton(
                                       icon: FontAwesomeIcons.trash,
                                       onPressed: _deleteSelected,
                                     ),
-                                    _DockButton(
+                                    DockButton(
                                       icon: FontAwesomeIcons.checkDouble,
                                       selected: _selectedFiles.isNotEmpty && _selectedFiles.length == _trashedFiles.length,
                                       onPressed: _selectAll,
@@ -302,19 +305,7 @@ class _TrashCardState extends State<_TrashCard> {
     if (!file.existsSync()) return '';
 
     final modified = file.lastModifiedSync();
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final modifiedDay = DateTime(modified.year, modified.month, modified.day);
-    final timeStr =
-        '${modified.hour.toString().padLeft(2, '0')}:${modified.minute.toString().padLeft(2, '0')}';
-
-    if (modifiedDay == today) {
-      return '${t.home.today} $timeStr';
-    } else if (modifiedDay == today.subtract(const Duration(days: 1))) {
-      return '${t.home.yesterday} $timeStr';
-    } else {
-      return '${modified.year}/${modified.month.toString().padLeft(2, '0')}/${modified.day.toString().padLeft(2, '0')} $timeStr';
-    }
+    return formatEditedDate(modified);
   }
 
   @override
@@ -347,11 +338,11 @@ class _TrashCardState extends State<_TrashCard> {
                     alignment: Alignment.topCenter,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
-                      return const _FallbackThumbnail();
+                      return const FallbackThumbnail();
                     },
                   );
                 }
-                return const _FallbackThumbnail();
+                return const FallbackThumbnail();
               },
             ),
             // 选中蒙版
@@ -435,94 +426,6 @@ class _TrashCardState extends State<_TrashCard> {
             titleWidget,
             dateWidget,
           ],
-        ),
-      ),
-    );
-  }
-}
-
-/// dock 栏按钮，与主页 _HomeDockButton 一致
-class _DockButton extends StatefulWidget {
-  const _DockButton({
-    required this.icon,
-    required this.onPressed,
-    this.selected = false,
-  });
-
-  final Object icon;
-  final VoidCallback? onPressed;
-  final bool selected;
-
-  @override
-  State<_DockButton> createState() => _DockButtonState();
-}
-
-class _DockButtonState extends State<_DockButton> {
-  bool _pressing = false;
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = ColorScheme.of(context);
-    final brightness = Theme.of(context).brightness;
-
-    final iconColor = widget.selected
-        ? colorScheme.primary
-        : colorScheme.onSurface;
-
-    Color? backgroundColor;
-    if (widget.selected) {
-      backgroundColor = brightness == Brightness.light
-          ? colorScheme.primary.withValues(alpha: 0.15)
-          : colorScheme.primary.withValues(alpha: 0.25);
-    } else if (_pressing) {
-      backgroundColor = brightness == Brightness.light
-          ? Colors.grey.withValues(alpha: 0.2)
-          : Colors.white.withValues(alpha: 0.1);
-    }
-
-    return GestureDetector(
-      onTapDown: widget.onPressed != null ? (_) => setState(() => _pressing = true) : null,
-      onTapUp: widget.onPressed != null ? (_) => setState(() => _pressing = false) : null,
-      onTapCancel: () => setState(() => _pressing = false),
-      onTap: widget.onPressed,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
-        curve: Curves.easeOut,
-        width: 40,
-        height: 40,
-        margin: const EdgeInsets.symmetric(horizontal: 2),
-        decoration: BoxDecoration(
-          color: backgroundColor,
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Center(
-          child: IconTheme(
-            data: IconThemeData(color: iconColor, size: 20),
-            child: widget.icon is IconData
-                ? Icon(widget.icon as IconData)
-                : FaIcon(widget.icon as FaIconData),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _FallbackThumbnail extends StatelessWidget {
-  const _FallbackThumbnail();
-
-  @override
-  Widget build(BuildContext context) {
-    return ColoredBox(
-      color: InnerCanvas.defaultBackgroundColor,
-      child: Center(
-        child: Text(
-          t.home.noPreviewAvailable,
-          style: TextTheme.of(context).bodyMedium?.copyWith(
-                color: Colors.grey.withValues(alpha: 0.7),
-                fontStyle: FontStyle.italic,
-              ),
-          textAlign: TextAlign.center,
         ),
       ),
     );
