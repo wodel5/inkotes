@@ -28,6 +28,7 @@ class FileManager {
   static final log = Logger('FileManager');
 
   static const appRootDirectoryPrefix = 'foledge';
+  static const maxRecentlyAccessedFiles = 30;
 
   /// This isn't final because isolates sometimes init multiple times.
   /// Realistically, this value never changes.
@@ -35,16 +36,14 @@ class FileManager {
 
   static final fileWriteStream = StreamController<FileOperation>.broadcast();
 
-  // TODO(adil192): Implement or remove this
-  static String _sanitisePath(String path) => File(path).path;
-
   /// A regex that matches the file names/paths of asset files,
   /// including previews, e.g. `mynote.sbn2.1`.
   static final assetFileRegex = RegExp(r'\.sbn2?\.[\dp]+$');
 
+  // TODO(adil192): Implement or remove this
+  static String _sanitisePath(String path) => File(path).path;
+
   /// Forbidden names for files and directories (on any/all platforms).
-  /// These patterns match the base name only (not the full path).
-  /// Source: https://stackoverflow.com/a/31976060/
   static List<(String, RegExp)> _getForbiddenFilenamePatterns() => [
     (
       t.home.renameNote.noteNameForbiddenCharacters,
@@ -58,6 +57,7 @@ class FileManager {
       ),
     ),
   ];
+
   static String? validateFilename(String filename) {
     if (filename.isEmpty) return t.home.renameNote.noteNameEmpty;
     for (final (error, regexp) in _getForbiddenFilenamePatterns()) {
@@ -66,34 +66,31 @@ class FileManager {
     return null;
   }
 
+  // ─── Init ─────────────────────────────────────────────────────────────
+
   static Future<void> init({
     String? documentsDirectory,
     bool shouldWatchRootDirectory = true,
   }) async {
     FileManager.documentsDirectory =
-        documentsDirectory ?? await getDocumentsDirectory();
+        documentsDirectory ?? await _getDocumentsDirectory();
 
     if (shouldWatchRootDirectory) unawaited(watchRootDirectory());
   }
 
-  static Future<String> getDocumentsDirectory() async =>
-      await getDefaultDocumentsDirectory();
-
-  static Future<String> getDefaultDocumentsDirectory() async =>
+  static Future<String> _getDocumentsDirectory() async =>
       '${(await getApplicationDocumentsDirectory()).path}/$appRootDirectoryPrefix';
 
   static Future<void> migrateDataDir() async {
     final oldDir = Directory(documentsDirectory);
-    final newDir = Directory(await getDocumentsDirectory());
+    final newDir = Directory(await _getDocumentsDirectory());
     if (oldDir.path == newDir.path) return;
     log.info('Migrating data directory from $oldDir to $newDir');
 
-    late final oldDirEmpty = oldDir.existsSync()
-        ? oldDir.listSync().isEmpty
-        : true;
-    late final newDirEmpty = newDir.existsSync()
-        ? newDir.listSync().isEmpty
-        : true;
+    late final oldDirEmpty =
+        oldDir.existsSync() ? oldDir.listSync().isEmpty : true;
+    late final newDirEmpty =
+        newDir.existsSync() ? newDir.listSync().isEmpty : true;
 
     if (!oldDirEmpty && !newDirEmpty) {
       log.severe('New and old data directory aren\'t empty, can\'t migrate');
@@ -104,19 +101,18 @@ class FileManager {
     if (oldDirEmpty) {
       log.fine('Old data directory is empty or missing, nothing to migrate');
     } else {
-      await moveDirContents(oldDir: oldDir, newDir: newDir);
+      await _moveDirContents(oldDir: oldDir, newDir: newDir);
       await oldDir.delete(recursive: true);
     }
   }
 
-  static Future<void> moveDirContents({
+  static Future<void> _moveDirContents({
     required Directory oldDir,
     required Directory newDir,
   }) async {
     await newDir.create(recursive: true);
 
     await for (final entity in oldDir.list(recursive: true)) {
-      // Get the path under oldDir and map it into newDir.
       final relative = p.relative(entity.path, from: oldDir.path);
       final targetPath = p.join(newDir.path, relative);
 
@@ -126,13 +122,10 @@ class FileManager {
       }
 
       if (entity is File) {
-        // Ensure parent exists
         await entity.parent.create(recursive: true);
-
         try {
           await entity.rename(targetPath);
         } on FileSystemException catch (e) {
-          // Cross device move, eg. private to public on android
           const exdev = 18;
           if (e.osError?.errorCode == exdev) {
             await entity.copy(targetPath);
@@ -159,24 +152,20 @@ class FileManager {
         _ =>
           kDebugMode
               ? throw UnimplementedError(
-                  'Unhandled FileSystemEvent type: ${event.type}',
-                )
+                  'Unhandled FileSystemEvent type: ${event.type}')
               : .write,
       };
       final String path = event.path
           .replaceAll('\\', '/')
-          // The path may or may not be relative,
-          // so remove the root directory path to make sure it's relative.
           .replaceFirst(documentsDirectory, '');
       broadcastFileWrite(type, path);
     });
   }
 
   @visibleForTesting
-  static void broadcastFileWrite(FileOperationType type, String path) async {
+  static void broadcastFileWrite(FileOperationType type, String path) {
     if (!fileWriteStream.hasListener) return;
 
-    // remove extension
     if (path.endsWith(Editor.extension)) {
       path = path.substring(0, path.length - Editor.extension.length);
     } else if (path.endsWith(Editor.extensionOldJson)) {
@@ -186,7 +175,8 @@ class FileManager {
     fileWriteStream.add(FileOperation(type, path));
   }
 
-  /// Returns the contents of the file at [filePath].
+  // ─── File I/O ─────────────────────────────────────────────────────────
+
   static Future<Uint8List?> readFile(String filePath, {int retries = 3}) async {
     filePath = _sanitisePath(filePath);
 
@@ -196,10 +186,9 @@ class FileManager {
       result = await file.readAsBytes();
       if (result.isEmpty) result = null;
     } else {
-      retries = 0; // don't retry if the file doesn't exist
+      retries = 0;
     }
 
-    // If result is null, try again in case the file was locked.
     if (result == null && retries > 0) {
       await Future.delayed(const Duration(milliseconds: 100));
       return readFile(filePath, retries: retries - 1);
@@ -207,10 +196,6 @@ class FileManager {
     return result;
   }
 
-  /// Whether getFile should just return File(filePath)
-  /// instead of prefixing with the documents directory.
-  /// This is useful for testing when test files
-  /// aren't in the documents directory.
   @visibleForTesting
   static var shouldUseRawFilePath = false;
 
@@ -228,12 +213,6 @@ class FileManager {
 
   static Directory getRootDirectory() => Directory(documentsDirectory);
 
-  /// Writes [toWrite] to [filePath].
-  ///
-  /// The file at [toPath] will have its last modified timestamp set to
-  /// [lastModified], if specified.
-  /// This is useful when downloading remote files, to make sure that the
-  /// timestamp is the same locally and remotely.
   static Future<void> writeFile(
     String filePath,
     List<int> toWrite, {
@@ -243,7 +222,7 @@ class FileManager {
     filePath = _sanitisePath(filePath);
     log.fine('Writing to $filePath');
 
-    await _saveFileAsRecentlyAccessed(filePath);
+    _saveFileAsRecentlyAccessed(filePath);
 
     final file = getFile(filePath);
     await _createFileDirectory(filePath);
@@ -251,14 +230,12 @@ class FileManager {
       file.writeAsBytes(toWrite).then((file) async {
         if (lastModified != null) await file.setLastModified(lastModified);
       }),
-      // if we're using a new format, also delete the old file
       if (filePath.endsWith(Editor.extension))
         getFile(
           '${filePath.substring(0, filePath.length - Editor.extension.length)}'
           '${Editor.extensionOldJson}',
-        ).delete()
-        // ignore if the file doesn't exist
-        .catchError((_) => File(''), test: (e) => e is PathNotFoundException),
+        ).delete().catchError((_) => File(''),
+            test: (e) => e is PathNotFoundException),
     ]);
 
     void afterWrite() {
@@ -277,10 +254,11 @@ class FileManager {
 
   static Future<void> createFolder(String folderPath) async {
     folderPath = _sanitisePath(folderPath);
-
     final dir = Directory(documentsDirectory + folderPath);
     await dir.create(recursive: true);
   }
+
+  // ─── Export ───────────────────────────────────────────────────────────
 
   static Future exportFile(
     String fileName,
@@ -298,9 +276,7 @@ class FileManager {
 
     if (Platform.isAndroid || Platform.isIOS) {
       if (isImage) {
-        // request permission
         final permissionGranted = await _requestPhotosPermission();
-        // save image to gallery
         if (permissionGranted) {
           await SaverGallery.saveImage(
             Uint8List.fromList(bytes),
@@ -310,7 +286,6 @@ class FileManager {
           );
         }
       } else {
-        // share file
         tempFile = await getTempFile();
         if (Platform.isIOS || Platform.isMacOS) {
           if (!context.mounted) return;
@@ -318,7 +293,6 @@ class FileManager {
           await SharePlus.instance.share(
             ShareParams(
               files: [XFile(tempFile.path)],
-              // iOS requires a sharePositionOrigin for the share sheet to appear
               sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size,
             ),
           );
@@ -329,7 +303,6 @@ class FileManager {
         }
       }
     } else {
-      // desktop, open save-as dialog
       final outputFile = await FilePicker.saveFile(
         fileName: fileName,
         initialDirectory: (await getDownloadsDirectory())?.path,
@@ -342,7 +315,6 @@ class FileManager {
       }
     }
 
-    // delete temp file if it isn't null
     await tempFile?.delete();
   }
 
@@ -363,15 +335,8 @@ class FileManager {
     }
   }
 
-  /// Moves a file from [fromPath] to [toPath], returning its final path.
-  ///
-  /// If a file already exists at [toPath], [fromPath] will be suffixed with
-  /// a number e.g. "file (1)". If [replaceExistingFile] is true, the existing
-  /// file will be overwritten instead.
-  ///
-  /// If [replaceExistingFile] is true but the file is a reserved file name,
-  /// the filename will be suffixed with a number instead
-  /// (like if [replaceExistingFile] was false).
+  // ─── File Operations ──────────────────────────────────────────────────
+
   static Future<String> moveFile(
     String fromPath,
     String toPath, {
@@ -382,7 +347,6 @@ class FileManager {
     toPath = _sanitisePath(toPath);
 
     if (!toPath.contains('/')) {
-      // if toPath is a relative path
       toPath = fromPath.substring(0, fromPath.lastIndexOf('/') + 1) + toPath;
     }
 
@@ -401,7 +365,8 @@ class FileManager {
     if (fromFile.existsSync()) {
       await fromFile.rename(toFile.path);
     } else {
-      log.warning('Tried to move non-existent file from $fromPath to $toPath');
+      log.warning(
+          'Tried to move non-existent file from $fromPath to $toPath');
     }
 
     _renameReferences(fromPath, toPath);
@@ -497,7 +462,6 @@ class FileManager {
     final directory = Directory(documentsDirectory + directoryPath);
     if (!directory.existsSync()) return;
 
-    /// recursively find children of [directory] for [_renameReferences]
     final List<String> children = [];
     await for (final entity in directory.list(recursive: true)) {
       if (entity is File) {
@@ -507,7 +471,7 @@ class FileManager {
 
     final String newPath =
         directoryPath.substring(0, directoryPath.lastIndexOf('/') + 1) +
-        newName;
+            newName;
     await directory.rename(documentsDirectory + newPath);
 
     for (final child in children) {
@@ -527,7 +491,6 @@ class FileManager {
     if (!directory.existsSync()) return;
 
     if (recursive) {
-      // call [deleteFile] on all files that are descendants of the directory
       await for (final entity in directory.list(recursive: true)) {
         if (entity is File) {
           await deleteFile(entity.path.substring(documentsDirectory.length));
@@ -538,17 +501,8 @@ class FileManager {
     await directory.delete(recursive: recursive);
   }
 
-  /// Gets the children of a directory, separated into
-  /// [DirectoryChildren.directories] and [DirectoryChildren.files].
-  ///
-  /// If [includeExtensions] is false (default), the extension will be removed
-  /// from the file names. We use this to get all notes in a directory.
-  ///
-  /// If [includeAssets] is true, assets and previews will be included.
-  ///
-  /// Note: [includeAssets] can't be true without [includeExtension],
-  /// since otherwise we wouldn't be able to tell the difference between notes
-  /// and assets.
+  // ─── Directory Listing ────────────────────────────────────────────────
+
   static Future<DirectoryChildren?> getChildrenOfDirectory(
     String directory, {
     bool includeExtensions = false,
@@ -568,18 +522,16 @@ class FileManager {
     final dir = Directory(documentsDirectory + directory);
     if (!dir.existsSync()) return null;
 
-    final int directoryPrefixLength = directory.endsWith('/')
-        ? directory.length
-        : directory.length + 1; // +1 for the trailing slash
+    final int directoryPrefixLength =
+        directory.endsWith('/') ? directory.length : directory.length + 1;
     final allChildren = await dir
         .list()
         .map((FileSystemEntity entity) {
-          final filePath = entity.path.substring(documentsDirectory.length);
+          final filePath =
+              entity.path.substring(documentsDirectory.length);
 
-          // directories don't need any further processing
           if (entity is Directory) return filePath;
 
-          // filter out reserved files
           if (Editor.isReservedPath(filePath)) return null;
 
           late final isSbn2 = filePath.endsWith(Editor.extension);
@@ -588,16 +540,12 @@ class FileManager {
           if (!includeExtensions) {
             if (isSbn2) {
               return filePath.substring(
-                0,
-                filePath.length - Editor.extension.length,
-              );
+                  0, filePath.length - Editor.extension.length);
             } else if (isSbn1) {
               return filePath.substring(
-                0,
-                filePath.length - Editor.extensionOldJson.length,
-              );
+                  0, filePath.length - Editor.extensionOldJson.length);
             } else {
-              return null; // filePath is name of some asset
+              return null;
             }
           } else if (!includeAssets) {
             final isAsset = !isSbn2 && !isSbn1;
@@ -607,16 +555,14 @@ class FileManager {
           return filePath;
         })
         .where((String? file) => file != null)
-        // remove parent folder
         .map((file) => file!.substring(directoryPrefixLength))
         .toList();
 
     for (final child in allChildren) {
-      if (FileManager.isDirectory(directory + child) &&
-          !directories.contains(child)) {
+      if (isDirectory(directory + child) && !directories.contains(child)) {
         directories.add(child);
       } else if (!includeAssets && assetFileRegex.hasMatch(child)) {
-        // if the file is an asset, don't add it to the list of files
+        // skip assets
       } else {
         files.add(child);
       }
@@ -644,9 +590,6 @@ class FileManager {
     return DirectoryChildren(directories, files);
   }
 
-  /// Returns a list of all files recursively in the root directory.
-  ///
-  /// See [getChildrenOfDirectory] for more information on the parameters.
   static Future<List<String>> getAllFiles({
     bool includeExtensions = false,
     bool includeAssets = false,
@@ -676,7 +619,6 @@ class FileManager {
 
   static Future<List<String>> getRecentlyAccessed() async {
     if (!stows.recentFiles.loaded) await stows.recentFiles.waitUntilRead();
-    // Delete entries for files that have been deleted outside of foledge
     for (final file in stows.recentFiles.value.toList()) {
       if (!doesFileExist(file)) _removeReferences(file);
     }
@@ -684,54 +626,32 @@ class FileManager {
         .map((String filePath) {
           if (filePath.endsWith(Editor.extension)) {
             return filePath.substring(
-              0,
-              filePath.length - Editor.extension.length,
-            );
+                0, filePath.length - Editor.extension.length);
           } else if (filePath.endsWith(Editor.extensionOldJson)) {
             return filePath.substring(
-              0,
-              filePath.length - Editor.extensionOldJson.length,
-            );
+                0, filePath.length - Editor.extensionOldJson.length);
           } else {
             return filePath;
           }
         })
-        .where(
-          (String file) => !Editor.isReservedPath(file),
-        ) // filter out reserved file names
+        .where((String file) => !Editor.isReservedPath(file))
         .toList();
   }
 
-  /// Marks a file as trashed by setting the isTrashed flag to true.
+  // ─── Trash ────────────────────────────────────────────────────────────
+
   static Future<void> markAsTrashed(String filePath) async {
-    filePath = _sanitisePath(filePath);
-    final coreInfo = await EditorCoreInfo.loadFromFilePath(filePath);
-    coreInfo.isTrashed = true;
-    final (bson, assets) = coreInfo.saveToBinary(
-      currentPageIndex: coreInfo.initialPageIndex,
-    );
-    final filePathWithExt = filePath + Editor.extension;
-    await Future.wait([
-      writeFile(filePathWithExt, bson, awaitWrite: true),
-      for (int i = 0; i < assets.length; ++i)
-        assets
-            .getBytes(i)
-            .then(
-              (bytes) => writeFile(
-                '$filePathWithExt.$i',
-                bytes,
-                awaitWrite: true,
-              ),
-            ),
-    ]);
-    broadcastFileWrite(FileOperationType.write, filePath);
+    await _setTrashStatus(filePath, true);
   }
 
-  /// Restores a file from trash by setting the isTrashed flag to false.
   static Future<void> restoreFromTrash(String filePath) async {
+    await _setTrashStatus(filePath, false);
+  }
+
+  static Future<void> _setTrashStatus(String filePath, bool isTrashed) async {
     filePath = _sanitisePath(filePath);
     final coreInfo = await EditorCoreInfo.loadFromFilePath(filePath);
-    coreInfo.isTrashed = false;
+    coreInfo.isTrashed = isTrashed;
     final (bson, assets) = coreInfo.saveToBinary(
       currentPageIndex: coreInfo.initialPageIndex,
     );
@@ -739,9 +659,7 @@ class FileManager {
     await Future.wait([
       writeFile(filePathWithExt, bson, awaitWrite: true),
       for (int i = 0; i < assets.length; ++i)
-        assets
-            .getBytes(i)
-            .then(
+        assets.getBytes(i).then(
               (bytes) => writeFile(
                 '$filePathWithExt.$i',
                 bytes,
@@ -752,7 +670,6 @@ class FileManager {
     broadcastFileWrite(FileOperationType.write, filePath);
   }
 
-  /// Returns a list of all trashed files.
   static Future<List<String>> getTrashedFiles() async {
     final allFiles = await getAllFiles();
     final trashedFiles = <String>[];
@@ -767,7 +684,6 @@ class FileManager {
     return trashedFiles;
   }
 
-  /// Returns a filtered list of files, excluding trashed files.
   static Future<List<String>> filterOutTrashed(List<String> files) async {
     final result = <String>[];
     for (final file in files) {
@@ -779,8 +695,8 @@ class FileManager {
     return result;
   }
 
-  /// Returns whether the [filePath] is a directory or file.
-  /// Behaviour is undefined if [filePath] is not a valid path.
+  // ─── Queries ──────────────────────────────────────────────────────────
+
   static bool isDirectory(String filePath) {
     filePath = _sanitisePath(filePath);
     final directory = Directory(documentsDirectory + filePath);
@@ -800,6 +716,8 @@ class FileManager {
     return file.lastModifiedSync();
   }
 
+  // ─── Import ───────────────────────────────────────────────────────────
+
   static Future<String> newFilePath([String parentPath = '/']) async {
     assert(parentPath.endsWith('/'));
 
@@ -811,14 +729,6 @@ class FileManager {
     return await suffixFilePathToMakeItUnique(filePath);
   }
 
-  /// Returns a unique file path by appending a number to the end of the [filePath].
-  /// e.g. "/Untitled" -> "/Untitled (2)"
-  ///
-  /// Providing a [currentPath] means that e.g. "/Untitled (2)" being renamed
-  /// to "/Untitled" will be returned as "/Untitled (2)" not "/Untitled (3)".
-  ///
-  /// If [currentPath] is provided, it must
-  /// end with [Editor.extension] or [Editor.extensionOldJson].
   static Future<String> suffixFilePathToMakeItUnique(
     String filePath, {
     String? intendedExtension,
@@ -829,17 +739,13 @@ class FileManager {
 
     if (filePath.endsWith(Editor.extension)) {
       filePath = filePath.substring(
-        0,
-        filePath.length - Editor.extension.length,
-      );
+          0, filePath.length - Editor.extension.length);
       newFilePath = filePath;
       hasExtension = true;
       intendedExtension ??= Editor.extension;
     } else if (filePath.endsWith(Editor.extensionOldJson)) {
       filePath = filePath.substring(
-        0,
-        filePath.length - Editor.extensionOldJson.length,
-      );
+          0, filePath.length - Editor.extensionOldJson.length);
       newFilePath = filePath;
       hasExtension = true;
       intendedExtension ??= Editor.extensionOldJson;
@@ -850,8 +756,7 @@ class FileManager {
     int i = 1;
     while (true) {
       if (!doesFileExist(newFilePath + Editor.extension) &&
-          !doesFileExist(newFilePath + Editor.extensionOldJson))
-        break;
+          !doesFileExist(newFilePath + Editor.extensionOldJson)) break;
       if (newFilePath + Editor.extension == currentPath) break;
       if (newFilePath + Editor.extensionOldJson == currentPath) break;
       i++;
@@ -861,32 +766,22 @@ class FileManager {
     return newFilePath + (hasExtension ? intendedExtension : '');
   }
 
-  /// Imports a file from a sharing intent.
-  ///
-  /// [parentDir], if provided, must start and end with a slash.
-  ///
-  /// [extension], if provided, must start with a dot.
-  /// If not provided, it will be inferred from the [path].
-  ///
-  /// Returns the file path of the imported file.
   static Future<String?> importFile(
     String path,
     String? parentDir, {
     String? extension,
     bool awaitWrite = true,
   }) async {
-    assert(
-      parentDir == null || parentDir.startsWith('/') && parentDir.endsWith('/'),
-    );
+    assert(parentDir == null ||
+        parentDir.startsWith('/') && parentDir.endsWith('/'));
 
     if (extension == null) {
       extension = '.${path.split('.').last}';
       assert(extension.length > 1);
     } else {
-      assert(extension.startsWith('.')); // extension must start with a dot
+      assert(extension.startsWith('.'));
     }
 
-    /// The file name without its extension
     String fileName = path.split(RegExp(r'[\\/]')).last;
     fileName = fileName.substring(0, fileName.lastIndexOf('.'));
     final String importedPath;
@@ -907,8 +802,8 @@ class FileManager {
         log.severe('Failed to find main note in sba: $path');
         return null;
       }
-      final mainFileExtension = '.${mainFile.name.split('.').last}'
-          .toLowerCase();
+      final mainFileExtension =
+          '.${mainFile.name.split('.').last}'.toLowerCase();
       importedPath = await suffixFilePathToMakeItUnique(
         '${parentDir ?? '/'}$fileName',
         intendedExtension: mainFileExtension,
@@ -919,22 +814,17 @@ class FileManager {
         return output.getBytes();
       }();
       writeFutures.add(
-        writeFile(
-          importedPath + mainFileExtension,
-          mainFileContents,
-          awaitWrite: awaitWrite,
-        ),
+        writeFile(importedPath + mainFileExtension, mainFileContents,
+            awaitWrite: awaitWrite),
       );
 
-      // now import assets
       for (final file in archive.files) {
         if (!file.isFile) continue;
         if (file == mainFile) continue;
 
-        final extension = file.name.split('.').last;
-        final assetNumber = int.tryParse(extension);
-        if (assetNumber == null) continue;
-        if (assetNumber < 0) continue;
+        final ext = file.name.split('.').last;
+        final assetNumber = int.tryParse(ext);
+        if (assetNumber == null || assetNumber < 0) continue;
 
         final assetBytes = () {
           final output = OutputMemoryStream();
@@ -943,14 +833,11 @@ class FileManager {
         }();
         writeFutures.add(
           writeFile(
-            '$importedPath$mainFileExtension.$assetNumber',
-            assetBytes,
-            awaitWrite: awaitWrite,
-          ),
+              '$importedPath$mainFileExtension.$assetNumber', assetBytes,
+              awaitWrite: awaitWrite),
         );
       }
     } else {
-      // import sbn or sbn2
       final file = File(path);
       final fileContents = await file.readAsBytes();
       importedPath = await suffixFilePathToMakeItUnique(
@@ -958,30 +845,26 @@ class FileManager {
         intendedExtension: extension.toLowerCase(),
       );
       writeFutures.add(
-        writeFile(
-          importedPath + extension.toLowerCase(),
-          fileContents,
-          awaitWrite: awaitWrite,
-        ),
+        writeFile(importedPath + extension.toLowerCase(), fileContents,
+            awaitWrite: awaitWrite),
       );
     }
 
     await Future.wait(writeFutures);
-
     return importedPath;
   }
 
-  /// Creates the parent directories of filePath if they don't exist.
+  // ─── Internal Helpers ─────────────────────────────────────────────────
+
   static Future _createFileDirectory(String filePath) async {
-    assert(filePath.contains('/'), 'filePath must be a path, not a file name');
+    assert(
+        filePath.contains('/'), 'filePath must be a path, not a file name');
     final parentDirectory = filePath.substring(0, filePath.lastIndexOf('/'));
-    await Directory(
-      documentsDirectory + parentDirectory,
-    ).create(recursive: true);
+    await Directory(documentsDirectory + parentDirectory)
+        .create(recursive: true);
   }
 
-  static Future _renameReferences(String fromPath, String toPath) async {
-    // rename file in recently accessed
+  static void _renameReferences(String fromPath, String toPath) {
     bool replaced = false;
     for (int i = 0; i < stows.recentFiles.value.length; i++) {
       if (stows.recentFiles.value[i] != fromPath) continue;
@@ -995,8 +878,7 @@ class FileManager {
     stows.recentFiles.notifyListeners();
   }
 
-  static Future _removeReferences(String filePath) async {
-    // remove file from recently accessed
+  static void _removeReferences(String filePath) {
     for (int i = 0; i < stows.recentFiles.value.length; i++) {
       if (stows.recentFiles.value[i] != filePath) continue;
       stows.recentFiles.value.removeAt(i);
@@ -1004,19 +886,17 @@ class FileManager {
     stows.recentFiles.notifyListeners();
   }
 
-  static Future _saveFileAsRecentlyAccessed(String filePath) async {
-    // don't add assets to recently accessed
+  static void _saveFileAsRecentlyAccessed(String filePath) {
     if (assetFileRegex.hasMatch(filePath)) return;
 
     stows.recentFiles.value.remove(filePath);
     stows.recentFiles.value.insert(0, filePath);
-    if (stows.recentFiles.value.length > maxRecentlyAccessedFiles)
+    if (stows.recentFiles.value.length > maxRecentlyAccessedFiles) {
       stows.recentFiles.value.removeLast();
+    }
 
     stows.recentFiles.notifyListeners();
   }
-
-  static const maxRecentlyAccessedFiles = 30;
 }
 
 class DirectoryChildren {

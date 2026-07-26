@@ -1,21 +1,10 @@
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:foledge/pickcolor/models/color_channel.dart';
 
 import 'circle_thumb_shape.dart';
 import 'palette.dart' show ColorPositionChanged;
-
-/// Color channel enum for internal calculations.
-enum _ColorChannel { red, green, blue }
-
-/// Get sorted color channels by value (descending).
-List<MapEntry<_ColorChannel, int>> _getSortedChannels(Color color) =>
-    <MapEntry<_ColorChannel, int>>[
-      MapEntry(_ColorChannel.red, (color.r * 255.0).round() & 0xff),
-      MapEntry(_ColorChannel.green, (color.g * 255.0).round() & 0xff),
-      MapEntry(_ColorChannel.blue, (color.b * 255.0).round() & 0xff),
-    ]..sort((MapEntry<_ColorChannel, int> a, MapEntry<_ColorChannel, int> b) =>
-        b.value.compareTo(a.value));
 
 /// Rainbow gradient colors for hue slider.
 const LinearGradient _rainbow = LinearGradient(colors: <Color>[
@@ -77,20 +66,20 @@ class RainbowSlider extends StatefulWidget {
 
   /// Calculate position from color (static utility).
   static double getPosition(Color color) {
-    List<MapEntry<_ColorChannel, int>> channels = _getSortedChannels(color);
+    List<MapEntry<ColorChannel, int>> channels = getSortedChannels(color);
     double c0 = channels[0].value.toDouble();
     double c1 = channels[1].value.toDouble();
     double c2 = channels[2].value.toDouble();
     if (c0 == c1 && c0 == c2) return 0.0;
-    _ColorChannel second = channels[1].key;
+    ColorChannel second = channels[1].key;
     double coEfficient = (c1 - c2) / (c0 - c2);
     switch (channels[0].key) {
-      case _ColorChannel.red: // red / purple
-        return second == _ColorChannel.blue ? 6 - coEfficient : 0 + coEfficient;
-      case _ColorChannel.green: // yellow / green
-        return second == _ColorChannel.red ? 2 - coEfficient : 2 + coEfficient;
-      case _ColorChannel.blue: // blue / purple
-        return second == _ColorChannel.green
+      case ColorChannel.red: // red / purple
+        return second == ColorChannel.blue ? 6 - coEfficient : 0 + coEfficient;
+      case ColorChannel.green: // yellow / green
+        return second == ColorChannel.red ? 2 - coEfficient : 2 + coEfficient;
+      case ColorChannel.blue: // blue / purple
+        return second == ColorChannel.green
             ? 4 - coEfficient
             : 4 + coEfficient;
     }

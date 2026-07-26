@@ -14,6 +14,7 @@ import 'package:foledge/components/canvas/canvas.dart';
 import 'package:foledge/components/canvas/canvas_gesture_detector.dart';
 import 'package:foledge/components/canvas/canvas_image.dart';
 import 'package:foledge/components/canvas/save_indicator.dart';
+import 'package:foledge/pages/editor/widgets/more_menu_overlay.dart';
 import 'package:foledge/pages/editor/widgets/read_only_banner.dart';
 import 'package:foledge/components/theming/adaptive_alert_dialog.dart';
 import 'package:foledge/components/theming/adaptive_icon.dart';
@@ -57,7 +58,6 @@ class Editor extends StatefulWidget {
   final String? customTitle;
   final String? pdfPath;
 
-  /// Delegated to [EditorConstants] for use in mixins without circular imports.
   static const extension = EditorConstants.extension;
   static const extensionOldJson = EditorConstants.extensionOldJson;
   static const double gapBetweenPages = EditorConstants.gapBetweenPages;
@@ -141,8 +141,6 @@ class EditorState extends State<Editor>
 
   late Tool _lastNonEraserTool = Pen.currentPen;
 
-  // --- Mixin abstract implementations ---
-
   @override
   GlobalKey<ToolbarState> get toolbarKey => _toolbarKey;
 
@@ -200,7 +198,21 @@ class EditorState extends State<Editor>
     autosaveAfterDelay();
   }
 
-  // --- Lifecycle ---
+  EditorImage _duplicateImage(EditorImage image, {Offset offset = const Offset(25, -25)}) {
+    final newImage = image.copy()
+      ..id = coreInfo.nextImageId++
+      ..dstRect = image.dstRect.shift(offset);
+    const pad = 25.0;
+    final r = newImage.dstRect;
+    final pageSize = coreInfo.pages[image.pageIndex].size;
+    newImage.dstRect = Rect.fromLTWH(
+      r.left.clamp(pad, max(pad, pageSize.width - r.width - pad)).toDouble(),
+      r.top.clamp(pad, max(pad, pageSize.height - r.height - pad)).toDouble(),
+      r.width,
+      r.height,
+    );
+    return newImage;
+  }
 
   @override
   void initState() {
@@ -250,8 +262,6 @@ class EditorState extends State<Editor>
     _toolbarKey.currentState?.collapseAll();
   }
 
-  // --- Keybindings ---
-
   Keybinding? _ctrlZ, _ctrlY, _ctrlShiftZ;
   void _assignKeybindings() {
     _ctrlZ = Keybinding([
@@ -277,8 +287,6 @@ class EditorState extends State<Editor>
     if (_ctrlY != null) Keybinder.remove(_ctrlY!);
     if (_ctrlShiftZ != null) Keybinder.remove(_ctrlShiftZ!);
   }
-
-  // --- Color ---
 
   void updateColorBar(Color color) {
     final newColorString = color.toARGB32().toString();
@@ -309,8 +317,6 @@ class EditorState extends State<Editor>
     stows.recentColorsPositioned.notifyListeners();
   }
 
-  // --- Page index ---
-
   @visibleForTesting
   static int getPageIndexFromScrollPosition({
     required double scrollY,
@@ -330,8 +336,6 @@ class EditorState extends State<Editor>
     }
     return pages.length - 1;
   }
-
-  // --- Version dialog ---
 
   Future<void> showVersionTooNewDialog() async {
     final disableReadOnly =
@@ -362,8 +366,6 @@ class EditorState extends State<Editor>
       if (mounted) setState(() {});
     }
   }
-
-  // --- Build ---
 
   @override
   Widget build(BuildContext context) {
@@ -448,19 +450,7 @@ class EditorState extends State<Editor>
               }).toList();
 
               final duplicatedImages = images.map((image) {
-                final newImage = image.copy()
-                  ..id = coreInfo.nextImageId++
-                  ..dstRect.shift(duplicationFeedbackOffset);
-                const pad = 25.0;
-                final r = newImage.dstRect;
-                final pageSize = coreInfo.pages[image.pageIndex].size;
-                newImage.dstRect = Rect.fromLTWH(
-                  r.left.clamp(pad, max(pad, pageSize.width - r.width - pad)).toDouble(),
-                  r.top.clamp(pad, max(pad, pageSize.height - r.height - pad)).toDouble(),
-                  r.width,
-                  r.height,
-                );
-                return newImage;
+                return _duplicateImage(image, offset: duplicationFeedbackOffset);
               }).toList();
 
               page.strokes.addAll(duplicatedStrokes);
@@ -518,21 +508,7 @@ class EditorState extends State<Editor>
 
             setState(() {
               final page = coreInfo.pages[image.pageIndex];
-              const duplicationFeedbackOffset = Offset(25, -25);
-
-              final duplicatedImage = image.copy()
-                ..id = coreInfo.nextImageId++
-                ..dstRect = image.dstRect.shift(duplicationFeedbackOffset);
-
-              const pad = 25.0;
-              final r = duplicatedImage.dstRect;
-              final pageSize = page.size;
-              duplicatedImage.dstRect = Rect.fromLTWH(
-                r.left.clamp(pad, max(pad, pageSize.width - r.width - pad)).toDouble(),
-                r.top.clamp(pad, max(pad, pageSize.height - r.height - pad)).toDouble(),
-                r.width,
-                r.height,
-              );
+              final duplicatedImage = _duplicateImage(image);
 
               page.images.add(duplicatedImage);
 
@@ -749,7 +725,7 @@ class EditorState extends State<Editor>
       barrierColor: Colors.black26,
       transitionDuration: const Duration(milliseconds: 250),
       pageBuilder: (context, animation, secondaryAnimation) {
-        return _MoreMenuOverlay(
+        return MoreMenuOverlay(
           buttonRect: buttonRect,
           child: bottomSheet(context),
         );
@@ -959,8 +935,6 @@ class EditorState extends State<Editor>
     );
   }
 
-  // --- Dispose ---
-
   @override
   void dispose() {
     unawaited(_cleanUpAsync());
@@ -991,89 +965,5 @@ class EditorState extends State<Editor>
     } finally {
       coreInfo.dispose();
     }
-  }
-}
-
-class _MoreMenuOverlay extends StatefulWidget {
-  const _MoreMenuOverlay({required this.buttonRect, required this.child});
-
-  final Rect buttonRect;
-  final Widget child;
-
-  @override
-  State<_MoreMenuOverlay> createState() => _MoreMenuOverlayState();
-}
-
-class _MoreMenuOverlayState extends State<_MoreMenuOverlay> {
-  Orientation? _lastOrientation;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final currentOrientation = MediaQuery.of(context).orientation;
-    if (_lastOrientation != null && _lastOrientation != currentOrientation) {
-      Navigator.of(context).pop();
-    }
-    _lastOrientation = currentOrientation;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final screenSize = MediaQuery.of(context).size;
-
-    final maxWidth = 350.0;
-
-    double top = widget.buttonRect.bottom + 8;
-    double left = widget.buttonRect.right - maxWidth;
-
-    if (left < 16) left = 16;
-    if (left + maxWidth > screenSize.width - 16) {
-      left = screenSize.width - maxWidth - 16;
-    }
-    if (top + 400 > screenSize.height - 16) {
-      top = widget.buttonRect.top - 400 - 8;
-    }
-
-    return Stack(
-      children: [
-        Positioned.fill(
-          child: GestureDetector(
-            onTap: () => Navigator.pop(context),
-            child: Container(color: Colors.transparent),
-          ),
-        ),
-        Positioned(
-          left: left,
-          top: top,
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              maxWidth: maxWidth,
-              maxHeight: 630.0,
-            ),
-            child: Material(
-              color: Colors.transparent,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: colorScheme.surface,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.15),
-                      blurRadius: 20,
-                      offset: const Offset(0, 8),
-                    ),
-                  ],
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
-                  child: widget.child,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
   }
 }

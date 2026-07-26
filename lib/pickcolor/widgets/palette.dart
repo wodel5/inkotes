@@ -1,18 +1,7 @@
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
-
-/// Color channel enum for internal calculations.
-enum _ColorChannel { red, green, blue }
-
-/// Get sorted color channels by value (descending).
-List<MapEntry<_ColorChannel, int>> _getSortedChannels(Color color) =>
-    <MapEntry<_ColorChannel, int>>[
-      MapEntry(_ColorChannel.red, (color.r * 255.0).round() & 0xff),
-      MapEntry(_ColorChannel.green, (color.g * 255.0).round() & 0xff),
-      MapEntry(_ColorChannel.blue, (color.b * 255.0).round() & 0xff),
-    ]..sort((MapEntry<_ColorChannel, int> a, MapEntry<_ColorChannel, int> b) =>
-        b.value.compareTo(a.value));
+import 'package:foledge/pickcolor/models/color_channel.dart';
 
 /// Callback for position changes with color.
 typedef ColorPositionChanged<TPosition> = void Function(
@@ -71,7 +60,7 @@ class Palette extends StatefulWidget {
   /// Calculate position from color (static utility).
   /// Maps color to hue and saturation palette.
   static Offset getPosition(Color color) {
-    List<MapEntry<_ColorChannel, int>> channels = _getSortedChannels(color);
+    List<MapEntry<ColorChannel, int>> channels = getSortedChannels(color);
     double brightness = channels[0].value / 0xff;
     if (brightness == 0) return const Offset(1, 1);
     double y = 1 - brightness;

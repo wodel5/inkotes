@@ -4,7 +4,7 @@ import 'package:foledge/components/theming/font_fallbacks.dart';
 
 typedef _ArgRecord = ({bool invert, Color secondary});
 
-abstract class FolegeQuillStyles {
+abstract class FoledgeQuillStyles {
   static DefaultStyles get({
     required bool invert,
     required Color secondary,

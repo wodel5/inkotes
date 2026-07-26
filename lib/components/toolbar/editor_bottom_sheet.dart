@@ -5,6 +5,8 @@ import 'package:foledge/components/canvas/canvas_background_preview.dart';
 import 'package:foledge/components/canvas/canvas_preview.dart';
 import 'package:foledge/components/canvas/inner_canvas.dart';
 import 'package:foledge/components/toolbar/size_picker.dart';
+import 'package:foledge/components/toolbar/widgets/background_color_button.dart';
+import 'package:foledge/components/toolbar/widgets/page_action_button.dart';
 import 'package:foledge/data/editor/editor_core_info.dart';
 import 'package:foledge/data/editor/page.dart';
 import 'package:foledge/data/extensions/flutter_extensions.dart';
@@ -98,7 +100,7 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
         context,
       ).copyWith(dragDevices: PointerDeviceKind.values.toSet()),
       child: Padding(
-        padding: const .symmetric(horizontal: 16, vertical: 0), // 弹窗左右内边距
+        padding: const .symmetric(horizontal: 16, vertical: 0),
         child: ListView(
           shrinkWrap: true,
           children: [
@@ -110,7 +112,7 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
                 ),
               ],
             ),
-            const SizedBox(height: 8), // 标题"更多"下方间距
+            const SizedBox(height: 8),
             Row(
               children: [
                 Text(
@@ -118,9 +120,9 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
                   style: TextTheme.of(context).titleMedium,
                 ),
                 const Spacer(),
-                for (final preset in _backgroundColorPresets) ...[
+                for (final preset in backgroundColorPresets) ...[
                   const SizedBox(width: 6),
-                  _BackgroundColorButton(
+                  BackgroundColorButton(
                     color: preset,
                     label: '',
                     isSelected: widget.coreInfo.backgroundColor == preset,
@@ -131,7 +133,7 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
                 ],
               ],
             ),
-            const SizedBox(height: 8), // 画纸类型标题与预览图之间间距
+            const SizedBox(height: 8),
             SizedBox(
               height: previewSize.height + 24,
               child: Row(
@@ -140,7 +142,7 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
                       in CanvasBackgroundPattern.values) ...[
                     if (backgroundPattern !=
                         CanvasBackgroundPattern.values.first)
-                      const SizedBox(width: 4), // 画纸预览卡片之间的间距
+                      const SizedBox(width: 4),
                     Expanded(
                       child: Center(
                         child: Column(
@@ -177,7 +179,7 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
                 ],
               ),
             ),
-            const SizedBox(height: 8), // 画纸预览图与行高之间间距
+            const SizedBox(height: 8),
             Row(
               children: [
                 Text(
@@ -225,7 +227,6 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
               ],
             ),
             Row(
-              // 行高与线条粗细之间无间距，紧挨着
               children: [
                 Text(
                   t.editor.menu.lineThickness,
@@ -271,9 +272,9 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
                 ),
               ],
             ),
-            const SizedBox(height: 8), // 线条粗细与页面标题之间间距
+            const SizedBox(height: 8),
             Text(t.editor.pages, style: TextTheme.of(context).titleMedium),
-            const SizedBox(height: 8), // 页面标题与缩略图之间间距
+            const SizedBox(height: 8),
             SizedBox(
               height: previewSize.height + 24,
               child: ListView.separated(
@@ -281,7 +282,7 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
                 scrollDirection: Axis.horizontal,
                 itemCount: pages.length,
                 separatorBuilder: (_, _) =>
-                    const SizedBox(width: 10), // 页面缩略图之间的间距
+                    const SizedBox(width: 10),
                 itemBuilder: (context, pageIndex) {
                   final isSelected = pageIndex == _selectedPageIndex;
                   return GestureDetector(
@@ -340,13 +341,13 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
                 },
               ),
             ),
-            const SizedBox(height: 8), // 缩略图与操作按钮之间间距
+            const SizedBox(height: 8),
             Row(
               children: [
                 Expanded(
                   child: AspectRatio(
                     aspectRatio: 1.0,
-                    child: _PageActionButton(
+                    child: PageActionButton(
                       icon: Icons.insert_page_break,
                       label: t.editor.menu.insertPage,
                       enabled: true,
@@ -363,7 +364,7 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
                 Expanded(
                   child: AspectRatio(
                     aspectRatio: 1.0,
-                    child: _PageActionButton(
+                    child: PageActionButton(
                       icon: FontAwesomeIcons.solidCopy,
                       label: t.editor.menu.duplicatePage,
                       enabled: true,
@@ -380,7 +381,7 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
                 Expanded(
                   child: AspectRatio(
                     aspectRatio: 1.0,
-                    child: _PageActionButton(
+                    child: PageActionButton(
                       icon: Icons.cleaning_services,
                       label: t.editor.menu.clearPage,
                       enabled: pages[_selectedPageIndex].isNotEmpty,
@@ -395,7 +396,7 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
                 Expanded(
                   child: AspectRatio(
                     aspectRatio: 1.0,
-                    child: _PageActionButton(
+                    child: PageActionButton(
                       icon: FontAwesomeIcons.trash,
                       label: t.editor.menu.deletePage,
                       enabled: pages.length > 1,
@@ -414,143 +415,6 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
             ),
             const SizedBox(height: 8),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-const _backgroundColorPresets = [
-  Color(0xFFFFFFFF), // 纯白
-  Color(0xFF272735), // 深色
-  Color(0xFFFFFBF0), // 暖白
-  Color(0xFFF0FFF0), // 浅绿
-  Color(0xFFF0F7FF), // 浅蓝
-];
-
-class _BackgroundColorButton extends StatelessWidget {
-  const _BackgroundColorButton({
-    required this.color,
-    required this.label,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  final Color? color;
-  final String label;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = ColorScheme.of(context);
-    return GestureDetector(
-      onTap: onTap,
-      child: Tooltip(
-        message: label,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 150),
-          width: 28,
-          height: 28,
-          decoration: BoxDecoration(
-            color: color ?? InnerCanvas.defaultBackgroundColor,
-            borderRadius: BorderRadius.circular(6),
-            border: Border.all(
-              color: isSelected
-                  ? colorScheme.primary
-                  : colorScheme.outlineVariant.withValues(alpha: 0.5),
-              width: isSelected ? 2.5 : 1,
-            ),
-            boxShadow: isSelected
-                ? [
-                    BoxShadow(
-                      color: colorScheme.primary.withValues(alpha: 0.3),
-                      blurRadius: 4,
-                    ),
-                  ]
-                : null,
-          ),
-          child: isSelected
-              ? Icon(
-                  Icons.check,
-                  size: 14,
-                  color: color == null || (color!.computeLuminance() > 0.5)
-                      ? colorScheme.primary
-                      : Colors.white,
-                )
-              : null,
-        ),
-      ),
-    );
-  }
-}
-
-class _PageActionButton extends StatefulWidget {
-  const _PageActionButton({
-    required this.icon,
-    required this.label,
-    required this.enabled,
-    required this.onTap,
-  });
-
-  final Object icon;
-  final String label;
-  final bool enabled;
-  final VoidCallback onTap;
-
-  @override
-  State<_PageActionButton> createState() => _PageActionButtonState();
-}
-
-class _PageActionButtonState extends State<_PageActionButton> {
-  bool _isPressed = false;
-
-  @override
-  Widget build(BuildContext context) {
-    final brightness = Theme.of(context).brightness;
-    final pressColor = brightness == Brightness.dark
-        ? const Color(0xFFB2C5FF)
-        : const Color(0xFF4A5E92);
-
-    final usePressColor = _isPressed && widget.enabled;
-    final colorScheme = ColorScheme.of(context);
-    final iconColor = !widget.enabled
-        ? colorScheme.onSurface.withValues(alpha: 0.3)
-        : usePressColor
-            ? pressColor
-            : colorScheme.onSurface;
-    final textColor = !widget.enabled
-        ? colorScheme.onSurface.withValues(alpha: 0.3)
-        : usePressColor
-            ? pressColor
-            : colorScheme.onSurface;
-
-    return GestureDetector(
-      onTapDown: widget.enabled ? (_) => setState(() => _isPressed = true) : null,
-      onTapUp: widget.enabled ? (_) => setState(() => _isPressed = false) : null,
-      onTapCancel: () => setState(() => _isPressed = false),
-      onTap: widget.enabled ? widget.onTap : null,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-            if (widget.icon is IconData)
-              Icon(widget.icon as IconData, size: 20, color: iconColor)
-            else
-              FaIcon(widget.icon as FaIconData, size: 20, color: iconColor),
-            const SizedBox(height: 2),
-            Text(
-              widget.label,
-              style: TextStyle(fontSize: 12, color: textColor),
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-        ),
         ),
       ),
     );

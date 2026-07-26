@@ -42,15 +42,15 @@ class DynamicMaterialAppState extends State<DynamicMaterialApp> {
           router: widget.router,
           themeMode: themeMode,
           theme: (lightColorScheme != null)
-              ? foledgeTheme.createTheme(lightColorScheme, platform)
-              : foledgeTheme.createThemeFromSeed(
+              ? FoledgeTheme.createTheme(lightColorScheme, platform)
+              : FoledgeTheme.createThemeFromSeed(
                   lightColorScheme?.primary ?? widget.defaultSwatch,
                   .light,
                   platform,
                 ),
           darkTheme: (darkColorScheme != null)
-              ? foledgeTheme.createTheme(darkColorScheme, platform)
-              : foledgeTheme.createThemeFromSeed(
+              ? FoledgeTheme.createTheme(darkColorScheme, platform)
+              : FoledgeTheme.createThemeFromSeed(
                   darkColorScheme?.primary ?? widget.defaultSwatch,
                   .dark,
                   platform,

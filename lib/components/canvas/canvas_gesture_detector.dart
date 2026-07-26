@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:collection';
 import 'dart:math';
 import 'dart:ui';
 
@@ -7,6 +6,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:keybinder/keybinder.dart';
+import 'package:foledge/components/canvas/canvas_transform_cache.dart';
 import 'package:foledge/components/canvas/hud/canvas_hud.dart';
 import 'package:foledge/components/canvas/interactive_canvas.dart';
 import 'package:foledge/data/editor/page.dart';
@@ -47,8 +47,6 @@ class CanvasGestureDetector extends StatefulWidget {
   final ValueChanged<ScaleUpdateDetails> onDrawUpdate;
   final ValueChanged<ScaleEndDetails> onDrawEnd;
 
-  /// Called when the pressure of the stylus changes.
-  /// The [pressure] value is normalized into a range of 0 to 1.
   final void Function(PointerDeviceKind kind, double? pressure)
   updatePointerData;
   final VoidCallback onHovering;
@@ -83,9 +81,6 @@ class CanvasGestureDetector extends StatefulWidget {
 
     for (int i = 0; i < pageIndex && i < pages.length; i++) {
       final pageSize = pages[i].size;
-
-      /// Since we use a FittedBox, the actual width of the page
-      /// is the minimum of the page width and the screen width.
       final pageWidthFitted = min(pageSize.width, screenWidth);
 
       top += 16;
@@ -108,7 +103,6 @@ class CanvasGestureDetector extends StatefulWidget {
     );
     transformationController.value = Matrix4.translationValues(
       0,
-      // Slight upwards offset so that the page is not flush with the top of the screen
       topOfPage + 50,
       0,
     );
@@ -125,9 +119,6 @@ class CanvasGestureDetector extends StatefulWidget {
 
     for (int i = 0; i < pages.length; i++) {
       final pageSize = pages[i].size;
-
-      /// Since we use a FittedBox, the actual width of the page
-      /// is the minimum of the page width and the screen width.
       final pageWidthFitted = min(pageSize.width, screenWidth);
 
       top += 16;
@@ -143,23 +134,16 @@ class CanvasGestureDetector extends StatefulWidget {
 class CanvasGestureDetectorState extends State<CanvasGestureDetector> {
   late var containerBounds = const BoxConstraints();
 
-  /// If true, the next onTransformChanged call will skip the top-edge clamping.
-  /// Used by the editor to set a positive translationY without it being canceled.
   bool _bypassTopClamping = false;
 
-  /// Called by the editor to allow a one-time positive translation (e.g. after page deletion).
   void bypassTopClamping() {
     _bypassTopClamping = true;
   }
 
-  /// If zooming is locked, this is the zoom level.
-  /// Otherwise, this is null.
   late double? zoomLockedValue = stows.lastZoomLock.value
       ? widget._transformationController.value.approxScale
       : null;
 
-  /// Whether single-finger panning is locked.
-  /// Two-finger panning is always enabled.
   late bool singleFingerPanLock = stows.lastSingleFingerPanLock.value;
 
   bool get isZoomLocked => zoomLockedValue != null;
@@ -225,7 +209,6 @@ class CanvasGestureDetectorState extends State<CanvasGestureDetector> {
 
     _arrowKeyPanNow(direction);
 
-    // Wait for 200ms, then pan every 100ms
     const ms100 = Duration(milliseconds: 100);
     const ms200 = Duration(milliseconds: 200);
     _arrowKeyPanTimers[direction] = Timer(ms200, () {
@@ -333,8 +316,6 @@ class CanvasGestureDetectorState extends State<CanvasGestureDetector> {
     super.initState();
   }
 
-  /// When the widget is created, we still have an empty coreInfo.
-  /// Wait for note to be loaded before setting the initial transform.
   @override
   void didUpdateWidget(CanvasGestureDetector oldWidget) {
     if (oldWidget.initialPageIndex != widget.initialPageIndex ||
@@ -344,25 +325,18 @@ class CanvasGestureDetectorState extends State<CanvasGestureDetector> {
     super.didUpdateWidget(oldWidget);
   }
 
-  /// Sets the initial transform so that we're scrolled to the correct page.
-  /// Has no effect if note hasn't yet loaded or if the user has already scrolled.
   void setInitialTransform() {
-    // wait for note to be loaded
     if (widget.filePath.isEmpty) return;
-
-    // don't override user's scroll
     if (!widget._transformationController.value.isIdentity()) return;
 
     final transformCacheItem = CanvasTransformCache.get(widget.filePath);
 
     if (transformCacheItem != null) {
-      // if we're opening the same note, restore the last transform
       widget._transformationController.value = transformCacheItem.transform;
       if (zoomLockedValue != null) {
         zoomLockedValue = transformCacheItem.transform.approxScale;
       }
     } else if (widget.initialPageIndex != null) {
-      // if we're opening a different note, scroll to the last recorded page
       CanvasGestureDetector.scrollToPage(
         pageIndex: widget.initialPageIndex!,
         pages: widget.pages,
@@ -374,9 +348,6 @@ class CanvasGestureDetectorState extends State<CanvasGestureDetector> {
 
   Timer? _snapZoomTimer;
 
-  /// Corrects the transform if it's out of bounds.
-  /// If the scale is less than 1, centers the pages horizontally.
-  /// Otherwise, prevents the user from scrolling past the edges.
   void onTransformChanged() {
     final scale = widget._transformationController.value.approxScale;
     final translation = widget._transformationController.value.getTranslation();
@@ -384,19 +355,15 @@ class CanvasGestureDetectorState extends State<CanvasGestureDetector> {
     double adjustmentX = 0;
     double adjustmentY = 0;
 
-    // snap to 1.0x zoom
     _snapZoomTimer?.cancel();
     final diffFrom1 = (scale - 1).abs();
-    // allow 0.001 leeway for floating point error
     if (diffFrom1 < 0.05 && diffFrom1 > 0.001)
       _snapZoomTimer = Timer(const Duration(milliseconds: 200), resetZoom);
 
     if (scale < 1) {
-      // horizontally center pages if zoomed out
       final center = containerBounds.maxWidth * (1 - scale) / 2;
       adjustmentX = center - translation.x;
     } else {
-      // if zoomed in, don't allow scrolling past the edges
       late final minX = containerBounds.maxWidth * (1 - scale);
       if (translation.x > 0) {
         adjustmentX = -translation.x;
@@ -405,7 +372,7 @@ class CanvasGestureDetectorState extends State<CanvasGestureDetector> {
       }
 
       if (_bypassTopClamping) {
-        _bypassTopClamping = false; // one-shot
+        _bypassTopClamping = false;
       } else if (translation.y > 0) {
         adjustmentY = -translation.y;
       }
@@ -421,7 +388,6 @@ class CanvasGestureDetectorState extends State<CanvasGestureDetector> {
     }
   }
 
-  /// Resets the zoom level to 1.0x
   void resetZoom() {
     final transformation = widget._transformationController.value;
     final scale = transformation.approxScale;
@@ -447,13 +413,12 @@ class CanvasGestureDetectorState extends State<CanvasGestureDetector> {
     final double? pressure;
     if (isStylus) {
       if (event.pressureMin != event.pressureMax) {
-        pressure = _inverseLerp(
+        pressure = inverseLerp(
           event.pressure,
           min: event.pressureMin,
           max: event.pressureMax,
         );
       } else {
-        // Detected as stylus, but no pressure values
         pressure = null;
       }
     } else {
@@ -472,8 +437,6 @@ class CanvasGestureDetectorState extends State<CanvasGestureDetector> {
   void _listenerPointerHoverEvent(PointerEvent event) {
     if (event.kind != .stylus && event.kind != .invertedStylus) return;
 
-    // Apparently flutter synthesizes a hover event on pointer down,
-    // so these are used to detect when hovering ends
     if (event.synthesized) {
       widget.onHoveringEnd();
     } else {
@@ -521,25 +484,17 @@ class CanvasGestureDetectorState extends State<CanvasGestureDetector> {
                   maxScale: zoomLockedValue ?? CanvasGestureDetector.kMaxScale,
                   panEnabled: !singleFingerPanLock,
                   panAxis: PanAxis.free,
-
-                  // Smoother scrolling fling gesture than the default
                   interactionEndFrictionCoefficient: 0.3,
-
-                  // we need a non-zero boundary margin so we can zoom out
-                  // past the size of the page (for minScale < 1)
                   boundaryMargin: .symmetric(
                     vertical: 0,
                     horizontal: screenSize.width * 2,
                   ),
-
                   transformationController: widget._transformationController,
-
                   isDrawGesture: widget.isDrawGesture,
                   onInteractionEnd: widget.onInteractionEnd,
                   onDrawStart: widget.onDrawStart,
                   onDrawUpdate: widget.onDrawUpdate,
                   onDrawEnd: widget.onDrawEnd,
-
                   builder: (BuildContext context, Quad viewport) {
                     return _PagesBuilder(
                       pages: widget.pages,
@@ -576,9 +531,6 @@ class CanvasGestureDetectorState extends State<CanvasGestureDetector> {
     super.dispose();
   }
 
-  /// Returns the axis aligned bounding box for the given Quad,
-  /// which might not be axis aligned.
-  /// From https://api.flutter.dev/flutter/widgets/InteractiveViewer/builder.html
   static Rect _axisAlignedBoundingBox(Quad quad) {
     final List<Vector3> points = [
       quad.point0,
@@ -598,7 +550,6 @@ class CanvasGestureDetectorState extends State<CanvasGestureDetector> {
 
 class _PagesBuilder extends StatelessWidget {
   const _PagesBuilder({
-    // ignore: unused_element_parameter
     super.key,
     required this.pages,
     required this.pageBuilder,
@@ -624,10 +575,7 @@ class _PagesBuilder extends StatelessWidget {
     double topOfPage = Editor.gapBetweenPages * 2;
     for (int pageIndex = 0; pageIndex < pages.length; pageIndex++) {
       final page = pages[pageIndex];
-      final pageWidth = min(
-        page.size.width,
-        containerWidth,
-      ); // because of FittedBox
+      final pageWidth = min(page.size.width, containerWidth);
       final pageHeight = pageWidth / page.size.width * page.size.height;
       final bottomOfPage = topOfPage + pageHeight;
 
@@ -649,60 +597,7 @@ class _PagesBuilder extends StatelessWidget {
     }
 
     children.add(const SizedBox.square(dimension: Editor.gapBetweenPages));
-    // 底部留出工具栏空间，防止最后一页被遮挡
     children.add(const SizedBox(height: 100));
     return Column(children: children);
   }
-}
-
-@visibleForTesting
-class CanvasTransformCache {
-  static const _maxCacheSize = 5;
-  static final _cache = LinkedList<CanvasTransformCacheItem>();
-
-  CanvasTransformCache._();
-
-  static void add(String filePath, Matrix4 transform) {
-    for (final entry in _cache) {
-      if (entry.filePath != filePath) continue;
-      entry.unlink();
-      break;
-    }
-    _cache.add(CanvasTransformCacheItem(filePath, transform));
-
-    if (_cache.length > _maxCacheSize) {
-      _cache.first.unlink();
-    }
-  }
-
-  static CanvasTransformCacheItem? get(String filePath) {
-    try {
-      return _cache.firstWhere((item) => item.filePath == filePath);
-    } on StateError {
-      return null;
-    }
-  }
-
-  @visibleForTesting
-  static void clear() {
-    _cache.clear();
-  }
-}
-
-@visibleForTesting
-base class CanvasTransformCacheItem
-    extends LinkedListEntry<CanvasTransformCacheItem> {
-  final String filePath;
-  final Matrix4 transform;
-
-  CanvasTransformCacheItem(this.filePath, this.transform);
-}
-
-double _inverseLerp(num value, {required num min, required num max}) {
-  assert(max >= min, 'Max ($max) must be >= min ($min)');
-  assert(
-    value >= min && value <= max,
-    'Value ($value) must be between $min and $max',
-  );
-  return (value - min) / (max - min);
 }

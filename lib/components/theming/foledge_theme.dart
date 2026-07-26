@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-abstract class foledgeTheme {
+abstract class FoledgeTheme {
   static ThemeData createTheme(
     ColorScheme colorScheme,
     TargetPlatform platform,

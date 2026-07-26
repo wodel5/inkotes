@@ -225,7 +225,7 @@ class TransformedStow<T_in, T_out> extends Stow<dynamic, T_out, dynamic> {
 
   @override
   String toString() {
-    return 'TransformedPref<$T_in, $T_out>(from ${parent.key}, $value)';
+    return 'TransformedStow<$T_in, $T_out>(from ${parent.key}, $value)';
   }
 
   @override
