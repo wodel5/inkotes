@@ -237,8 +237,7 @@ class ToolbarState extends State<Toolbar> {
         child: Padding(
           padding: const EdgeInsets.fromLTRB(12, 4, 12, 8),
           child: GlassmorphismDock(
-            child: IntrinsicWidth(
-                  child: Column(
+            child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -324,7 +323,9 @@ class ToolbarState extends State<Toolbar> {
                         );
                       },
                     ),
-                    Row(
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                     DockButton(
@@ -492,9 +493,9 @@ class ToolbarState extends State<Toolbar> {
                     ),
                   ],
                 ),
+                ),
                 ],  // Column children
                 ),  // Column
-                ),  // IntrinsicWidth
           ),  // GlassmorphismDock
         ),  // Padding
       ),  // Center
