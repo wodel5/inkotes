@@ -85,6 +85,7 @@ mixin EditorImportExportMixin<T extends StatefulWidget> on State<T> {
     );
     createPage(currentPageIndex);
     coreInfo.pages[currentPageIndex].images.addAll(images);
+    setState(() {});
     autosaveAfterDelay();
 
     return images.length;
