@@ -235,7 +235,9 @@ class _CanvasImageState extends State<CanvasImage> {
 
       child: DecoratedBox(
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.red, width: 2),
+          border: active
+              ? Border.all(color: colorScheme.primary, width: 2)
+              : null,
         ),
         child: unpositioned,
       ),
