@@ -248,7 +248,7 @@ mixin EditorImportExportMixin<T extends StatefulWidget> on State<T> {
     final sba = await coreInfo.saveToSba(currentPageIndex: currentPageIndex);
     if (!context.mounted) return;
     await FileManager.exportFile(
-      '${coreInfo.fileName}.sba',
+      '${coreInfo.fileName}.fle',
       sba,
       context: context,
     );

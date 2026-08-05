@@ -126,10 +126,10 @@ class App extends StatefulWidget {
 
     var extension = p.extension(filePath);
     if (extension.isEmpty) {
-      extension = '.sbn2';
+      extension = '.fln';
     }
 
-    if (extension == '.sbn' || extension == '.sbn2' || extension == '.sba') {
+    if (extension == '.fln' || extension == '.fle') {
       final path = await FileManager.importFile(
         filePath,
         null,

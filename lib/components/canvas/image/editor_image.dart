@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 import 'dart:math';
@@ -113,16 +112,14 @@ sealed class EditorImage extends ChangeNotifier {
 
   factory EditorImage.fromJson(
     Map<String, dynamic> json, {
-    required List<Uint8List>? inlineAssets,
     bool isThumbnail = false,
     required String sbnPath,
     required AssetCache assetCache,
   }) {
-    final extension = json['e'] as String?;
+    final extension = json['ext'] as String?;
     if (extension == '.svg') {
       return SvgEditorImage.fromJson(
         json,
-        inlineAssets: inlineAssets,
         isThumbnail: isThumbnail,
         sbnPath: sbnPath,
         assetCache: assetCache,
@@ -130,7 +127,6 @@ sealed class EditorImage extends ChangeNotifier {
     } else if (extension == '.pdf') {
       return PdfEditorImage.fromJson(
         json,
-        inlineAssets: inlineAssets,
         isThumbnail: isThumbnail,
         sbnPath: sbnPath,
         assetCache: assetCache,
@@ -138,7 +134,6 @@ sealed class EditorImage extends ChangeNotifier {
     } else {
       return PngEditorImage.fromJson(
         json,
-        inlineAssets: inlineAssets,
         isThumbnail: isThumbnail,
         sbnPath: sbnPath,
         assetCache: assetCache,
@@ -149,20 +144,20 @@ sealed class EditorImage extends ChangeNotifier {
   @mustBeOverridden
   @mustCallSuper
   Map<String, dynamic> toJson(OrderedAssetCache assets) => {
-    'id': id,
-    'e': extension,
-    'i': pageIndex,
-    'f': backgroundFit.index,
-    'x': dstRect.left,
-    'y': dstRect.top,
-    'w': dstRect.width,
-    'h': dstRect.height,
-    if (srcRect.left != 0) 'sx': srcRect.left,
-    if (srcRect.top != 0) 'sy': srcRect.top,
+    'pid': id,
+    'ext': extension,
+    'pg': pageIndex,
+    'fit': backgroundFit.index,
+    'l': dstRect.left,
+    't': dstRect.top,
+    'wd': dstRect.width,
+    'ht': dstRect.height,
+    if (srcRect.left != 0) 'sl': srcRect.left,
+    if (srcRect.top != 0) 'st': srcRect.top,
     if (srcRect.width != 0) 'sw': srcRect.width,
     if (srcRect.height != 0) 'sh': srcRect.height,
-    if (naturalSize.width != 0) 'nw': naturalSize.width,
-    if (naturalSize.height != 0) 'nh': naturalSize.height,
+    if (naturalSize.width != 0) 'natw': naturalSize.width,
+    if (naturalSize.height != 0) 'nath': naturalSize.height,
   };
 
   /// Images are loaded out after 5 seconds of not being visible.

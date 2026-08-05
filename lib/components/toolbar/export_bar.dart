@@ -69,7 +69,7 @@ class _ExportBarState extends State<ExportBar> {
           return TextButton(
             onPressed: _onPressed(widget.exportAsSba, context),
             style: TextButton.styleFrom(foregroundColor: buttonColor),
-            child: _buttonChild(widget.exportAsSba, 'SBA'),
+            child: _buttonChild(widget.exportAsSba, 'FLE'),
           );
         },
       ),

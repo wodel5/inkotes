@@ -41,28 +41,23 @@ class SvgEditorImage extends EditorImage {
 
   factory SvgEditorImage.fromJson(
     Map<String, dynamic> json, {
-    required List<Uint8List>? inlineAssets,
     bool isThumbnail = false,
     required String sbnPath,
     required AssetCache assetCache,
   }) {
-    final extension = json['e'] as String?;
+    final extension = json['ext'] as String?;
     assert(extension == null || extension == '.svg');
 
-    final assetIndex = json['a'] as int?;
+    final assetIndex = json['as'] as int?;
     final String? svgString;
     File? svgFile;
     if (assetIndex != null) {
-      if (inlineAssets == null) {
-        svgFile = FileManager.getFile(
-          '$sbnPath${Editor.extension}.$assetIndex',
-        );
-        svgString = assetCache.get(svgFile);
-      } else {
-        svgString = utf8.decode(inlineAssets[assetIndex]);
-      }
-    } else if (json['b'] != null) {
-      svgString = json['b'] as String;
+      svgFile = FileManager.getFile(
+        '$sbnPath${Editor.extension}.$assetIndex',
+      );
+      svgString = assetCache.get(svgFile);
+    } else if (json['by'] != null) {
+      svgString = json['by'] as String;
     } else {
       log.warning('SvgEditorImage.fromJson: no svg string found');
       svgString = '';
@@ -70,32 +65,32 @@ class SvgEditorImage extends EditorImage {
 
     return SvgEditorImage(
       id:
-          json['id'] ??
+          json['pid'] ??
           -1, // -1 will be replaced by EditorCoreInfo._handleEmptyImageIds()
       assetCache: assetCache,
       svgString: svgString,
       svgFile: svgFile,
-      pageIndex: json['i'] ?? 0,
+      pageIndex: json['pg'] ?? 0,
       pageSize: .infinite,
-      backgroundFit: json['f'] != null ? .values[json['f']] : .contain,
+      backgroundFit: json['fit'] != null ? .values[json['fit']] : .contain,
       onMoveImage: null,
       onDeleteImage: null,
       onMiscChange: null,
       onLoad: null,
       newImage: false,
       dstRect: .fromLTWH(
-        json['x'] ?? 0,
-        json['y'] ?? 0,
-        json['w'] ?? 0,
-        json['h'] ?? 0,
+        json['l'] ?? 0,
+        json['t'] ?? 0,
+        json['wd'] ?? 0,
+        json['ht'] ?? 0,
       ),
       srcRect: .fromLTWH(
-        json['sx'] ?? 0,
-        json['sy'] ?? 0,
+        json['sl'] ?? 0,
+        json['st'] ?? 0,
         json['sw'] ?? 0,
         json['sh'] ?? 0,
       ),
-      naturalSize: Size(json['nw'] ?? 0, json['nh'] ?? 0),
+      naturalSize: Size(json['natw'] ?? 0, json['nath'] ?? 0),
       isThumbnail: isThumbnail,
     );
   }
@@ -105,12 +100,12 @@ class SvgEditorImage extends EditorImage {
     final json = super.toJson(assets);
 
     // remove non-svg fields
-    json.remove('t'); // thumbnail bytes
-    assert(!json.containsKey('a'));
-    assert(!json.containsKey('b'));
+    json.remove('th'); // thumbnail bytes
+    assert(!json.containsKey('as'));
+    assert(!json.containsKey('by'));
 
     final svgData = _extractSvg();
-    json['a'] = assets.add(svgData.string ?? svgData.file!);
+    json['as'] = assets.add(svgData.string ?? svgData.file!);
 
     return json;
   }

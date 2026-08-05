@@ -30,11 +30,11 @@ class CircleStroke extends Stroke {
     required int pageIndex,
     required HasSize page,
   }) {
-    assert(json['shape'] == 'circle');
-    assert(json['i'] == pageIndex || json['i'] == null);
+    assert(json['shp'] == 'circle');
+    assert(json['pg'] == pageIndex || json['pg'] == null);
 
     final Color color;
-    switch (json['c']) {
+    switch (json['col']) {
       case (final int value):
         color = Color(value);
       case (final Int64 value):
@@ -43,17 +43,17 @@ class CircleStroke extends Stroke {
         color = Stroke.defaultColor;
       default:
         throw Exception(
-          'Invalid color value: (${json['c'].runtimeType}) ${json['c']}',
+          'Invalid color value: (${json['col'].runtimeType}) ${json['col']}',
         );
     }
 
     return CircleStroke(
       color: color,
-      pressureEnabled: json['pe'] ?? Stroke.defaultPressureEnabled,
+      pressureEnabled: json['prs'] ?? Stroke.defaultPressureEnabled,
       options: StrokeOptions.fromJson(json),
       pageIndex: pageIndex,
       page: page,
-      toolId: .parsePenType(json['ty'], fallback: .shapePen),
+      toolId: .parsePenType(json['tool'], fallback: .shapePen),
       center: Offset(json['cx'] ?? 0, json['cy'] ?? 0),
       radius: json['r'] ?? 0,
     );
@@ -61,13 +61,13 @@ class CircleStroke extends Stroke {
   @override
   Map<String, dynamic> toJson() {
     return {
-      'shape': 'circle',
-      'i': pageIndex,
+      'shp': 'circle',
+      'pg': pageIndex,
       'cx': center.dx,
       'cy': center.dy,
       'r': radius,
-      'pe': pressureEnabled,
-      'c': color.toARGB32(),
+      'prs': pressureEnabled,
+      'col': color.toARGB32(),
     }..addAll(options.toJson());
   }
 

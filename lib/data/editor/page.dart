@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:math';
-import 'dart:typed_data';
 import 'dart:ui' show FragmentShader;
 
 import 'package:flutter/material.dart';
@@ -125,42 +124,39 @@ class EditorPage extends ChangeNotifier implements HasSize {
 
   factory EditorPage.fromJson(
     Map<String, dynamic> json, {
-    required List<Uint8List>? inlineAssets,
     required bool readOnly,
     required int fileVersion,
     required String sbnPath,
     required AssetCache assetCache,
   }) {
-    final size = Size(json['w'] ?? defaultWidth, json['h'] ?? defaultHeight);
+    final size = Size(json['wid'] ?? defaultWidth, json['hei'] ?? defaultHeight);
     return EditorPage(
       size: size,
       strokes: parseStrokesJson(
-        json['s'] as List?,
+        json['stk'] as List?,
         page: HasSize(size),
         onlyFirstPage: false,
         fileVersion: fileVersion,
       ),
       images: parseImagesJson(
-        json['i'] as List?,
-        inlineAssets: inlineAssets,
+        json['img'] as List?,
         isThumbnail: readOnly,
         onlyFirstPage: false,
         sbnPath: sbnPath,
         assetCache: assetCache,
       ),
       quill: QuillStruct(
-        controller: json['q'] != null
+        controller: json['txt'] != null
             ? QuillController(
-                document: Document.fromJson(json['q'] as List),
+                document: Document.fromJson(json['txt'] as List),
                 selection: const TextSelection.collapsed(offset: 0),
               )
             : QuillController.basic(),
         focusNode: FocusNode(debugLabel: 'Quill Focus Node'),
       ),
-      backgroundImage: json['b'] != null
+      backgroundImage: json['bg'] != null
           ? parseImageJson(
-              json['b'],
-              inlineAssets: inlineAssets,
+              json['bg'],
               isThumbnail: false,
               sbnPath: sbnPath,
               assetCache: assetCache,
@@ -170,15 +166,15 @@ class EditorPage extends ChangeNotifier implements HasSize {
   }
 
   Map<String, dynamic> toJson(OrderedAssetCache assets) => {
-    'w': size.width,
-    'h': size.height,
+    'wid': size.width,
+    'hei': size.height,
     if (strokes.isNotEmpty)
-      's': strokes.map((stroke) => stroke.toJson()).toList(),
+      'stk': strokes.map((stroke) => stroke.toJson()).toList(),
     if (images.isNotEmpty)
-      'i': images.map((image) => image.toJson(assets)).toList(),
+      'img': images.map((image) => image.toJson(assets)).toList(),
     if (!quill.controller.document.isEmpty())
-      'q': quill.controller.document.toDelta().toJson(),
-    if (backgroundImage != null) 'b': backgroundImage?.toJson(assets),
+      'txt': quill.controller.document.toDelta().toJson(),
+    if (backgroundImage != null) 'bg': backgroundImage?.toJson(assets),
   };
 
   /// Inserts a stroke, while keeping the strokes sorted by
@@ -221,7 +217,7 @@ class EditorPage extends ChangeNotifier implements HasSize {
   }) => (strokes ?? [])
       .map((dynamic stroke) {
         final map = stroke as Map<String, dynamic>;
-        final pageIndex = map['i'] ?? 0;
+        final pageIndex = map['pg'] ?? 0;
         if (onlyFirstPage && pageIndex > 0) return null;
         return Stroke.fromJson(
           map,
@@ -236,7 +232,6 @@ class EditorPage extends ChangeNotifier implements HasSize {
 
   static List<EditorImage> parseImagesJson(
     List<dynamic>? images, {
-    required List<Uint8List>? inlineAssets,
     required bool isThumbnail,
     required bool onlyFirstPage,
     required String sbnPath,
@@ -245,10 +240,9 @@ class EditorPage extends ChangeNotifier implements HasSize {
       images
           ?.cast<Map<String, dynamic>>()
           .map((Map<String, dynamic> image) {
-            if (onlyFirstPage && image['i'] > 0) return null;
+            if (onlyFirstPage && image['pg'] > 0) return null;
             return parseImageJson(
               image,
-              inlineAssets: inlineAssets,
               isThumbnail: isThumbnail,
               sbnPath: sbnPath,
               assetCache: assetCache,
@@ -261,13 +255,11 @@ class EditorPage extends ChangeNotifier implements HasSize {
 
   static EditorImage parseImageJson(
     Map<String, dynamic> json, {
-    required List<Uint8List>? inlineAssets,
     required bool isThumbnail,
     required String sbnPath,
     required AssetCache assetCache,
   }) => EditorImage.fromJson(
     json,
-    inlineAssets: inlineAssets,
     isThumbnail: isThumbnail,
     sbnPath: sbnPath,
     assetCache: assetCache,

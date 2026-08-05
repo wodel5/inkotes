@@ -59,7 +59,6 @@ class Editor extends StatefulWidget {
   final String? pdfPath;
 
   static const extension = EditorConstants.extension;
-  static const extensionOldJson = EditorConstants.extensionOldJson;
   static const double gapBetweenPages = EditorConstants.gapBetweenPages;
 
   static bool isReservedPath(String path) {

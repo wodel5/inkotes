@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:archive/archive_io.dart';
 import 'package:bson/bson.dart';
@@ -10,8 +9,6 @@ import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 import 'package:foledge/components/canvas/asset_cache.dart';
-import 'package:foledge/components/canvas/stroke.dart';
-import 'package:foledge/components/canvas/image/editor_image.dart';
 import 'package:foledge/data/editor/page.dart';
 import 'package:foledge/data/file_manager/file_manager.dart';
 import 'package:foledge/data/flavor_config.dart';
@@ -19,7 +16,6 @@ import 'package:foledge/data/prefs.dart';
 import 'package:foledge/data/tools/stroke_properties.dart';
 import 'package:foledge/pages/editor/editor.dart';
 import 'package:foledge/data/models/canvas_background_pattern.dart';
-import 'package:foledge/data/models/has_size.dart';
 import 'package:foledge/data/models/read_only_reason.dart';
 import 'package:worker_manager/worker_manager.dart';
 
@@ -28,28 +24,7 @@ class EditorCoreInfo {
 
   /// The version of the file format.
   /// Increment this if earlier versions of the app can't satisfiably read the file.
-  ///
-  /// Version history:
-  /// - 19: Assets are now stored in separate files, and added the `sba` file format.
-  /// - 18: [Pencil] tool introduced
-  /// - 17: [PdfEditorImage] introduced
-  /// - 16: [ShapePen] tool introduced
-  /// - 15: Tablature background pattern
-  /// - 14: Store images as BsonBinary
-  /// - 13: Save points as BsonBinary
-  /// - 12: Don't store empty pressure
-  /// - 11: Centralise storage of image assets
-  /// - 10: Remove old inversion code
-  /// - 9: Add [Stroke.offset] property
-  /// - 8: Store strokes and images in their respective pages
-  /// - 7: Set image as background
-  /// - 6: Save Quill data
-  /// - 5: Store images' file extension
-  /// - 4: Store page sizes in [EditorPage.size]
-  /// - 3: Store page sizes for each page
-  /// - 2: Store width and height in sbn
-  /// - 1: Store version in sbn
-  static const sbnVersion = 19;
+  static const sbnVersion = 1;
 
   /// The reason why the note is read-only,
   /// or `null` if the note is editable.
@@ -87,15 +62,9 @@ class EditorCoreInfo {
         backgroundPattern: .none,
         lineHeight: stows.lastLineHeight.value,
         lineThickness: stows.lastLineThickness.value,
-        pages: [],
+        pages: [EditorPage()],
         initialPageIndex: null,
         assetCache: null,
-      ).._migrateOldStrokesAndImages(
-        fileVersion: sbnVersion,
-        strokesJson: null,
-        imagesJson: null,
-        inlineAssets: null,
-        onlyFirstPage: true,
       );
 
   bool get isEmpty => pages.every((EditorPage page) => page.isEmpty);
@@ -150,7 +119,7 @@ class EditorCoreInfo {
     required bool onlyFirstPage,
   }) {
     ReadOnlyReason? readOnlyReason;
-    final fileVersion = json['v'] as int? ?? 0;
+    final fileVersion = json['ver'] as int? ?? 0;
     if (fileVersion > sbnVersion) {
       readOnlyReason ??= .versionTooNew;
       log.warning(
@@ -159,28 +128,8 @@ class EditorCoreInfo {
       );
     }
 
-    /// Note that inline assets aren't used anymore
-    /// since sbnVersion 19.
-    final List<Uint8List>? inlineAssets = (json['a'] as List?)
-        ?.map(
-          (asset) => switch (asset) {
-            (final String base64) => base64Decode(base64),
-            (final Uint8List bytes) => bytes,
-            (final List<dynamic> bytes) => Uint8List.fromList(
-              bytes.cast<int>(),
-            ),
-            (final BsonBinary bsonBinary) => bsonBinary.byteList,
-            _ => () {
-              log.severe('Invalid asset type: ${asset.runtimeType}');
-              return Uint8List(0);
-            }(),
-          },
-        )
-        .toList();
-
     final Color? backgroundColor;
-    log.info('fromJson: json[b]=${json['b']} type=${json['b']?.runtimeType}');
-    switch (json['b']) {
+    switch (json['bgc']) {
       case (final int value):
         backgroundColor = Color(value);
       case (final Int64 value):
@@ -189,7 +138,7 @@ class EditorCoreInfo {
         backgroundColor = null;
       default:
         throw Exception(
-          'Invalid color value: (${json['b'].runtimeType}) ${json['b']}',
+          'Invalid color value: (${json['bgc'].runtimeType}) ${json['bgc']}',
         );
     }
 
@@ -198,64 +147,31 @@ class EditorCoreInfo {
     return EditorCoreInfo._(
         filePath: filePath,
         readOnlyReason: readOnlyReason,
-        nextImageId: json['ni'] as int? ?? 0,
+        nextImageId: json['imgc'] as int? ?? 0,
         backgroundColor: backgroundColor,
         backgroundPattern: CanvasBackgroundPattern.fromName(
-          json['p'] as String?,
+          json['pat'] as String?,
         ),
-        lineHeight: json['l'] as int? ?? stows.lastLineHeight.value,
-        lineThickness: json['lt'] as int? ?? stows.lastLineThickness.value,
+        lineHeight: json['lh'] as int? ?? stows.lastLineHeight.value,
+        lineThickness: json['lw'] as int? ?? stows.lastLineThickness.value,
         pages: _parsePagesJson(
-          json['z'] as List?,
-          inlineAssets: inlineAssets,
+          json['pgs'] as List?,
           readOnlyReason: readOnlyReason,
           onlyFirstPage: onlyFirstPage,
           fileVersion: fileVersion,
           sbnPath: filePath,
           assetCache: assetCache,
         ),
-        initialPageIndex: json['c'] as int?,
+        initialPageIndex: json['pg'] as int?,
         assetCache: assetCache,
-        isTrashed: json['tr'] as bool? ?? false,
+        isTrashed: json['del'] as bool? ?? false,
       )
-      .._migrateOldStrokesAndImages(
-        fileVersion: fileVersion,
-        strokesJson: json['s'] as List?,
-        imagesJson: json['i'] as List?,
-        inlineAssets: inlineAssets,
-        fallbackPageSize: json['w'] != null && json['h'] != null
-            ? Size(json['w'] as double, json['h'] as double)
-            : null,
-        onlyFirstPage: onlyFirstPage,
-      )
+      .._ensurePage()
       .._sortStrokes();
-  }
-
-  /// Old json format is just a list of strokes
-  EditorCoreInfo.fromOldJson(
-    List<dynamic> json, {
-    required this.filePath,
-    required bool onlyFirstPage,
-  }) : nextImageId = 0,
-       backgroundPattern = .none,
-       lineHeight = stows.lastLineHeight.value,
-       lineThickness = stows.lastLineThickness.value,
-       pages = [],
-       isTrashed = false,
-       assetCache = AssetCache() {
-    _migrateOldStrokesAndImages(
-      fileVersion: 0,
-      strokesJson: json,
-      imagesJson: null,
-      inlineAssets: null,
-      onlyFirstPage: onlyFirstPage,
-    );
-    _sortStrokes();
   }
 
   static List<EditorPage> _parsePagesJson(
     List<dynamic>? pages, {
-    required List<Uint8List>? inlineAssets,
     required ReadOnlyReason? readOnlyReason,
     required bool onlyFirstPage,
     required int fileVersion,
@@ -263,32 +179,18 @@ class EditorCoreInfo {
     required AssetCache assetCache,
   }) {
     if (pages == null || pages.isEmpty) return [];
-    if (pages[0] is List) {
-      // old format (list of [width, height])
-      return pages
-          .take(onlyFirstPage ? 1 : pages.length)
-          .map(
-            (dynamic page) => EditorPage(
-              width: page[0] as double?,
-              height: page[1] as double?,
-            ),
-          )
-          .toList();
-    } else {
-      return pages
-          .take(onlyFirstPage ? 1 : pages.length)
-          .map(
-            (dynamic page) => EditorPage.fromJson(
-              page as Map<String, dynamic>,
-              inlineAssets: inlineAssets,
-              readOnly: readOnlyReason != null,
-              fileVersion: fileVersion,
-              sbnPath: sbnPath,
-              assetCache: assetCache,
-            ),
-          )
-          .toList();
-    }
+    return pages
+        .take(onlyFirstPage ? 1 : pages.length)
+        .map(
+          (dynamic page) => EditorPage.fromJson(
+            page as Map<String, dynamic>,
+            readOnly: readOnlyReason != null,
+            fileVersion: fileVersion,
+            sbnPath: sbnPath,
+            assetCache: assetCache,
+          ),
+        )
+        .toList();
   }
 
   void _handleEmptyImageIds() {
@@ -299,70 +201,10 @@ class EditorCoreInfo {
     }
   }
 
-  /// Performs the following migrations:
-  ///
-  /// Migrates from fileVersion 7 to 8.
-  /// In version 8, strokes and images are stored in their respective pages.
-  ///
-  /// Creates a page if there are no pages.
-  ///
-  /// Migrates from fileVersion 11 to 12.
-  /// In version 12, points are deleted if they are too close to each other.
-  void _migrateOldStrokesAndImages({
-    required int fileVersion,
-    required List<dynamic>? strokesJson,
-    required List<dynamic>? imagesJson,
-    required List<Uint8List>? inlineAssets,
-    Size? fallbackPageSize,
-    required bool onlyFirstPage,
-  }) {
-    if (strokesJson != null) {
-      final hasSize = HasSize(fallbackPageSize ?? EditorPage.defaultSize);
-      final strokes = EditorPage.parseStrokesJson(
-        strokesJson,
-        page: hasSize,
-        onlyFirstPage: onlyFirstPage,
-        fileVersion: fileVersion,
-      );
-      for (final stroke in strokes) {
-        if (onlyFirstPage) assert(stroke.pageIndex == 0);
-        while (stroke.pageIndex >= pages.length) {
-          pages.add(EditorPage(size: fallbackPageSize));
-        }
-        pages[stroke.pageIndex].insertStroke(stroke);
-      }
-    }
-
-    if (imagesJson != null) {
-      final images = EditorPage.parseImagesJson(
-        imagesJson,
-        inlineAssets: inlineAssets,
-        isThumbnail: readOnlyReason != null,
-        onlyFirstPage: onlyFirstPage,
-        sbnPath: filePath,
-        assetCache: assetCache,
-      );
-      for (final image in images) {
-        if (onlyFirstPage) assert(image.pageIndex == 0);
-        while (image.pageIndex >= pages.length) {
-          pages.add(EditorPage(size: fallbackPageSize));
-        }
-        pages[image.pageIndex].images.add(image);
-      }
-    }
-
-    // add a page if there are no pages
+  /// Adds a page if there are no pages.
+  void _ensurePage() {
     if (pages.isEmpty) {
-      pages.add(EditorPage(size: fallbackPageSize));
-    }
-
-    // delete points that are too close to each other
-    if (fileVersion < 12) {
-      for (final page in pages) {
-        for (final stroke in page.strokes) {
-          stroke.optimisePoints();
-        }
-      }
+      pages.add(EditorPage());
     }
   }
 
@@ -378,22 +220,11 @@ class EditorCoreInfo {
   }) async {
     final bsonBytes = await FileManager.readFile(path + Editor.extension);
 
-    final String? jsonString;
-    if (bsonBytes != null) {
-      jsonString = null;
-    } else {
-      final jsonBytes = await FileManager.readFile(
-        path + Editor.extensionOldJson,
-      );
-      jsonString = jsonBytes != null ? utf8.decode(jsonBytes) : null;
-    }
-
-    if (bsonBytes == null && jsonString == null) {
+    if (bsonBytes == null) {
       return EditorCoreInfo(filePath: path);
     }
 
     return loadFromFileContents(
-      jsonString: jsonString,
       bsonBytes: bsonBytes,
       path: path,
       onlyFirstPage: onlyFirstPage,
@@ -409,9 +240,7 @@ class EditorCoreInfo {
     try {
       final bsonBinary = BsonBinary.from(bsonBytes);
       final json = BsonCodec.deserialize(bsonBinary);
-      if (json is Map<String, dynamic>) {
-        return json['tr'] as bool? ?? false;
-      }
+      return json['del'] as bool? ?? false;
     } catch (e) {
       // If we can't parse, assume not trashed
     }
@@ -420,7 +249,6 @@ class EditorCoreInfo {
 
   @visibleForTesting
   static Future<EditorCoreInfo> loadFromFileContents({
-    String? jsonString,
     Uint8List? bsonBytes,
     required String path,
     required bool onlyFirstPage,
@@ -428,10 +256,9 @@ class EditorCoreInfo {
   }) async {
     EditorCoreInfo coreInfo;
     try {
-      EditorCoreInfo isolate() =>
-          _loadFromFileIsolate(jsonString, bsonBytes, path, onlyFirstPage);
+      EditorCoreInfo isolate() => _loadFromFileIsolate(bsonBytes, path, onlyFirstPage);
 
-      final length = jsonString?.length ?? bsonBytes!.length;
+      final length = bsonBytes!.length;
       if (alwaysUseIsolate || length > 2 * 1024 * 1024) {
         // > 2 MB, run on a separate isolate
         final documentsDirectory = FileManager.documentsDirectory;
@@ -467,42 +294,27 @@ class EditorCoreInfo {
   }
 
   static EditorCoreInfo _loadFromFileIsolate(
-    String? jsonString,
     Uint8List? bsonBytes,
     String path,
     bool onlyFirstPage,
   ) {
     final dynamic json;
     try {
-      if (bsonBytes != null) {
-        final bsonBinary = BsonBinary.from(bsonBytes);
-        json = BsonCodec.deserialize(bsonBinary);
-      } else if (jsonString != null) {
-        json = jsonDecode(jsonString);
-      } else {
-        throw ArgumentError('Both bsonBytes and jsonString are null');
-      }
+      final bsonBinary = BsonBinary.from(bsonBytes!);
+      json = BsonCodec.deserialize(bsonBinary);
     } catch (e, st) {
       log.severe('Failed to parse file: $e', e, st);
       rethrow;
     }
 
-    if (json == null) {
+    if (json is! Map<String, dynamic>) {
       throw Exception('Failed to parse json');
-    } else if (json is List) {
-      // old format
-      return EditorCoreInfo.fromOldJson(
-        json,
-        filePath: path,
-        onlyFirstPage: onlyFirstPage,
-      );
-    } else {
-      return EditorCoreInfo.fromJson(
-        json as Map<String, dynamic>,
-        filePath: path,
-        onlyFirstPage: onlyFirstPage,
-      );
     }
+    return EditorCoreInfo.fromJson(
+      json,
+      filePath: path,
+      onlyFirstPage: onlyFirstPage,
+    );
   }
 
   /// Returns the json map and a list of assets.
@@ -512,28 +324,26 @@ class EditorCoreInfo {
     final OrderedAssetCache assets = OrderedAssetCache();
 
     final json = {
-      'v': sbnVersion,
-      'ni': nextImageId,
-      'b': backgroundColor?.toARGB32(),
-      'p': backgroundPattern.name,
-      'l': lineHeight,
-      'lt': lineThickness,
-      'z': pages.map((EditorPage page) => page.toJson(assets)).toList(),
-      'c': initialPageIndex,
-      'tr': isTrashed,
+      'ver': sbnVersion,
+      'imgc': nextImageId,
+      'bgc': backgroundColor?.toARGB32(),
+      'pat': backgroundPattern.name,
+      'lh': lineHeight,
+      'lw': lineThickness,
+      'pgs': pages.map((EditorPage page) => page.toJson(assets)).toList(),
+      'pg': initialPageIndex,
+      'del': isTrashed,
     };
-
-    log.info('toJson: json[b]=${json['b']} type=${json['b']?.runtimeType}');
 
     return (json, assets);
   }
 
-  /// Converts the current note as an SBA (foledge Archive) file,
+  /// Converts the current note as an FLE (foledge Archive) file,
   /// which contains the main bson file and all the assets
   /// compressed into a zip file.
   ///
-  /// In the archive, the main bson file is named `main.sbn2`,
-  /// and the assets are named `main.sbn2.0`, `main.sbn2.1`, etc.
+  /// In the archive, the main bson file is named `main.fln`,
+  /// and the assets are named `main.fln.0`, `main.fln.1`, etc.
   ///
   /// If [currentPageIndex] isn't null,
   /// [initialPageIndex] will be updated to it before saving.

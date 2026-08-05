@@ -44,26 +44,21 @@ class PdfEditorImage extends EditorImage {
 
   factory PdfEditorImage.fromJson(
     Map<String, dynamic> json, {
-    required List<Uint8List>? inlineAssets,
     bool isThumbnail = false,
     required String sbnPath,
     required AssetCache assetCache,
   }) {
-    final extension = json['e'] as String?;
+    final extension = json['ext'] as String?;
     assert(extension == null || extension == '.pdf');
 
-    final assetIndex = json['a'] as int?;
+    final assetIndex = json['as'] as int?;
     final Uint8List? pdfBytes;
     File? pdfFile;
     if (assetIndex != null) {
-      if (inlineAssets == null) {
-        pdfFile = FileManager.getFile(
-          '$sbnPath${Editor.extension}.$assetIndex',
-        );
-        pdfBytes = assetCache.get(pdfFile);
-      } else {
-        pdfBytes = inlineAssets[assetIndex];
-      }
+      pdfFile = FileManager.getFile(
+        '$sbnPath${Editor.extension}.$assetIndex',
+      );
+      pdfBytes = assetCache.get(pdfFile);
     } else {
       if (kDebugMode) {
         throw Exception('PdfEditorImage.fromJson: pdf bytes not found');
@@ -73,27 +68,27 @@ class PdfEditorImage extends EditorImage {
 
     return PdfEditorImage(
       id:
-          json['id'] ??
+          json['pid'] ??
           -1, // -1 will be replaced by EditorCoreInfo._handleEmptyImageIds()
       assetCache: assetCache,
       pdfBytes: pdfBytes,
       pdfFile: pdfFile,
-      pdfPage: json['pdfi'],
-      pageIndex: json['i'] ?? 0,
+      pdfPage: json['pdfp'],
+      pageIndex: json['pg'] ?? 0,
       pageSize: .infinite,
-      backgroundFit: json['f'] != null ? .values[json['f']] : .contain,
+      backgroundFit: json['fit'] != null ? .values[json['fit']] : .contain,
       onMoveImage: null,
       onDeleteImage: null,
       onMiscChange: null,
       onLoad: null,
       newImage: false,
       dstRect: .fromLTWH(
-        json['x'] ?? 0,
-        json['y'] ?? 0,
-        json['w'] ?? 0,
-        json['h'] ?? 0,
+        json['l'] ?? 0,
+        json['t'] ?? 0,
+        json['wd'] ?? 0,
+        json['ht'] ?? 0,
       ),
-      naturalSize: Size(json['nw'] ?? 0, json['nh'] ?? 0),
+      naturalSize: Size(json['natw'] ?? 0, json['nath'] ?? 0),
       isThumbnail: isThumbnail,
     );
   }
@@ -103,12 +98,12 @@ class PdfEditorImage extends EditorImage {
     final json = super.toJson(assets);
 
     // remove non-pdf fields
-    json.remove('t'); // thumbnail bytes
-    assert(!json.containsKey('a'));
-    assert(!json.containsKey('b'));
+    json.remove('th'); // thumbnail bytes
+    assert(!json.containsKey('as'));
+    assert(!json.containsKey('by'));
 
-    json['a'] = assets.add(pdfFile ?? pdfBytes!);
-    json['pdfi'] = pdfPage;
+    json['as'] = assets.add(pdfFile ?? pdfBytes!);
+    json['pdfp'] = pdfPage;
 
     return json;
   }

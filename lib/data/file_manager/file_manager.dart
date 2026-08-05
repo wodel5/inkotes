@@ -37,8 +37,8 @@ class FileManager {
   static final fileWriteStream = StreamController<FileOperation>.broadcast();
 
   /// A regex that matches the file names/paths of asset files,
-  /// including previews, e.g. `mynote.sbn2.1`.
-  static final assetFileRegex = RegExp(r'\.sbn2?\.[\dp]+$');
+  /// including previews, e.g. `mynote.fln.1`.
+  static final assetFileRegex = RegExp(r'\.fln\.[\dp]+$');
 
   // TODO(adil192): Implement or remove this
   static String _sanitisePath(String path) => File(path).path;
@@ -168,8 +168,6 @@ class FileManager {
 
     if (path.endsWith(Editor.extension)) {
       path = path.substring(0, path.length - Editor.extension.length);
-    } else if (path.endsWith(Editor.extensionOldJson)) {
-      path = path.substring(0, path.length - Editor.extensionOldJson.length);
     }
 
     fileWriteStream.add(FileOperation(type, path));
@@ -226,26 +224,12 @@ class FileManager {
 
     final file = getFile(filePath);
     await _createFileDirectory(filePath);
-    Future writeFuture = Future.wait([
-      file.writeAsBytes(toWrite).then((file) async {
-        if (lastModified != null) await file.setLastModified(lastModified);
-      }),
-      if (filePath.endsWith(Editor.extension))
-        getFile(
-          '${filePath.substring(0, filePath.length - Editor.extension.length)}'
-          '${Editor.extensionOldJson}',
-        ).delete().catchError((_) => File(''),
-            test: (e) => e is PathNotFoundException),
-    ]);
+    Future<void> writeFuture = file.writeAsBytes(toWrite).then((file) async {
+      if (lastModified != null) await file.setLastModified(lastModified);
+    });
 
     void afterWrite() {
       broadcastFileWrite(FileOperationType.write, filePath);
-      if (filePath.endsWith(Editor.extension)) {
-        _removeReferences(
-          '${filePath.substring(0, filePath.length - Editor.extension.length)}'
-          '${Editor.extensionOldJson}',
-        );
-      }
     }
 
     writeFuture = writeFuture.then((_) => afterWrite());
@@ -534,22 +518,17 @@ class FileManager {
 
           if (Editor.isReservedPath(filePath)) return null;
 
-          late final isSbn2 = filePath.endsWith(Editor.extension);
-          late final isSbn1 = filePath.endsWith(Editor.extensionOldJson);
+          late final isFln = filePath.endsWith(Editor.extension);
 
           if (!includeExtensions) {
-            if (isSbn2) {
+            if (isFln) {
               return filePath.substring(
                   0, filePath.length - Editor.extension.length);
-            } else if (isSbn1) {
-              return filePath.substring(
-                  0, filePath.length - Editor.extensionOldJson.length);
             } else {
               return null;
             }
           } else if (!includeAssets) {
-            final isAsset = !isSbn2 && !isSbn1;
-            if (isAsset) return null;
+            if (!isFln) return null;
           }
 
           return filePath;
@@ -627,9 +606,6 @@ class FileManager {
           if (filePath.endsWith(Editor.extension)) {
             return filePath.substring(
                 0, filePath.length - Editor.extension.length);
-          } else if (filePath.endsWith(Editor.extensionOldJson)) {
-            return filePath.substring(
-                0, filePath.length - Editor.extensionOldJson.length);
           } else {
             return filePath;
           }
@@ -743,22 +719,14 @@ class FileManager {
       newFilePath = filePath;
       hasExtension = true;
       intendedExtension ??= Editor.extension;
-    } else if (filePath.endsWith(Editor.extensionOldJson)) {
-      filePath = filePath.substring(
-          0, filePath.length - Editor.extensionOldJson.length);
-      newFilePath = filePath;
-      hasExtension = true;
-      intendedExtension ??= Editor.extensionOldJson;
     } else {
       intendedExtension ??= Editor.extension;
     }
 
     int i = 1;
     while (true) {
-      if (!doesFileExist(newFilePath + Editor.extension) &&
-          !doesFileExist(newFilePath + Editor.extensionOldJson)) break;
+      if (!doesFileExist(newFilePath + Editor.extension)) break;
       if (newFilePath + Editor.extension == currentPath) break;
-      if (newFilePath + Editor.extensionOldJson == currentPath) break;
       i++;
       newFilePath = '$filePath ($i)';
     }
@@ -788,18 +756,16 @@ class FileManager {
 
     final writeFutures = <Future>[];
 
-    if (extension.toLowerCase() == '.sba') {
+    if (extension.toLowerCase() == '.fle') {
       final inputStream = InputFileStream(path);
       final archive = ZipDecoder().decodeStream(inputStream);
 
       final mainFile = archive.files.cast<ArchiveFile?>().firstWhere(
-        (file) =>
-            file!.name.toLowerCase().endsWith('sbn') ||
-            file.name.toLowerCase().endsWith('sbn2'),
+        (file) => file!.name.toLowerCase().endsWith(Editor.extension),
         orElse: () => null,
       );
       if (mainFile == null) {
-        log.severe('Failed to find main note in sba: $path');
+        log.severe('Failed to find main note in fle: $path');
         return null;
       }
       final mainFileExtension =

@@ -26,11 +26,11 @@ class RectangleStroke extends Stroke {
     required int pageIndex,
     required HasSize page,
   }) {
-    assert(json['shape'] == 'rect');
-    assert(json['i'] == pageIndex || json['i'] == null);
+    assert(json['shp'] == 'rect');
+    assert(json['pg'] == pageIndex || json['pg'] == null);
 
     final Color color;
-    switch (json['c']) {
+    switch (json['col']) {
       case (final int value):
         color = Color(value);
       case (final Int64 value):
@@ -39,17 +39,17 @@ class RectangleStroke extends Stroke {
         color = Stroke.defaultColor;
       default:
         throw Exception(
-          'Invalid color value: (${json['c'].runtimeType}) ${json['c']}',
+          'Invalid color value: (${json['col'].runtimeType}) ${json['col']}',
         );
     }
 
     return RectangleStroke(
       color: color,
-      pressureEnabled: json['pe'] ?? Stroke.defaultPressureEnabled,
+      pressureEnabled: json['prs'] ?? Stroke.defaultPressureEnabled,
       options: StrokeOptions.fromJson(json),
       pageIndex: pageIndex,
       page: page,
-      toolId: .parsePenType(json['ty'], fallback: .shapePen),
+      toolId: .parsePenType(json['tool'], fallback: .shapePen),
       rect: .fromLTWH(
         json['rl'] ?? 0,
         json['rt'] ?? 0,
@@ -61,14 +61,14 @@ class RectangleStroke extends Stroke {
   @override
   Map<String, dynamic> toJson() {
     return {
-      'shape': 'rect',
-      'i': pageIndex,
+      'shp': 'rect',
+      'pg': pageIndex,
       'rl': rect.left,
       'rt': rect.top,
       'rw': rect.width,
       'rh': rect.height,
-      'pe': pressureEnabled,
-      'c': color.toARGB32(),
+      'prs': pressureEnabled,
+      'col': color.toARGB32(),
     }..addAll(options.toJson());
   }
 

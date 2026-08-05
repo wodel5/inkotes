@@ -49,25 +49,20 @@ class PngEditorImage extends EditorImage {
 
   factory PngEditorImage.fromJson(
     Map<String, dynamic> json, {
-    required List<Uint8List>? inlineAssets,
     bool isThumbnail = false,
     required String sbnPath,
     required AssetCache assetCache,
   }) {
-    final assetIndex = json['a'] as int?;
+    final assetIndex = json['as'] as int?;
     final Uint8List? bytes;
     File? imageFile;
     if (assetIndex != null) {
-      if (inlineAssets == null) {
-        imageFile = FileManager.getFile(
-          '$sbnPath${Editor.extension}.$assetIndex',
-        );
-        bytes = assetCache.get(imageFile);
-      } else {
-        bytes = inlineAssets[assetIndex];
-      }
-    } else if (json['b'] != null) {
-      bytes = Uint8List.fromList((json['b'] as List<dynamic>).cast<int>());
+      imageFile = FileManager.getFile(
+        '$sbnPath${Editor.extension}.$assetIndex',
+      );
+      bytes = assetCache.get(imageFile);
+    } else if (json['by'] != null) {
+      bytes = Uint8List.fromList((json['by'] as List<dynamic>).cast<int>());
     } else {
       if (kDebugMode) {
         throw Exception('EditorImage.fromJson: image bytes not found');
@@ -81,35 +76,35 @@ class PngEditorImage extends EditorImage {
 
     return PngEditorImage(
       // -1 will be replaced by [EditorCoreInfo._handleEmptyImageIds()]
-      id: json['id'] ?? -1,
+      id: json['pid'] ?? -1,
       assetCache: assetCache,
-      extension: json['e'] ?? '.jpg',
+      extension: json['ext'] ?? '.jpg',
       imageProvider: bytes != null
           ? MemoryImage(bytes) as ImageProvider
           : FileImage(imageFile!),
-      pageIndex: json['i'] ?? 0,
+      pageIndex: json['pg'] ?? 0,
       pageSize: .infinite,
-      backgroundFit: json['f'] != null ? .values[json['f']] : .contain,
+      backgroundFit: json['fit'] != null ? .values[json['fit']] : .contain,
       onMoveImage: null,
       onDeleteImage: null,
       onMiscChange: null,
       onLoad: null,
       newImage: false,
       dstRect: .fromLTWH(
-        json['x'] ?? 0,
-        json['y'] ?? 0,
-        json['w'] ?? 0,
-        json['h'] ?? 0,
+        json['l'] ?? 0,
+        json['t'] ?? 0,
+        json['wd'] ?? 0,
+        json['ht'] ?? 0,
       ),
       srcRect: .fromLTWH(
-        json['sx'] ?? 0,
-        json['sy'] ?? 0,
+        json['sl'] ?? 0,
+        json['st'] ?? 0,
         json['sw'] ?? 0,
         json['sh'] ?? 0,
       ),
-      naturalSize: Size(json['nw'] ?? 0, json['nh'] ?? 0),
-      thumbnailBytes: json['t'] != null
-          ? Uint8List.fromList((json['t'] as List<dynamic>).cast<int>())
+      naturalSize: Size(json['natw'] ?? 0, json['nath'] ?? 0),
+      thumbnailBytes: json['th'] != null
+          ? Uint8List.fromList((json['th'] as List<dynamic>).cast<int>())
           : null,
       isThumbnail: isThumbnail,
     );
@@ -118,7 +113,7 @@ class PngEditorImage extends EditorImage {
   @override
   Map<String, dynamic> toJson(OrderedAssetCache assets) =>
       super.toJson(assets)
-        ..addAll({if (imageProvider != null) 'a': assets.add(imageProvider!)});
+        ..addAll({if (imageProvider != null) 'as': assets.add(imageProvider!)});
 
   @override
   Future<void> firstLoad() async {

@@ -77,8 +77,8 @@ class Stroke {
     required int pageIndex,
     required HasSize page,
   }) {
-    assert(json['i'] == pageIndex || json['i'] == null);
-    switch (json['shape'] as String?) {
+    assert(json['pg'] == pageIndex || json['pg'] == null);
+    switch (json['shp'] as String?) {
       case null:
         break;
       case 'circle':
@@ -96,13 +96,13 @@ class Stroke {
           page: page,
         );
       default:
-        log.severe('Unknown shape: ${json['shape']}');
+        log.severe('Unknown shape: ${json['shp']}');
     }
 
-    final ToolId toolId = .parsePenType(json['ty'], fallback: .fountainPen);
+    final ToolId toolId = .parsePenType(json['tool'], fallback: .fountainPen);
 
     final options = StrokeOptions.fromJson(json);
-    final pressureEnabled = json['pe'] ?? defaultPressureEnabled;
+    final pressureEnabled = json['prs'] ?? defaultPressureEnabled;
     if (toolId == .shapePen) {
       // Set smoothing and streamline to 0 for ShapePen
       // to mitigate https://github.com/foledge-notes/foledge/issues/1587
@@ -111,7 +111,7 @@ class Stroke {
     }
 
     final Color color;
-    switch (json['c']) {
+    switch (json['col']) {
       case (final int value):
         color = Color(value);
       case (final Int64 value):
@@ -120,26 +120,15 @@ class Stroke {
         color = defaultColor;
       default:
         throw Exception(
-          'Invalid color value: (${json['c'].runtimeType}) ${json['c']}',
+          'Invalid color value: (${json['col'].runtimeType}) ${json['col']}',
         );
     }
 
-    final offset = Offset(json['ox'] ?? 0, json['oy'] ?? 0);
-    final pointsJson = json['p'] as List<dynamic>;
-    final Iterable<PointVector> points;
-    if (fileVersion >= 13) {
-      points = pointsJson.map(
-        (point) => PointExtensions.fromBsonBinary(json: point, offset: offset),
-      );
-    } else {
-      points = pointsJson.map(
-        // ignore: deprecated_member_use_from_same_package
-        (point) => PointExtensions.fromJson(
-          json: Map<String, dynamic>.from(point),
-          offset: offset,
-        ),
-      );
-    }
+    final offset = Offset(json['ofx'] ?? 0, json['ofy'] ?? 0);
+    final pointsJson = json['pts'] as List<dynamic>;
+    final Iterable<PointVector> points = pointsJson.map(
+      (point) => PointExtensions.fromBsonBinary(json: point, offset: offset),
+    );
 
     return Stroke(
       color: color,
@@ -153,15 +142,15 @@ class Stroke {
   Map<String, dynamic> toJson() {
     // these json keys should not be the same as the ones in [StrokeOptions.toJson]
     return {
-      'shape': null,
-      'p': points
+      'shp': null,
+      'pts': points
           .where((point) => point.isFinite)
           .map((PointVector point) => point.toBsonBinary())
           .toList(),
-      'i': pageIndex,
-      'ty': toolId.id,
-      'pe': pressureEnabled,
-      'c': color.toARGB32(),
+      'pg': pageIndex,
+      'tool': toolId.id,
+      'prs': pressureEnabled,
+      'col': color.toARGB32(),
     }..addAll(options.toJson());
   }
 

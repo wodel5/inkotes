@@ -10,7 +10,6 @@ import 'package:foledge/data/file_manager/file_manager.dart';
 import 'package:foledge/i18n/strings.g.dart';
 import 'package:foledge/pages/editor/editor.dart';
 import 'package:foledge/pages/home/widgets/trash_card.dart';
-import 'package:yaru/yaru.dart';
 
 class TrashPage extends StatefulWidget {
   const TrashPage({super.key});
@@ -83,9 +82,7 @@ class _TrashPageState extends State<TrashPage> {
 
     if (confirmed == true) {
       for (final file in _selectedFiles) {
-        final hasOld = FileManager.doesFileExist(file + Editor.extensionOldJson);
-        final ext = hasOld ? Editor.extensionOldJson : Editor.extension;
-        await FileManager.deleteFile(file + ext);
+        await FileManager.deleteFile(file + Editor.extension);
       }
       setState(() => _selectedFiles.clear());
       await _loadTrashedFiles();
