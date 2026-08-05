@@ -323,9 +323,10 @@ class ToolbarState extends State<Toolbar> {
                         );
                       },
                     ),
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
+                    IntrinsicWidth(
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                     DockButton(
@@ -492,6 +493,7 @@ class ToolbarState extends State<Toolbar> {
                       child: const FaIcon(FontAwesomeIcons.shareNodes, size: 20),
                     ),
                   ],
+                ),
                 ),
                 ),
                 ],  // Column children

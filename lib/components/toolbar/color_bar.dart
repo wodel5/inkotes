@@ -186,10 +186,12 @@ class _ColorBarState extends State<ColorBar> {
         ),
     ];
 
-    return Center(
-      child: SingleChildScrollView(
-        scrollDirection: widget.axis,
-        child: Flex(direction: widget.axis, children: children),
+    return IntrinsicWidth(
+      child: Center(
+        child: SingleChildScrollView(
+          scrollDirection: widget.axis,
+          child: Flex(direction: widget.axis, children: children),
+        ),
       ),
     );
   }

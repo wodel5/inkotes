@@ -92,12 +92,14 @@ class _PenModalState extends State<PenModal> {
       ],
     ];
 
-    return Center(
-      child: SizedBox(
-        height: 34,
-        child: SingleChildScrollView(
-          scrollDirection: axis,
-          child: Flex(direction: axis, children: children),
+    return IntrinsicWidth(
+      child: Center(
+        child: SizedBox(
+          height: 34,
+          child: SingleChildScrollView(
+            scrollDirection: axis,
+            child: Flex(direction: axis, children: children),
+          ),
         ),
       ),
     );

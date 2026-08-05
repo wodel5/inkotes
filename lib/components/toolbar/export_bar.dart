@@ -93,12 +93,14 @@ class _ExportBarState extends State<ExportBar> {
       ),
     ];
 
-    return Center(
-      child: SizedBox(
-        height: 34,
-        child: SingleChildScrollView(
-          scrollDirection: widget.axis,
-          child: Flex(direction: widget.axis, children: children),
+    return IntrinsicWidth(
+      child: Center(
+        child: SizedBox(
+          height: 34,
+          child: SingleChildScrollView(
+            scrollDirection: widget.axis,
+            child: Flex(direction: widget.axis, children: children),
+          ),
         ),
       ),
     );
