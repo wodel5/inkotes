@@ -270,8 +270,8 @@ class FileManager {
           );
         }
       } else {
-        tempFile = await getTempFile();
-        if (Platform.isIOS || Platform.isMacOS) {
+        if (Platform.isIOS) {
+          tempFile = await getTempFile();
           if (!context.mounted) return;
           final box = context.findRenderObject() as RenderBox;
           await SharePlus.instance.share(
@@ -281,9 +281,17 @@ class FileManager {
             ),
           );
         } else {
-          await SharePlus.instance.share(
-            ShareParams(files: [XFile(tempFile.path)]),
+          // Android: save the file via the system save dialog (SAF),
+          // since the share sheet won't list the sharing app itself.
+          final outputFile = await FilePicker.saveFile(
+            fileName: fileName,
+            bytes: Uint8List.fromList(bytes),
+            type: FileType.custom,
+            allowedExtensions: [fileName.split('.').last],
           );
+          if (outputFile != null) {
+            log.info('Saved file to $outputFile');
+          }
         }
       }
     } else {

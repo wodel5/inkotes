@@ -39,7 +39,9 @@ class _ExportBarState extends State<ExportBar> {
       setState(() => _currentlyExporting = exportFunction);
       exportFunction(context).then((_) {
         widget.toggleExportBar();
-        setState(() => _currentlyExporting = null);
+        if (mounted) {
+          setState(() => _currentlyExporting = null);
+        }
       });
     };
   }
