@@ -113,7 +113,7 @@ sealed class EditorImage extends ChangeNotifier {
   factory EditorImage.fromJson(
     Map<String, dynamic> json, {
     bool isThumbnail = false,
-    required String sbnPath,
+    required String notePath,
     required AssetCache assetCache,
   }) {
     final extension = json['ext'] as String?;
@@ -121,21 +121,21 @@ sealed class EditorImage extends ChangeNotifier {
       return SvgEditorImage.fromJson(
         json,
         isThumbnail: isThumbnail,
-        sbnPath: sbnPath,
+        notePath: notePath,
         assetCache: assetCache,
       );
     } else if (extension == '.pdf') {
       return PdfEditorImage.fromJson(
         json,
         isThumbnail: isThumbnail,
-        sbnPath: sbnPath,
+        notePath: notePath,
         assetCache: assetCache,
       );
     } else {
       return PngEditorImage.fromJson(
         json,
         isThumbnail: isThumbnail,
-        sbnPath: sbnPath,
+        notePath: notePath,
         assetCache: assetCache,
       );
     }

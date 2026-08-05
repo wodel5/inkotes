@@ -256,11 +256,11 @@ class _HomePageState extends State<HomePage> {
       0,
       fileName.length - '.pdf'.length,
     );
-    final sbnFilePath = await FileManager.suffixFilePathToMakeItUnique(
+    final noteFilePath = await FileManager.suffixFilePathToMakeItUnique(
       '${currentPath ?? ''}/$fileNameWithoutExtension',
     );
     if (!mounted) return;
-    context.push(RoutePaths.editImportPdf(sbnFilePath, filePath));
+    context.push(RoutePaths.editImportPdf(noteFilePath, filePath));
   }
 
   @override

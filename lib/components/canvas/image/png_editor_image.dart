@@ -50,7 +50,7 @@ class PngEditorImage extends EditorImage {
   factory PngEditorImage.fromJson(
     Map<String, dynamic> json, {
     bool isThumbnail = false,
-    required String sbnPath,
+    required String notePath,
     required AssetCache assetCache,
   }) {
     final assetIndex = json['as'] as int?;
@@ -58,7 +58,7 @@ class PngEditorImage extends EditorImage {
     File? imageFile;
     if (assetIndex != null) {
       imageFile = FileManager.getFile(
-        '$sbnPath${Editor.extension}.$assetIndex',
+        '$notePath${Editor.extension}.$assetIndex',
       );
       bytes = assetCache.get(imageFile);
     } else if (json['by'] != null) {

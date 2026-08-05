@@ -142,10 +142,10 @@ class App extends StatefulWidget {
       _router.push(RoutePaths.editFilePath(path));
     } else if (extension == '.pdf' && Editor.canRasterPdf) {
       final fileNameWithoutExtension = p.basenameWithoutExtension(filePath);
-      final sbnFilePath = await FileManager.suffixFilePathToMakeItUnique(
+      final noteFilePath = await FileManager.suffixFilePathToMakeItUnique(
         '/$fileNameWithoutExtension',
       );
-      _router.push(RoutePaths.editImportPdf(sbnFilePath, filePath));
+      _router.push(RoutePaths.editImportPdf(noteFilePath, filePath));
     } else {
       log.warning('openFile: Unsupported file type: $extension');
     }

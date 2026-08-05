@@ -575,7 +575,7 @@ class EditorState extends State<Editor>
           importPdf: importPdf,
           canRasterPdf: EditorConstants.canRasterPdf,
           paste: paste,
-          exportAsSba: exportAsSba,
+          exportAsFle: exportAsFle,
           exportAsPdf: exportAsPdf,
           exportAsPng: exportAsPng,
         ),

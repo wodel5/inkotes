@@ -41,7 +41,7 @@ class Toolbar extends StatefulWidget {
     required this.deleteSelection,
     this.onDuplicateActiveImage,
     this.onDeleteActiveImage,
-    required this.exportAsSba,
+    required this.exportAsFle,
     required this.exportAsPdf,
     required this.exportAsPng,
     this.collapsePanels,
@@ -71,7 +71,7 @@ class Toolbar extends StatefulWidget {
   final VoidCallback? onDuplicateActiveImage;
   final VoidCallback? onDeleteActiveImage;
 
-  final Future Function(BuildContext)? exportAsSba;
+  final Future Function(BuildContext)? exportAsFle;
   final Future Function(BuildContext)? exportAsPdf;
   final Future Function(BuildContext)? exportAsPng;
   final VoidCallback? collapsePanels;
@@ -253,7 +253,7 @@ class ToolbarState extends State<Toolbar> {
                                   child: ExportBar(
                                     axis: Axis.horizontal,
                                     toggleExportBar: toggleExportBar,
-                                    exportAsSba: widget.exportAsSba,
+                                    exportAsFle: widget.exportAsFle,
                                     exportAsPdf: widget.exportAsPdf,
                                     exportAsPng: widget.exportAsPng,
                                   ),

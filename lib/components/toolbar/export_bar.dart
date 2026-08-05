@@ -7,7 +7,7 @@ class ExportBar extends StatefulWidget {
     super.key,
     required this.axis,
     required this.toggleExportBar,
-    required this.exportAsSba,
+    required this.exportAsFle,
     required this.exportAsPdf,
     required this.exportAsPng,
   });
@@ -16,7 +16,7 @@ class ExportBar extends StatefulWidget {
 
   final VoidCallback toggleExportBar;
 
-  final Future Function(BuildContext)? exportAsSba;
+  final Future Function(BuildContext)? exportAsFle;
   final Future Function(BuildContext)? exportAsPdf;
   final Future Function(BuildContext)? exportAsPng;
 
@@ -67,9 +67,9 @@ class _ExportBarState extends State<ExportBar> {
       Builder(
         builder: (context) {
           return TextButton(
-            onPressed: _onPressed(widget.exportAsSba, context),
+            onPressed: _onPressed(widget.exportAsFle, context),
             style: TextButton.styleFrom(foregroundColor: buttonColor),
-            child: _buttonChild(widget.exportAsSba, 'FLE'),
+            child: _buttonChild(widget.exportAsFle, 'FLE'),
           );
         },
       ),

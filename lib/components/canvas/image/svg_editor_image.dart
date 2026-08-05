@@ -42,7 +42,7 @@ class SvgEditorImage extends EditorImage {
   factory SvgEditorImage.fromJson(
     Map<String, dynamic> json, {
     bool isThumbnail = false,
-    required String sbnPath,
+    required String notePath,
     required AssetCache assetCache,
   }) {
     final extension = json['ext'] as String?;
@@ -53,7 +53,7 @@ class SvgEditorImage extends EditorImage {
     File? svgFile;
     if (assetIndex != null) {
       svgFile = FileManager.getFile(
-        '$sbnPath${Editor.extension}.$assetIndex',
+        '$notePath${Editor.extension}.$assetIndex',
       );
       svgString = assetCache.get(svgFile);
     } else if (json['by'] != null) {

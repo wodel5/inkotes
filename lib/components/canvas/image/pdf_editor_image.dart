@@ -45,7 +45,7 @@ class PdfEditorImage extends EditorImage {
   factory PdfEditorImage.fromJson(
     Map<String, dynamic> json, {
     bool isThumbnail = false,
-    required String sbnPath,
+    required String notePath,
     required AssetCache assetCache,
   }) {
     final extension = json['ext'] as String?;
@@ -56,7 +56,7 @@ class PdfEditorImage extends EditorImage {
     File? pdfFile;
     if (assetIndex != null) {
       pdfFile = FileManager.getFile(
-        '$sbnPath${Editor.extension}.$assetIndex',
+        '$notePath${Editor.extension}.$assetIndex',
       );
       pdfBytes = assetCache.get(pdfFile);
     } else {

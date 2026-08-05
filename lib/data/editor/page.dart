@@ -126,7 +126,7 @@ class EditorPage extends ChangeNotifier implements HasSize {
     Map<String, dynamic> json, {
     required bool readOnly,
     required int fileVersion,
-    required String sbnPath,
+    required String notePath,
     required AssetCache assetCache,
   }) {
     final size = Size(json['wid'] ?? defaultWidth, json['hei'] ?? defaultHeight);
@@ -142,7 +142,7 @@ class EditorPage extends ChangeNotifier implements HasSize {
         json['img'] as List?,
         isThumbnail: readOnly,
         onlyFirstPage: false,
-        sbnPath: sbnPath,
+        notePath: notePath,
         assetCache: assetCache,
       ),
       quill: QuillStruct(
@@ -158,7 +158,7 @@ class EditorPage extends ChangeNotifier implements HasSize {
           ? parseImageJson(
               json['bg'],
               isThumbnail: false,
-              sbnPath: sbnPath,
+              notePath: notePath,
               assetCache: assetCache,
             )
           : null,
@@ -234,7 +234,7 @@ class EditorPage extends ChangeNotifier implements HasSize {
     List<dynamic>? images, {
     required bool isThumbnail,
     required bool onlyFirstPage,
-    required String sbnPath,
+    required String notePath,
     required AssetCache assetCache,
   }) =>
       images
@@ -244,7 +244,7 @@ class EditorPage extends ChangeNotifier implements HasSize {
             return parseImageJson(
               image,
               isThumbnail: isThumbnail,
-              sbnPath: sbnPath,
+              notePath: notePath,
               assetCache: assetCache,
             );
           })
@@ -256,12 +256,12 @@ class EditorPage extends ChangeNotifier implements HasSize {
   static EditorImage parseImageJson(
     Map<String, dynamic> json, {
     required bool isThumbnail,
-    required String sbnPath,
+    required String notePath,
     required AssetCache assetCache,
   }) => EditorImage.fromJson(
     json,
     isThumbnail: isThumbnail,
-    sbnPath: sbnPath,
+    notePath: notePath,
     assetCache: assetCache,
   );
 

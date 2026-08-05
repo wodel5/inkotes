@@ -19,7 +19,7 @@ typedef PhotoInfo = ({Uint8List bytes, String extension});
 /// Mixin that provides import/export operations for the Editor.
 ///
 /// Contains: _pickPhotos, _pickPhotosWithFilePicker, importPdf,
-/// importPdfFromFilePath, paste, exportAsPdf, exportAsSba, exportAsPng.
+/// importPdfFromFilePath, paste, exportAsPdf, exportAsFle, exportAsPng.
 mixin EditorImportExportMixin<T extends StatefulWidget> on State<T> {
   // --- Abstract dependencies ---
 
@@ -244,12 +244,12 @@ mixin EditorImportExportMixin<T extends StatefulWidget> on State<T> {
     );
   }
 
-  Future exportAsSba(BuildContext context) async {
-    final sba = await coreInfo.saveToSba(currentPageIndex: currentPageIndex);
+  Future exportAsFle(BuildContext context) async {
+    final fle = await coreInfo.saveToFle(currentPageIndex: currentPageIndex);
     if (!context.mounted) return;
     await FileManager.exportFile(
       '${coreInfo.fileName}.fle',
-      sba,
+      fle,
       context: context,
     );
   }

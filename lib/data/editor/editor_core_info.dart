@@ -24,7 +24,7 @@ class EditorCoreInfo {
 
   /// The version of the file format.
   /// Increment this if earlier versions of the app can't satisfiably read the file.
-  static const sbnVersion = 1;
+  static const formatVersion = 1;
 
   /// The reason why the note is read-only,
   /// or `null` if the note is editable.
@@ -120,10 +120,10 @@ class EditorCoreInfo {
   }) {
     ReadOnlyReason? readOnlyReason;
     final fileVersion = json['ver'] as int? ?? 0;
-    if (fileVersion > sbnVersion) {
+    if (fileVersion > formatVersion) {
       readOnlyReason ??= .versionTooNew;
       log.warning(
-        'File version $fileVersion is newer than supported $sbnVersion. '
+        'File version $fileVersion is newer than supported $formatVersion. '
         'Note may be read incorrectly or incompletely.',
       );
     }
@@ -159,7 +159,7 @@ class EditorCoreInfo {
           readOnlyReason: readOnlyReason,
           onlyFirstPage: onlyFirstPage,
           fileVersion: fileVersion,
-          sbnPath: filePath,
+          notePath: filePath,
           assetCache: assetCache,
         ),
         initialPageIndex: json['pg'] as int?,
@@ -175,7 +175,7 @@ class EditorCoreInfo {
     required ReadOnlyReason? readOnlyReason,
     required bool onlyFirstPage,
     required int fileVersion,
-    required String sbnPath,
+    required String notePath,
     required AssetCache assetCache,
   }) {
     if (pages == null || pages.isEmpty) return [];
@@ -186,7 +186,7 @@ class EditorCoreInfo {
             page as Map<String, dynamic>,
             readOnly: readOnlyReason != null,
             fileVersion: fileVersion,
-            sbnPath: sbnPath,
+            notePath: notePath,
             assetCache: assetCache,
           ),
         )
@@ -324,7 +324,7 @@ class EditorCoreInfo {
     final OrderedAssetCache assets = OrderedAssetCache();
 
     final json = {
-      'ver': sbnVersion,
+      'ver': formatVersion,
       'imgc': nextImageId,
       'bgc': backgroundColor?.toARGB32(),
       'pat': backgroundPattern.name,
@@ -347,7 +347,7 @@ class EditorCoreInfo {
   ///
   /// If [currentPageIndex] isn't null,
   /// [initialPageIndex] will be updated to it before saving.
-  Future<List<int>> saveToSba({required int? currentPageIndex}) async {
+  Future<List<int>> saveToFle({required int? currentPageIndex}) async {
     final (bson, assets) = saveToBinary(currentPageIndex: currentPageIndex);
     const filePath = 'main${Editor.extension}';
 
