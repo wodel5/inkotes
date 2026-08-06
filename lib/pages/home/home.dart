@@ -602,6 +602,11 @@ class _HomePageState extends State<HomePage> {
                                                   errorText: _renameError,
                                                   isDense: true,
                                                   border: InputBorder.none,
+                                                  contentPadding:
+                                                      const EdgeInsets.symmetric(
+                                                        vertical: 8,
+                                                        horizontal: 8,
+                                                      ),
                                                   hintStyle: TextStyle(
                                                     color: ColorScheme.of(
                                                       context,
@@ -618,22 +623,44 @@ class _HomePageState extends State<HomePage> {
                                                 ),
                                               ),
                                             ),
-                                            IconButton(
-                                              icon: const FaIcon(
-                                                FontAwesomeIcons.check,
-                                                size: 16,
-                                              ),
-                                              tooltip:
+                                            Tooltip(
+                                              message:
                                                   t.home.renameNote.rename,
-                                              onPressed: confirmRename,
-                                            ),
-                                            IconButton(
-                                              icon: const FaIcon(
-                                                FontAwesomeIcons.xmark,
-                                                size: 16,
+                                              child: GestureDetector(
+                                                behavior:
+                                                    HitTestBehavior.opaque,
+                                                onTap: confirmRename,
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8),
+                                                  child: Icon(
+                                                    Icons.check,
+                                                    size: 20,
+                                                    color: ColorScheme.of(
+                                                      context,
+                                                    ).primary,
+                                                  ),
+                                                ),
                                               ),
-                                              tooltip: t.common.cancel,
-                                              onPressed: cancelRename,
+                                            ),
+                                            Tooltip(
+                                              message: t.common.cancel,
+                                              child: GestureDetector(
+                                                behavior:
+                                                    HitTestBehavior.opaque,
+                                                onTap: cancelRename,
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8),
+                                                  child: Icon(
+                                                    Icons.close,
+                                                    size: 20,
+                                                    color: ColorScheme.of(
+                                                      context,
+                                                    ).onSurfaceVariant,
+                                                  ),
+                                                ),
+                                              ),
                                             ),
                                           ],
                                         ),
