@@ -25,6 +25,21 @@ class SettingsContent extends StatefulWidget {
   State<SettingsContent> createState() => _SettingsContentState();
 }
 
+/// Full-screen settings page.
+class SettingsPage extends StatelessWidget {
+  const SettingsPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(t.home.titles.settings),
+      ),
+      body: const SettingsContent(),
+    );
+  }
+}
+
 class _SettingsContentState extends State<SettingsContent> {
   static const appVersion = '0.1.0-beta1';
 

@@ -22,6 +22,7 @@ import 'package:inkotes/data/tools/stroke_properties.dart';
 import 'package:inkotes/i18n/strings.g.dart';
 import 'package:inkotes/pages/editor/editor.dart';
 import 'package:inkotes/pages/home/home.dart';
+import 'package:inkotes/pages/home/settings.dart';
 import 'package:inkotes/pages/home/trash_page.dart';
 
 import 'package:worker_manager/worker_manager.dart';
@@ -122,6 +123,10 @@ class App extends StatefulWidget {
       GoRoute(
         path: RoutePaths.trash,
         builder: (context, state) => const TrashPage(),
+      ),
+      GoRoute(
+        path: RoutePaths.settings,
+        builder: (context, state) => const SettingsPage(),
       ),
     ],
   );

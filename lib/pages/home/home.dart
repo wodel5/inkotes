@@ -20,7 +20,6 @@ import 'package:inkotes/i18n/strings.g.dart';
 import 'package:inkotes/pages/editor/editor.dart';
 import 'package:inkotes/pages/home/widgets/no_files.dart';
 import 'package:inkotes/pages/home/widgets/path_breadcrumb.dart';
-import 'package:inkotes/pages/home/widgets/settings_overlay.dart';
 
 class HomePage extends StatefulHookWidget {
   const HomePage({super.key});
@@ -223,30 +222,6 @@ class _HomePageState extends State<HomePage> {
             .toList();
       }
     });
-  }
-
-  void _showSettingsOverlay(BuildContext context, Rect buttonRect) {
-    showGeneralDialog(
-      context: context,
-      barrierDismissible: true,
-      barrierLabel: 'Settings',
-      barrierColor: Colors.black26,
-      transitionDuration: const Duration(milliseconds: 250),
-      pageBuilder: (context, animation, secondaryAnimation) {
-        return SettingsOverlay(buttonRect: buttonRect);
-      },
-      transitionBuilder: (context, animation, secondaryAnimation, child) {
-        return SlideTransition(
-          position: Tween<Offset>(
-            begin: const Offset(0, -0.1),
-            end: Offset.zero,
-          ).animate(
-            CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
-          ),
-          child: FadeTransition(opacity: animation, child: child),
-        );
-      },
-    );
   }
 
   void startRename() {
@@ -481,17 +456,12 @@ class _HomePageState extends State<HomePage> {
                       AnimatedOpacity(
                         opacity: _isSearching ? 0 : 1,
                         duration: const Duration(milliseconds: 300),
-                        child: Builder(
-                          builder: (context) => IconButton(
-                            icon: const FaIcon(FontAwesomeIcons.gear),
-                            onPressed: () {
-                              selectedFiles.value = [];
-                              final RenderBox button =
-                                  context.findRenderObject() as RenderBox;
-                              final buttonRect = button.localToGlobal(Offset.zero) & button.size;
-                              _showSettingsOverlay(context, buttonRect);
-                            },
-                          ),
+                        child: IconButton(
+                          icon: const FaIcon(FontAwesomeIcons.gear),
+                          onPressed: () {
+                            selectedFiles.value = [];
+                            context.push(RoutePaths.settings);
+                          },
                         ),
                       ),
                     ],
