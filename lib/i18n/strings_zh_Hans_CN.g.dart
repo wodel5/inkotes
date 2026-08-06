@@ -93,6 +93,8 @@ class _Translations$settings$zh_Hans_CN extends Translations$settings$en {
 	// Translations
 	@override late final _Translations$settings$prefCategories$zh_Hans_CN prefCategories = _Translations$settings$prefCategories$zh_Hans_CN._(_root);
 	@override late final _Translations$settings$prefLabels$zh_Hans_CN prefLabels = _Translations$settings$prefLabels$zh_Hans_CN._(_root);
+	@override String get aboutApp => '关于此应用';
+	@override late final _Translations$settings$aboutDialog$zh_Hans_CN aboutDialog = _Translations$settings$aboutDialog$zh_Hans_CN._(_root);
 	@override late final _Translations$settings$accentColorPicker$zh_Hans_CN accentColorPicker = _Translations$settings$accentColorPicker$zh_Hans_CN._(_root);
 	@override late final _Translations$settings$reset$zh_Hans_CN reset = _Translations$settings$reset$zh_Hans_CN._(_root);
 	@override String get autosaveDisabled => '禁用';
@@ -302,6 +304,19 @@ class _Translations$settings$prefLabels$zh_Hans_CN extends Translations$settings
 	@override String get autoSwitchPaperColor => '自动切换画纸颜色';
 	@override String get printPageIndicators => '打印页码';
 	@override String get autosave => '自动保存';
+}
+
+// Path: settings.aboutDialog
+class _Translations$settings$aboutDialog$zh_Hans_CN extends Translations$settings$aboutDialog$en {
+	_Translations$settings$aboutDialog$zh_Hans_CN._(TranslationsZhHansCn root) : this._root = root, super.internal(root);
+
+	final TranslationsZhHansCn _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => '关于锋页笔记';
+	@override String version({required Object version}) => '版本 ${version}';
+	@override String copyright({required Object year}) => '锋页笔记 Copyright © ${year}\n这是自由软件，欢迎在特定条件下重新分发。';
+	@override String get licenses => '查看开源许可证';
 }
 
 // Path: settings.accentColorPicker

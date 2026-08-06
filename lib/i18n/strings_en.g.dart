@@ -130,6 +130,11 @@ class Translations$settings$en {
 	// Translations
 	late final Translations$settings$prefCategories$en prefCategories = Translations$settings$prefCategories$en.internal(_root);
 	late final Translations$settings$prefLabels$en prefLabels = Translations$settings$prefLabels$en.internal(_root);
+
+	/// en: 'About the APP'
+	String get aboutApp => 'About the APP';
+
+	late final Translations$settings$aboutDialog$en aboutDialog = Translations$settings$aboutDialog$en.internal(_root);
 	late final Translations$settings$accentColorPicker$en accentColorPicker = Translations$settings$accentColorPicker$en.internal(_root);
 	late final Translations$settings$reset$en reset = Translations$settings$reset$en.internal(_root);
 
@@ -473,6 +478,27 @@ class Translations$settings$prefLabels$en {
 
 	/// en: 'Auto-save'
 	String get autosave => 'Auto-save';
+}
+
+// Path: settings.aboutDialog
+class Translations$settings$aboutDialog$en {
+	Translations$settings$aboutDialog$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'About Foledge Notes'
+	String get title => 'About Foledge Notes';
+
+	/// en: 'Version $version'
+	String version({required Object version}) => 'Version ${version}';
+
+	/// en: 'Foledge Notes Copyright © $year This is free software, and you are welcome to redistribute it under certain conditions.'
+	String copyright({required Object year}) => 'Foledge Notes Copyright © ${year}\nThis is free software, and you are welcome to redistribute it under certain conditions.';
+
+	/// en: 'View open source licenses'
+	String get licenses => 'View open source licenses';
 }
 
 // Path: settings.accentColorPicker

@@ -95,6 +95,14 @@ settings:
     printPageIndicators: 打印页码
     autosave: 自动保存
   prefDescriptions: {}
+  aboutApp: 关于此应用
+  aboutDialog:
+    title: 关于锋页笔记
+    version: 版本 $version
+    copyright: |-
+      锋页笔记 Copyright © $year
+      这是自由软件，欢迎在特定条件下重新分发。
+    licenses: 查看开源许可证
   accentColorPicker:
     pickAColor: 选取颜色
     customColor: 自定义颜色

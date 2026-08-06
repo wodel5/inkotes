@@ -95,6 +95,14 @@ settings:
     printPageIndicators: Print page indicators
     autosave: Auto-save
   prefDescriptions: {}
+  aboutApp: About the APP
+  aboutDialog:
+    title: About Foledge Notes
+    version: Version $version
+    copyright: |-
+      Foledge Notes Copyright © $year
+      This is free software, and you are welcome to redistribute it under certain conditions.
+    licenses: View open source licenses
   accentColorPicker:
     pickAColor: Pick a color
     customColor: Custom color

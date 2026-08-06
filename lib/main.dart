@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:args/args.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_sharing_intent/flutter_sharing_intent.dart';
 import 'package:flutter_sharing_intent/model/sharing_file.dart';
 import 'package:go_router/go_router.dart';
@@ -63,6 +64,12 @@ Future<void> appRunner(List<String> args) async {
 
   StrokeOptionsExtension.setDefaults();
   Stows.markAsOnMainIsolate();
+  LicenseRegistry.addLicense(() async* {
+    final license = await rootBundle.loadString(
+      'assets/licenses/saber_LICENSE.md',
+    );
+    yield LicenseEntryWithLineBreaks(['Saber'], license);
+  });
 
   await Future.wait([
     FileManager.init(),

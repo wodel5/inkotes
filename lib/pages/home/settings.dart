@@ -4,6 +4,7 @@ import 'package:foledge/components/settings/settings_dropdown.dart';
 import 'package:foledge/components/settings/settings_selection.dart';
 import 'package:foledge/components/settings/settings_switch.dart';
 import 'package:foledge/components/theming/adaptive_toggle_buttons.dart';
+import 'package:foledge/components/theming/uni_icon.dart';
 import 'package:foledge/data/locales.dart';
 import 'package:foledge/data/prefs.dart';
 import 'package:foledge/i18n/strings.g.dart';
@@ -25,6 +26,8 @@ class SettingsContent extends StatefulWidget {
 }
 
 class _SettingsContentState extends State<SettingsContent> {
+  static const appVersion = '0.1.0-beta1';
+
   @override
   void initState() {
     stows.locale.addListener(onChanged);
@@ -35,9 +38,68 @@ class _SettingsContentState extends State<SettingsContent> {
     setState(() {});
   }
 
+  void _showAboutDialog() {
+    final colorScheme = ColorScheme.of(context);
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Theme.of(context).brightness == Brightness.light
+            ? const Color(0xFFF2F4F8)
+            : null,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.note_alt_outlined,
+              size: 64,
+              color: colorScheme.primary,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              t.home.titles.appName,
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              t.settings.aboutDialog.version(version: appVersion),
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: colorScheme.onSurface.withValues(alpha: 0.6),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              t.settings.aboutDialog.copyright(
+                year: '${DateTime.now().year}',
+              ),
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: colorScheme.onSurface.withValues(alpha: 0.6),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => showLicensePage(
+              context: context,
+              applicationName: t.home.titles.appName,
+              applicationVersion: appVersion,
+            ),
+            child: Text(t.settings.aboutDialog.licenses),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(t.common.done),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return ListView(
+      padding: EdgeInsets.zero,
       children: [
         SettingsDropdown(
           title: t.settings.prefLabels.locale,
@@ -108,6 +170,35 @@ class _SettingsContentState extends State<SettingsContent> {
             const ToggleButtonsOption(10000, Text('10s')),
             ToggleButtonsOption(-1, Text(t.settings.autosaveDisabled)),
           ],
+        ),
+        // About
+        ListTile(
+          contentPadding: const EdgeInsets.symmetric(
+            vertical: 4,
+            horizontal: 16,
+          ),
+          leading: const UniIcon(Icons.info_outline_rounded, size: 26),
+          title: Text(
+            t.settings.aboutApp,
+            style: const TextStyle(fontSize: 18),
+          ),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: _showAboutDialog,
+        ),
+        // Version tag
+        Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: Center(
+            child: Text(
+              t.settings.aboutDialog.version(version: appVersion),
+              style: TextStyle(
+                fontSize: 12,
+                color: ColorScheme.of(context).onSurface.withValues(
+                  alpha: 0.5,
+                ),
+              ),
+            ),
+          ),
         ),
       ],
     );

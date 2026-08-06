@@ -73,7 +73,7 @@ class Stows {
 
   final autoSwitchPaperColor = PlainStow(
     'autoSwitchPaperColor',
-    false,
+    true,
     volatile: !_isOnMainIsolate,
   );
 
