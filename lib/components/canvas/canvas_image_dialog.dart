@@ -2,10 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:foledge/components/canvas/image/editor_image.dart';
-import 'package:foledge/components/theming/adaptive_icon.dart';
-import 'package:foledge/data/file_manager/file_manager.dart';
-import 'package:foledge/i18n/strings.g.dart';
+import 'package:inkotes/components/canvas/image/editor_image.dart';
+import 'package:inkotes/components/theming/adaptive_icon.dart';
+import 'package:inkotes/data/file_manager/file_manager.dart';
+import 'package:inkotes/i18n/strings.g.dart';
 
 class CanvasImageDialog extends StatefulWidget {
   const CanvasImageDialog({

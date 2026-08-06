@@ -1,4 +1,4 @@
-package com.notes.foledge
+package com.inkotes.app
 
 import io.flutter.embedding.android.FlutterActivity
 

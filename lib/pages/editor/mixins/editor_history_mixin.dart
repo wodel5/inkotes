@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:foledge/components/canvas/stroke.dart';
-import 'package:foledge/components/canvas/image/editor_image.dart';
-import 'package:foledge/components/canvas/canvas_gesture_detector.dart';
-import 'package:foledge/data/editor/editor_history.dart';
-import 'package:foledge/data/editor/page.dart';
-import 'package:foledge/data/tools/select.dart';
+import 'package:inkotes/components/canvas/stroke.dart';
+import 'package:inkotes/components/canvas/image/editor_image.dart';
+import 'package:inkotes/components/canvas/canvas_gesture_detector.dart';
+import 'package:inkotes/data/editor/editor_history.dart';
+import 'package:inkotes/data/editor/page.dart';
+import 'package:inkotes/data/tools/select.dart';
 
 /// Mixin that provides history (undo/redo) and page management for the Editor.
 ///

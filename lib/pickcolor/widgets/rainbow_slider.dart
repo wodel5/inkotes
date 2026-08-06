@@ -1,7 +1,7 @@
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
-import 'package:foledge/pickcolor/models/color_channel.dart';
+import 'package:inkotes/pickcolor/models/color_channel.dart';
 
 import 'circle_thumb_shape.dart';
 import 'palette.dart' show ColorPositionChanged;

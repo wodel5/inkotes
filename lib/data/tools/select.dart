@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:foledge/components/canvas/stroke.dart';
-import 'package:foledge/components/canvas/image/editor_image.dart';
-import 'package:foledge/data/tools/tool.dart';
-import 'package:foledge/data/models/tool_id.dart';
+import 'package:inkotes/components/canvas/stroke.dart';
+import 'package:inkotes/components/canvas/image/editor_image.dart';
+import 'package:inkotes/data/tools/tool.dart';
+import 'package:inkotes/data/models/tool_id.dart';
 
 class Select extends Tool {
   Select._();

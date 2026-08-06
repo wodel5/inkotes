@@ -12,11 +12,11 @@ import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:foledge/components/home/sort_button.dart';
-import 'package:foledge/data/editor/editor_core_info.dart';
-import 'package:foledge/data/prefs.dart';
-import 'package:foledge/i18n/strings.g.dart';
-import 'package:foledge/pages/editor/editor.dart';
+import 'package:inkotes/components/home/sort_button.dart';
+import 'package:inkotes/data/editor/editor_core_info.dart';
+import 'package:inkotes/data/prefs.dart';
+import 'package:inkotes/i18n/strings.g.dart';
+import 'package:inkotes/pages/editor/editor.dart';
 import 'package:saver_gallery/saver_gallery.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -27,7 +27,7 @@ class FileManager {
 
   static final log = Logger('FileManager');
 
-  static const appRootDirectoryPrefix = 'foledge';
+  static const appRootDirectoryPrefix = 'inkotes';
   static const maxRecentlyAccessedFiles = 30;
 
   /// This isn't final because isolates sometimes init multiple times.
@@ -265,7 +265,7 @@ class FileManager {
           await SaverGallery.saveImage(
             Uint8List.fromList(bytes),
             fileName: fileName,
-            albumPath: 'foledge',
+            albumPath: 'inkotes',
             skipIfExists: true,
           );
         }

@@ -5,16 +5,16 @@ import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
-import 'package:foledge/components/canvas/save_indicator.dart';
-import 'package:foledge/components/canvas/asset_cache.dart';
-import 'package:foledge/components/canvas/image/editor_image.dart';
-import 'package:foledge/data/editor/editor_core_info.dart';
-import 'package:foledge/data/editor/editor_exporter.dart';
-import 'package:foledge/data/file_manager/file_manager.dart';
-import 'package:foledge/data/prefs.dart';
-import 'package:foledge/data/tools/pen.dart';
-import 'package:foledge/data/editor/editor_history.dart';
-import 'package:foledge/pages/editor/editor_constants.dart';
+import 'package:inkotes/components/canvas/save_indicator.dart';
+import 'package:inkotes/components/canvas/asset_cache.dart';
+import 'package:inkotes/components/canvas/image/editor_image.dart';
+import 'package:inkotes/data/editor/editor_core_info.dart';
+import 'package:inkotes/data/editor/editor_exporter.dart';
+import 'package:inkotes/data/file_manager/file_manager.dart';
+import 'package:inkotes/data/prefs.dart';
+import 'package:inkotes/data/tools/pen.dart';
+import 'package:inkotes/data/editor/editor_history.dart';
+import 'package:inkotes/pages/editor/editor_constants.dart';
 
 /// Mixin that provides file I/O operations for the Editor.
 ///

@@ -2,16 +2,16 @@ import 'dart:async';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:foledge/components/canvas/canvas_image.dart';
-import 'package:foledge/components/toolbar/toolbar.dart';
-import 'package:foledge/data/editor/editor_history.dart';
-import 'package:foledge/data/extensions/flutter_extensions.dart';
-import 'package:foledge/data/prefs.dart';
-import 'package:foledge/data/tools/eraser.dart';
-import 'package:foledge/data/tools/laser_pointer.dart';
-import 'package:foledge/data/tools/pen.dart';
-import 'package:foledge/data/tools/select.dart';
-import 'package:foledge/data/tools/tool.dart';
+import 'package:inkotes/components/canvas/canvas_image.dart';
+import 'package:inkotes/components/toolbar/toolbar.dart';
+import 'package:inkotes/data/editor/editor_history.dart';
+import 'package:inkotes/data/extensions/flutter_extensions.dart';
+import 'package:inkotes/data/prefs.dart';
+import 'package:inkotes/data/tools/eraser.dart';
+import 'package:inkotes/data/tools/laser_pointer.dart';
+import 'package:inkotes/data/tools/pen.dart';
+import 'package:inkotes/data/tools/select.dart';
+import 'package:inkotes/data/tools/tool.dart';
 
 /// Mixin that provides drawing gesture handling for the Editor.
 ///

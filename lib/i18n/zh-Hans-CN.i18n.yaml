@@ -6,14 +6,14 @@ home:
   titles:
     home: 最近笔记
     settings: 设置
-    appName: 锋页笔记
+    appName: Inkotes
   importPdf: 导入 PDF
   tooltips:
     exportNote: 导出笔记
   create:
     newNote: 新建笔记
     importNote: 导入笔记
-  welcome: 欢迎使用锋页笔记
+  welcome: 欢迎使用 Inkotes
   noFiles: 未找到文件
   noPreviewAvailable: 无可用预览
   editedAt: 编辑于$date
@@ -97,10 +97,10 @@ settings:
   prefDescriptions: {}
   aboutApp: 关于此应用
   aboutDialog:
-    title: 关于锋页笔记
+    title: 关于 Inkotes
     version: 版本 $version
     copyright: |-
-      锋页笔记 Copyright © $year
+      Inkotes Copyright © $year
       这是自由软件，欢迎在特定条件下重新分发。
     licenses: 查看开源许可证
   accentColorPicker:

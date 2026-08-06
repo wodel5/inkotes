@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-/// Foledge 固定配色方案。
+/// Inkotes 固定配色方案。
 ///
 /// 这些颜色提取自开发时模拟器的 Material You 动态取色并硬编码固定，
 /// 保证在所有设备上主题色一致（不随系统壁纸变化）。
 /// 以后加主题或改配色，只需要修改/新增这里的方案。
-abstract class FoledgeColorSchemes {
+abstract class InkotesColorSchemes {
   /// 浅色主题
   static const ColorScheme light = ColorScheme.light(
     primary: Color(0xFF495D92),

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
-import 'package:foledge/components/theming/adaptive_circular_progress_indicator.dart';
-import 'package:foledge/data/is_this_a_test.dart';
-import 'package:foledge/data/routes.dart';
+import 'package:inkotes/components/theming/adaptive_circular_progress_indicator.dart';
+import 'package:inkotes/data/is_this_a_test.dart';
+import 'package:inkotes/data/routes.dart';
 
 /// Replaces the back button as the
 /// [AppBar.leading] widget in the [AppBar]

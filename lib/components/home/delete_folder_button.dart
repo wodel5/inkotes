@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:foledge/components/theming/adaptive_alert_dialog.dart';
-import 'package:foledge/i18n/strings.g.dart';
+import 'package:inkotes/components/theming/adaptive_alert_dialog.dart';
+import 'package:inkotes/i18n/strings.g.dart';
 
 class DeleteFolderButton extends StatelessWidget {
   const DeleteFolderButton({

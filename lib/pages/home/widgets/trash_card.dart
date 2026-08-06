@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:yaru/yaru.dart';
-import 'package:foledge/components/canvas/inner_canvas.dart';
-import 'package:foledge/components/common/fallback_thumbnail.dart';
-import 'package:foledge/components/home/preview_card.dart';
-import 'package:foledge/data/extensions/collection_extensions.dart';
-import 'package:foledge/data/file_manager/file_manager.dart';
-import 'package:foledge/pages/editor/editor.dart';
+import 'package:inkotes/components/canvas/inner_canvas.dart';
+import 'package:inkotes/components/common/fallback_thumbnail.dart';
+import 'package:inkotes/components/home/preview_card.dart';
+import 'package:inkotes/data/extensions/collection_extensions.dart';
+import 'package:inkotes/data/file_manager/file_manager.dart';
+import 'package:inkotes/pages/editor/editor.dart';
 
 class TrashCard extends StatefulWidget {
   const TrashCard({

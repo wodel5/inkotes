@@ -6,14 +6,14 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:keybinder/keybinder.dart';
-import 'package:foledge/components/canvas/canvas_transform_cache.dart';
-import 'package:foledge/components/canvas/hud/canvas_hud.dart';
-import 'package:foledge/components/canvas/interactive_canvas.dart';
-import 'package:foledge/data/editor/page.dart';
-import 'package:foledge/data/extensions/flutter_extensions.dart';
-import 'package:foledge/data/extensions/math_extensions.dart';
-import 'package:foledge/data/prefs.dart';
-import 'package:foledge/pages/editor/editor.dart';
+import 'package:inkotes/components/canvas/canvas_transform_cache.dart';
+import 'package:inkotes/components/canvas/hud/canvas_hud.dart';
+import 'package:inkotes/components/canvas/interactive_canvas.dart';
+import 'package:inkotes/data/editor/page.dart';
+import 'package:inkotes/data/extensions/flutter_extensions.dart';
+import 'package:inkotes/data/extensions/math_extensions.dart';
+import 'package:inkotes/data/prefs.dart';
+import 'package:inkotes/pages/editor/editor.dart';
 import 'package:vector_math/vector_math_64.dart';
 
 class CanvasGestureDetector extends StatefulWidget {

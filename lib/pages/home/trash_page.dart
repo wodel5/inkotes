@@ -3,13 +3,13 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:foledge/components/common/dock_button.dart';
-import 'package:foledge/components/home/preview_card.dart';
-import 'package:foledge/components/theming/adaptive_alert_dialog.dart';
-import 'package:foledge/data/file_manager/file_manager.dart';
-import 'package:foledge/i18n/strings.g.dart';
-import 'package:foledge/pages/editor/editor.dart';
-import 'package:foledge/pages/home/widgets/trash_card.dart';
+import 'package:inkotes/components/common/dock_button.dart';
+import 'package:inkotes/components/home/preview_card.dart';
+import 'package:inkotes/components/theming/adaptive_alert_dialog.dart';
+import 'package:inkotes/data/file_manager/file_manager.dart';
+import 'package:inkotes/i18n/strings.g.dart';
+import 'package:inkotes/pages/editor/editor.dart';
+import 'package:inkotes/pages/home/widgets/trash_card.dart';
 
 class TrashPage extends StatefulWidget {
   const TrashPage({super.key});

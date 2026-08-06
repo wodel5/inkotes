@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:foledge/i18n/strings.g.dart';
+import 'package:inkotes/i18n/strings.g.dart';
 
 class SelectionBar extends StatelessWidget {
   final VoidCallback duplicateSelection;

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:foledge/pages/home/settings.dart';
+import 'package:inkotes/pages/home/settings.dart';
 
 /// Settings overlay that appears as a floating panel.
 class SettingsOverlay extends StatefulWidget {

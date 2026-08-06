@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:foledge/data/tools/pen.dart';
-import 'package:foledge/i18n/strings.g.dart';
+import 'package:inkotes/data/tools/pen.dart';
+import 'package:inkotes/i18n/strings.g.dart';
 
 class SizePicker extends StatefulWidget {
   const SizePicker({super.key, required this.axis, required this.pen, this.onChanged});

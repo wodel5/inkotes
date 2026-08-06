@@ -1,7 +1,7 @@
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
-import 'package:foledge/pickcolor/models/color_channel.dart';
+import 'package:inkotes/pickcolor/models/color_channel.dart';
 
 /// Callback for position changes with color.
 typedef ColorPositionChanged<TPosition> = void Function(

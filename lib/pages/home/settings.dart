@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:foledge/components/settings/settings_dropdown.dart';
-import 'package:foledge/components/settings/settings_selection.dart';
-import 'package:foledge/components/settings/settings_switch.dart';
-import 'package:foledge/components/theming/adaptive_toggle_buttons.dart';
-import 'package:foledge/components/theming/uni_icon.dart';
-import 'package:foledge/data/locales.dart';
-import 'package:foledge/data/prefs.dart';
-import 'package:foledge/i18n/strings.g.dart';
+import 'package:inkotes/components/settings/settings_dropdown.dart';
+import 'package:inkotes/components/settings/settings_selection.dart';
+import 'package:inkotes/components/settings/settings_switch.dart';
+import 'package:inkotes/components/theming/adaptive_toggle_buttons.dart';
+import 'package:inkotes/components/theming/uni_icon.dart';
+import 'package:inkotes/data/locales.dart';
+import 'package:inkotes/data/prefs.dart';
+import 'package:inkotes/i18n/strings.g.dart';
 
 abstract class _SettingsStows {
   static final appTheme = TransformedStow(

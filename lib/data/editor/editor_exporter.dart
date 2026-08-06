@@ -8,13 +8,13 @@ import 'package:image/image.dart' as im;
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:pool/pool.dart';
-import 'package:foledge/components/canvas/circle_stroke.dart';
-import 'package:foledge/components/canvas/rectangle_stroke.dart';
-import 'package:foledge/components/canvas/stroke.dart';
-import 'package:foledge/components/canvas/canvas_preview.dart';
-import 'package:foledge/components/canvas/inner_canvas.dart';
-import 'package:foledge/data/editor/editor_core_info.dart';
-import 'package:foledge/data/is_this_a_test.dart';
+import 'package:inkotes/components/canvas/circle_stroke.dart';
+import 'package:inkotes/components/canvas/rectangle_stroke.dart';
+import 'package:inkotes/components/canvas/stroke.dart';
+import 'package:inkotes/components/canvas/canvas_preview.dart';
+import 'package:inkotes/components/canvas/inner_canvas.dart';
+import 'package:inkotes/data/editor/editor_core_info.dart';
+import 'package:inkotes/data/is_this_a_test.dart';
 import 'package:screenshot/screenshot.dart';
 
 abstract class EditorExporter {

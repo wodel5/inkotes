@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:foledge/components/canvas/inner_canvas.dart';
+import 'package:inkotes/components/canvas/inner_canvas.dart';
 
 const backgroundColorPresets = [
   Color(0xFFFFFFFF),

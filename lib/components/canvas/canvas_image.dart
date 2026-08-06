@@ -3,9 +3,9 @@ import 'dart:math';
 import 'package:defer_pointer/defer_pointer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:foledge/components/canvas/image/editor_image.dart';
-import 'package:foledge/data/extensions/flutter_extensions.dart';
-import 'package:foledge/data/tools/select.dart';
+import 'package:inkotes/components/canvas/image/editor_image.dart';
+import 'package:inkotes/data/extensions/flutter_extensions.dart';
+import 'package:inkotes/data/tools/select.dart';
 
 class CanvasImage extends StatefulHookWidget {
   CanvasImage({

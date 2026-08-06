@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:foledge/components/canvas/canvas_gesture_detector.dart';
-import 'package:foledge/components/canvas/canvas_preview.dart';
-import 'package:foledge/components/theming/adaptive_icon.dart';
-import 'package:foledge/data/editor/editor_core_info.dart';
-import 'package:foledge/i18n/strings.g.dart';
+import 'package:inkotes/components/canvas/canvas_gesture_detector.dart';
+import 'package:inkotes/components/canvas/canvas_preview.dart';
+import 'package:inkotes/components/theming/adaptive_icon.dart';
+import 'package:inkotes/data/editor/editor_core_info.dart';
+import 'package:inkotes/i18n/strings.g.dart';
 
 class EditorPageManager extends StatefulWidget {
   const EditorPageManager({

@@ -1,5 +1,5 @@
-import 'package:foledge/i18n/strings.g.dart';
-import 'package:foledge/data/models/canvas_background_pattern.dart';
+import 'package:inkotes/i18n/strings.g.dart';
+import 'package:inkotes/data/models/canvas_background_pattern.dart';
 
 extension CanvasBackgroundPatternLocalized on CanvasBackgroundPattern {
   String get localizedName => switch (this) {

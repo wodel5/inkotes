@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-const foledgeSansSerifFontFallbacks = [
+const inkotesSansSerifFontFallbacks = [
   'Adwaita Sans',
   'Inter',
   'Noto Sans',
@@ -23,7 +23,7 @@ const foledgeSansSerifFontFallbacks = [
   '.SF UI Text',
   'Segoe UI',
 ];
-const foledgeMonoFontFallbacks = [
+const inkotesMonoFontFallbacks = [
   'Fira Mono',
   'ui-monospace',
   'Cascadia Code',
@@ -33,7 +33,7 @@ const foledgeMonoFontFallbacks = [
   'DejaVu Sans Mono',
   'monospace',
 ];
-const foledgeHandwritingFontFallbacks = [
+const inkotesHandwritingFontFallbacks = [
   'Neucha',
   'Dekko',
   // Fallback fonts from https://github.com/system-fonts/modern-font-stacks#handwritten
@@ -45,7 +45,7 @@ const foledgeHandwritingFontFallbacks = [
   'casual',
   'cursive',
   'handwriting',
-  ...foledgeSansSerifFontFallbacks,
+  ...inkotesSansSerifFontFallbacks,
 ];
 
 extension TextThemeExtension on TextTheme {

@@ -1,4 +1,4 @@
-# foledge
+# inkotes
 
 A new Flutter project for notes改改改.
 

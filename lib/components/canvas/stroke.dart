@@ -6,12 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:one_dollar_unistroke_recognizer/one_dollar_unistroke_recognizer.dart';
 import 'package:perfect_freehand/perfect_freehand.dart';
-import 'package:foledge/components/canvas/circle_stroke.dart';
-import 'package:foledge/components/canvas/rectangle_stroke.dart';
-import 'package:foledge/data/extensions/collection_extensions.dart';
-import 'package:foledge/data/extensions/math_extensions.dart';
-import 'package:foledge/data/models/has_size.dart';
-import 'package:foledge/data/models/tool_id.dart';
+import 'package:inkotes/components/canvas/circle_stroke.dart';
+import 'package:inkotes/components/canvas/rectangle_stroke.dart';
+import 'package:inkotes/data/extensions/collection_extensions.dart';
+import 'package:inkotes/data/extensions/math_extensions.dart';
+import 'package:inkotes/data/models/has_size.dart';
+import 'package:inkotes/data/models/tool_id.dart';
 
 class Stroke {
   static final log = Logger('Stroke');
@@ -105,7 +105,7 @@ class Stroke {
     final pressureEnabled = json['prs'] ?? defaultPressureEnabled;
     if (toolId == .shapePen) {
       // Set smoothing and streamline to 0 for ShapePen
-      // to mitigate https://github.com/foledge-notes/foledge/issues/1587
+      // to mitigate https://github.com/inkotes-notes/inkotes/issues/1587
       options.smoothing = 0;
       options.streamline = 0;
     }

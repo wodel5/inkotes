@@ -8,15 +8,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
-import 'package:foledge/components/canvas/asset_cache.dart';
-import 'package:foledge/data/editor/page.dart';
-import 'package:foledge/data/file_manager/file_manager.dart';
-import 'package:foledge/data/flavor_config.dart';
-import 'package:foledge/data/prefs.dart';
-import 'package:foledge/data/tools/stroke_properties.dart';
-import 'package:foledge/pages/editor/editor.dart';
-import 'package:foledge/data/models/canvas_background_pattern.dart';
-import 'package:foledge/data/models/read_only_reason.dart';
+import 'package:inkotes/components/canvas/asset_cache.dart';
+import 'package:inkotes/data/editor/page.dart';
+import 'package:inkotes/data/file_manager/file_manager.dart';
+import 'package:inkotes/data/flavor_config.dart';
+import 'package:inkotes/data/prefs.dart';
+import 'package:inkotes/data/tools/stroke_properties.dart';
+import 'package:inkotes/pages/editor/editor.dart';
+import 'package:inkotes/data/models/canvas_background_pattern.dart';
+import 'package:inkotes/data/models/read_only_reason.dart';
 import 'package:worker_manager/worker_manager.dart';
 
 class EditorCoreInfo {
@@ -265,7 +265,7 @@ class EditorCoreInfo {
         coreInfo = await workerManager.execute(
           () async {
             // We need to rerun some "init" methods in the isolate,
-            // see https://github.com/foledge-notes/foledge/issues/1031.
+            // see https://github.com/inkotes-notes/inkotes/issues/1031.
             FlavorConfig.setupFromEnvironment();
             await FileManager.init(
               documentsDirectory: documentsDirectory,
@@ -338,7 +338,7 @@ class EditorCoreInfo {
     return (json, assets);
   }
 
-  /// Converts the current note as an FLE (foledge Archive) file,
+  /// Converts the current note as an FLE (inkotes Archive) file,
   /// which contains the main bson file and all the assets
   /// compressed into a zip file.
   ///

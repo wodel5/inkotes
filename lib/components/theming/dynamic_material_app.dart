@@ -5,11 +5,11 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:go_router/go_router.dart';
-import 'package:foledge/components/theming/foledge_color_schemes.dart';
-import 'package:foledge/components/theming/foledge_theme.dart';
-import 'package:foledge/data/prefs.dart';
-import 'package:foledge/i18n/extensions/redirecting_localization_delegate.dart';
-import 'package:foledge/i18n/strings.g.dart';
+import 'package:inkotes/components/theming/inkotes_color_schemes.dart';
+import 'package:inkotes/components/theming/inkotes_theme.dart';
+import 'package:inkotes/data/prefs.dart';
+import 'package:inkotes/i18n/extensions/redirecting_localization_delegate.dart';
+import 'package:inkotes/i18n/strings.g.dart';
 
 class DynamicMaterialApp extends StatefulHookWidget {
   const DynamicMaterialApp({
@@ -36,8 +36,8 @@ class DynamicMaterialAppState extends State<DynamicMaterialApp> {
       title: widget.title,
       router: widget.router,
       themeMode: themeMode,
-      theme: FoledgeTheme.createTheme(FoledgeColorSchemes.light, platform),
-      darkTheme: FoledgeTheme.createTheme(FoledgeColorSchemes.dark, platform),
+      theme: InkotesTheme.createTheme(InkotesColorSchemes.light, platform),
+      darkTheme: InkotesTheme.createTheme(InkotesColorSchemes.dark, platform),
     );
   }
 

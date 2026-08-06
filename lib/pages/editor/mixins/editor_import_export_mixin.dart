@@ -6,12 +6,12 @@ import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
-import 'package:foledge/components/canvas/image/editor_image.dart';
-import 'package:foledge/data/editor/editor_exporter.dart';
-import 'package:foledge/data/editor/editor_history.dart';
-import 'package:foledge/data/editor/page.dart';
-import 'package:foledge/data/file_manager/file_manager.dart';
-import 'package:foledge/pages/editor/editor_constants.dart';
+import 'package:inkotes/components/canvas/image/editor_image.dart';
+import 'package:inkotes/data/editor/editor_exporter.dart';
+import 'package:inkotes/data/editor/editor_history.dart';
+import 'package:inkotes/data/editor/page.dart';
+import 'package:inkotes/data/file_manager/file_manager.dart';
+import 'package:inkotes/pages/editor/editor_constants.dart';
 import 'package:super_clipboard/super_clipboard.dart';
 
 typedef PhotoInfo = ({Uint8List bytes, String extension});

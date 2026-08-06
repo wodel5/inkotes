@@ -1,19 +1,19 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:foledge/components/canvas/canvas_background_preview.dart';
-import 'package:foledge/components/canvas/canvas_preview.dart';
-import 'package:foledge/components/canvas/inner_canvas.dart';
-import 'package:foledge/components/toolbar/size_picker.dart';
-import 'package:foledge/components/toolbar/widgets/background_color_button.dart';
-import 'package:foledge/components/toolbar/widgets/page_action_button.dart';
-import 'package:foledge/data/editor/editor_core_info.dart';
-import 'package:foledge/data/editor/page.dart';
-import 'package:foledge/data/extensions/flutter_extensions.dart';
-import 'package:foledge/data/extensions/collection_extensions.dart';
-import 'package:foledge/i18n/extensions/canvas_background_pattern_localized.dart';
-import 'package:foledge/i18n/strings.g.dart';
-import 'package:foledge/data/models/canvas_background_pattern.dart';
+import 'package:inkotes/components/canvas/canvas_background_preview.dart';
+import 'package:inkotes/components/canvas/canvas_preview.dart';
+import 'package:inkotes/components/canvas/inner_canvas.dart';
+import 'package:inkotes/components/toolbar/size_picker.dart';
+import 'package:inkotes/components/toolbar/widgets/background_color_button.dart';
+import 'package:inkotes/components/toolbar/widgets/page_action_button.dart';
+import 'package:inkotes/data/editor/editor_core_info.dart';
+import 'package:inkotes/data/editor/page.dart';
+import 'package:inkotes/data/extensions/flutter_extensions.dart';
+import 'package:inkotes/data/extensions/collection_extensions.dart';
+import 'package:inkotes/i18n/extensions/canvas_background_pattern_localized.dart';
+import 'package:inkotes/i18n/strings.g.dart';
+import 'package:inkotes/data/models/canvas_background_pattern.dart';
 
 class EditorBottomSheet extends StatefulWidget {
   const EditorBottomSheet({

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:foledge/components/home/preview_card.dart';
-import 'package:foledge/data/extensions/flutter_extensions.dart';
+import 'package:inkotes/components/home/preview_card.dart';
+import 'package:inkotes/data/extensions/flutter_extensions.dart';
 
 class MasonryFiles extends StatefulWidget {
   const MasonryFiles({

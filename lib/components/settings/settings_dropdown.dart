@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:foledge/components/theming/adaptive_toggle_buttons.dart';
-import 'package:foledge/components/theming/uni_icon.dart';
+import 'package:inkotes/components/theming/adaptive_toggle_buttons.dart';
+import 'package:inkotes/components/theming/uni_icon.dart';
 import 'package:stow/stow.dart';
 import 'package:yaru/yaru.dart';
 

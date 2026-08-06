@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:foledge/i18n/strings.g.dart';
+import 'package:inkotes/i18n/strings.g.dart';
 
 extension ListExtensions<T> on List<T> {
   T? getOrNull(int index) {

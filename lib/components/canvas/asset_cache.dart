@@ -4,8 +4,8 @@ import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:flutter/painting.dart';
 import 'package:logging/logging.dart';
-import 'package:foledge/components/canvas/image/editor_image.dart';
-import 'package:foledge/components/canvas/image/pdf_document_cache.dart';
+import 'package:inkotes/components/canvas/image/editor_image.dart';
+import 'package:inkotes/components/canvas/image/pdf_document_cache.dart';
 
 /// A cache for assets that are loaded from disk.
 ///

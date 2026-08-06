@@ -6,14 +6,14 @@ home:
   titles:
     home: Recent notes
     settings: Settings
-    appName: Foledge Notes
+    appName: Inkotes
   importPdf: Import PDF
   tooltips:
     exportNote: Export note
   create:
     newNote: New note
     importNote: Import note
-  welcome: Welcome to Foledge Notes
+  welcome: Welcome to Inkotes
   noFiles: No files found
   noPreviewAvailable: No preview available
   editedAt: Edited $date
@@ -97,10 +97,10 @@ settings:
   prefDescriptions: {}
   aboutApp: About the APP
   aboutDialog:
-    title: About Foledge Notes
+    title: About Inkotes
     version: Version $version
     copyright: |-
-      Foledge Notes Copyright © $year
+      Inkotes Copyright © $year
       This is free software, and you are welcome to redistribute it under certain conditions.
     licenses: View open source licenses
   accentColorPicker:

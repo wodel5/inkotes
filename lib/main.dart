@@ -12,17 +12,17 @@ import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 import 'package:pdfrx/pdfrx.dart';
 import 'package:printing/printing.dart';
-import 'package:foledge/components/canvas/pencil_shader.dart';
-import 'package:foledge/components/theming/dynamic_material_app.dart';
-import 'package:foledge/data/file_manager/file_manager.dart';
-import 'package:foledge/data/flavor_config.dart';
-import 'package:foledge/data/prefs.dart';
-import 'package:foledge/data/routes.dart';
-import 'package:foledge/data/tools/stroke_properties.dart';
-import 'package:foledge/i18n/strings.g.dart';
-import 'package:foledge/pages/editor/editor.dart';
-import 'package:foledge/pages/home/home.dart';
-import 'package:foledge/pages/home/trash_page.dart';
+import 'package:inkotes/components/canvas/pencil_shader.dart';
+import 'package:inkotes/components/theming/dynamic_material_app.dart';
+import 'package:inkotes/data/file_manager/file_manager.dart';
+import 'package:inkotes/data/flavor_config.dart';
+import 'package:inkotes/data/prefs.dart';
+import 'package:inkotes/data/routes.dart';
+import 'package:inkotes/data/tools/stroke_properties.dart';
+import 'package:inkotes/i18n/strings.g.dart';
+import 'package:inkotes/pages/editor/editor.dart';
+import 'package:inkotes/pages/home/home.dart';
+import 'package:inkotes/pages/home/trash_page.dart';
 
 import 'package:worker_manager/worker_manager.dart';
 
@@ -192,7 +192,7 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
-    return DynamicMaterialApp(title: 'Foledge Notes', router: App._router);
+    return DynamicMaterialApp(title: 'Inkotes', router: App._router);
   }
 
   @override

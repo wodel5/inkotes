@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:foledge/components/home/delete_folder_button.dart';
-import 'package:foledge/components/home/new_folder_dialog.dart';
-import 'package:foledge/components/home/rename_folder_button.dart';
-import 'package:foledge/components/theming/adaptive_icon.dart';
-import 'package:foledge/data/extensions/collection_extensions.dart';
-import 'package:foledge/i18n/strings.g.dart';
+import 'package:inkotes/components/home/delete_folder_button.dart';
+import 'package:inkotes/components/home/new_folder_dialog.dart';
+import 'package:inkotes/components/home/rename_folder_button.dart';
+import 'package:inkotes/components/theming/adaptive_icon.dart';
+import 'package:inkotes/data/extensions/collection_extensions.dart';
+import 'package:inkotes/i18n/strings.g.dart';
 
 class GridFolders extends StatelessWidget {
   const GridFolders({

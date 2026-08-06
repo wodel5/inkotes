@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
-import 'package:foledge/components/theming/font_fallbacks.dart';
+import 'package:inkotes/components/theming/font_fallbacks.dart';
 
 typedef _ArgRecord = ({bool invert, Color secondary});
 
-abstract class FoledgeQuillStyles {
+abstract class InkotesQuillStyles {
   static DefaultStyles get({
     required bool invert,
     required Color secondary,
@@ -36,7 +36,7 @@ abstract class FoledgeQuillStyles {
     final baseStyle = TextStyle(
       inherit: false,
       fontFamily: 'Neucha',
-      fontFamilyFallback: foledgeHandwritingFontFallbacks,
+      fontFamilyFallback: inkotesHandwritingFontFallbacks,
       color: invert ? Colors.white : Colors.black,
       fontSize: fixedFontSize,
       height: 1 / 1,
@@ -138,19 +138,19 @@ abstract class FoledgeQuillStyles {
         radius: const .circular(3),
         style: textTheme.bodyLarge.copyWith(
           fontFamily: 'FiraMono',
-          fontFamilyFallback: foledgeMonoFontFallbacks,
+          fontFamilyFallback: inkotesMonoFontFallbacks,
         ),
         header1: textTheme.displayLarge.copyWith(
           fontFamily: 'FiraMono',
-          fontFamilyFallback: foledgeMonoFontFallbacks,
+          fontFamilyFallback: inkotesMonoFontFallbacks,
         ),
         header2: textTheme.displayMedium.copyWith(
           fontFamily: 'FiraMono',
-          fontFamilyFallback: foledgeMonoFontFallbacks,
+          fontFamilyFallback: inkotesMonoFontFallbacks,
         ),
         header3: textTheme.displaySmall.copyWith(
           fontFamily: 'FiraMono',
-          fontFamilyFallback: foledgeMonoFontFallbacks,
+          fontFamilyFallback: inkotesMonoFontFallbacks,
         ),
       ),
       link: TextStyle(color: secondary, decoration: TextDecoration.underline),
@@ -186,7 +186,7 @@ abstract class FoledgeQuillStyles {
       code: DefaultTextBlockStyle(
         textTheme.bodyLarge.copyWith(
           fontFamily: 'FiraMono',
-          fontFamilyFallback: foledgeMonoFontFallbacks,
+          fontFamilyFallback: inkotesMonoFontFallbacks,
         ),
         HorizontalSpacing.zero,
         VerticalSpacing(-fixedFontSize * 0.16, fixedFontSize * 0.8),

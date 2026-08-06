@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:foledge/components/toolbar/color_option.dart';
-import 'package:foledge/data/prefs.dart';
-import 'package:foledge/i18n/strings.g.dart';
-import 'package:foledge/pickcolor/pickcolor.dart';
+import 'package:inkotes/components/toolbar/color_option.dart';
+import 'package:inkotes/data/prefs.dart';
+import 'package:inkotes/i18n/strings.g.dart';
+import 'package:inkotes/pickcolor/pickcolor.dart';
 
 typedef NamedColor = ({String name, Color color});
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:foledge/components/canvas/inner_canvas.dart';
-import 'package:foledge/i18n/strings.g.dart';
+import 'package:inkotes/components/canvas/inner_canvas.dart';
+import 'package:inkotes/i18n/strings.g.dart';
 
 /// 空缩略图占位组件，用于笔记卡片和回收站卡片。
 class FallbackThumbnail extends StatelessWidget {

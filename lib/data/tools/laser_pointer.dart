@@ -2,12 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:perfect_freehand/perfect_freehand.dart';
-import 'package:foledge/components/canvas/stroke.dart';
-import 'package:foledge/data/editor/page.dart';
-import 'package:foledge/data/extensions/collection_extensions.dart';
-import 'package:foledge/data/tools/tool.dart';
-import 'package:foledge/data/tools/pen.dart';
-import 'package:foledge/data/models/tool_id.dart';
+import 'package:inkotes/components/canvas/stroke.dart';
+import 'package:inkotes/data/editor/page.dart';
+import 'package:inkotes/data/extensions/collection_extensions.dart';
+import 'package:inkotes/data/tools/tool.dart';
+import 'package:inkotes/data/tools/pen.dart';
+import 'package:inkotes/data/models/tool_id.dart';
 
 class LaserPointer extends Tool {
   LaserPointer._();

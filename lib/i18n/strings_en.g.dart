@@ -74,8 +74,8 @@ class Translations$home$en {
 	late final Translations$home$tooltips$en tooltips = Translations$home$tooltips$en.internal(_root);
 	late final Translations$home$create$en create = Translations$home$create$en.internal(_root);
 
-	/// en: 'Welcome to Foledge Notes'
-	String get welcome => 'Welcome to Foledge Notes';
+	/// en: 'Welcome to Inkotes'
+	String get welcome => 'Welcome to Inkotes';
 
 	/// en: 'No files found'
 	String get noFiles => 'No files found';
@@ -188,8 +188,8 @@ class Translations$home$titles$en {
 	/// en: 'Settings'
 	String get settings => 'Settings';
 
-	/// en: 'Foledge Notes'
-	String get appName => 'Foledge Notes';
+	/// en: 'Inkotes'
+	String get appName => 'Inkotes';
 }
 
 // Path: home.tooltips
@@ -488,14 +488,14 @@ class Translations$settings$aboutDialog$en {
 
 	// Translations
 
-	/// en: 'About Foledge Notes'
-	String get title => 'About Foledge Notes';
+	/// en: 'About Inkotes'
+	String get title => 'About Inkotes';
 
 	/// en: 'Version $version'
 	String version({required Object version}) => 'Version ${version}';
 
-	/// en: 'Foledge Notes Copyright © $year This is free software, and you are welcome to redistribute it under certain conditions.'
-	String copyright({required Object year}) => 'Foledge Notes Copyright © ${year}\nThis is free software, and you are welcome to redistribute it under certain conditions.';
+	/// en: 'Inkotes Copyright © $year This is free software, and you are welcome to redistribute it under certain conditions.'
+	String copyright({required Object year}) => 'Inkotes Copyright © ${year}\nThis is free software, and you are welcome to redistribute it under certain conditions.';
 
 	/// en: 'View open source licenses'
 	String get licenses => 'View open source licenses';

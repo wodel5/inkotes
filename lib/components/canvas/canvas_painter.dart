@@ -3,13 +3,13 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:path_drawing/path_drawing.dart';
-import 'package:foledge/components/canvas/circle_stroke.dart';
-import 'package:foledge/components/canvas/rectangle_stroke.dart';
-import 'package:foledge/components/canvas/stroke.dart';
-import 'package:foledge/data/editor/page.dart';
-import 'package:foledge/data/tools/highlighter.dart';
-import 'package:foledge/data/tools/laser_pointer.dart';
-import 'package:foledge/data/tools/select.dart';
+import 'package:inkotes/components/canvas/circle_stroke.dart';
+import 'package:inkotes/components/canvas/rectangle_stroke.dart';
+import 'package:inkotes/components/canvas/stroke.dart';
+import 'package:inkotes/data/editor/page.dart';
+import 'package:inkotes/data/tools/highlighter.dart';
+import 'package:inkotes/data/tools/laser_pointer.dart';
+import 'package:inkotes/data/tools/select.dart';
 
 class CanvasPainter extends CustomPainter {
   const CanvasPainter({

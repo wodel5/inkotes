@@ -62,7 +62,7 @@ class _Translations$home$zh_Hans_CN extends Translations$home$en {
 	@override String get importPdf => '导入 PDF';
 	@override late final _Translations$home$tooltips$zh_Hans_CN tooltips = _Translations$home$tooltips$zh_Hans_CN._(_root);
 	@override late final _Translations$home$create$zh_Hans_CN create = _Translations$home$create$zh_Hans_CN._(_root);
-	@override String get welcome => '欢迎使用锋页笔记';
+	@override String get welcome => '欢迎使用 Inkotes';
 	@override String get noFiles => '未找到文件';
 	@override String get noPreviewAvailable => '无可用预览';
 	@override String editedAt({required Object date}) => '编辑于${date}';
@@ -133,7 +133,7 @@ class _Translations$home$titles$zh_Hans_CN extends Translations$home$titles$en {
 	// Translations
 	@override String get home => '最近笔记';
 	@override String get settings => '设置';
-	@override String get appName => '锋页笔记';
+	@override String get appName => 'Inkotes';
 }
 
 // Path: home.tooltips
@@ -313,9 +313,9 @@ class _Translations$settings$aboutDialog$zh_Hans_CN extends Translations$setting
 	final TranslationsZhHansCn _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => '关于锋页笔记';
+	@override String get title => '关于 Inkotes';
 	@override String version({required Object version}) => '版本 ${version}';
-	@override String copyright({required Object year}) => '锋页笔记 Copyright © ${year}\n这是自由软件，欢迎在特定条件下重新分发。';
+	@override String copyright({required Object year}) => 'Inkotes Copyright © ${year}\n这是自由软件，欢迎在特定条件下重新分发。';
 	@override String get licenses => '查看开源许可证';
 }
 
