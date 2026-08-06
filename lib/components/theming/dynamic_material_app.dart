@@ -1,4 +1,3 @@
-import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -6,6 +5,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:go_router/go_router.dart';
+import 'package:foledge/components/theming/foledge_color_schemes.dart';
 import 'package:foledge/components/theming/foledge_theme.dart';
 import 'package:foledge/data/prefs.dart';
 import 'package:foledge/i18n/extensions/redirecting_localization_delegate.dart';
@@ -16,11 +16,9 @@ class DynamicMaterialApp extends StatefulHookWidget {
     super.key,
     required this.title,
     required this.router,
-    this.defaultSwatch = Colors.yellow,
   });
 
   final String title;
-  final Color defaultSwatch;
   final GoRouter router;
 
   @override
@@ -34,29 +32,12 @@ class DynamicMaterialAppState extends State<DynamicMaterialApp> {
 
     final platform = Theme.of(context).platform;
 
-    // Use device's accent color, or fall back to defaultSwatch
-    return DynamicColorBuilder(
-      builder: (ColorScheme? lightColorScheme, ColorScheme? darkColorScheme) {
-        return ExplicitlyThemedApp(
-          title: widget.title,
-          router: widget.router,
-          themeMode: themeMode,
-          theme: (lightColorScheme != null)
-              ? FoledgeTheme.createTheme(lightColorScheme, platform)
-              : FoledgeTheme.createThemeFromSeed(
-                  lightColorScheme?.primary ?? widget.defaultSwatch,
-                  .light,
-                  platform,
-                ),
-          darkTheme: (darkColorScheme != null)
-              ? FoledgeTheme.createTheme(darkColorScheme, platform)
-              : FoledgeTheme.createThemeFromSeed(
-                  darkColorScheme?.primary ?? widget.defaultSwatch,
-                  .dark,
-                  platform,
-                ),
-        );
-      },
+    return ExplicitlyThemedApp(
+      title: widget.title,
+      router: widget.router,
+      themeMode: themeMode,
+      theme: FoledgeTheme.createTheme(FoledgeColorSchemes.light, platform),
+      darkTheme: FoledgeTheme.createTheme(FoledgeColorSchemes.dark, platform),
     );
   }
 

@@ -21,18 +21,6 @@ abstract class FoledgeTheme {
     );
   }
 
-  static ThemeData createThemeFromSeed(
-    Color seedColor,
-    Brightness brightness,
-    TargetPlatform platform,
-  ) {
-    final colorScheme = ColorScheme.fromSeed(
-      brightness: brightness,
-      seedColor: seedColor,
-    );
-    return createTheme(colorScheme, platform);
-  }
-
   /// Adjusts certain colors in the [ColorScheme].
   static ColorScheme _adjustColorScheme(
     ColorScheme colorScheme,
