@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +20,6 @@ import 'package:foledge/i18n/strings.g.dart';
 import 'package:foledge/pages/editor/editor.dart';
 import 'package:foledge/pages/home/widgets/no_files.dart';
 import 'package:foledge/pages/home/widgets/path_breadcrumb.dart';
-import 'package:foledge/pages/home/widgets/rename_note_dialog.dart';
 import 'package:foledge/pages/home/widgets/settings_overlay.dart';
 
 class HomePage extends StatefulHookWidget {
@@ -44,6 +44,11 @@ class _HomePageState extends State<HomePage> {
   var failed = false;
 
   final ValueNotifier<List<String>> selectedFiles = ValueNotifier([]);
+
+  // Rename-in-dock state
+  var _isRenaming = false;
+  final _renameController = TextEditingController();
+  String? _renameError;
 
   // Search state
   var _isSearching = false;
@@ -72,6 +77,7 @@ class _HomePageState extends State<HomePage> {
     fileWriteSubscription?.cancel();
     _searchController.dispose();
     _searchFocusNode.dispose();
+    _renameController.dispose();
     super.dispose();
   }
 
@@ -80,7 +86,13 @@ class _HomePageState extends State<HomePage> {
     findChildren(fromFileListener: true);
   }
 
-  void _setState() => setState(() {});
+  void _setState() {
+    if (selectedFiles.value.isEmpty && _isRenaming) {
+      _isRenaming = false;
+      _renameError = null;
+    }
+    setState(() {});
+  }
 
   /// Mitigates a bug where files got imported starting with `null/` instead of `/`.
   void moveIncorrectlyImportedFiles() async {
@@ -237,6 +249,49 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  void startRename() {
+    final path = selectedFiles.value.first;
+    _renameController.text = path.substring(path.lastIndexOf('/') + 1);
+    _renameError = null;
+    setState(() => _isRenaming = true);
+  }
+
+  void cancelRename() {
+    _renameController.clear();
+    _renameError = null;
+    setState(() => _isRenaming = false);
+  }
+
+  Future<void> confirmRename() async {
+    final newName = _renameController.text.trim();
+    final path = selectedFiles.value.first;
+    final parentFolder = path.substring(0, path.lastIndexOf('/') + 1);
+    final oldName = path.substring(path.lastIndexOf('/') + 1);
+
+    if (newName.isEmpty) {
+      setState(() => _renameError = t.home.renameNote.noteNameEmpty);
+      return;
+    }
+    final error = FileManager.validateFilename(newName);
+    if (error != null) {
+      setState(() => _renameError = error);
+      return;
+    }
+    if (newName != oldName && File('$parentFolder$newName').existsSync()) {
+      setState(() => _renameError = t.home.renameNote.noteNameExists);
+      return;
+    }
+
+    if (newName != oldName) {
+      await FileManager.moveFile(
+        path + Editor.extension,
+        newName + Editor.extension,
+      );
+    }
+    cancelRename();
+    selectedFiles.value = [];
+  }
+
   Future<void> _importPdf() async {
     final result = await FilePicker.pickFiles(
       type: FileType.custom,
@@ -272,6 +327,7 @@ class _HomePageState extends State<HomePage> {
 
     return GestureDetector(
       onTap: () {
+        if (_isRenaming) cancelRename();
         if (selectedFiles.value.isNotEmpty) {
           selectedFiles.value = [];
         }
@@ -507,30 +563,101 @@ class _HomePageState extends State<HomePage> {
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(12, 4, 12, 8),
                       child: GlassmorphismDock(
-                        child: IntrinsicWidth(
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            // Rename editor row, expands inside the dock
+                            AnimatedSize(
+                              duration: const Duration(milliseconds: 240),
+                              curve: Curves.easeOut,
+                              child: _isRenaming
+                                  ? Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 12,
+                                        vertical: 4,
+                                      ),
+                                      child: SizedBox(
+                                        width: 280,
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              child: TextField(
+                                                controller: _renameController,
+                                                autofocus: true,
+                                                textInputAction:
+                                                    TextInputAction.done,
+                                                onSubmitted: (_) =>
+                                                    confirmRename(),
+                                                style: TextStyle(
+                                                  color: ColorScheme.of(
+                                                    context,
+                                                  ).onSurface,
+                                                ),
+                                                decoration: InputDecoration(
+                                                  hintText: t
+                                                      .home
+                                                      .renameNote
+                                                      .noteName,
+                                                  errorText: _renameError,
+                                                  isDense: true,
+                                                  border: InputBorder.none,
+                                                  hintStyle: TextStyle(
+                                                    color: ColorScheme.of(
+                                                      context,
+                                                    ).onSurface.withValues(
+                                                      alpha: 0.4,
+                                                    ),
+                                                  ),
+                                                  errorStyle: TextStyle(
+                                                    fontSize: 12,
+                                                    color: ColorScheme.of(
+                                                      context,
+                                                    ).error,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            IconButton(
+                                              icon: const FaIcon(
+                                                FontAwesomeIcons.check,
+                                                size: 16,
+                                              ),
+                                              tooltip:
+                                                  t.home.renameNote.rename,
+                                              onPressed: confirmRename,
+                                            ),
+                                            IconButton(
+                                              icon: const FaIcon(
+                                                FontAwesomeIcons.xmark,
+                                                size: 16,
+                                              ),
+                                              tooltip: t.common.cancel,
+                                              onPressed: cancelRename,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    )
+                                  : const SizedBox.shrink(),
+                            ),
+                            IntrinsicWidth(
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
                                   DockButton(
                                     icon: FontAwesomeIcons.penToSquare,
+                                    selected: _isRenaming,
                                     enabled: selectedFiles.value.length == 1,
-                                    onPressed: selectedFiles.value.length == 1
-                                        ? () {
-                                            showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return RenameNoteDialog(
-                                                  existingPath: selectedFiles.value.first,
-                                                  unselectNotes: () => selectedFiles.value = [],
-                                                );
-                                              },
-                                            );
-                                          }
+                                    onPressed:
+                                        selectedFiles.value.length == 1
+                                        ? startRename
                                         : null,
                                   ),
                                   DockButton(
                                     icon: FontAwesomeIcons.trash,
                                     onPressed: () async {
+                                      cancelRename();
                                       for (final file in selectedFiles.value) {
                                         await FileManager.markAsTrashed(file);
                                       }
@@ -538,18 +665,10 @@ class _HomePageState extends State<HomePage> {
                                     },
                                   ),
                                   DockButton(
-                                    icon: FontAwesomeIcons.shareNodes,
-                                    enabled: selectedFiles.value.isNotEmpty,
-                                    onPressed: selectedFiles.value.isNotEmpty
-                                        ? () {
-                                            // TODO: implement export
-                                          }
-                                        : null,
-                                  ),
-                                  DockButton(
                                     icon: FontAwesomeIcons.checkDouble,
                                     selected: selectedFiles.value.isNotEmpty && selectedFiles.value.length == filePaths.length,
                                     onPressed: () {
+                                      cancelRename();
                                       if (selectedFiles.value.length == filePaths.length) {
                                         selectedFiles.value = [];
                                       } else {
@@ -560,7 +679,7 @@ class _HomePageState extends State<HomePage> {
                                 ],
                               ),
                             ),
-                          ),
+                          ],
                         ),
                       ),
                     ),
@@ -568,8 +687,10 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-          ],
-        ),
+            ),
+          ),
+        ],
+      ),
       ),
     );
   }

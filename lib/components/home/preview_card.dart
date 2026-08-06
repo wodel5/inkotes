@@ -145,6 +145,9 @@ class _PreviewCardState extends State<PreviewCard> {
                           image: thumbnail.image!,
                           alignment: Alignment.topCenter,
                           fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return const FallbackThumbnail();
+                          },
                         )
                       : const FallbackThumbnail(),
                 ),
@@ -283,7 +286,8 @@ class _ThumbnailState extends ChangeNotifier {
   }
 
   bool get doesImageExist => switch (image) {
-        (final FileImage fileImage) => fileImage.file.existsSync(),
+        (final FileImage fileImage) =>
+          fileImage.file.existsSync() && fileImage.file.lengthSync() > 0,
         null => false,
         _ => true,
       };
