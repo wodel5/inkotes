@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:perfect_freehand/perfect_freehand.dart';
 import 'package:inkotes/components/canvas/stroke.dart';
-import 'package:inkotes/data/editor/page.dart';
+import 'package:inkotes/data/editor/editor_page.dart';
 import 'package:inkotes/data/prefs.dart';
 import 'package:inkotes/data/tools/tool.dart';
 import 'package:inkotes/data/tools/highlighter.dart';

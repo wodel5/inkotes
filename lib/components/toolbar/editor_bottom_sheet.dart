@@ -8,7 +8,7 @@ import 'package:inkotes/components/toolbar/size_picker.dart';
 import 'package:inkotes/components/toolbar/widgets/background_color_button.dart';
 import 'package:inkotes/components/toolbar/widgets/page_action_button.dart';
 import 'package:inkotes/data/editor/editor_core_info.dart';
-import 'package:inkotes/data/editor/page.dart';
+import 'package:inkotes/data/editor/editor_page.dart';
 import 'package:inkotes/data/extensions/flutter_extensions.dart';
 import 'package:inkotes/data/extensions/collection_extensions.dart';
 import 'package:inkotes/i18n/extensions/canvas_background_pattern_localized.dart';

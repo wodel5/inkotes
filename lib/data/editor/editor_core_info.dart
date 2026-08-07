@@ -9,7 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 import 'package:inkotes/components/canvas/asset_cache.dart';
-import 'package:inkotes/data/editor/page.dart';
+import 'package:inkotes/data/editor/editor_page.dart';
 import 'package:inkotes/data/file_manager/file_manager.dart';
 import 'package:inkotes/data/flavor_config.dart';
 import 'package:inkotes/data/prefs.dart';

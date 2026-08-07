@@ -6,7 +6,7 @@ import 'package:path_drawing/path_drawing.dart';
 import 'package:inkotes/components/canvas/circle_stroke.dart';
 import 'package:inkotes/components/canvas/rectangle_stroke.dart';
 import 'package:inkotes/components/canvas/stroke.dart';
-import 'package:inkotes/data/editor/page.dart';
+import 'package:inkotes/data/editor/editor_page.dart';
 import 'package:inkotes/data/tools/highlighter.dart';
 import 'package:inkotes/data/tools/laser_pointer.dart';
 import 'package:inkotes/data/tools/select.dart';

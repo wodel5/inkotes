@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:inkotes/components/canvas/stroke.dart';
 import 'package:inkotes/components/canvas/image/editor_image.dart';
-import 'package:inkotes/data/editor/page.dart';
+import 'package:inkotes/data/editor/editor_page.dart';
 import 'package:inkotes/data/models/canvas_background_pattern.dart';
 import 'package:inkotes/data/models/change.dart';
 

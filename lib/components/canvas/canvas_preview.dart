@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:inkotes/components/canvas/inner_canvas.dart';
 import 'package:inkotes/data/editor/editor_core_info.dart';
-import 'package:inkotes/data/editor/page.dart';
+import 'package:inkotes/data/editor/editor_page.dart';
 import 'package:inkotes/data/extensions/collection_extensions.dart';
 import 'package:inkotes/data/prefs.dart';
 

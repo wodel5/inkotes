@@ -9,7 +9,7 @@ import 'package:logging/logging.dart';
 import 'package:inkotes/components/canvas/image/editor_image.dart';
 import 'package:inkotes/data/editor/editor_exporter.dart';
 import 'package:inkotes/data/editor/editor_history.dart';
-import 'package:inkotes/data/editor/page.dart';
+import 'package:inkotes/data/editor/editor_page.dart';
 import 'package:inkotes/data/file_manager/file_manager.dart';
 import 'package:inkotes/pages/editor/editor_constants.dart';
 import 'package:super_clipboard/super_clipboard.dart';

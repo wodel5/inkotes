@@ -9,7 +9,7 @@ import 'package:keybinder/keybinder.dart';
 import 'package:inkotes/components/canvas/canvas_transform_cache.dart';
 import 'package:inkotes/components/canvas/hud/canvas_hud.dart';
 import 'package:inkotes/components/canvas/interactive_canvas.dart';
-import 'package:inkotes/data/editor/page.dart';
+import 'package:inkotes/data/editor/editor_page.dart';
 import 'package:inkotes/data/extensions/flutter_extensions.dart';
 import 'package:inkotes/data/extensions/math_extensions.dart';
 import 'package:inkotes/data/prefs.dart';

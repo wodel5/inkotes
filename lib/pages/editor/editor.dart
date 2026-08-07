@@ -20,7 +20,7 @@ import 'package:inkotes/components/toolbar/editor_bottom_sheet.dart';
 import 'package:inkotes/components/toolbar/toolbar.dart';
 import 'package:inkotes/data/editor/editor_core_info.dart';
 import 'package:inkotes/data/editor/editor_history.dart';
-import 'package:inkotes/data/editor/page.dart';
+import 'package:inkotes/data/editor/editor_page.dart';
 import 'package:inkotes/data/extensions/flutter_extensions.dart';
 import 'package:inkotes/data/file_manager/file_manager.dart';
 import 'package:inkotes/data/prefs.dart';

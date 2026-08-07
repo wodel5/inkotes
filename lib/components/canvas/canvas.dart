@@ -4,7 +4,7 @@ import 'package:inkotes/components/canvas/stroke.dart';
 import 'package:inkotes/components/canvas/image/editor_image.dart';
 import 'package:inkotes/components/canvas/inner_canvas.dart';
 import 'package:inkotes/data/editor/editor_core_info.dart';
-import 'package:inkotes/data/editor/page.dart';
+import 'package:inkotes/data/editor/editor_page.dart';
 import 'package:inkotes/data/tools/tool.dart';
 import 'package:inkotes/data/tools/select.dart';
 import 'package:inkotes/data/models/tool_id.dart';
