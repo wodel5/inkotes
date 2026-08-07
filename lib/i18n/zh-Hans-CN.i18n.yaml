@@ -168,3 +168,8 @@ editor:
   pages: 页面管理
   more: 更多
   untitled: 未命名
+  export:
+    pngSuccess: PNG 已保存到相册
+    pngFailed: 导出 PNG 失败
+    pdfSuccess: PDF 导出成功
+    fleSuccess: FLE 导出成功

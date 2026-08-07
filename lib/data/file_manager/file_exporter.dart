@@ -16,7 +16,7 @@ class FileExporter {
 
   static final log = Logger('FileExporter');
 
-  static Future exportFile(
+  static Future<bool> exportFile(
     String fileName,
     List<int> bytes, {
     bool isImage = false,
@@ -33,18 +33,27 @@ class FileExporter {
     if (Platform.isAndroid || Platform.isIOS) {
       if (isImage) {
         final permissionGranted = await _requestPhotosPermission();
+        log.info('Photos permission granted: $permissionGranted');
         if (permissionGranted) {
-          await SaverGallery.saveImage(
-            Uint8List.fromList(bytes),
-            fileName: fileName,
-            albumPath: 'inkotes',
-            skipIfExists: true,
-          );
+          try {
+            final result = await SaverGallery.saveImage(
+              Uint8List.fromList(bytes),
+              fileName: fileName,
+              albumPath: 'inkotes',
+              skipIfExists: false,
+            );
+            log.info('SaverGallery.saveImage result: ${result.isSuccess}');
+            return result.isSuccess;
+          } catch (e, st) {
+            log.severe('SaverGallery.saveImage failed', e, st);
+            return false;
+          }
         }
+        return false;
       } else {
         if (Platform.isIOS) {
           tempFile = await getTempFile();
-          if (!context.mounted) return;
+          if (!context.mounted) return false;
           final box = context.findRenderObject() as RenderBox;
           await SharePlus.instance.share(
             ShareParams(
@@ -52,6 +61,8 @@ class FileExporter {
               sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size,
             ),
           );
+          await tempFile.delete();
+          return true;
         } else {
           // Android: save the file via the system save dialog (SAF),
           // since the share sheet won't list the sharing app itself.
@@ -63,7 +74,9 @@ class FileExporter {
           );
           if (outputFile != null) {
             log.info('Saved file to $outputFile');
+            return true;
           }
+          return false;
         }
       }
     } else {
@@ -76,10 +89,10 @@ class FileExporter {
       if (outputFile != null) {
         final file = File(outputFile);
         await file.writeAsBytes(bytes);
+        return true;
       }
+      return false;
     }
-
-    await tempFile?.delete();
   }
 
   static Future<bool> _requestPhotosPermission() async {

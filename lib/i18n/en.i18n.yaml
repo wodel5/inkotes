@@ -168,3 +168,8 @@ editor:
   pages: Page Management
   more: More
   untitled: Untitled
+  export:
+    pngSuccess: PNG saved to gallery
+    pngFailed: Failed to export PNG
+    pdfSuccess: PDF exported successfully
+    fleSuccess: FLE exported successfully

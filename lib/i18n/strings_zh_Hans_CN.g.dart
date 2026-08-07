@@ -116,6 +116,7 @@ class _Translations$editor$zh_Hans_CN extends Translations$editor$en {
 	@override String get pages => '页面管理';
 	@override String get more => '更多';
 	@override String get untitled => '未命名';
+	@override late final _Translations$editor$export$zh_Hans_CN export = _Translations$editor$export$zh_Hans_CN._(_root);
 }
 
 // Path: home.titles
@@ -430,6 +431,19 @@ class _Translations$editor$hud$zh_Hans_CN extends Translations$editor$hud$en {
 	@override String get lockZoom => '锁定缩放';
 	@override String get unlockSingleFingerPan => '启用单指平移';
 	@override String get lockSingleFingerPan => '禁用单指平移';
+}
+
+// Path: editor.export
+class _Translations$editor$export$zh_Hans_CN extends Translations$editor$export$en {
+	_Translations$editor$export$zh_Hans_CN._(TranslationsZhHansCn root) : this._root = root, super.internal(root);
+
+	final TranslationsZhHansCn _root; // ignore: unused_field
+
+	// Translations
+	@override String get pngSuccess => 'PNG 已保存到相册';
+	@override String get pngFailed => '导出 PNG 失败';
+	@override String get pdfSuccess => 'PDF 导出成功';
+	@override String get fleSuccess => 'FLE 导出成功';
 }
 
 // Path: editor.menu.boxFits

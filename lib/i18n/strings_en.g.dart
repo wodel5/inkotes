@@ -164,6 +164,8 @@ class Translations$editor$en {
 
 	/// en: 'Untitled'
 	String get untitled => 'Untitled';
+
+	late final Translations$editor$export$en export = Translations$editor$export$en.internal(_root);
 }
 
 // Path: home.titles
@@ -701,6 +703,27 @@ class Translations$editor$hud$en {
 
 	/// en: 'Disable single-finger panning'
 	String get lockSingleFingerPan => 'Disable single-finger panning';
+}
+
+// Path: editor.export
+class Translations$editor$export$en {
+	Translations$editor$export$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'PNG saved to gallery'
+	String get pngSuccess => 'PNG saved to gallery';
+
+	/// en: 'Failed to export PNG'
+	String get pngFailed => 'Failed to export PNG';
+
+	/// en: 'PDF exported successfully'
+	String get pdfSuccess => 'PDF exported successfully';
+
+	/// en: 'FLE exported successfully'
+	String get fleSuccess => 'FLE exported successfully';
 }
 
 // Path: editor.menu.boxFits

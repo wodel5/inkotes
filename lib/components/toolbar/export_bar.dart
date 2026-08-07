@@ -60,8 +60,7 @@ class _ExportBarState extends State<ExportBar> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final buttonColor = isDark ? const Color(0xFF44495F) : null;
+    final colorScheme = Theme.of(context).colorScheme;
 
     final children = <Widget>[
       Text(t.editor.toolbar.exportAs),
@@ -70,7 +69,7 @@ class _ExportBarState extends State<ExportBar> {
         builder: (context) {
           return TextButton(
             onPressed: _onPressed(widget.exportAsFle, context),
-            style: TextButton.styleFrom(foregroundColor: buttonColor),
+            style: TextButton.styleFrom(foregroundColor: colorScheme.primary),
             child: _buttonChild(widget.exportAsFle, 'FLE'),
           );
         },
@@ -79,7 +78,7 @@ class _ExportBarState extends State<ExportBar> {
         builder: (context) {
           return TextButton(
             onPressed: _onPressed(widget.exportAsPdf, context),
-            style: TextButton.styleFrom(foregroundColor: buttonColor),
+            style: TextButton.styleFrom(foregroundColor: colorScheme.primary),
             child: _buttonChild(widget.exportAsPdf, 'PDF'),
           );
         },
@@ -88,7 +87,7 @@ class _ExportBarState extends State<ExportBar> {
         builder: (context) {
           return TextButton(
             onPressed: _onPressed(widget.exportAsPng, context),
-            style: TextButton.styleFrom(foregroundColor: buttonColor),
+            style: TextButton.styleFrom(foregroundColor: colorScheme.primary),
             child: _buttonChild(widget.exportAsPng, 'PNG'),
           );
         },

@@ -8,11 +8,13 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logging/logging.dart';
 import 'package:inkotes/components/canvas/image/editor_image.dart';
+import 'package:inkotes/components/common/app_toast.dart';
 import 'package:inkotes/data/editor/editor_exporter.dart';
 import 'package:inkotes/data/editor/editor_history.dart';
 import 'package:inkotes/data/editor/editor_page.dart';
 import 'package:inkotes/data/file_manager/file_exporter.dart';
 import 'package:inkotes/data/file_manager/file_manager.dart';
+import 'package:inkotes/i18n/strings.g.dart';
 import 'package:inkotes/pages/editor/editor_constants.dart';
 import 'package:super_clipboard/super_clipboard.dart';
 
@@ -240,6 +242,9 @@ mixin EditorImportExportMixin<T extends StatefulWidget> on State<T> {
       bytes,
       context: context,
     );
+    if (context.mounted) {
+      AppToast.show(context, message: t.editor.export.pdfSuccess);
+    }
   }
 
   Future exportAsFle(BuildContext context) async {
@@ -250,6 +255,9 @@ mixin EditorImportExportMixin<T extends StatefulWidget> on State<T> {
       fle,
       context: context,
     );
+    if (context.mounted) {
+      AppToast.show(context, message: t.editor.export.fleSuccess);
+    }
   }
 
   Future exportAsPng(BuildContext context) async {
@@ -270,14 +278,33 @@ mixin EditorImportExportMixin<T extends StatefulWidget> on State<T> {
       image.dispose();
 
       if (!context.mounted) return;
-      await FileExporter.exportFile(
+      final success = await FileExporter.exportFile(
         '${coreInfo.fileName}_page_${currentPageIndex + 1}.png',
         pngBytes!.buffer.asUint8List(),
         isImage: true,
         context: context,
       );
+
+      if (context.mounted) {
+        if (success) {
+          AppToast.show(context, message: t.editor.export.pngSuccess);
+        } else {
+          AppToast.show(
+            context,
+            message: t.editor.export.pngFailed,
+            isError: true,
+          );
+        }
+      }
     } catch (e, st) {
       log.severe('Failed to export PNG', e, st);
+      if (context.mounted) {
+        AppToast.show(
+          context,
+          message: t.editor.export.pngFailed,
+          isError: true,
+        );
+      }
     }
   }
 }
