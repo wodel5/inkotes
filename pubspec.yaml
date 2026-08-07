@@ -116,6 +116,8 @@ dependencies:
   pool: ^1.5.2
   flutter_advanced_switch: 3.2.1
   package_info_plus: ^9.0.1
+
+  image_picker: ^1.1.2
 ########################################################################################
 
 dev_dependencies:

@@ -5,6 +5,7 @@ import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:logging/logging.dart';
 import 'package:inkotes/components/canvas/image/editor_image.dart';
 import 'package:inkotes/data/editor/editor_exporter.dart';
@@ -95,22 +96,18 @@ mixin EditorImportExportMixin<T extends StatefulWidget> on State<T> {
   EditorHistory get history;
 
   Future<List<PhotoInfo>> _pickPhotosWithFilePicker() async {
-    final FilePickerResult? result = await FilePicker.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: [
-        'jpg', 'jpeg', 'png', 'gif', 'tiff', 'bmp', 'tga', 'ico',
-        'pvrtc', 'svg', 'webp', 'psd', 'exr',
-      ],
-      allowMultiple: true,
-      withData: true,
-    );
-    if (result == null) return const [];
+    final ImagePicker picker = ImagePicker();
+    final List<XFile> images = await picker.pickMultiImage();
 
-    return [
-      for (final PlatformFile file in result.files)
-        if (file.bytes != null && file.extension != null)
-          (bytes: file.bytes!, extension: '.${file.extension}'),
-    ];
+    if (images.isEmpty) return const [];
+
+    final List<PhotoInfo> result = [];
+    for (final image in images) {
+      final bytes = await image.readAsBytes();
+      final extension = '.${image.name.split('.').last.toLowerCase()}';
+      result.add((bytes: bytes, extension: extension));
+    }
+    return result;
   }
 
   Future<bool> importPdf() async {
