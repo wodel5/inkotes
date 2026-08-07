@@ -139,6 +139,8 @@ flutter:
   assets:
     - assets/iconfont.ttf
     - assets/licenses/
+    - assets/icon/splash-light.png
+    - assets/icon/splash-dark.png
 
   # https://flutter.dev/assets-and-images/#resolution-aware
 

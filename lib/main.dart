@@ -232,7 +232,7 @@ class _SplashPageState extends State<_SplashPage> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF1A1B21) : Colors.white,
+      backgroundColor: isDark ? Colors.black : Colors.white,
       body: Center(
         child: Image.asset(
           isDark
