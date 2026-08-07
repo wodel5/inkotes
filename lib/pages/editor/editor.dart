@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:math' show max;
 
 import 'package:collapsible/collapsible.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_quill/flutter_quill.dart' as flutter_quill;
@@ -16,7 +15,6 @@ import 'package:inkotes/components/canvas/canvas_image.dart';
 import 'package:inkotes/components/canvas/save_indicator.dart';
 import 'package:inkotes/pages/editor/widgets/more_menu_overlay.dart';
 import 'package:inkotes/pages/editor/widgets/read_only_banner.dart';
-import 'package:inkotes/components/theming/adaptive_alert_dialog.dart';
 import 'package:inkotes/components/theming/adaptive_icon.dart';
 import 'package:inkotes/components/toolbar/editor_bottom_sheet.dart';
 import 'package:inkotes/components/toolbar/toolbar.dart';
@@ -39,7 +37,6 @@ import 'package:inkotes/components/toolbar/color_bar.dart';
 import 'package:inkotes/data/extensions/math_extensions.dart';
 import 'package:inkotes/i18n/strings.g.dart';
 import 'package:inkotes/data/models/change.dart';
-import 'package:inkotes/data/models/read_only_reason.dart';
 import 'package:inkotes/pages/editor/editor_constants.dart';
 import 'package:inkotes/pages/editor/mixins/editor_drawing_mixin.dart';
 import 'package:inkotes/pages/editor/mixins/editor_file_mixin.dart';
@@ -336,36 +333,6 @@ class EditorState extends State<Editor>
     return pages.length - 1;
   }
 
-  Future<void> showVersionTooNewDialog() async {
-    final disableReadOnly =
-        await showDialog(
-          context: context,
-          builder: (context) => AdaptiveAlertDialog(
-            title: Text(t.editor.versionTooNew.title),
-            content: Text(t.editor.versionTooNew.subtitle),
-            actions: [
-              CupertinoDialogAction(
-                child: Text(t.common.cancel),
-                onPressed: () => Navigator.pop(context, false),
-              ),
-              CupertinoDialogAction(
-                child: Text(t.editor.versionTooNew.allowEditing),
-                onPressed: () => Navigator.pop(context, true),
-              ),
-            ],
-          ),
-        ) ??
-        false;
-
-    if (!mounted) return;
-    if (!disableReadOnly) return;
-
-    if (coreInfo.readOnlyReason == ReadOnlyReason.versionTooNew) {
-      coreInfo.readOnlyReason = null;
-      if (mounted) setState(() {});
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final Widget canvas = CanvasGestureDetector(
@@ -405,9 +372,6 @@ class EditorState extends State<Editor>
 
     final readonlyBanner = ReadOnlyBanner(
       coreInfo.readOnlyReason,
-      action: coreInfo.readOnlyReason == ReadOnlyReason.versionTooNew
-          ? showVersionTooNewDialog
-          : null,
     );
 
     final Widget toolbar = Collapsible(

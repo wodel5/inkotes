@@ -26,7 +26,6 @@ class CircleStroke extends Stroke {
 
   factory CircleStroke.fromJson(
     Map<String, dynamic> json, {
-    required int fileVersion,
     required int pageIndex,
     required HasSize page,
   }) {

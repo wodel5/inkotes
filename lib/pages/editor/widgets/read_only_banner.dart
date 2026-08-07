@@ -28,7 +28,6 @@ class _ReadOnlyBannerState extends State<ReadOnlyBanner> {
   String get subtitle => _lastSubtitle = switch (widget.reason) {
     null => _lastSubtitle,
     .placeholder => _lastSubtitle,
-    .versionTooNew => t.editor.versionTooNew.title,
     .watchingServer => t.editor.readOnlyBanner.watchingServer,
     .corrupted => t.editor.readOnlyBanner.corrupted,
   };

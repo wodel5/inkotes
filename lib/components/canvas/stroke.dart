@@ -73,7 +73,6 @@ class Stroke {
 
   factory Stroke.fromJson(
     Map<String, dynamic> json, {
-    required int fileVersion,
     required int pageIndex,
     required HasSize page,
   }) {
@@ -84,14 +83,12 @@ class Stroke {
       case 'circle':
         return CircleStroke.fromJson(
           json,
-          fileVersion: fileVersion,
           pageIndex: pageIndex,
           page: page,
         );
       case 'rect':
         return RectangleStroke.fromJson(
           json,
-          fileVersion: fileVersion,
           pageIndex: pageIndex,
           page: page,
         );

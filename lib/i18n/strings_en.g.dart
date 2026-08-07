@@ -109,7 +109,6 @@ class Translations$home$en {
 
 	late final Translations$home$newFolder$en newFolder = Translations$home$newFolder$en.internal(_root);
 	late final Translations$home$renameNote$en renameNote = Translations$home$renameNote$en.internal(_root);
-	late final Translations$home$moveNote$en moveNote = Translations$home$moveNote$en.internal(_root);
 
 	/// en: 'Delete note'
 	String get deleteNote => 'Delete note';
@@ -128,7 +127,6 @@ class Translations$settings$en {
 	final Translations _root; // ignore: unused_field
 
 	// Translations
-	late final Translations$settings$prefCategories$en prefCategories = Translations$settings$prefCategories$en.internal(_root);
 	late final Translations$settings$prefLabels$en prefLabels = Translations$settings$prefLabels$en.internal(_root);
 
 	/// en: 'About the APP'
@@ -136,7 +134,6 @@ class Translations$settings$en {
 
 	late final Translations$settings$aboutDialog$en aboutDialog = Translations$settings$aboutDialog$en.internal(_root);
 	late final Translations$settings$accentColorPicker$en accentColorPicker = Translations$settings$accentColorPicker$en.internal(_root);
-	late final Translations$settings$reset$en reset = Translations$settings$reset$en.internal(_root);
 
 	/// en: 'Never'
 	String get autosaveDisabled => 'Never';
@@ -157,8 +154,6 @@ class Translations$editor$en {
 	late final Translations$editor$selectionBar$en selectionBar = Translations$editor$selectionBar$en.internal(_root);
 	late final Translations$editor$menu$en menu = Translations$editor$menu$en.internal(_root);
 	late final Translations$editor$readOnlyBanner$en readOnlyBanner = Translations$editor$readOnlyBanner$en.internal(_root);
-	late final Translations$editor$versionTooNew$en versionTooNew = Translations$editor$versionTooNew$en.internal(_root);
-	late final Translations$editor$quill$en quill = Translations$editor$quill$en.internal(_root);
 	late final Translations$editor$hud$en hud = Translations$editor$hud$en.internal(_root);
 
 	/// en: 'Page Management'
@@ -169,9 +164,6 @@ class Translations$editor$en {
 
 	/// en: 'Untitled'
 	String get untitled => 'Untitled';
-
-	/// en: 'Saving your changes... You can safely exit the editor when it's done'
-	String get needsToSaveBeforeExiting => 'Saving your changes... You can safely exit the editor when it\'s done';
 }
 
 // Path: home.titles
@@ -274,36 +266,6 @@ class Translations$home$renameNote$en {
 
 	/// en: 'Note name reserved'
 	String get noteNameReserved => 'Note name reserved';
-}
-
-// Path: home.moveNote
-class Translations$home$moveNote$en {
-	Translations$home$moveNote$en.internal(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-
-	/// en: 'Move note'
-	String get moveNote => 'Move note';
-
-	/// en: 'Move $n notes'
-	String moveNotes({required Object n}) => 'Move ${n} notes';
-
-	/// en: 'Move $f'
-	String moveName({required Object f}) => 'Move ${f}';
-
-	/// en: 'Move'
-	String get move => 'Move';
-
-	/// en: 'Note will be renamed to $newName'
-	String renamedTo({required Object newName}) => 'Note will be renamed to ${newName}';
-
-	/// en: 'The following notes will be renamed:'
-	String get multipleRenamedTo => 'The following notes will be renamed:';
-
-	/// en: '$n notes will be renamed to avoid conflicts'
-	String numberRenamedTo({required Object n}) => '${n} notes will be renamed to avoid conflicts';
 }
 
 // Path: home.deleteNoteDialog
@@ -435,24 +397,6 @@ class Translations$home$sort$en {
 	String get lastModifiedOldToNew => 'Edited (Oldest first)';
 }
 
-// Path: settings.prefCategories
-class Translations$settings$prefCategories$en {
-	Translations$settings$prefCategories$en.internal(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-
-	/// en: 'General'
-	String get general => 'General';
-
-	/// en: 'Writing'
-	String get writing => 'Writing';
-
-	/// en: 'Editor'
-	String get editor => 'Editor';
-}
-
 // Path: settings.prefLabels
 class Translations$settings$prefLabels$en {
 	Translations$settings$prefLabels$en.internal(this._root);
@@ -509,26 +453,8 @@ class Translations$settings$accentColorPicker$en {
 
 	// Translations
 
-	/// en: 'Pick a color'
-	String get pickAColor => 'Pick a color';
-
 	/// en: 'Custom color'
 	String get customColor => 'Custom color';
-}
-
-// Path: settings.reset
-class Translations$settings$reset$en {
-	Translations$settings$reset$en.internal(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-
-	/// en: 'Reset this setting?'
-	String get title => 'Reset this setting?';
-
-	/// en: 'Reset'
-	String get button => 'Reset';
 }
 
 // Path: editor.toolbar
@@ -539,38 +465,8 @@ class Translations$editor$toolbar$en {
 
 	// Translations
 
-	/// en: 'Toggle colors (Ctrl C)'
-	String get toggleColors => 'Toggle colors (Ctrl C)';
-
-	/// en: 'Select'
-	String get select => 'Select';
-
-	/// en: 'Toggle eraser (Ctrl E)'
-	String get toggleEraser => 'Toggle eraser (Ctrl E)';
-
-	/// en: 'Images'
-	String get photo => 'Images';
-
-	/// en: 'Text'
-	String get text => 'Text';
-
-	/// en: 'Toggle finger drawing (Ctrl F)'
-	String get toggleFingerDrawing => 'Toggle finger drawing (Ctrl F)';
-
-	/// en: 'Undo'
-	String get undo => 'Undo';
-
-	/// en: 'Redo'
-	String get redo => 'Redo';
-
-	/// en: 'Export (Ctrl Shift S)'
-	String get export => 'Export (Ctrl Shift S)';
-
 	/// en: 'Export as:'
 	String get exportAs => 'Export as:';
-
-	/// en: 'Toggle fullscreen (F11)'
-	String get fullscreen => 'Toggle fullscreen (F11)';
 }
 
 // Path: editor.pens
@@ -592,9 +488,6 @@ class Translations$editor$pens$en {
 
 	/// en: 'Pencil'
 	String get pencil => 'Pencil';
-
-	/// en: 'Laser pointer'
-	String get laserPointer => 'Laser pointer';
 }
 
 // Path: editor.penOptions
@@ -746,9 +639,6 @@ class Translations$editor$menu$en {
 
 	// Translations
 
-	/// en: 'Clear all pages'
-	String get clearAllPages => 'Clear all pages';
-
 	/// en: 'Insert'
 	String get insertPage => 'Insert';
 
@@ -767,17 +657,8 @@ class Translations$editor$menu$en {
 	/// en: 'Line thickness'
 	String get lineThickness => 'Line thickness';
 
-	/// en: 'Background image fit'
-	String get backgroundImageFit => 'Background image fit';
-
 	/// en: 'Paper type'
 	String get backgroundPattern => 'Paper type';
-
-	/// en: 'Default'
-	String get defaultColor => 'Default';
-
-	/// en: 'Import'
-	String get import => 'Import';
 
 	late final Translations$editor$menu$boxFits$en boxFits = Translations$editor$menu$boxFits$en.internal(_root);
 	late final Translations$editor$menu$bgPatterns$en bgPatterns = Translations$editor$menu$bgPatterns$en.internal(_root);
@@ -801,36 +682,6 @@ class Translations$editor$readOnlyBanner$en {
 	String get corrupted => 'Failed to load note. It may be corrupted or still being downloaded.';
 }
 
-// Path: editor.versionTooNew
-class Translations$editor$versionTooNew$en {
-	Translations$editor$versionTooNew$en.internal(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-
-	/// en: 'This note was edited using a newer version of Saber'
-	String get title => 'This note was edited using a newer version of Saber';
-
-	/// en: 'Editing this note may result in some information being lost. Do you want to ignore this and edit it anyway?'
-	String get subtitle => 'Editing this note may result in some information being lost. Do you want to ignore this and edit it anyway?';
-
-	/// en: 'Allow editing'
-	String get allowEditing => 'Allow editing';
-}
-
-// Path: editor.quill
-class Translations$editor$quill$en {
-	Translations$editor$quill$en.internal(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-
-	/// en: 'Type something here...'
-	String get typeSomething => 'Type something here...';
-}
-
 // Path: editor.hud
 class Translations$editor$hud$en {
 	Translations$editor$hud$en.internal(this._root);
@@ -850,12 +701,6 @@ class Translations$editor$hud$en {
 
 	/// en: 'Disable single-finger panning'
 	String get lockSingleFingerPan => 'Disable single-finger panning';
-
-	/// en: 'Unlock panning to horizontal or vertical'
-	String get unlockAxisAlignedPan => 'Unlock panning to horizontal or vertical';
-
-	/// en: 'Lock panning to horizontal or vertical'
-	String get lockAxisAlignedPan => 'Lock panning to horizontal or vertical';
 }
 
 // Path: editor.menu.boxFits

@@ -39,14 +39,6 @@ home:
     noteNameExists: A note with this name already exists
     noteNameForbiddenCharacters: Note name contains forbidden characters
     noteNameReserved: Note name reserved
-  moveNote:
-    moveNote: Move note
-    moveNotes: Move $n notes
-    moveName: Move $f
-    move: Move
-    renamedTo: Note will be renamed to $newName
-    multipleRenamedTo: "The following notes will be renamed:"
-    numberRenamedTo: $n notes will be renamed to avoid conflicts
   deleteNote: Delete note
   deleteNoteDialog:
     deleteNotes: Delete $n notes
@@ -83,10 +75,6 @@ home:
     lastModifiedNewToOld: Edited (Newest first)
     lastModifiedOldToNew: Edited (Oldest first)
 settings:
-  prefCategories:
-    general: General
-    writing: Writing
-    editor: Editor
   prefLabels:
     locale: Language
     appTheme: App theme
@@ -94,7 +82,6 @@ settings:
     autoSwitchPaperColor: Auto-switch paper color
     printPageIndicators: Print page indicators
     autosave: Auto-save
-  prefDescriptions: {}
   aboutApp: About the APP
   aboutDialog:
     title: About Inkotes
@@ -104,31 +91,16 @@ settings:
       This is free software, and you are welcome to redistribute it under certain conditions.
     licenses: View open source licenses
   accentColorPicker:
-    pickAColor: Pick a color
     customColor: Custom color
-  reset:
-    title: Reset this setting?
-    button: Reset
   autosaveDisabled: Never
 editor:
   toolbar:
-    toggleColors: Toggle colors (Ctrl C)
-    select: Select
-    toggleEraser: Toggle eraser (Ctrl E)
-    photo: Images
-    text: Text
-    toggleFingerDrawing: Toggle finger drawing (Ctrl F)
-    undo: Undo
-    redo: Redo
-    export: Export (Ctrl Shift S)
     exportAs: "Export as:"
-    fullscreen: Toggle fullscreen (F11)
   pens:
     fountainPen: Fountain pen
     ballpointPen: Ballpoint pen
     highlighter: Highlighter
     pencil: Pencil
-    laserPointer: Laser pointer
   penOptions:
     size: Stroke size
   colors:
@@ -169,17 +141,13 @@ editor:
     delete: Delete
     duplicate: Duplicate
   menu:
-    clearAllPages: Clear all pages
     insertPage: Insert
     duplicatePage: Duplicate
     clearPage: Clear
     deletePage: Delete
     lineHeight: Line height
     lineThickness: Line thickness
-    backgroundImageFit: Background image fit
     backgroundPattern: Paper type
-    defaultColor: Default
-    import: Import
     boxFits:
       fill: Stretch
       cover: Cover
@@ -192,20 +160,11 @@ editor:
     title: Read-only mode
     watchingServer: You are currently watching for updates on the server. Editing is disabled in this mode.
     corrupted: Failed to load note. It may be corrupted or still being downloaded.
-  versionTooNew:
-    title: This note was edited using a newer version of Saber
-    subtitle: Editing this note may result in some information being lost. Do you want to ignore this and edit it anyway?
-    allowEditing: Allow editing
-  quill:
-    typeSomething: Type something here...
   hud:
     unlockZoom: Unlock zoom
     lockZoom: Lock zoom
     unlockSingleFingerPan: Enable single-finger panning
     lockSingleFingerPan: Disable single-finger panning
-    unlockAxisAlignedPan: Unlock panning to horizontal or vertical
-    lockAxisAlignedPan: Lock panning to horizontal or vertical
   pages: Page Management
   more: More
   untitled: Untitled
-  needsToSaveBeforeExiting: Saving your changes... You can safely exit the editor when it's done

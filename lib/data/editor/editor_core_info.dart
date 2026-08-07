@@ -119,14 +119,6 @@ class EditorCoreInfo {
     required bool onlyFirstPage,
   }) {
     ReadOnlyReason? readOnlyReason;
-    final fileVersion = json['ver'] as int? ?? 0;
-    if (fileVersion > formatVersion) {
-      readOnlyReason ??= .versionTooNew;
-      log.warning(
-        'File version $fileVersion is newer than supported $formatVersion. '
-        'Note may be read incorrectly or incompletely.',
-      );
-    }
 
     final Color? backgroundColor;
     switch (json['bgc']) {
@@ -158,7 +150,6 @@ class EditorCoreInfo {
           json['pgs'] as List?,
           readOnlyReason: readOnlyReason,
           onlyFirstPage: onlyFirstPage,
-          fileVersion: fileVersion,
           notePath: filePath,
           assetCache: assetCache,
         ),
@@ -174,7 +165,6 @@ class EditorCoreInfo {
     List<dynamic>? pages, {
     required ReadOnlyReason? readOnlyReason,
     required bool onlyFirstPage,
-    required int fileVersion,
     required String notePath,
     required AssetCache assetCache,
   }) {
@@ -185,7 +175,6 @@ class EditorCoreInfo {
           (dynamic page) => EditorPage.fromJson(
             page as Map<String, dynamic>,
             readOnly: readOnlyReason != null,
-            fileVersion: fileVersion,
             notePath: notePath,
             assetCache: assetCache,
           ),

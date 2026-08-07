@@ -39,14 +39,6 @@ home:
     noteNameExists: 此名称的笔记已经存在
     noteNameForbiddenCharacters: 笔记名称包含禁止使用的字符
     noteNameReserved: 保留了笔记名
-  moveNote:
-    moveNote: 移动笔记
-    moveNotes: 移动 $n 个笔记
-    moveName: 移动 $f
-    move: 移动
-    renamedTo: 笔记将重命名为 $newName
-    multipleRenamedTo: 以下笔记将被重命名：
-    numberRenamedTo: $n 个笔记将被重命名以避免冲突
   deleteNote: 删除笔记
   deleteNoteDialog:
     deleteNotes: 删除 $n 个笔记
@@ -77,16 +69,12 @@ home:
     confirmEmptyTrash: 确定要清空回收站吗？此操作不可撤销。
     confirmPermanentDelete: 确定要彻底删除此笔记吗？此操作不可撤销。
   sort:
-    sortBy(OUTDATED): 按...排序
-    nameAToZ(OUTDATED): 姓名（A-Z）
-    nameZToA(OUTDATED): 姓名（从 A 到 Z）
-    lastModifiedNewToOld(OUTDATED): 编辑（最新优先）
-    lastModifiedOldToNew(OUTDATED): 编辑（按最旧的排序）
+    sortBy: 按...排序
+    nameAToZ: 姓名（A-Z）
+    nameZToA: 姓名（从 A 到 Z）
+    lastModifiedNewToOld: 编辑（最新优先）
+    lastModifiedOldToNew: 编辑（按最旧的排序）
 settings:
-  prefCategories:
-    general: 通用
-    writing: 书写
-    editor: 编辑器
   prefLabels:
     locale: 应用语言
     appTheme: 应用主题
@@ -94,7 +82,6 @@ settings:
     autoSwitchPaperColor: 自动切换画纸颜色
     printPageIndicators: 打印页码
     autosave: 自动保存
-  prefDescriptions: {}
   aboutApp: 关于此应用
   aboutDialog:
     title: 关于 Inkotes
@@ -104,31 +91,16 @@ settings:
       这是自由软件，欢迎在特定条件下重新分发。
     licenses: 查看开源许可证
   accentColorPicker:
-    pickAColor: 选取颜色
     customColor: 自定义颜色
-  reset:
-    title: 重置此设置？
-    button: 重置
   autosaveDisabled: 禁用
 editor:
   toolbar:
-    toggleColors: 切换颜色 (Ctrl C)
-    select: 选择
-    toggleEraser: 切换橡皮擦 (Ctrl E)
-    photo: 照片
-    text: 文本
-    toggleFingerDrawing: 切换手指绘图 (Ctrl F)
-    undo: 撤销
-    redo: 重做
-    export: 导出 (Ctrl Shift S)
     exportAs: 导出为：
-    fullscreen: 切换全屏 (F11)
   pens:
     fountainPen: 钢笔
     ballpointPen: 圆珠笔
     highlighter: 荧光笔
     pencil: 铅笔
-    laserPointer: 激光笔
   penOptions:
     size: 笔画粗细
   colors:
@@ -169,17 +141,13 @@ editor:
     delete: 删除
     duplicate: 复制
   menu:
-    clearAllPages: 清除全部页面
     insertPage: 插入
     duplicatePage: 复制
     clearPage: 清空
     deletePage: 删除
     lineHeight: 行高
     lineThickness: 线条粗细
-    backgroundImageFit: 背景图像拟合
     backgroundPattern: 画纸类型
-    defaultColor: 默认
-    import: 导入
     boxFits:
       fill: 拉伸
       cover: 覆盖
@@ -192,20 +160,11 @@ editor:
     title: 只读模式
     watchingServer: 当前正在监视服务器的更新，此模式下编辑功能已禁用。
     corrupted: 无法加载笔记。它可能已损坏或仍在下载中。
-  versionTooNew:
-    title: 此笔记使用新版 Saber 编辑而成
-    subtitle: 编辑此笔记可能会导致某些信息丢失。您想忽略并编辑吗？
-    allowEditing: 允许编辑
-  quill:
-    typeSomething: 在这里输入...
   hud:
     unlockZoom: 解锁缩放
     lockZoom: 锁定缩放
     unlockSingleFingerPan: 启用单指平移
     lockSingleFingerPan: 禁用单指平移
-    unlockAxisAlignedPan: 解锁水平或垂直平移
-    lockAxisAlignedPan: 锁定水平或垂直平移
   pages: 页面管理
   more: 更多
   untitled: 未命名
-  needsToSaveBeforeExiting: 正在保存您的更改...

@@ -214,8 +214,6 @@ class ToolbarState extends State<Toolbar> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = ColorScheme.of(context);
-
     final currentColor = switch (widget.currentTool) {
       final Pen pen => pen.color,
       final Select select => select.getDominantStrokeColor(),

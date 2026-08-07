@@ -125,7 +125,6 @@ class EditorPage extends ChangeNotifier implements HasSize {
   factory EditorPage.fromJson(
     Map<String, dynamic> json, {
     required bool readOnly,
-    required int fileVersion,
     required String notePath,
     required AssetCache assetCache,
   }) {
@@ -136,7 +135,6 @@ class EditorPage extends ChangeNotifier implements HasSize {
         json['stk'] as List?,
         page: HasSize(size),
         onlyFirstPage: false,
-        fileVersion: fileVersion,
       ),
       images: parseImagesJson(
         json['img'] as List?,
@@ -213,7 +211,6 @@ class EditorPage extends ChangeNotifier implements HasSize {
     List<dynamic>? strokes, {
     required HasSize page,
     required bool onlyFirstPage,
-    required int fileVersion,
   }) => (strokes ?? [])
       .map((dynamic stroke) {
         final map = stroke as Map<String, dynamic>;
@@ -221,7 +218,6 @@ class EditorPage extends ChangeNotifier implements HasSize {
         if (onlyFirstPage && pageIndex > 0) return null;
         return Stroke.fromJson(
           map,
-          fileVersion: fileVersion,
           pageIndex: pageIndex,
           page: page,
         );

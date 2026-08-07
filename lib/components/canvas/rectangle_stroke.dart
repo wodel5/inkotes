@@ -22,7 +22,6 @@ class RectangleStroke extends Stroke {
 
   factory RectangleStroke.fromJson(
     Map<String, dynamic> json, {
-    required int fileVersion,
     required int pageIndex,
     required HasSize page,
   }) {

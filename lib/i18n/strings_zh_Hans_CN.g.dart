@@ -75,7 +75,6 @@ class _Translations$home$zh_Hans_CN extends Translations$home$en {
 	@override String get rootDirectory => '根目录';
 	@override late final _Translations$home$newFolder$zh_Hans_CN newFolder = _Translations$home$newFolder$zh_Hans_CN._(_root);
 	@override late final _Translations$home$renameNote$zh_Hans_CN renameNote = _Translations$home$renameNote$zh_Hans_CN._(_root);
-	@override late final _Translations$home$moveNote$zh_Hans_CN moveNote = _Translations$home$moveNote$zh_Hans_CN._(_root);
 	@override String get deleteNote => '删除笔记';
 	@override late final _Translations$home$deleteNoteDialog$zh_Hans_CN deleteNoteDialog = _Translations$home$deleteNoteDialog$zh_Hans_CN._(_root);
 	@override late final _Translations$home$renameFolder$zh_Hans_CN renameFolder = _Translations$home$renameFolder$zh_Hans_CN._(_root);
@@ -91,12 +90,10 @@ class _Translations$settings$zh_Hans_CN extends Translations$settings$en {
 	final TranslationsZhHansCn _root; // ignore: unused_field
 
 	// Translations
-	@override late final _Translations$settings$prefCategories$zh_Hans_CN prefCategories = _Translations$settings$prefCategories$zh_Hans_CN._(_root);
 	@override late final _Translations$settings$prefLabels$zh_Hans_CN prefLabels = _Translations$settings$prefLabels$zh_Hans_CN._(_root);
 	@override String get aboutApp => '关于此应用';
 	@override late final _Translations$settings$aboutDialog$zh_Hans_CN aboutDialog = _Translations$settings$aboutDialog$zh_Hans_CN._(_root);
 	@override late final _Translations$settings$accentColorPicker$zh_Hans_CN accentColorPicker = _Translations$settings$accentColorPicker$zh_Hans_CN._(_root);
-	@override late final _Translations$settings$reset$zh_Hans_CN reset = _Translations$settings$reset$zh_Hans_CN._(_root);
 	@override String get autosaveDisabled => '禁用';
 }
 
@@ -115,13 +112,10 @@ class _Translations$editor$zh_Hans_CN extends Translations$editor$en {
 	@override late final _Translations$editor$selectionBar$zh_Hans_CN selectionBar = _Translations$editor$selectionBar$zh_Hans_CN._(_root);
 	@override late final _Translations$editor$menu$zh_Hans_CN menu = _Translations$editor$menu$zh_Hans_CN._(_root);
 	@override late final _Translations$editor$readOnlyBanner$zh_Hans_CN readOnlyBanner = _Translations$editor$readOnlyBanner$zh_Hans_CN._(_root);
-	@override late final _Translations$editor$versionTooNew$zh_Hans_CN versionTooNew = _Translations$editor$versionTooNew$zh_Hans_CN._(_root);
-	@override late final _Translations$editor$quill$zh_Hans_CN quill = _Translations$editor$quill$zh_Hans_CN._(_root);
 	@override late final _Translations$editor$hud$zh_Hans_CN hud = _Translations$editor$hud$zh_Hans_CN._(_root);
 	@override String get pages => '页面管理';
 	@override String get more => '更多';
 	@override String get untitled => '未命名';
-	@override String get needsToSaveBeforeExiting => '正在保存您的更改...';
 }
 
 // Path: home.titles
@@ -186,22 +180,6 @@ class _Translations$home$renameNote$zh_Hans_CN extends Translations$home$renameN
 	@override String get noteNameExists => '此名称的笔记已经存在';
 	@override String get noteNameForbiddenCharacters => '笔记名称包含禁止使用的字符';
 	@override String get noteNameReserved => '保留了笔记名';
-}
-
-// Path: home.moveNote
-class _Translations$home$moveNote$zh_Hans_CN extends Translations$home$moveNote$en {
-	_Translations$home$moveNote$zh_Hans_CN._(TranslationsZhHansCn root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHansCn _root; // ignore: unused_field
-
-	// Translations
-	@override String get moveNote => '移动笔记';
-	@override String moveNotes({required Object n}) => '移动 ${n} 个笔记';
-	@override String moveName({required Object f}) => '移动 ${f}';
-	@override String get move => '移动';
-	@override String renamedTo({required Object newName}) => '笔记将重命名为 ${newName}';
-	@override String get multipleRenamedTo => '以下笔记将被重命名：';
-	@override String numberRenamedTo({required Object n}) => '${n} 个笔记将被重命名以避免冲突';
 }
 
 // Path: home.deleteNoteDialog
@@ -279,18 +257,6 @@ class _Translations$home$sort$zh_Hans_CN extends Translations$home$sort$en {
 	@override String get lastModifiedOldToNew => '编辑（按最旧的排序）';
 }
 
-// Path: settings.prefCategories
-class _Translations$settings$prefCategories$zh_Hans_CN extends Translations$settings$prefCategories$en {
-	_Translations$settings$prefCategories$zh_Hans_CN._(TranslationsZhHansCn root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHansCn _root; // ignore: unused_field
-
-	// Translations
-	@override String get general => '通用';
-	@override String get writing => '书写';
-	@override String get editor => '编辑器';
-}
-
 // Path: settings.prefLabels
 class _Translations$settings$prefLabels$zh_Hans_CN extends Translations$settings$prefLabels$en {
 	_Translations$settings$prefLabels$zh_Hans_CN._(TranslationsZhHansCn root) : this._root = root, super.internal(root);
@@ -326,19 +292,7 @@ class _Translations$settings$accentColorPicker$zh_Hans_CN extends Translations$s
 	final TranslationsZhHansCn _root; // ignore: unused_field
 
 	// Translations
-	@override String get pickAColor => '选取颜色';
 	@override String get customColor => '自定义颜色';
-}
-
-// Path: settings.reset
-class _Translations$settings$reset$zh_Hans_CN extends Translations$settings$reset$en {
-	_Translations$settings$reset$zh_Hans_CN._(TranslationsZhHansCn root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHansCn _root; // ignore: unused_field
-
-	// Translations
-	@override String get title => '重置此设置？';
-	@override String get button => '重置';
 }
 
 // Path: editor.toolbar
@@ -348,17 +302,7 @@ class _Translations$editor$toolbar$zh_Hans_CN extends Translations$editor$toolba
 	final TranslationsZhHansCn _root; // ignore: unused_field
 
 	// Translations
-	@override String get toggleColors => '切换颜色 (Ctrl C)';
-	@override String get select => '选择';
-	@override String get toggleEraser => '切换橡皮擦 (Ctrl E)';
-	@override String get photo => '照片';
-	@override String get text => '文本';
-	@override String get toggleFingerDrawing => '切换手指绘图 (Ctrl F)';
-	@override String get undo => '撤销';
-	@override String get redo => '重做';
-	@override String get export => '导出 (Ctrl Shift S)';
 	@override String get exportAs => '导出为：';
-	@override String get fullscreen => '切换全屏 (F11)';
 }
 
 // Path: editor.pens
@@ -372,7 +316,6 @@ class _Translations$editor$pens$zh_Hans_CN extends Translations$editor$pens$en {
 	@override String get ballpointPen => '圆珠笔';
 	@override String get highlighter => '荧光笔';
 	@override String get pencil => '铅笔';
-	@override String get laserPointer => '激光笔';
 }
 
 // Path: editor.penOptions
@@ -453,17 +396,13 @@ class _Translations$editor$menu$zh_Hans_CN extends Translations$editor$menu$en {
 	final TranslationsZhHansCn _root; // ignore: unused_field
 
 	// Translations
-	@override String get clearAllPages => '清除全部页面';
 	@override String get insertPage => '插入';
 	@override String get duplicatePage => '复制';
 	@override String get clearPage => '清空';
 	@override String get deletePage => '删除';
 	@override String get lineHeight => '行高';
 	@override String get lineThickness => '线条粗细';
-	@override String get backgroundImageFit => '背景图像拟合';
 	@override String get backgroundPattern => '画纸类型';
-	@override String get defaultColor => '默认';
-	@override String get import => '导入';
 	@override late final _Translations$editor$menu$boxFits$zh_Hans_CN boxFits = _Translations$editor$menu$boxFits$zh_Hans_CN._(_root);
 	@override late final _Translations$editor$menu$bgPatterns$zh_Hans_CN bgPatterns = _Translations$editor$menu$bgPatterns$zh_Hans_CN._(_root);
 }
@@ -480,28 +419,6 @@ class _Translations$editor$readOnlyBanner$zh_Hans_CN extends Translations$editor
 	@override String get corrupted => '无法加载笔记。它可能已损坏或仍在下载中。';
 }
 
-// Path: editor.versionTooNew
-class _Translations$editor$versionTooNew$zh_Hans_CN extends Translations$editor$versionTooNew$en {
-	_Translations$editor$versionTooNew$zh_Hans_CN._(TranslationsZhHansCn root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHansCn _root; // ignore: unused_field
-
-	// Translations
-	@override String get title => '此笔记使用新版 Saber 编辑而成';
-	@override String get subtitle => '编辑此笔记可能会导致某些信息丢失。您想忽略并编辑吗？';
-	@override String get allowEditing => '允许编辑';
-}
-
-// Path: editor.quill
-class _Translations$editor$quill$zh_Hans_CN extends Translations$editor$quill$en {
-	_Translations$editor$quill$zh_Hans_CN._(TranslationsZhHansCn root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHansCn _root; // ignore: unused_field
-
-	// Translations
-	@override String get typeSomething => '在这里输入...';
-}
-
 // Path: editor.hud
 class _Translations$editor$hud$zh_Hans_CN extends Translations$editor$hud$en {
 	_Translations$editor$hud$zh_Hans_CN._(TranslationsZhHansCn root) : this._root = root, super.internal(root);
@@ -513,8 +430,6 @@ class _Translations$editor$hud$zh_Hans_CN extends Translations$editor$hud$en {
 	@override String get lockZoom => '锁定缩放';
 	@override String get unlockSingleFingerPan => '启用单指平移';
 	@override String get lockSingleFingerPan => '禁用单指平移';
-	@override String get unlockAxisAlignedPan => '解锁水平或垂直平移';
-	@override String get lockAxisAlignedPan => '锁定水平或垂直平移';
 }
 
 // Path: editor.menu.boxFits
