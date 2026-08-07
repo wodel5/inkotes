@@ -8,6 +8,7 @@ import 'package:inkotes/components/theming/uni_icon.dart';
 import 'package:inkotes/data/locales.dart';
 import 'package:inkotes/data/prefs.dart';
 import 'package:inkotes/i18n/strings.g.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 abstract class _SettingsStows {
   static final appTheme = TransformedStow(
@@ -32,28 +33,35 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(t.home.titles.settings),
-      ),
+      appBar: AppBar(title: Text(t.home.titles.settings)),
       body: const SettingsContent(),
     );
   }
 }
 
 class _SettingsContentState extends State<SettingsContent> {
-  static const appVersion = '0.1.0-beta1';
+  String _appVersion = '';
 
   @override
   void initState() {
     stows.locale.addListener(onChanged);
+    _loadVersion();
     super.initState();
+  }
+
+  Future<void> _loadVersion() async {
+    final info = await PackageInfo.fromPlatform();
+    if (mounted) setState(() => _appVersion = info.version);
   }
 
   void onChanged() {
     setState(() {});
   }
 
-  void _showAboutDialog() {
+  Future<void> _showAboutDialog() async {
+    final info = await PackageInfo.fromPlatform();
+    if (!mounted) return;
+    final appVersion = info.version;
     final colorScheme = ColorScheme.of(context);
     showDialog(
       context: context,
@@ -64,11 +72,7 @@ class _SettingsContentState extends State<SettingsContent> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              Icons.note_alt_outlined,
-              size: 64,
-              color: colorScheme.primary,
-            ),
+            Icon(Icons.note_alt_outlined, size: 64, color: colorScheme.primary),
             const SizedBox(height: 12),
             Text(
               t.home.titles.appName,
@@ -83,9 +87,7 @@ class _SettingsContentState extends State<SettingsContent> {
             ),
             const SizedBox(height: 16),
             Text(
-              t.settings.aboutDialog.copyright(
-                year: '${DateTime.now().year}',
-              ),
+              t.settings.aboutDialog.copyright(year: '${DateTime.now().year}'),
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 color: colorScheme.onSurface.withValues(alpha: 0.6),
@@ -138,7 +140,8 @@ class _SettingsContentState extends State<SettingsContent> {
             if (i == ThemeMode.system.index) {
               return Icons.brightness_auto_rounded;
             }
-            if (i == ThemeMode.light.index) return Icons.brightness_high_rounded;
+            if (i == ThemeMode.light.index)
+              return Icons.brightness_high_rounded;
             if (i == ThemeMode.dark.index) return FontAwesomeIcons.solidMoon;
             return null;
           },
@@ -192,7 +195,7 @@ class _SettingsContentState extends State<SettingsContent> {
             vertical: 4,
             horizontal: 16,
           ),
-          leading: const UniIcon(Icons.info_outline_rounded, size: 26),
+          leading: const UniIcon(FontAwesomeIcons.circleInfo, size: 26),
           title: Text(
             t.settings.aboutApp,
             style: const TextStyle(fontSize: 18),
@@ -205,12 +208,10 @@ class _SettingsContentState extends State<SettingsContent> {
           padding: const EdgeInsets.only(bottom: 12),
           child: Center(
             child: Text(
-              t.settings.aboutDialog.version(version: appVersion),
+              t.settings.aboutDialog.version(version: _appVersion),
               style: TextStyle(
                 fontSize: 12,
-                color: ColorScheme.of(context).onSurface.withValues(
-                  alpha: 0.5,
-                ),
+                color: ColorScheme.of(context).onSurface.withValues(alpha: 0.5),
               ),
             ),
           ),
