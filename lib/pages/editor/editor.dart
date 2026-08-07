@@ -22,6 +22,7 @@ import 'package:inkotes/data/editor/editor_core_info.dart';
 import 'package:inkotes/data/editor/editor_history.dart';
 import 'package:inkotes/data/editor/editor_page.dart';
 import 'package:inkotes/data/extensions/flutter_extensions.dart';
+import 'package:inkotes/data/file_manager/file_importer.dart';
 import 'package:inkotes/data/file_manager/file_manager.dart';
 import 'package:inkotes/data/prefs.dart';
 import 'package:inkotes/data/tools/tool.dart';
@@ -47,7 +48,7 @@ class Editor extends StatefulWidget {
   Editor({super.key, String? path, this.customTitle, this.pdfPath})
     : initialPath = path != null
           ? Future.value(path)
-          : FileManager.newFilePath('/'),
+          : FileImporter.newFilePath('/'),
       needsNaming = path == null;
 
   final Future<String> initialPath;

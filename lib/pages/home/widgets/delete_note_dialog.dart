@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:inkotes/components/theming/adaptive_alert_dialog.dart';
-import 'package:inkotes/data/file_manager/file_manager.dart';
+import 'package:inkotes/data/file_manager/file_trash_manager.dart';
 import 'package:inkotes/i18n/strings.g.dart';
 
 /// Dialog for confirming deletion of one or more notes.
@@ -54,7 +54,7 @@ class _DeleteNoteDialogState extends State<DeleteNoteDialog> {
               ? () async {
                   await Future.wait([
                     for (final String filePath in widget.filesToDelete)
-                      FileManager.markAsTrashed(filePath),
+                      FileTrashManager.markAsTrashed(filePath),
                   ]);
                   if (context.mounted) Navigator.of(context).pop();
                   widget.unselectNotes();

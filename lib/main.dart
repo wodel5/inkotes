@@ -14,6 +14,7 @@ import 'package:pdfrx/pdfrx.dart';
 import 'package:printing/printing.dart';
 import 'package:inkotes/components/canvas/pencil_shader.dart';
 import 'package:inkotes/components/theming/dynamic_material_app.dart';
+import 'package:inkotes/data/file_manager/file_importer.dart';
 import 'package:inkotes/data/file_manager/file_manager.dart';
 import 'package:inkotes/data/flavor_config.dart';
 import 'package:inkotes/data/prefs.dart';
@@ -142,7 +143,7 @@ class App extends StatefulWidget {
     }
 
     if (extension == '.fln' || extension == '.fle') {
-      final path = await FileManager.importFile(
+      final path = await FileImporter.importFile(
         filePath,
         null,
         extension: extension,

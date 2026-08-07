@@ -321,181 +321,9 @@ class ToolbarState extends State<Toolbar> {
                         );
                       },
                     ),
-                    IntrinsicWidth(
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                    DockButton(
-                      selected: widget.currentTool == Pen.currentPen,
-                      enabled: !widget.readOnly,
-                      onPressed: () {
-                        if (widget.currentTool == Pen.currentPen) {
-                          toolOptionsType.value = toolOptionsType.value == .pen
-                              ? .hide
-                              : .pen;
-                        } else {
-                          toolOptionsType.value = .hide;
-                          showColorOptions.value = false;
-                          showExportOptions.value = false;
-                          widget.setTool(Pen.currentPen);
-                        }
-                      },
-                      child: UniIcon(Pen.currentPen.icon, size: 20),
-                    ),
-                    DockButton(
-                      selected: widget.currentTool == Pencil.currentPencil,
-                      enabled: !widget.readOnly,
-                      onPressed: () {
-                        if (widget.currentTool == Pencil.currentPencil) {
-                          toolOptionsType.value = toolOptionsType.value == .pencil
-                              ? .hide
-                              : .pencil;
-                        } else {
-                          toolOptionsType.value = .hide;
-                          showColorOptions.value = false;
-                          showExportOptions.value = false;
-                          widget.setTool(Pencil.currentPencil);
-                        }
-                      },
-                      child: const FaIcon(Pencil.pencilIcon, size: 20),
-                    ),
-                    DockButton(
-                      selected: widget.currentTool == Highlighter.currentHighlighter,
-                      enabled: !widget.readOnly,
-                      onPressed: () {
-                        if (widget.currentTool == Highlighter.currentHighlighter) {
-                          toolOptionsType.value = toolOptionsType.value == .highlighter
-                              ? .hide
-                              : .highlighter;
-                        } else {
-                          toolOptionsType.value = .hide;
-                          showColorOptions.value = false;
-                          showExportOptions.value = false;
-                          widget.setTool(Highlighter.currentHighlighter);
-                        }
-                      },
-                      child: const FaIcon(Highlighter.highlighterIcon, size: 20),
-                    ),
-                    DockButton(
-                      enabled: !widget.readOnly && widget.currentTool is! LaserPointer && widget.currentTool is! Eraser,
-                      onPressed: toggleColorOptions,
-                      child: currentColor == null
-                          ? const FaIcon(FontAwesomeIcons.palette, size: 20)
-                          : FaIcon(FontAwesomeIcons.palette, size: 20, color: currentColor),
-                    ),
-                    _DockDivider(),
-                    DockButton(
-                      selected: widget.currentTool == LaserPointer.currentLaserPointer,
-                      enabled: true,
-                      onPressed: () {
-                        toolOptionsType.value = .hide;
-                        showColorOptions.value = false;
-                        showExportOptions.value = false;
-                        widget.setTool(LaserPointer.currentLaserPointer);
-                      },
-                      child: const Icon(Symbols.stylus_laser_pointer),
-                    ),
-                    DockButton(
-                      selected: widget.currentTool is Select,
-                      enabled: !widget.readOnly,
-                      onPressed: () {
-                        if (widget.currentTool == Select.currentSelect) {
-                          if (toolOptionsType.value == .select) {
-                            toolOptionsType.value = .hide;
-                          } else if (Select.currentSelect.doneSelecting ||
-                              CanvasImage.activeImageNotifier.value != null) {
-                            toolOptionsType.value = .select;
-                          }
-                        } else {
-                          Select.currentSelect.unselect();
-                          toolOptionsType.value = .hide;
-                          showColorOptions.value = false;
-                          showExportOptions.value = false;
-                          widget.setTool(Select.currentSelect);
-                        }
-                      },
-                      child: const FaIcon(FontAwesomeIcons.solidObjectGroup, size: 20),
-                    ),
-                    DockButton(
-                      selected: widget.currentTool is Eraser,
-                      enabled: !widget.readOnly,
-                      onPressed: () {
-                        showColorOptions.value = false;
-                        showExportOptions.value = false;
-                        toggleEraser();
-                      },
-                      child: const FaIcon(FontAwesomeIcons.eraser, size: 20),
-                    ),
-                    _DockDivider(),
-                    DockButton(
-                      enabled: !widget.readOnly,
-                      onPressed: () {
-                        showColorOptions.value = false;
-                        showExportOptions.value = false;
-                        widget.pickPhoto();
-                      },
-                      child: const FaIcon(FontAwesomeIcons.solidImage, size: 20),
-                    ),
-                    if (widget.canRasterPdf)
-                      DockButton(
-                        enabled: !widget.readOnly,
-                        onPressed: () async {
-                          showColorOptions.value = false;
-                          showExportOptions.value = false;
-                          await widget.importPdf();
-                        },
-                        child: const FaIcon(FontAwesomeIcons.solidFilePdf, size: 20),
-                      ),
-                    _DockDivider(),
-                    DockButton(
-                      selected: stows.editorFingerDrawing.value,
-                      enabled: !widget.readOnly,
-                      onPressed: () {
-                        showColorOptions.value = false;
-                        showExportOptions.value = false;
-                        stows.editorFingerDrawing.value = !stows.editorFingerDrawing.value;
-                      },
-                      child: Icon(const IconData(0xe7de, fontFamily: 'iconfont'), size: 20),
-                    ),
-                    _DockDivider(),
-                    DockButton(
-                      enabled: !widget.readOnly && widget.isUndoPossible,
-                      onPressed: () {
-                        showColorOptions.value = false;
-                        showExportOptions.value = false;
-                        widget.undo();
-                      },
-                      child: Transform.scale(
-                        scaleX: -1,
-                        child: const FaIcon(FontAwesomeIcons.share, size: 20),
-                      ),
-                    ),
-                    DockButton(
-                      enabled: !widget.readOnly && widget.isRedoPossible,
-                      onPressed: () {
-                        showColorOptions.value = false;
-                        showExportOptions.value = false;
-                        widget.redo();
-                      },
-                      child: const FaIcon(FontAwesomeIcons.share, size: 20),
-                    ),
-                    _DockDivider(),
-                    DockButton(
-                      enabled: !widget.readOnly,
-                      onPressed: () {
-                        showColorOptions.value = false;
-                        toggleExportBar();
-                      },
-                      child: const FaIcon(FontAwesomeIcons.shareNodes, size: 20),
-                    ),
-                  ],
-                ),
-                ),
-                ),
-                ],  // Column children
-                ),  // Column
+                    _buildToolButtons(currentColor),
+                    ],  // Column children
+                    ),  // Column
           ),  // GlassmorphismDock
         ),  // Padding
       ),  // Center
@@ -505,6 +333,182 @@ class ToolbarState extends State<Toolbar> {
       direction: Axis.vertical,
       verticalDirection: VerticalDirection.down,
       children: bars,
+    );
+  }
+
+  Widget _buildToolButtons(Color? currentColor) {
+    return IntrinsicWidth(
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            DockButton(
+              selected: widget.currentTool == Pen.currentPen,
+              enabled: !widget.readOnly,
+              onPressed: () {
+                if (widget.currentTool == Pen.currentPen) {
+                  toolOptionsType.value = toolOptionsType.value == .pen
+                      ? .hide
+                      : .pen;
+                } else {
+                  toolOptionsType.value = .hide;
+                  showColorOptions.value = false;
+                  showExportOptions.value = false;
+                  widget.setTool(Pen.currentPen);
+                }
+              },
+              child: UniIcon(Pen.currentPen.icon, size: 20),
+            ),
+            DockButton(
+              selected: widget.currentTool == Pencil.currentPencil,
+              enabled: !widget.readOnly,
+              onPressed: () {
+                if (widget.currentTool == Pencil.currentPencil) {
+                  toolOptionsType.value = toolOptionsType.value == .pencil
+                      ? .hide
+                      : .pencil;
+                } else {
+                  toolOptionsType.value = .hide;
+                  showColorOptions.value = false;
+                  showExportOptions.value = false;
+                  widget.setTool(Pencil.currentPencil);
+                }
+              },
+              child: const FaIcon(Pencil.pencilIcon, size: 20),
+            ),
+            DockButton(
+              selected: widget.currentTool == Highlighter.currentHighlighter,
+              enabled: !widget.readOnly,
+              onPressed: () {
+                if (widget.currentTool == Highlighter.currentHighlighter) {
+                  toolOptionsType.value = toolOptionsType.value == .highlighter
+                      ? .hide
+                      : .highlighter;
+                } else {
+                  toolOptionsType.value = .hide;
+                  showColorOptions.value = false;
+                  showExportOptions.value = false;
+                  widget.setTool(Highlighter.currentHighlighter);
+                }
+              },
+              child: const FaIcon(Highlighter.highlighterIcon, size: 20),
+            ),
+            DockButton(
+              enabled: !widget.readOnly && widget.currentTool is! LaserPointer && widget.currentTool is! Eraser,
+              onPressed: toggleColorOptions,
+              child: currentColor == null
+                  ? const FaIcon(FontAwesomeIcons.palette, size: 20)
+                  : FaIcon(FontAwesomeIcons.palette, size: 20, color: currentColor),
+            ),
+            _DockDivider(),
+            DockButton(
+              selected: widget.currentTool == LaserPointer.currentLaserPointer,
+              enabled: true,
+              onPressed: () {
+                toolOptionsType.value = .hide;
+                showColorOptions.value = false;
+                showExportOptions.value = false;
+                widget.setTool(LaserPointer.currentLaserPointer);
+              },
+              child: const Icon(Symbols.stylus_laser_pointer),
+            ),
+            DockButton(
+              selected: widget.currentTool is Select,
+              enabled: !widget.readOnly,
+              onPressed: () {
+                if (widget.currentTool == Select.currentSelect) {
+                  if (toolOptionsType.value == .select) {
+                    toolOptionsType.value = .hide;
+                  } else if (Select.currentSelect.doneSelecting ||
+                      CanvasImage.activeImageNotifier.value != null) {
+                    toolOptionsType.value = .select;
+                  }
+                } else {
+                  Select.currentSelect.unselect();
+                  toolOptionsType.value = .hide;
+                  showColorOptions.value = false;
+                  showExportOptions.value = false;
+                  widget.setTool(Select.currentSelect);
+                }
+              },
+              child: const FaIcon(FontAwesomeIcons.solidObjectGroup, size: 20),
+            ),
+            DockButton(
+              selected: widget.currentTool is Eraser,
+              enabled: !widget.readOnly,
+              onPressed: () {
+                showColorOptions.value = false;
+                showExportOptions.value = false;
+                toggleEraser();
+              },
+              child: const FaIcon(FontAwesomeIcons.eraser, size: 20),
+            ),
+            _DockDivider(),
+            DockButton(
+              enabled: !widget.readOnly,
+              onPressed: () {
+                showColorOptions.value = false;
+                showExportOptions.value = false;
+                widget.pickPhoto();
+              },
+              child: const FaIcon(FontAwesomeIcons.solidImage, size: 20),
+            ),
+            if (widget.canRasterPdf)
+              DockButton(
+                enabled: !widget.readOnly,
+                onPressed: () async {
+                  showColorOptions.value = false;
+                  showExportOptions.value = false;
+                  await widget.importPdf();
+                },
+                child: const FaIcon(FontAwesomeIcons.solidFilePdf, size: 20),
+              ),
+            _DockDivider(),
+            DockButton(
+              selected: stows.editorFingerDrawing.value,
+              enabled: !widget.readOnly,
+              onPressed: () {
+                showColorOptions.value = false;
+                showExportOptions.value = false;
+                stows.editorFingerDrawing.value = !stows.editorFingerDrawing.value;
+              },
+              child: Icon(const IconData(0xe7de, fontFamily: 'iconfont'), size: 20),
+            ),
+            _DockDivider(),
+            DockButton(
+              enabled: !widget.readOnly && widget.isUndoPossible,
+              onPressed: () {
+                showColorOptions.value = false;
+                showExportOptions.value = false;
+                widget.undo();
+              },
+              child: Transform.scale(
+                scaleX: -1,
+                child: const FaIcon(FontAwesomeIcons.share, size: 20),
+              ),
+            ),
+            DockButton(
+              enabled: !widget.readOnly && widget.isRedoPossible,
+              onPressed: () {
+                showColorOptions.value = false;
+                showExportOptions.value = false;
+                widget.redo();
+              },
+              child: const FaIcon(FontAwesomeIcons.share, size: 20),
+            ),
+            _DockDivider(),
+            DockButton(
+              enabled: !widget.readOnly,
+              onPressed: () {
+                showColorOptions.value = false;
+                toggleExportBar();
+              },
+              child: const FaIcon(FontAwesomeIcons.shareNodes, size: 20),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

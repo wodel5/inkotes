@@ -7,6 +7,7 @@ import 'package:inkotes/components/common/dock_button.dart';
 import 'package:inkotes/components/home/preview_card.dart';
 import 'package:inkotes/components/theming/adaptive_alert_dialog.dart';
 import 'package:inkotes/data/file_manager/file_manager.dart';
+import 'package:inkotes/data/file_manager/file_trash_manager.dart';
 import 'package:inkotes/i18n/strings.g.dart';
 import 'package:inkotes/pages/editor/editor.dart';
 import 'package:inkotes/pages/home/widgets/trash_card.dart';
@@ -31,7 +32,7 @@ class _TrashPageState extends State<TrashPage> {
 
   Future<void> _loadTrashedFiles() async {
     setState(() => _isLoading = true);
-    final files = await FileManager.getTrashedFiles();
+    final files = await FileTrashManager.getTrashedFiles();
     if (mounted) {
       setState(() {
         _trashedFiles = files;
@@ -54,7 +55,7 @@ class _TrashPageState extends State<TrashPage> {
 
   Future<void> _restoreSelected() async {
     for (final file in _selectedFiles) {
-      await FileManager.restoreFromTrash(file);
+      await FileTrashManager.restoreFromTrash(file);
     }
     setState(() => _selectedFiles.clear());
     await _loadTrashedFiles();

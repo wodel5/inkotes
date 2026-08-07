@@ -1,24 +1,16 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:archive/archive_io.dart';
 import 'package:collection/collection.dart';
-import 'package:device_info_plus/device_info_plus.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-import 'package:intl/intl.dart' show DateFormat;
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:inkotes/components/home/sort_button.dart';
-import 'package:inkotes/data/editor/editor_core_info.dart';
 import 'package:inkotes/data/prefs.dart';
 import 'package:inkotes/i18n/strings.g.dart';
 import 'package:inkotes/pages/editor/editor.dart';
-import 'package:saver_gallery/saver_gallery.dart';
-import 'package:share_plus/share_plus.dart';
 
 /// A collection of cross-platform utility functions for working with a virtual file system.
 class FileManager {
@@ -40,8 +32,7 @@ class FileManager {
   /// including previews, e.g. `mynote.fln.1`.
   static final assetFileRegex = RegExp(r'\.fln\.[\dp]+$');
 
-  // TODO(adil192): Implement or remove this
-  static String _sanitisePath(String path) => File(path).path;
+  static String sanitisePath(String path) => File(path).path;
 
   /// Forbidden names for files and directories (on any/all platforms).
   static List<(String, RegExp)> _getForbiddenFilenamePatterns() => [
@@ -176,7 +167,7 @@ class FileManager {
   // ─── File I/O ─────────────────────────────────────────────────────────
 
   static Future<Uint8List?> readFile(String filePath, {int retries = 3}) async {
-    filePath = _sanitisePath(filePath);
+    filePath = sanitisePath(filePath);
 
     Uint8List? result;
     final file = getFile(filePath);
@@ -217,13 +208,13 @@ class FileManager {
     bool awaitWrite = false,
     DateTime? lastModified,
   }) async {
-    filePath = _sanitisePath(filePath);
+    filePath = sanitisePath(filePath);
     log.fine('Writing to $filePath');
 
-    _saveFileAsRecentlyAccessed(filePath);
+    saveFileAsRecentlyAccessed(filePath);
 
     final file = getFile(filePath);
-    await _createFileDirectory(filePath);
+    await createFileDirectory(filePath);
     Future<void> writeFuture = file.writeAsBytes(toWrite).then((file) async {
       if (lastModified != null) await file.setLastModified(lastModified);
     });
@@ -237,94 +228,9 @@ class FileManager {
   }
 
   static Future<void> createFolder(String folderPath) async {
-    folderPath = _sanitisePath(folderPath);
+    folderPath = sanitisePath(folderPath);
     final dir = Directory(documentsDirectory + folderPath);
     await dir.create(recursive: true);
-  }
-
-  // ─── Export ───────────────────────────────────────────────────────────
-
-  static Future exportFile(
-    String fileName,
-    List<int> bytes, {
-    bool isImage = false,
-    required BuildContext context,
-  }) async {
-    File? tempFile;
-    Future<File> getTempFile() async {
-      final tempFolder = (await getTemporaryDirectory()).path;
-      final file = File('$tempFolder/$fileName');
-      await file.writeAsBytes(bytes);
-      return file;
-    }
-
-    if (Platform.isAndroid || Platform.isIOS) {
-      if (isImage) {
-        final permissionGranted = await _requestPhotosPermission();
-        if (permissionGranted) {
-          await SaverGallery.saveImage(
-            Uint8List.fromList(bytes),
-            fileName: fileName,
-            albumPath: 'inkotes',
-            skipIfExists: true,
-          );
-        }
-      } else {
-        if (Platform.isIOS) {
-          tempFile = await getTempFile();
-          if (!context.mounted) return;
-          final box = context.findRenderObject() as RenderBox;
-          await SharePlus.instance.share(
-            ShareParams(
-              files: [XFile(tempFile.path)],
-              sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size,
-            ),
-          );
-        } else {
-          // Android: save the file via the system save dialog (SAF),
-          // since the share sheet won't list the sharing app itself.
-          final outputFile = await FilePicker.saveFile(
-            fileName: fileName,
-            bytes: Uint8List.fromList(bytes),
-            type: FileType.custom,
-            allowedExtensions: [fileName.split('.').last],
-          );
-          if (outputFile != null) {
-            log.info('Saved file to $outputFile');
-          }
-        }
-      }
-    } else {
-      final outputFile = await FilePicker.saveFile(
-        fileName: fileName,
-        initialDirectory: (await getDownloadsDirectory())?.path,
-        type: FileType.custom,
-        allowedExtensions: [fileName.split('.').last],
-      );
-      if (outputFile != null) {
-        final file = File(outputFile);
-        await file.writeAsBytes(bytes);
-      }
-    }
-
-    await tempFile?.delete();
-  }
-
-  static Future<bool> _requestPhotosPermission() async {
-    if (Platform.isIOS) {
-      return await Permission.photosAddOnly.request().isGranted;
-    } else if (!Platform.isAndroid) {
-      return true;
-    }
-
-    final sdkInt = await DeviceInfoPlugin().androidInfo.then(
-      (info) => info.version.sdkInt,
-    );
-    if (sdkInt > 33) {
-      return await Permission.photos.request().isGranted;
-    } else {
-      return await Permission.storage.request().isGranted;
-    }
   }
 
   // ─── File Operations ──────────────────────────────────────────────────
@@ -335,8 +241,8 @@ class FileManager {
     bool replaceExistingFile = false,
     bool alsoMoveAssets = true,
   }) async {
-    fromPath = _sanitisePath(fromPath);
-    toPath = _sanitisePath(toPath);
+    fromPath = sanitisePath(fromPath);
+    toPath = sanitisePath(toPath);
 
     if (!toPath.contains('/')) {
       toPath = fromPath.substring(0, fromPath.lastIndexOf('/') + 1) + toPath;
@@ -353,7 +259,7 @@ class FileManager {
 
     final fromFile = getFile(fromPath);
     final toFile = getFile(toPath);
-    await _createFileDirectory(toPath);
+    await createFileDirectory(toPath);
     if (fromFile.existsSync()) {
       await fromFile.rename(toFile.path);
     } else {
@@ -361,7 +267,7 @@ class FileManager {
           'Tried to move non-existent file from $fromPath to $toPath');
     }
 
-    _renameReferences(fromPath, toPath);
+    renameReferences(fromPath, toPath);
     broadcastFileWrite(FileOperationType.delete, fromPath);
     broadcastFileWrite(FileOperationType.write, toPath);
 
@@ -400,13 +306,13 @@ class FileManager {
     String filePath, {
     bool alsoDeleteAssets = true,
   }) async {
-    filePath = _sanitisePath(filePath);
+    filePath = sanitisePath(filePath);
 
     final file = getFile(filePath);
     if (!file.existsSync()) return;
     await file.delete();
 
-    _removeReferences(filePath);
+    removeReferences(filePath);
     broadcastFileWrite(FileOperationType.delete, filePath);
 
     if (alsoDeleteAssets && !assetFileRegex.hasMatch(filePath)) {
@@ -449,7 +355,7 @@ class FileManager {
   }
 
   static Future renameDirectory(String directoryPath, String newName) async {
-    directoryPath = _sanitisePath(directoryPath);
+    directoryPath = sanitisePath(directoryPath);
 
     final directory = Directory(documentsDirectory + directoryPath);
     if (!directory.existsSync()) return;
@@ -467,7 +373,7 @@ class FileManager {
     await directory.rename(documentsDirectory + newPath);
 
     for (final child in children) {
-      _renameReferences(directoryPath + child, newPath + child);
+      renameReferences(directoryPath + child, newPath + child);
       broadcastFileWrite(FileOperationType.delete, directoryPath + child);
       broadcastFileWrite(FileOperationType.write, newPath + child);
     }
@@ -477,7 +383,7 @@ class FileManager {
     String directoryPath, [
     bool recursive = true,
   ]) async {
-    directoryPath = _sanitisePath(directoryPath);
+    directoryPath = sanitisePath(directoryPath);
 
     final directory = Directory(documentsDirectory + directoryPath);
     if (!directory.existsSync()) return;
@@ -506,7 +412,7 @@ class FileManager {
       'includeAssets can\'t be true without includeExtensions',
     );
 
-    directory = _sanitisePath(directory);
+    directory = sanitisePath(directory);
     if (!directory.endsWith('/')) directory += '/';
 
     final List<String> directories = [], files = [];
@@ -607,7 +513,7 @@ class FileManager {
   static Future<List<String>> getRecentlyAccessed() async {
     if (!stows.recentFiles.loaded) await stows.recentFiles.waitUntilRead();
     for (final file in stows.recentFiles.value.toList()) {
-      if (!doesFileExist(file)) _removeReferences(file);
+      if (!doesFileExist(file)) removeReferences(file);
     }
     return stows.recentFiles.value
         .map((String filePath) {
@@ -622,96 +528,28 @@ class FileManager {
         .toList();
   }
 
-  // ─── Trash ────────────────────────────────────────────────────────────
-
-  static Future<void> markAsTrashed(String filePath) async {
-    await _setTrashStatus(filePath, true);
-  }
-
-  static Future<void> restoreFromTrash(String filePath) async {
-    await _setTrashStatus(filePath, false);
-  }
-
-  static Future<void> _setTrashStatus(String filePath, bool isTrashed) async {
-    filePath = _sanitisePath(filePath);
-    final coreInfo = await EditorCoreInfo.loadFromFilePath(filePath);
-    coreInfo.isTrashed = isTrashed;
-    final (bson, assets) = coreInfo.saveToBinary(
-      currentPageIndex: coreInfo.initialPageIndex,
-    );
-    final filePathWithExt = filePath + Editor.extension;
-    await Future.wait([
-      writeFile(filePathWithExt, bson, awaitWrite: true),
-      for (int i = 0; i < assets.length; ++i)
-        assets.getBytes(i).then(
-              (bytes) => writeFile(
-                '$filePathWithExt.$i',
-                bytes,
-                awaitWrite: true,
-              ),
-            ),
-    ]);
-    broadcastFileWrite(FileOperationType.write, filePath);
-  }
-
-  static Future<List<String>> getTrashedFiles() async {
-    final allFiles = await getAllFiles();
-    final trashedFiles = <String>[];
-
-    for (final file in allFiles) {
-      final isTrashed = await EditorCoreInfo.isFileTrashed(file);
-      if (isTrashed) {
-        trashedFiles.add(file);
-      }
-    }
-
-    return trashedFiles;
-  }
-
-  static Future<List<String>> filterOutTrashed(List<String> files) async {
-    final result = <String>[];
-    for (final file in files) {
-      final isTrashed = await EditorCoreInfo.isFileTrashed(file);
-      if (!isTrashed) {
-        result.add(file);
-      }
-    }
-    return result;
-  }
-
   // ─── Queries ──────────────────────────────────────────────────────────
 
   static bool isDirectory(String filePath) {
-    filePath = _sanitisePath(filePath);
+    filePath = sanitisePath(filePath);
     final directory = Directory(documentsDirectory + filePath);
     return directory.existsSync();
   }
 
   static bool doesFileExist(String filePath) {
-    filePath = _sanitisePath(filePath);
+    filePath = sanitisePath(filePath);
     final file = getFile(filePath);
     return file.existsSync();
   }
 
   static DateTime lastModified(String filePath) {
-    filePath = _sanitisePath(filePath);
+    filePath = sanitisePath(filePath);
     final file = getFile(filePath);
     if (!file.existsSync()) return DateTime(2023);
     return file.lastModifiedSync();
   }
 
-  // ─── Import ───────────────────────────────────────────────────────────
-
-  static Future<String> newFilePath([String parentPath = '/']) async {
-    assert(parentPath.endsWith('/'));
-
-    final DateTime now = DateTime.now();
-    final String filePath =
-        '$parentPath${DateFormat("yy-MM-dd").format(now)} '
-        '${t.editor.untitled}';
-
-    return await suffixFilePathToMakeItUnique(filePath);
-  }
+  // ─── Path Utilities ───────────────────────────────────────────────────
 
   static Future<String> suffixFilePathToMakeItUnique(
     String filePath, {
@@ -742,95 +580,9 @@ class FileManager {
     return newFilePath + (hasExtension ? intendedExtension : '');
   }
 
-  static Future<String?> importFile(
-    String path,
-    String? parentDir, {
-    String? extension,
-    bool awaitWrite = true,
-  }) async {
-    assert(parentDir == null ||
-        parentDir.startsWith('/') && parentDir.endsWith('/'));
-
-    if (extension == null) {
-      extension = '.${path.split('.').last}';
-      assert(extension.length > 1);
-    } else {
-      assert(extension.startsWith('.'));
-    }
-
-    String fileName = path.split(RegExp(r'[\\/]')).last;
-    fileName = fileName.substring(0, fileName.lastIndexOf('.'));
-    final String importedPath;
-
-    final writeFutures = <Future>[];
-
-    if (extension.toLowerCase() == '.fle') {
-      final inputStream = InputFileStream(path);
-      final archive = ZipDecoder().decodeStream(inputStream);
-
-      final mainFile = archive.files.cast<ArchiveFile?>().firstWhere(
-        (file) => file!.name.toLowerCase().endsWith(Editor.extension),
-        orElse: () => null,
-      );
-      if (mainFile == null) {
-        log.severe('Failed to find main note in fle: $path');
-        return null;
-      }
-      final mainFileExtension =
-          '.${mainFile.name.split('.').last}'.toLowerCase();
-      importedPath = await suffixFilePathToMakeItUnique(
-        '${parentDir ?? '/'}$fileName',
-        intendedExtension: mainFileExtension,
-      );
-      final mainFileContents = () {
-        final output = OutputMemoryStream();
-        mainFile.writeContent(output);
-        return output.getBytes();
-      }();
-      writeFutures.add(
-        writeFile(importedPath + mainFileExtension, mainFileContents,
-            awaitWrite: awaitWrite),
-      );
-
-      for (final file in archive.files) {
-        if (!file.isFile) continue;
-        if (file == mainFile) continue;
-
-        final ext = file.name.split('.').last;
-        final assetNumber = int.tryParse(ext);
-        if (assetNumber == null || assetNumber < 0) continue;
-
-        final assetBytes = () {
-          final output = OutputMemoryStream();
-          file.writeContent(output);
-          return output.getBytes();
-        }();
-        writeFutures.add(
-          writeFile(
-              '$importedPath$mainFileExtension.$assetNumber', assetBytes,
-              awaitWrite: awaitWrite),
-        );
-      }
-    } else {
-      final file = File(path);
-      final fileContents = await file.readAsBytes();
-      importedPath = await suffixFilePathToMakeItUnique(
-        '${parentDir ?? '/'}$fileName',
-        intendedExtension: extension.toLowerCase(),
-      );
-      writeFutures.add(
-        writeFile(importedPath + extension.toLowerCase(), fileContents,
-            awaitWrite: awaitWrite),
-      );
-    }
-
-    await Future.wait(writeFutures);
-    return importedPath;
-  }
-
   // ─── Internal Helpers ─────────────────────────────────────────────────
 
-  static Future _createFileDirectory(String filePath) async {
+  static Future createFileDirectory(String filePath) async {
     assert(
         filePath.contains('/'), 'filePath must be a path, not a file name');
     final parentDirectory = filePath.substring(0, filePath.lastIndexOf('/'));
@@ -838,7 +590,7 @@ class FileManager {
         .create(recursive: true);
   }
 
-  static void _renameReferences(String fromPath, String toPath) {
+  static void renameReferences(String fromPath, String toPath) {
     bool replaced = false;
     for (int i = 0; i < stows.recentFiles.value.length; i++) {
       if (stows.recentFiles.value[i] != fromPath) continue;
@@ -852,7 +604,7 @@ class FileManager {
     stows.recentFiles.notifyListeners();
   }
 
-  static void _removeReferences(String filePath) {
+  static void removeReferences(String filePath) {
     for (int i = 0; i < stows.recentFiles.value.length; i++) {
       if (stows.recentFiles.value[i] != filePath) continue;
       stows.recentFiles.value.removeAt(i);
@@ -860,7 +612,7 @@ class FileManager {
     stows.recentFiles.notifyListeners();
   }
 
-  static void _saveFileAsRecentlyAccessed(String filePath) {
+  static void saveFileAsRecentlyAccessed(String filePath) {
     if (assetFileRegex.hasMatch(filePath)) return;
 
     stows.recentFiles.value.remove(filePath);

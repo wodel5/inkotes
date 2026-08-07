@@ -10,6 +10,7 @@ import 'package:inkotes/components/canvas/image/editor_image.dart';
 import 'package:inkotes/data/editor/editor_exporter.dart';
 import 'package:inkotes/data/editor/editor_history.dart';
 import 'package:inkotes/data/editor/editor_page.dart';
+import 'package:inkotes/data/file_manager/file_exporter.dart';
 import 'package:inkotes/data/file_manager/file_manager.dart';
 import 'package:inkotes/pages/editor/editor_constants.dart';
 import 'package:super_clipboard/super_clipboard.dart';
@@ -237,7 +238,7 @@ mixin EditorImportExportMixin<T extends StatefulWidget> on State<T> {
     final pdf = await EditorExporter.generatePdf(coreInfo, context);
     final bytes = await pdf.save();
     if (!context.mounted) return;
-    await FileManager.exportFile(
+    await FileExporter.exportFile(
       '${coreInfo.fileName}.pdf',
       bytes,
       context: context,
@@ -247,7 +248,7 @@ mixin EditorImportExportMixin<T extends StatefulWidget> on State<T> {
   Future exportAsFle(BuildContext context) async {
     final fle = await coreInfo.saveToFle(currentPageIndex: currentPageIndex);
     if (!context.mounted) return;
-    await FileManager.exportFile(
+    await FileExporter.exportFile(
       '${coreInfo.fileName}.fle',
       fle,
       context: context,
@@ -272,7 +273,7 @@ mixin EditorImportExportMixin<T extends StatefulWidget> on State<T> {
       image.dispose();
 
       if (!context.mounted) return;
-      await FileManager.exportFile(
+      await FileExporter.exportFile(
         '${coreInfo.fileName}_page_${currentPageIndex + 1}.png',
         pngBytes!.buffer.asUint8List(),
         isImage: true,
