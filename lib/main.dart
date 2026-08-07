@@ -27,7 +27,6 @@ import 'package:inkotes/pages/home/trash_page.dart';
 
 import 'package:worker_manager/worker_manager.dart';
 
-
 Future<void> main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
   FlavorConfig.setupFromEnvironment();
@@ -35,7 +34,6 @@ Future<void> main(List<String> args) async {
 }
 
 Future<void> appRunner(List<String> args) async {
-
   final parser = ArgParser()..addFlag('verbose', abbr: 'v', negatable: false);
   final parsedArgs = parser.parse(args);
 
@@ -74,9 +72,7 @@ Future<void> appRunner(List<String> args) async {
 
   await Future.wait([
     FileManager.init(),
-    workerManager.init(
-      isolatesCount: kDebugMode ? 1 : 2,
-    ),
+    workerManager.init(isolatesCount: kDebugMode ? 1 : 2),
     stows.locale.waitUntilRead(),
     PencilShader.init(),
     Printing.info().then((info) {
@@ -107,8 +103,12 @@ class App extends StatefulWidget {
   static final log = Logger('App');
 
   static final _router = GoRouter(
-    initialLocation: RoutePaths.home,
+    initialLocation: '/splash',
     routes: <GoRoute>[
+      GoRoute(
+        path: '/splash',
+        builder: (context, state) => const _SplashPage(),
+      ),
       GoRoute(
         path: RoutePaths.home,
         builder: (context, state) => const HomePage(),
@@ -204,5 +204,45 @@ class _AppState extends State<App> {
   void dispose() {
     _intentDataStreamSubscription?.cancel();
     super.dispose();
+  }
+}
+
+class _SplashPage extends StatefulWidget {
+  const _SplashPage();
+
+  @override
+  State<_SplashPage> createState() => _SplashPageState();
+}
+
+class _SplashPageState extends State<_SplashPage> {
+  @override
+  void initState() {
+    super.initState();
+    _navigateToHome();
+  }
+
+  Future<void> _navigateToHome() async {
+    await Future.delayed(const Duration(milliseconds: 800));
+    if (mounted) {
+      context.go(RoutePaths.home);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Scaffold(
+      backgroundColor: isDark ? const Color(0xFF1A1B21) : Colors.white,
+      body: Center(
+        child: Image.asset(
+          isDark
+              ? 'assets/icon/splash-dark.png'
+              : 'assets/icon/splash-light.png',
+          width: 200,
+          height: 200,
+          fit: BoxFit.contain,
+        ),
+      ),
+    );
   }
 }

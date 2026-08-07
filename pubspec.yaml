@@ -115,7 +115,6 @@ dependencies:
   image: ^4.8.0
   pool: ^1.5.2
   flutter_advanced_switch: 3.2.1
-  flutter_native_splash: ^2.4.8
   package_info_plus: ^9.0.1
 ########################################################################################
 
@@ -168,10 +167,4 @@ flutter_icons:
   image_path: "assets/icon/logo.png"
   android: true
   ios: true
-
-flutter_native_splash:
-  color: "#ffffff"
-  color_dark: "#000000"
-  image: assets/icon/splash-light.png
-  image_dark: assets/icon/splash-dark.png
 
