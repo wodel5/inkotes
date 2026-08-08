@@ -20,6 +20,14 @@ enum LayoutSize {
   static const codec = EnumCodec(values);
 }
 
+/// The source to check for updates from.
+enum UpdateSource {
+  github,
+  gitee;
+
+  static const codec = EnumCodec(values);
+}
+
 /// If false, all stows are stuck at their default values.
 var _isOnMainIsolate = false;
 
@@ -194,6 +202,18 @@ class Stows {
   final recentFiles = PlainStow(
     'recentFiles',
     <String>[],
+    volatile: !_isOnMainIsolate,
+  );
+
+  final updateSource = PlainStow(
+    'updateSource',
+    UpdateSource.gitee,
+    codec: UpdateSource.codec,
+    volatile: !_isOnMainIsolate,
+  );
+  final autoCheckForUpdates = PlainStow(
+    'autoCheckForUpdates',
+    true,
     volatile: !_isOnMainIsolate,
   );
 

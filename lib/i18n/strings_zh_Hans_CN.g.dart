@@ -92,6 +92,7 @@ class _Translations$settings$zh_Hans_CN extends Translations$settings$en {
 
 	// Translations
 	@override late final _Translations$settings$prefLabels$zh_Hans_CN prefLabels = _Translations$settings$prefLabels$zh_Hans_CN._(_root);
+	@override String get autoCheckForUpdates => '自动检查更新';
 	@override String get aboutApp => '关于此应用';
 	@override late final _Translations$settings$aboutDialog$zh_Hans_CN aboutDialog = _Translations$settings$aboutDialog$zh_Hans_CN._(_root);
 	@override late final _Translations$settings$accentColorPicker$zh_Hans_CN accentColorPicker = _Translations$settings$accentColorPicker$zh_Hans_CN._(_root);

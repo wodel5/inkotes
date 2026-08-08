@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:inkotes/components/settings/settings_dropdown.dart';
 import 'package:inkotes/components/settings/settings_selection.dart';
 import 'package:inkotes/components/settings/settings_switch.dart';
+import 'package:inkotes/components/settings/update_check_settings.dart';
 import 'package:inkotes/components/theming/adaptive_toggle_buttons.dart';
 import 'package:inkotes/components/theming/uni_icon.dart';
 import 'package:inkotes/data/locales.dart';
@@ -189,6 +190,7 @@ class _SettingsContentState extends State<SettingsContent> {
             ToggleButtonsOption(-1, Text(t.settings.autosaveDisabled)),
           ],
         ),
+        const UpdateCheckSettings(),
         // About
         ListTile(
           contentPadding: const EdgeInsets.symmetric(

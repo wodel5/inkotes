@@ -84,6 +84,7 @@ settings:
     autoSwitchPaperColor: Auto-switch paper color
     printPageIndicators: Print page indicators
     autosave: Auto-save
+  autoCheckForUpdates: Auto check for updates
   aboutApp: About the APP
   aboutDialog:
     title: About Inkotes

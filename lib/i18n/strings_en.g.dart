@@ -130,6 +130,9 @@ class Translations$settings$en {
 	// Translations
 	late final Translations$settings$prefLabels$en prefLabels = Translations$settings$prefLabels$en.internal(_root);
 
+	/// en: 'Auto check for updates'
+	String get autoCheckForUpdates => 'Auto check for updates';
+
 	/// en: 'About the APP'
 	String get aboutApp => 'About the APP';
 

@@ -84,6 +84,7 @@ settings:
     autoSwitchPaperColor: 自动切换画纸颜色
     printPageIndicators: 打印页码
     autosave: 自动保存
+  autoCheckForUpdates: 自动检查更新
   aboutApp: 关于此应用
   aboutDialog:
     title: 关于 Inkotes
