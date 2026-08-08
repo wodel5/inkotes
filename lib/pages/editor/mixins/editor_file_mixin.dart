@@ -19,7 +19,7 @@ import 'package:inkotes/pages/editor/editor_constants.dart';
 /// Mixin that provides file I/O operations for the Editor.
 ///
 /// Contains: autosaveAfterDelay, cancelAutosaveAndMarkSaved, saveToFile,
-/// renameFile, _renameFileNow, _validateFilenameTextField, _loadCoreInfo,
+/// renameFileNow, _validateFilenameTextField, _loadCoreInfo,
 /// _initAsync, _autoApplyPaperColor.
 mixin EditorFileMixin<T extends StatefulWidget> on State<T> {
   // --- Abstract dependencies ---
@@ -30,12 +30,12 @@ mixin EditorFileMixin<T extends StatefulWidget> on State<T> {
   bool get mounted;
   void setState(VoidCallback fn);
   EditorHistory get history;
+  FocusNode get filenameFocusNode;
 
   // --- File state ---
 
   ValueNotifier<SavingState> savingState = ValueNotifier(SavingState.saved);
   Timer? delayedSaveTimer;
-  Timer? renameTimer;
 
   final filenameFormKey = GlobalKey<FormState>();
   final filenameTextEditingController = TextEditingController();
@@ -108,8 +108,6 @@ mixin EditorFileMixin<T extends StatefulWidget> on State<T> {
     savingState.value = SavingState.saving;
     if (!force && history.isCurrentStateSaved) return cancelAutosaveAndMarkSaved();
 
-    await renameFileNow();
-
     final filePath = coreInfo.filePath + EditorConstants.extension;
     final Uint8List bson;
     final OrderedAssetCache assets;
@@ -168,11 +166,9 @@ mixin EditorFileMixin<T extends StatefulWidget> on State<T> {
   // Must be provided by the mixing class
   int get currentPageIndex;
 
-  void renameFile([String? _]) {
-    renameTimer?.cancel();
-    renameTimer = Timer(const Duration(seconds: 5), renameFileNow);
-  }
-
+  /// Renames the note file to the current text field value.
+  /// Called when the user confirms (check button or keyboard submit)
+  /// or when the filename text field loses focus.
   Future<void> renameFileNow() async {
     final newName = filenameTextEditingController.text.trim();
 
@@ -188,7 +184,11 @@ mixin EditorFileMixin<T extends StatefulWidget> on State<T> {
       needsNaming = false;
     }
 
-    filenameTextEditingController.text = coreInfo.fileName;
+    // Only sync the text field back to the confirmed name if it still holds
+    // the renamed value, i.e. the user hasn't started typing again.
+    if (!filenameFocusNode.hasFocus) {
+      filenameTextEditingController.text = coreInfo.fileName;
+    }
   }
 
   String? _validateFilenameTextField(String? newName) {

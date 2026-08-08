@@ -87,6 +87,7 @@ class EditorState extends State<Editor>
   final _transformationController = TransformationController();
   final _filenameFocusNode = FocusNode();
   final _isFilenameFocused = ValueNotifier<bool>(false);
+  bool _filenameWasFocused = false;
 
   double get scrollY {
     final transformation = _transformationController.value;
@@ -142,6 +143,9 @@ class EditorState extends State<Editor>
 
   @override
   GlobalKey<ToolbarState> get toolbarKey => _toolbarKey;
+
+  @override
+  FocusNode get filenameFocusNode => _filenameFocusNode;
 
   @override
   TransformationController get transformationController =>
@@ -220,9 +224,21 @@ class EditorState extends State<Editor>
     _assignKeybindings();
     _transformationController.addListener(_onTransformChanged);
     CanvasImage.activeImageNotifier.addListener(_onActiveImageChanged);
-    _filenameFocusNode.addListener(() {
-      _isFilenameFocused.value = _filenameFocusNode.hasFocus;
-    });
+    _filenameFocusNode.addListener(_onFilenameFocusChanged);
+  }
+
+  /// Called when the filename text field gains/loses focus.
+  /// Renames the note when focus is lost (e.g. tapping elsewhere),
+  /// unless the change was cancelled with the cross button.
+  void _onFilenameFocusChanged() {
+    final hasFocus = _filenameFocusNode.hasFocus;
+    _isFilenameFocused.value = hasFocus;
+    if (!hasFocus && _filenameWasFocused) {
+      // Rename to the current text field value. The cross button resets the
+      // text first, so this becomes a no-op after a cancel.
+      unawaited(renameFileNow());
+    }
+    _filenameWasFocused = hasFocus;
   }
 
   @override
@@ -345,8 +361,18 @@ class EditorState extends State<Editor>
       key: _canvasGestureDetectorKey,
       filePath: coreInfo.filePath,
       isDrawGesture: isDrawGesture,
-      onInteractionEnd: onInteractionEnd,
-      onDrawStart: onDrawStart,
+      onInteractionEnd: (details) {
+        // Fallback for gestures that don't trigger onDrawStart (e.g. pan/zoom
+        // when finger drawing is disabled): leave filename edit mode too.
+        _filenameFocusNode.unfocus();
+        onInteractionEnd(details);
+      },
+      onDrawStart: (details) {
+        // Tapping the canvas leaves filename edit mode, which also commits
+        // any pending rename via the focus-loss listener.
+        _filenameFocusNode.unfocus();
+        onDrawStart(details);
+      },
       onDrawUpdate: onDrawUpdate,
       onDrawEnd: onDrawEnd,
       onHovering: onHovering,
@@ -595,7 +621,7 @@ class EditorState extends State<Editor>
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Flexible(
+                            IntrinsicWidth(
                               child: TextFormField(
                                 focusNode: _filenameFocusNode,
                                 decoration: const InputDecoration(
@@ -604,8 +630,11 @@ class EditorState extends State<Editor>
                                   contentPadding: EdgeInsets.symmetric(vertical: 8),
                                 ),
                                 controller: filenameTextEditingController,
-                                onChanged: renameFile,
                                 autofocus: needsNaming,
+                                onFieldSubmitted: (_) {
+                                  unawaited(renameFileNow());
+                                  _filenameFocusNode.unfocus();
+                                },
                                 validator: (v) {
                                   if (v == null) return null;
                                   return FileManager.validateFilename(v);
@@ -975,6 +1004,7 @@ class EditorState extends State<Editor>
     lastSeenPointerCountTimer?.cancel();
     _transformationController.removeListener(_onTransformChanged);
     CanvasImage.activeImageNotifier.removeListener(_onActiveImageChanged);
+    _filenameFocusNode.removeListener(_onFilenameFocusChanged);
     _filenameFocusNode.dispose();
 
     _removeKeybindings();
@@ -989,11 +1019,7 @@ class EditorState extends State<Editor>
 
   Future<void> _cleanUpAsync() async {
     try {
-      if (renameTimer?.isActive ?? false) {
-        renameTimer!.cancel();
-        await renameFileNow();
-        filenameTextEditingController.dispose();
-      }
+      filenameTextEditingController.dispose();
       await saveToFile(force: true);
     } finally {
       coreInfo.dispose();
