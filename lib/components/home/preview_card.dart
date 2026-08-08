@@ -175,6 +175,7 @@ class _PreviewCardState extends State<PreviewCard> {
             widget.filePath.substring(widget.filePath.lastIndexOf('/') + 1),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
           ),
         ),
       ),

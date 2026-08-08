@@ -621,24 +621,26 @@ class EditorState extends State<Editor>
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            IntrinsicWidth(
-                              child: TextFormField(
-                                focusNode: _filenameFocusNode,
-                                decoration: const InputDecoration(
-                                  border: InputBorder.none,
-                                  isDense: true,
-                                  contentPadding: EdgeInsets.symmetric(vertical: 8),
+                            Flexible(
+                              child: IntrinsicWidth(
+                                child: TextFormField(
+                                  focusNode: _filenameFocusNode,
+                                  decoration: const InputDecoration(
+                                    border: InputBorder.none,
+                                    isDense: true,
+                                    contentPadding: EdgeInsets.symmetric(vertical: 8),
+                                  ),
+                                  controller: filenameTextEditingController,
+                                  autofocus: needsNaming,
+                                  onFieldSubmitted: (_) {
+                                    unawaited(renameFileNow());
+                                    _filenameFocusNode.unfocus();
+                                  },
+                                  validator: (v) {
+                                    if (v == null) return null;
+                                    return FileManager.validateFilename(v);
+                                  },
                                 ),
-                                controller: filenameTextEditingController,
-                                autofocus: needsNaming,
-                                onFieldSubmitted: (_) {
-                                  unawaited(renameFileNow());
-                                  _filenameFocusNode.unfocus();
-                                },
-                                validator: (v) {
-                                  if (v == null) return null;
-                                  return FileManager.validateFilename(v);
-                                },
                               ),
                             ),
                             ValueListenableBuilder(
