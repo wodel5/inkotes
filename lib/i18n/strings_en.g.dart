@@ -130,12 +130,13 @@ class Translations$settings$en {
 	// Translations
 	late final Translations$settings$prefLabels$en prefLabels = Translations$settings$prefLabels$en.internal(_root);
 
-	/// en: 'Auto check for updates'
-	String get autoCheckForUpdates => 'Auto check for updates';
+	/// en: 'Update source'
+	String get checkUpdateSource => 'Update source';
 
 	/// en: 'About the APP'
 	String get aboutApp => 'About the APP';
 
+	late final Translations$settings$update$en update = Translations$settings$update$en.internal(_root);
 	late final Translations$settings$aboutDialog$en aboutDialog = Translations$settings$aboutDialog$en.internal(_root);
 	late final Translations$settings$accentColorPicker$en accentColorPicker = Translations$settings$accentColorPicker$en.internal(_root);
 
@@ -440,6 +441,33 @@ class Translations$settings$prefLabels$en {
 
 	/// en: 'Auto-save'
 	String get autosave => 'Auto-save';
+}
+
+// Path: settings.update
+class Translations$settings$update$en {
+	Translations$settings$update$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Update'
+	String get title => 'Update';
+
+	/// en: 'New version $version available'
+	String newVersion({required Object version}) => 'New version ${version} available';
+
+	/// en: 'Changelog'
+	String get changelog => 'Changelog';
+
+	/// en: 'Download update'
+	String get downloadUpdate => 'Download update';
+
+	/// en: 'Downloading $percent'
+	String downloading({required Object percent}) => 'Downloading ${percent}';
+
+	/// en: 'Download complete'
+	String get downloaded => 'Download complete';
 }
 
 // Path: settings.aboutDialog

@@ -211,11 +211,6 @@ class Stows {
     codec: UpdateSource.codec,
     volatile: !_isOnMainIsolate,
   );
-  final autoCheckForUpdates = PlainStow(
-    'autoCheckForUpdates',
-    true,
-    volatile: !_isOnMainIsolate,
-  );
 
   final locale = PlainStow('locale', '', volatile: !_isOnMainIsolate);
 }

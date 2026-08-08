@@ -92,8 +92,9 @@ class _Translations$settings$zh_Hans_CN extends Translations$settings$en {
 
 	// Translations
 	@override late final _Translations$settings$prefLabels$zh_Hans_CN prefLabels = _Translations$settings$prefLabels$zh_Hans_CN._(_root);
-	@override String get autoCheckForUpdates => '自动检查更新';
+	@override String get checkUpdateSource => '检查更新源';
 	@override String get aboutApp => '关于此应用';
+	@override late final _Translations$settings$update$zh_Hans_CN update = _Translations$settings$update$zh_Hans_CN._(_root);
 	@override late final _Translations$settings$aboutDialog$zh_Hans_CN aboutDialog = _Translations$settings$aboutDialog$zh_Hans_CN._(_root);
 	@override late final _Translations$settings$accentColorPicker$zh_Hans_CN accentColorPicker = _Translations$settings$accentColorPicker$zh_Hans_CN._(_root);
 	@override String get autosaveDisabled => '禁用';
@@ -283,6 +284,21 @@ class _Translations$settings$prefLabels$zh_Hans_CN extends Translations$settings
 	@override String get autoSwitchPaperColor => '自动切换画纸颜色';
 	@override String get printPageIndicators => '打印页码';
 	@override String get autosave => '自动保存';
+}
+
+// Path: settings.update
+class _Translations$settings$update$zh_Hans_CN extends Translations$settings$update$en {
+	_Translations$settings$update$zh_Hans_CN._(TranslationsZhHansCn root) : this._root = root, super.internal(root);
+
+	final TranslationsZhHansCn _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => '更新';
+	@override String newVersion({required Object version}) => '发现新版本 ${version}';
+	@override String get changelog => '更新日志';
+	@override String get downloadUpdate => '下载更新';
+	@override String downloading({required Object percent}) => '正在下载 ${percent}';
+	@override String get downloaded => '下载完成';
 }
 
 // Path: settings.aboutDialog

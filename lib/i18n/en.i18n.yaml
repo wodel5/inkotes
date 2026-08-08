@@ -84,8 +84,15 @@ settings:
     autoSwitchPaperColor: Auto-switch paper color
     printPageIndicators: Print page indicators
     autosave: Auto-save
-  autoCheckForUpdates: Auto check for updates
+  checkUpdateSource: Update source
   aboutApp: About the APP
+  update:
+    title: Update
+    newVersion: New version $version available
+    changelog: Changelog
+    downloadUpdate: Download update
+    downloading: Downloading $percent
+    downloaded: Download complete
   aboutDialog:
     title: About Inkotes
     version: Version $version

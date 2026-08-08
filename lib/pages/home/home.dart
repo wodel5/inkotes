@@ -17,6 +17,7 @@ import 'package:inkotes/data/file_manager/file_manager.dart';
 import 'package:inkotes/data/file_manager/file_trash_manager.dart';
 import 'package:inkotes/data/prefs.dart';
 import 'package:inkotes/data/routes.dart';
+import 'package:inkotes/data/update_service.dart';
 import 'package:inkotes/i18n/strings.g.dart';
 import 'package:inkotes/pages/editor/editor.dart';
 import 'package:inkotes/pages/home/widgets/home_bottom_dock.dart';
@@ -69,7 +70,15 @@ class _HomePageState extends State<HomePage> {
     // Fix incorrectly imported files
     moveIncorrectlyImportedFiles();
 
+    // 自动检查更新（当前为模拟实现）
+    checkForUpdates();
+
     super.initState();
+  }
+
+  /// 触发更新检查，有新版本时主页设置按钮显示红点。
+  void checkForUpdates() async {
+    await UpdateService.checkForUpdates(source: stows.updateSource.value);
   }
 
   @override
@@ -496,11 +505,35 @@ class _HomePageState extends State<HomePage> {
                       AnimatedOpacity(
                         opacity: _isSearching ? 0 : 1,
                         duration: const Duration(milliseconds: 300),
-                        child: IconButton(
-                          icon: const FaIcon(FontAwesomeIcons.gear),
-                          onPressed: () {
-                            selectedFiles.value = [];
-                            context.push(RoutePaths.settings);
+                        child: ValueListenableBuilder<bool>(
+                          valueListenable: UpdateService.hasNewVersion,
+                          builder: (context, hasNewVersion, _) {
+                            return Stack(
+                              clipBehavior: Clip.none,
+                              children: [
+                                IconButton(
+                                  icon: const FaIcon(FontAwesomeIcons.gear),
+                                  onPressed: () {
+                                    selectedFiles.value = [];
+                                    context.push(RoutePaths.settings);
+                                  },
+                                ),
+                                // 有新版本时的红点提示
+                                if (hasNewVersion)
+                                  Positioned(
+                                    top: 6,
+                                    right: 6,
+                                    child: Container(
+                                      width: 8,
+                                      height: 8,
+                                      decoration: BoxDecoration(
+                                        color: colorScheme.error,
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            );
                           },
                         ),
                       ),
