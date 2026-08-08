@@ -46,3 +46,8 @@ app.*.map.json
 
 # Pre-downloaded pdfium binaries
 /pdfium_cache/
+
+# AI tools
+.mimocode/
+.reasonix/
+reasonix.toml
