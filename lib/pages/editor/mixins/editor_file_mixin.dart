@@ -145,7 +145,6 @@ mixin EditorFileMixin<T extends StatefulWidget> on State<T> {
       return;
     }
 
-    if (!mounted) return;
     final page = coreInfo.pages.first;
     final previewHeight = page.previewHeight(lineHeight: coreInfo.lineHeight);
     final thumbnailSize = Size(720, 720 * previewHeight / page.size.width);

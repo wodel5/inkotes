@@ -3,7 +3,7 @@ class EditorConstants {
   EditorConstants._();
 
   /// The file extension used by the app (BSON format).
-  static const extension = '.fln';
+  static const extension = '.ikn';
 
   /// Gap between pages in the canvas.
   static const double gapBetweenPages = 16;

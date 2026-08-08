@@ -62,6 +62,7 @@ class _Translations$home$zh_Hans_CN extends Translations$home$en {
 	@override String get importPdf => '导入 PDF';
 	@override late final _Translations$home$tooltips$zh_Hans_CN tooltips = _Translations$home$tooltips$zh_Hans_CN._(_root);
 	@override late final _Translations$home$create$zh_Hans_CN create = _Translations$home$create$zh_Hans_CN._(_root);
+	@override late final _Translations$home$import$zh_Hans_CN import = _Translations$home$import$zh_Hans_CN._(_root);
 	@override String get welcome => '欢迎使用 Inkotes';
 	@override String get noFiles => '未找到文件';
 	@override String get noPreviewAvailable => '无可用预览';
@@ -150,6 +151,18 @@ class _Translations$home$create$zh_Hans_CN extends Translations$home$create$en {
 	// Translations
 	@override String get newNote => '新建笔记';
 	@override String get importNote => '导入笔记';
+}
+
+// Path: home.import
+class _Translations$home$import$zh_Hans_CN extends Translations$home$import$en {
+	_Translations$home$import$zh_Hans_CN._(TranslationsZhHansCn root) : this._root = root, super.internal(root);
+
+	final TranslationsZhHansCn _root; // ignore: unused_field
+
+	// Translations
+	@override String get success => '笔记导入成功';
+	@override String get failed => '笔记导入失败';
+	@override String get invalidFile => '无效文件，该文件不是笔记归档';
 }
 
 // Path: home.newFolder
@@ -443,7 +456,7 @@ class _Translations$editor$export$zh_Hans_CN extends Translations$editor$export$
 	@override String get pngSuccess => 'PNG 已保存到相册';
 	@override String get pngFailed => '导出 PNG 失败';
 	@override String get pdfSuccess => 'PDF 导出成功';
-	@override String get fleSuccess => 'FLE 导出成功';
+	@override String get iksSuccess => 'IKS 导出成功';
 }
 
 // Path: editor.menu.boxFits

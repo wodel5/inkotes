@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:archive/archive_io.dart';
@@ -19,10 +20,47 @@ class FileImporter {
 
     final DateTime now = DateTime.now();
     final String filePath =
-        '$parentPath${DateFormat("yy-MM-dd").format(now)} '
+        '$parentPath${DateFormat("yy-MM-dd HH:mm").format(now)} '
         '${t.editor.untitled}';
 
     return await FileManager.suffixFilePathToMakeItUnique(filePath);
+  }
+
+  /// Validates that the ZIP archive is a valid Inkotes note archive.
+  /// Returns null if valid, or an error message if invalid.
+  static String? validateArchive(Archive archive) {
+    // 检查是否存在 inkotes.json 验证文件
+    final validationFile = archive.files.cast<ArchiveFile?>().firstWhere(
+      (file) => file!.name == 'inkotes.json',
+      orElse: () => null,
+    );
+    if (validationFile == null) {
+      return t.home.import.invalidFile;
+    }
+
+    // 验证 inkotes.json 内容
+    try {
+      final output = OutputMemoryStream();
+      validationFile.writeContent(output);
+      final bytes = output.getBytes();
+      final json = jsonDecode(utf8.decode(bytes));
+      if (json is! Map || json['app'] != 'inkotes') {
+        return t.home.import.invalidFile;
+      }
+    } catch (e) {
+      return t.home.import.invalidFile;
+    }
+
+    // 检查是否存在主笔记文件
+    final mainFile = archive.files.cast<ArchiveFile?>().firstWhere(
+      (file) => file!.name.toLowerCase().endsWith(Editor.extension),
+      orElse: () => null,
+    );
+    if (mainFile == null) {
+      return t.home.import.invalidFile;
+    }
+
+    return null; // 验证通过
   }
 
   static Future<String?> importFile(
@@ -47,16 +85,23 @@ class FileImporter {
 
     final writeFutures = <Future>[];
 
-    if (extension.toLowerCase() == '.fle') {
+    if (extension.toLowerCase() == '.zip') {
       final inputStream = InputFileStream(path);
       final archive = ZipDecoder().decodeStream(inputStream);
+
+      // 验证是否为有效的 Inkotes 归档
+      final validationError = validateArchive(archive);
+      if (validationError != null) {
+        log.warning('Archive validation failed: $validationError');
+        return null;
+      }
 
       final mainFile = archive.files.cast<ArchiveFile?>().firstWhere(
         (file) => file!.name.toLowerCase().endsWith(Editor.extension),
         orElse: () => null,
       );
       if (mainFile == null) {
-        log.severe('Failed to find main note in fle: $path');
+        log.severe('Failed to find main note in archive: $path');
         return null;
       }
       final mainFileExtension =
@@ -78,6 +123,7 @@ class FileImporter {
       for (final file in archive.files) {
         if (!file.isFile) continue;
         if (file == mainFile) continue;
+        if (file.name == 'inkotes.json') continue; // 跳过验证文件
 
         final ext = file.name.split('.').last;
         final assetNumber = int.tryParse(ext);

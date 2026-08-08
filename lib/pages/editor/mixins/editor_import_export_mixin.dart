@@ -23,7 +23,7 @@ typedef PhotoInfo = ({Uint8List bytes, String extension});
 /// Mixin that provides import/export operations for the Editor.
 ///
 /// Contains: _pickPhotos, _pickPhotosWithFilePicker, importPdf,
-/// importPdfFromFilePath, paste, exportAsPdf, exportAsFle, exportAsPng.
+/// importPdfFromFilePath, paste, exportAsPdf, exportAsIks, exportAsPng.
 mixin EditorImportExportMixin<T extends StatefulWidget> on State<T> {
   // --- Abstract dependencies ---
 
@@ -247,16 +247,16 @@ mixin EditorImportExportMixin<T extends StatefulWidget> on State<T> {
     }
   }
 
-  Future exportAsFle(BuildContext context) async {
-    final fle = await coreInfo.saveToFle(currentPageIndex: currentPageIndex);
+  Future exportAsIks(BuildContext context) async {
+    final iks = await coreInfo.saveToFle(currentPageIndex: currentPageIndex);
     if (!context.mounted) return;
     await FileExporter.exportFile(
-      '${coreInfo.fileName}.fle',
-      fle,
+      '${coreInfo.fileName}.zip',
+      iks,
       context: context,
     );
     if (context.mounted) {
-      AppToast.show(context, message: t.editor.export.fleSuccess);
+      AppToast.show(context, message: t.editor.export.iksSuccess);
     }
   }
 

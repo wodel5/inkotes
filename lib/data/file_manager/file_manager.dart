@@ -29,8 +29,8 @@ class FileManager {
   static final fileWriteStream = StreamController<FileOperation>.broadcast();
 
   /// A regex that matches the file names/paths of asset files,
-  /// including previews, e.g. `mynote.fln.1`.
-  static final assetFileRegex = RegExp(r'\.fln\.[\dp]+$');
+  /// including previews, e.g. `mynote.ikn.1`.
+  static final assetFileRegex = RegExp(r'\.ikn\.[\dp]+$');
 
   static String sanitisePath(String path) => File(path).path;
 

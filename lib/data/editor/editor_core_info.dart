@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:archive/archive_io.dart';
 import 'package:bson/bson.dart';
@@ -327,12 +328,10 @@ class EditorCoreInfo {
     return (json, assets);
   }
 
-  /// Converts the current note as an FLE (inkotes Archive) file,
-  /// which contains the main bson file and all the assets
-  /// compressed into a zip file.
+  /// Converts the current note as a ZIP archive file,
+  /// which contains the main bson file and all the assets.
   ///
-  /// In the archive, the main bson file is named `main.fln`,
-  /// and the assets are named `main.fln.0`, `main.fln.1`, etc.
+  /// The archive includes an `inkotes.json` validation file.
   ///
   /// If [currentPageIndex] isn't null,
   /// [initialPageIndex] will be updated to it before saving.
@@ -341,6 +340,12 @@ class EditorCoreInfo {
     const filePath = 'main${Editor.extension}';
 
     final archive = Archive();
+
+    // 验证文件
+    final validationJson = '{"app":"inkotes","version":${EditorCoreInfo.formatVersion}}';
+    final validationBytes = utf8.encode(validationJson);
+    archive.addFile(ArchiveFile('inkotes.json', validationBytes.length, validationBytes));
+
     archive.addFile(ArchiveFile(filePath, bson.length, bson));
 
     await Future.wait([

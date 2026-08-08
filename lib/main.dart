@@ -139,10 +139,10 @@ class App extends StatefulWidget {
 
     var extension = p.extension(filePath);
     if (extension.isEmpty) {
-      extension = '.fln';
+      extension = '.ikn';
     }
 
-    if (extension == '.fln' || extension == '.fle') {
+    if (extension == '.ikn' || extension == '.zip') {
       final path = await FileImporter.importFile(
         filePath,
         null,

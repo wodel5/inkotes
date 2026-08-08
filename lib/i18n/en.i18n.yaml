@@ -13,6 +13,10 @@ home:
   create:
     newNote: New note
     importNote: Import note
+  import:
+    success: Note imported successfully
+    failed: Failed to import note
+    invalidFile: Invalid file. This is not a note archive.
   welcome: Welcome to Inkotes
   noFiles: No files found
   noPreviewAvailable: No preview available
@@ -172,4 +176,4 @@ editor:
     pngSuccess: PNG saved to gallery
     pngFailed: Failed to export PNG
     pdfSuccess: PDF exported successfully
-    fleSuccess: FLE exported successfully
+    iksSuccess: IKS exported successfully

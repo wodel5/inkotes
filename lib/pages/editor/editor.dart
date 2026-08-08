@@ -540,7 +540,7 @@ class EditorState extends State<Editor>
           importPdf: importPdf,
           canRasterPdf: EditorConstants.canRasterPdf,
           paste: paste,
-          exportAsFle: exportAsFle,
+          exportAsIks: exportAsIks,
           exportAsPdf: exportAsPdf,
           exportAsPng: exportAsPng,
         ),
@@ -925,7 +925,7 @@ class EditorState extends State<Editor>
         await renameFileNow();
         filenameTextEditingController.dispose();
       }
-      await saveToFile();
+      await saveToFile(force: true);
     } finally {
       coreInfo.dispose();
     }

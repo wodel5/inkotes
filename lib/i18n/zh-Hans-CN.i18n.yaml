@@ -13,6 +13,10 @@ home:
   create:
     newNote: 新建笔记
     importNote: 导入笔记
+  import:
+    success: 笔记导入成功
+    failed: 笔记导入失败
+    invalidFile: 无效文件，该文件不是笔记归档
   welcome: 欢迎使用 Inkotes
   noFiles: 未找到文件
   noPreviewAvailable: 无可用预览
@@ -172,4 +176,4 @@ editor:
     pngSuccess: PNG 已保存到相册
     pngFailed: 导出 PNG 失败
     pdfSuccess: PDF 导出成功
-    fleSuccess: FLE 导出成功
+    iksSuccess: IKS 导出成功

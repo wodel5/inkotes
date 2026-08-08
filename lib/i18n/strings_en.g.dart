@@ -73,6 +73,7 @@ class Translations$home$en {
 
 	late final Translations$home$tooltips$en tooltips = Translations$home$tooltips$en.internal(_root);
 	late final Translations$home$create$en create = Translations$home$create$en.internal(_root);
+	late final Translations$home$import$en import = Translations$home$import$en.internal(_root);
 
 	/// en: 'Welcome to Inkotes'
 	String get welcome => 'Welcome to Inkotes';
@@ -211,6 +212,24 @@ class Translations$home$create$en {
 
 	/// en: 'Import note'
 	String get importNote => 'Import note';
+}
+
+// Path: home.import
+class Translations$home$import$en {
+	Translations$home$import$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Note imported successfully'
+	String get success => 'Note imported successfully';
+
+	/// en: 'Failed to import note'
+	String get failed => 'Failed to import note';
+
+	/// en: 'Invalid file. This is not a note archive.'
+	String get invalidFile => 'Invalid file. This is not a note archive.';
 }
 
 // Path: home.newFolder
@@ -722,8 +741,8 @@ class Translations$editor$export$en {
 	/// en: 'PDF exported successfully'
 	String get pdfSuccess => 'PDF exported successfully';
 
-	/// en: 'FLE exported successfully'
-	String get fleSuccess => 'FLE exported successfully';
+	/// en: 'IKS exported successfully'
+	String get iksSuccess => 'IKS exported successfully';
 }
 
 // Path: editor.menu.boxFits

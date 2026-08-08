@@ -9,8 +9,7 @@ import 'package:go_router/go_router.dart';
 import 'package:yaru/yaru.dart';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
-import 'package:inkotes/components/common/dock_button.dart';
-import 'package:inkotes/components/common/glassmorphism_dock.dart';
+import 'package:inkotes/components/common/app_toast.dart';
 import 'package:inkotes/components/home/grid_folders.dart';
 import 'package:inkotes/components/home/masonry_files.dart';
 import 'package:inkotes/data/file_manager/file_importer.dart';
@@ -296,6 +295,33 @@ class _HomePageState extends State<HomePage> {
     context.push(RoutePaths.editImportPdf(noteFilePath, filePath));
   }
 
+  Future<void> _importNote() async {
+    final result = await FilePicker.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['zip'],
+      allowMultiple: false,
+      withData: false,
+    );
+    if (result == null || !mounted) return;
+
+    final filePath = result.files.single.path;
+    if (filePath == null) return;
+
+    final importedPath = await FileImporter.importFile(
+      filePath,
+      '${currentPath ?? ''}/',
+      extension: '.zip',
+    );
+    if (!mounted) return;
+
+    if (importedPath != null) {
+      AppToast.show(context, message: t.home.import.success);
+      context.push(RoutePaths.editFilePath(importedPath));
+    } else {
+      AppToast.show(context, message: t.home.import.invalidFile, isError: true, duration: const Duration(seconds: 4));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = ColorScheme.of(context);
@@ -396,8 +422,17 @@ class _HomePageState extends State<HomePage> {
                                   PopupMenuItem(
                                     value: 'create',
                                     child: ListTile(
-                                      leading: const FaIcon(FontAwesomeIcons.fileCirclePlus),
+                                      leading: const SizedBox(width: 24, child: Center(child: FaIcon(FontAwesomeIcons.fileCirclePlus))),
                                       title: Text(t.home.create.newNote, style: const TextStyle(fontSize: 16)),
+                                      dense: true,
+                                      contentPadding: EdgeInsets.zero,
+                                    ),
+                                  ),
+                                  PopupMenuItem(
+                                    value: 'import',
+                                    child: ListTile(
+                                      leading: const SizedBox(width: 24, child: Center(child: FaIcon(FontAwesomeIcons.fileImport))),
+                                      title: Text(t.home.create.importNote, style: const TextStyle(fontSize: 16)),
                                       dense: true,
                                       contentPadding: EdgeInsets.zero,
                                     ),
@@ -405,7 +440,7 @@ class _HomePageState extends State<HomePage> {
                                   PopupMenuItem(
                                     value: 'pdf',
                                     child: ListTile(
-                                      leading: const FaIcon(FontAwesomeIcons.solidFilePdf),
+                                      leading: const SizedBox(width: 24, child: Center(child: FaIcon(FontAwesomeIcons.solidFilePdf))),
                                       title: Text(t.home.importPdf, style: const TextStyle(fontSize: 16)),
                                       dense: true,
                                       contentPadding: EdgeInsets.zero,
@@ -421,6 +456,8 @@ class _HomePageState extends State<HomePage> {
                                   );
                                   if (!mounted) return;
                                   router.push(RoutePaths.editFilePath(newFilePath));
+                                } else if (value == 'import') {
+                                  _importNote();
                                 } else if (value == 'pdf') {
                                   _importPdf();
                                 }
