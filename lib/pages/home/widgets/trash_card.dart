@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:yaru/yaru.dart';
-import 'package:inkotes/components/canvas/inner_canvas.dart';
 import 'package:inkotes/components/common/fallback_thumbnail.dart';
 import 'package:inkotes/components/home/preview_card.dart';
 import 'package:inkotes/data/extensions/collection_extensions.dart';
@@ -59,27 +58,26 @@ class _TrashCardState extends State<TrashCard> {
         ),
         child: Stack(
           children: [
-            const Positioned.fill(
-              child: ColoredBox(
-                color: InnerCanvas.defaultBackgroundColor,
-              ),
-            ),
             Builder(
               builder: (context) {
                 final imageFile = FileManager.getFile(
                   '${widget.filePath}${Editor.extension}.p',
                 );
                 if (imageFile.existsSync()) {
-                  return Image(
-                    image: FileImage(imageFile),
-                    alignment: Alignment.topCenter,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return const FallbackThumbnail();
-                    },
+                  return Positioned.fill(
+                    child: Image(
+                      image: FileImage(imageFile),
+                      alignment: Alignment.topCenter,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const FallbackThumbnail();
+                      },
+                    ),
                   );
                 }
-                return const FallbackThumbnail();
+                return const Positioned.fill(
+                  child: FallbackThumbnail(),
+                );
               },
             ),
             Positioned.fill(

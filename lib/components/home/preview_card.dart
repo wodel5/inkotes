@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
-import 'package:inkotes/components/canvas/inner_canvas.dart';
 import 'package:inkotes/components/common/fallback_thumbnail.dart';
 import 'package:inkotes/data/extensions/collection_extensions.dart';
 import 'package:inkotes/data/file_manager/file_manager.dart';
@@ -125,21 +124,12 @@ class _PreviewCardState extends State<PreviewCard> {
         ),
         child: Stack(
           children: [
-            const Positioned.fill(
-              child: ColoredBox(
-                color: InnerCanvas.defaultBackgroundColor,
-              ),
-            ),
             ListenableBuilder(
               listenable: thumbnail,
               builder: (context, _) => AnimatedSwitcher(
                 duration: const Duration(milliseconds: 300),
-                child: ConstrainedBox(
+                child: SizedBox.expand(
                   key: ValueKey(thumbnail.updateCount),
-                  constraints: const BoxConstraints(
-                    minWidth: double.infinity,
-                    minHeight: 100,
-                  ),
                   child: thumbnail.doesImageExist
                       ? Image(
                           image: thumbnail.image!,
