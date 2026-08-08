@@ -34,26 +34,8 @@ class FileManager {
 
   static String sanitisePath(String path) => File(path).path;
 
-  /// Forbidden names for files and directories (on any/all platforms).
-  static List<(String, RegExp)> _getForbiddenFilenamePatterns() => [
-    (
-      t.home.renameNote.noteNameForbiddenCharacters,
-      RegExp(r'[<>:"/\\|?*\x00-\x1F]'),
-    ),
-    (
-      t.home.renameNote.noteNameReserved,
-      RegExp(
-        r'^((con|prn|aux|nul|com[1-9]|lpt[1-9])(\..*)?)|\.+$',
-        caseSensitive: false,
-      ),
-    ),
-  ];
-
   static String? validateFilename(String filename) {
     if (filename.isEmpty) return t.home.renameNote.noteNameEmpty;
-    for (final (error, regexp) in _getForbiddenFilenamePatterns()) {
-      if (regexp.hasMatch(filename)) return error;
-    }
     return null;
   }
 

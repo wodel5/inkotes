@@ -281,12 +281,6 @@ class Translations$home$renameNote$en {
 
 	/// en: 'A note with this name already exists'
 	String get noteNameExists => 'A note with this name already exists';
-
-	/// en: 'Note name contains forbidden characters'
-	String get noteNameForbiddenCharacters => 'Note name contains forbidden characters';
-
-	/// en: 'Note name reserved'
-	String get noteNameReserved => 'Note name reserved';
 }
 
 // Path: home.deleteNoteDialog

@@ -85,6 +85,8 @@ class EditorState extends State<Editor>
   final _canvasGestureDetectorKey = GlobalKey<CanvasGestureDetectorState>();
   final _toolbarKey = GlobalKey<ToolbarState>();
   final _transformationController = TransformationController();
+  final _filenameFocusNode = FocusNode();
+  final _isFilenameFocused = ValueNotifier<bool>(false);
 
   double get scrollY {
     final transformation = _transformationController.value;
@@ -218,6 +220,9 @@ class EditorState extends State<Editor>
     _assignKeybindings();
     _transformationController.addListener(_onTransformChanged);
     CanvasImage.activeImageNotifier.addListener(_onActiveImageChanged);
+    _filenameFocusNode.addListener(() {
+      _isFilenameFocused.value = _filenameFocusNode.hasFocus;
+    });
   }
 
   @override
@@ -587,17 +592,80 @@ class EditorState extends State<Editor>
                     : Form(
                         key: filenameFormKey,
                         autovalidateMode: AutovalidateMode.onUserInteraction,
-                        child: TextFormField(
-                          decoration: const InputDecoration(
-                            border: InputBorder.none,
-                          ),
-                          controller: filenameTextEditingController,
-                          onChanged: renameFile,
-                          autofocus: needsNaming,
-                          validator: (v) {
-                            if (v == null) return null;
-                            return FileManager.validateFilename(v);
-                          },
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Flexible(
+                              child: TextFormField(
+                                focusNode: _filenameFocusNode,
+                                decoration: const InputDecoration(
+                                  border: InputBorder.none,
+                                  isDense: true,
+                                  contentPadding: EdgeInsets.symmetric(vertical: 8),
+                                ),
+                                controller: filenameTextEditingController,
+                                onChanged: renameFile,
+                                autofocus: needsNaming,
+                                validator: (v) {
+                                  if (v == null) return null;
+                                  return FileManager.validateFilename(v);
+                                },
+                              ),
+                            ),
+                            ValueListenableBuilder(
+                              valueListenable: _isFilenameFocused,
+                              builder: (context, isFocused, _) {
+                                return AnimatedOpacity(
+                                  opacity: isFocused ? 1 : 0,
+                                  duration: const Duration(milliseconds: 200),
+                                  child: IgnorePointer(
+                                    ignoring: !isFocused,
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Tooltip(
+                                          message: t.home.renameNote.rename,
+                                          child: GestureDetector(
+                                            behavior: HitTestBehavior.opaque,
+                                            onTap: () async {
+                                              await renameFileNow();
+                                              _filenameFocusNode.unfocus();
+                                            },
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(8),
+                                              child: Icon(
+                                                Icons.check,
+                                                size: 20,
+                                                color: ColorScheme.of(context).primary,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Tooltip(
+                                          message: t.common.cancel,
+                                          child: GestureDetector(
+                                            behavior: HitTestBehavior.opaque,
+                                            onTap: () {
+                                              filenameTextEditingController.text = coreInfo.fileName;
+                                              FocusScope.of(context).unfocus();
+                                            },
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(8),
+                                              child: Icon(
+                                                Icons.close,
+                                                size: 20,
+                                                color: ColorScheme.of(context).onSurfaceVariant,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
                         ),
                       ),
                 leading: SaveIndicator(
@@ -907,6 +975,7 @@ class EditorState extends State<Editor>
     lastSeenPointerCountTimer?.cancel();
     _transformationController.removeListener(_onTransformChanged);
     CanvasImage.activeImageNotifier.removeListener(_onActiveImageChanged);
+    _filenameFocusNode.dispose();
 
     _removeKeybindings();
 

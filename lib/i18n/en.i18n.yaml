@@ -41,8 +41,6 @@ home:
     rename: Rename
     noteNameEmpty: Note name can't be empty
     noteNameExists: A note with this name already exists
-    noteNameForbiddenCharacters: Note name contains forbidden characters
-    noteNameReserved: Note name reserved
   deleteNote: Delete note
   deleteNoteDialog:
     deleteNotes: Delete $n notes

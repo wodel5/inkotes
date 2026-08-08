@@ -175,10 +175,8 @@ mixin EditorFileMixin<T extends StatefulWidget> on State<T> {
 
   Future<void> renameFileNow() async {
     final newName = filenameTextEditingController.text.trim();
-    if (newName == coreInfo.fileName) return;
 
-    if (filenameFormKey.currentState?.validate() ??
-        _validateFilenameTextField(newName) == null) {
+    if (newName.isNotEmpty && newName != coreInfo.fileName) {
       coreInfo.filePath = await FileManager.moveFile(
         coreInfo.filePath + EditorConstants.extension,
         newName.trim() + EditorConstants.extension,
@@ -190,17 +188,7 @@ mixin EditorFileMixin<T extends StatefulWidget> on State<T> {
       needsNaming = false;
     }
 
-    final actualName = coreInfo.fileName;
-    if (actualName != newName) {
-      filenameTextEditingController.value = filenameTextEditingController.value
-          .copyWith(
-            text: actualName,
-            selection: TextSelection.fromPosition(
-              TextPosition(offset: actualName.length),
-            ),
-            composing: TextRange.empty,
-          );
-    }
+    filenameTextEditingController.text = coreInfo.fileName;
   }
 
   String? _validateFilenameTextField(String? newName) {

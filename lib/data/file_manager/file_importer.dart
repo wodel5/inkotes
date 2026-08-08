@@ -20,7 +20,7 @@ class FileImporter {
 
     final DateTime now = DateTime.now();
     final String filePath =
-        '$parentPath${DateFormat("yy-MM-dd HH:mm").format(now)} '
+        '$parentPath${DateFormat("yy-MM-dd HH-mm").format(now)} '
         '${t.editor.untitled}';
 
     return await FileManager.suffixFilePathToMakeItUnique(filePath);
