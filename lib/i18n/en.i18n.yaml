@@ -182,4 +182,6 @@ editor:
     pngSuccess: PNG saved to gallery
     pngFailed: Failed to export PNG
     pdfSuccess: PDF exported successfully
+    pdfFailed: Failed to export PDF
     iksSuccess: IKS exported successfully
+    iksFailed: Failed to export IKS

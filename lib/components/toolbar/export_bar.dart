@@ -42,6 +42,11 @@ class _ExportBarState extends State<ExportBar> {
         if (mounted) {
           setState(() => _currentlyExporting = null);
         }
+      }).catchError((Object _) {
+        // 导出失败时也要恢复按钮状态，避免一直转圈
+        if (mounted) {
+          setState(() => _currentlyExporting = null);
+        }
       });
     };
   }

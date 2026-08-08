@@ -471,7 +471,9 @@ class _Translations$editor$export$zh_Hans_CN extends Translations$editor$export$
 	@override String get pngSuccess => 'PNG 已保存到相册';
 	@override String get pngFailed => '导出 PNG 失败';
 	@override String get pdfSuccess => 'PDF 导出成功';
+	@override String get pdfFailed => '导出 PDF 失败';
 	@override String get iksSuccess => 'IKS 导出成功';
+	@override String get iksFailed => '导出 IKS 失败';
 }
 
 // Path: editor.menu.boxFits

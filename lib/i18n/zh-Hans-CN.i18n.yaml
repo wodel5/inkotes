@@ -182,4 +182,6 @@ editor:
     pngSuccess: PNG 已保存到相册
     pngFailed: 导出 PNG 失败
     pdfSuccess: PDF 导出成功
+    pdfFailed: 导出 PDF 失败
     iksSuccess: IKS 导出成功
+    iksFailed: 导出 IKS 失败

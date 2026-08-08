@@ -159,7 +159,9 @@ class EditorState extends State<Editor>
   late int _lastCurrentPageIndex = coreInfo.initialPageIndex ?? 0;
   @override
   int get currentPageIndex {
-    if (!mounted) return _lastCurrentPageIndex;
+    // 注意：卸载阶段（dispose 中）State.mounted 仍为 true，
+    // 但 context 已不可用，需用 context.mounted 判断。
+    if (!mounted || !context.mounted) return _lastCurrentPageIndex;
 
     final screenWidth = MediaQuery.sizeOf(context).width;
 

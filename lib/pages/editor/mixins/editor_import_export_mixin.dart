@@ -13,7 +13,6 @@ import 'package:inkotes/data/editor/editor_exporter.dart';
 import 'package:inkotes/data/editor/editor_history.dart';
 import 'package:inkotes/data/editor/editor_page.dart';
 import 'package:inkotes/data/file_manager/file_exporter.dart';
-import 'package:inkotes/data/file_manager/file_manager.dart';
 import 'package:inkotes/i18n/strings.g.dart';
 import 'package:inkotes/pages/editor/editor_constants.dart';
 import 'package:super_clipboard/super_clipboard.dart';
@@ -134,44 +133,50 @@ mixin EditorImportExportMixin<T extends StatefulWidget> on State<T> {
     final emptyPage = coreInfo.pages.removeLast();
     assert(emptyPage.isEmpty);
 
-    for (final pdfPage in pdfDocument.pages) {
-      assert(pdfPage.pageNumber >= 1, 'pdfrx page numbers start at 1');
+    try {
+      for (final pdfPage in pdfDocument.pages) {
+        assert(pdfPage.pageNumber >= 1, 'pdfrx page numbers start at 1');
 
-      final pageSize = Size(
-        EditorPage.defaultWidth,
-        EditorPage.defaultWidth * pdfPage.height / pdfPage.width,
-      );
+        final pageSize = Size(
+          EditorPage.defaultWidth,
+          EditorPage.defaultWidth * pdfPage.height / pdfPage.width,
+        );
 
-      final page = EditorPage(
-        size: pageSize,
-        backgroundImage: PdfEditorImage(
-          id: coreInfo.nextImageId++,
-          pdfBytes: null,
-          pdfFile: File(path),
-          pdfPage: pdfPage.pageNumber - 1,
-          pageIndex: coreInfo.pages.length,
-          pageSize: pageSize,
-          naturalSize: pdfPage.size,
-          onMoveImage: onMoveImage,
-          onDeleteImage: onDeleteImage,
-          onMiscChange: autosaveAfterDelay,
-          onLoad: () => setState(() {}),
-          assetCache: coreInfo.assetCache,
-        ),
-      );
-      coreInfo.pages.add(page);
-      history.recordChange(
-        EditorHistoryItem(
-          type: EditorHistoryItemType.insertPage,
-          pageIndex: coreInfo.pages.length - 1,
-          strokes: const [],
-          images: const [],
-          page: page,
-        ),
-      );
+        final page = EditorPage(
+          size: pageSize,
+          backgroundImage: PdfEditorImage(
+            id: coreInfo.nextImageId++,
+            pdfBytes: null,
+            pdfFile: File(path),
+            pdfPage: pdfPage.pageNumber - 1,
+            pageIndex: coreInfo.pages.length,
+            pageSize: pageSize,
+            // 注意：不能用 pdfPage.size（那是 pdfrx 的扩展，coreInfo 是
+            // dynamic 导致这里解析为实例成员而崩溃），改用实例成员。
+            naturalSize: Size(pdfPage.width, pdfPage.height),
+            onMoveImage: onMoveImage,
+            onDeleteImage: onDeleteImage,
+            onMiscChange: autosaveAfterDelay,
+            onLoad: () => setState(() {}),
+            assetCache: coreInfo.assetCache,
+          ),
+        );
+        coreInfo.pages.add(page);
+        history.recordChange(
+          EditorHistoryItem(
+            type: EditorHistoryItemType.insertPage,
+            pageIndex: coreInfo.pages.length - 1,
+            strokes: const [],
+            images: const [],
+            page: page,
+          ),
+        );
+      }
+    } finally {
+      // 即使导入中途失败也恢复空页，避免 pages 为空导致保存崩溃
+      coreInfo.pages.add(emptyPage);
     }
 
-    coreInfo.pages.add(emptyPage);
     if (mounted) setState(() {});
 
     autosaveAfterDelay();
@@ -234,29 +239,51 @@ mixin EditorImportExportMixin<T extends StatefulWidget> on State<T> {
   }
 
   Future exportAsPdf(BuildContext context) async {
-    final pdf = await EditorExporter.generatePdf(coreInfo, context);
-    final bytes = await pdf.save();
-    if (!context.mounted) return;
-    await FileExporter.exportFile(
-      '${coreInfo.fileName}.pdf',
-      bytes,
-      context: context,
-    );
-    if (context.mounted) {
-      AppToast.show(context, message: t.editor.export.pdfSuccess);
+    try {
+      final pdf = await EditorExporter.generatePdf(coreInfo, context);
+      final bytes = await pdf.save();
+      // 不能用传入的 context 做 mounted 检查：导出耗时期间工具栏面板可能
+      // 因自动折叠被移除，导致 context 失效而跳过保存。改用 State 的 context。
+      await FileExporter.exportFile(
+        '${coreInfo.fileName}.pdf',
+        bytes,
+        context: this.context,
+      );
+      if (mounted) {
+        AppToast.show(this.context, message: t.editor.export.pdfSuccess);
+      }
+    } catch (e, st) {
+      log.severe('Failed to export PDF', e, st);
+      if (mounted) {
+        AppToast.show(
+          this.context,
+          message: t.editor.export.pdfFailed,
+          isError: true,
+        );
+      }
     }
   }
 
   Future exportAsIks(BuildContext context) async {
-    final iks = await coreInfo.saveToFle(currentPageIndex: currentPageIndex);
-    if (!context.mounted) return;
-    await FileExporter.exportFile(
-      '${coreInfo.fileName}.zip',
-      iks,
-      context: context,
-    );
-    if (context.mounted) {
-      AppToast.show(context, message: t.editor.export.iksSuccess);
+    try {
+      final iks = await coreInfo.saveToFle(currentPageIndex: currentPageIndex);
+      await FileExporter.exportFile(
+        '${coreInfo.fileName}.zip',
+        iks,
+        context: this.context,
+      );
+      if (mounted) {
+        AppToast.show(this.context, message: t.editor.export.iksSuccess);
+      }
+    } catch (e, st) {
+      log.severe('Failed to export IKS', e, st);
+      if (mounted) {
+        AppToast.show(
+          this.context,
+          message: t.editor.export.iksFailed,
+          isError: true,
+        );
+      }
     }
   }
 

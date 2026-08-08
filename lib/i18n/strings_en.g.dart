@@ -766,8 +766,14 @@ class Translations$editor$export$en {
 	/// en: 'PDF exported successfully'
 	String get pdfSuccess => 'PDF exported successfully';
 
+	/// en: 'Failed to export PDF'
+	String get pdfFailed => 'Failed to export PDF';
+
 	/// en: 'IKS exported successfully'
 	String get iksSuccess => 'IKS exported successfully';
+
+	/// en: 'Failed to export IKS'
+	String get iksFailed => 'Failed to export IKS';
 }
 
 // Path: editor.menu.boxFits
