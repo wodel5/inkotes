@@ -114,11 +114,6 @@ editor:
     pastelBlue: Pastel blue
     pastelPurple: Pastel purple
     pastelPink: Pastel pink
-  imageOptions:
-    title: Image options
-    invertible: Invertible
-    download: Download
-    delete: Delete
   selectionBar:
     delete: Delete
     duplicate: Duplicate

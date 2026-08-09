@@ -105,7 +105,6 @@ class _Translations$editor$zh_Hans_CN extends Translations$editor$en {
 	@override late final _Translations$editor$pens$zh_Hans_CN pens = _Translations$editor$pens$zh_Hans_CN._(_root);
 	@override late final _Translations$editor$penOptions$zh_Hans_CN penOptions = _Translations$editor$penOptions$zh_Hans_CN._(_root);
 	@override late final _Translations$editor$colors$zh_Hans_CN colors = _Translations$editor$colors$zh_Hans_CN._(_root);
-	@override late final _Translations$editor$imageOptions$zh_Hans_CN imageOptions = _Translations$editor$imageOptions$zh_Hans_CN._(_root);
 	@override late final _Translations$editor$selectionBar$zh_Hans_CN selectionBar = _Translations$editor$selectionBar$zh_Hans_CN._(_root);
 	@override late final _Translations$editor$menu$zh_Hans_CN menu = _Translations$editor$menu$zh_Hans_CN._(_root);
 	@override late final _Translations$editor$readOnlyBanner$zh_Hans_CN readOnlyBanner = _Translations$editor$readOnlyBanner$zh_Hans_CN._(_root);
@@ -328,19 +327,6 @@ class _Translations$editor$colors$zh_Hans_CN extends Translations$editor$colors$
 	@override String get pastelBlue => '浅蓝色';
 	@override String get pastelPurple => '浅紫色';
 	@override String get pastelPink => '浅粉色';
-}
-
-// Path: editor.imageOptions
-class _Translations$editor$imageOptions$zh_Hans_CN extends Translations$editor$imageOptions$en {
-	_Translations$editor$imageOptions$zh_Hans_CN._(TranslationsZhHansCn root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHansCn _root; // ignore: unused_field
-
-	// Translations
-	@override String get title => '图片选项';
-	@override String get invertible => '反转颜色';
-	@override String get download => '下载';
-	@override String get delete => '删除';
 }
 
 // Path: editor.selectionBar

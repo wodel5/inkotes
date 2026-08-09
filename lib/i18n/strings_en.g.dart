@@ -145,7 +145,6 @@ class Translations$editor$en {
 	late final Translations$editor$pens$en pens = Translations$editor$pens$en.internal(_root);
 	late final Translations$editor$penOptions$en penOptions = Translations$editor$penOptions$en.internal(_root);
 	late final Translations$editor$colors$en colors = Translations$editor$colors$en.internal(_root);
-	late final Translations$editor$imageOptions$en imageOptions = Translations$editor$imageOptions$en.internal(_root);
 	late final Translations$editor$selectionBar$en selectionBar = Translations$editor$selectionBar$en.internal(_root);
 	late final Translations$editor$menu$en menu = Translations$editor$menu$en.internal(_root);
 	late final Translations$editor$readOnlyBanner$en readOnlyBanner = Translations$editor$readOnlyBanner$en.internal(_root);
@@ -527,27 +526,6 @@ class Translations$editor$colors$en {
 
 	/// en: 'Pastel pink'
 	String get pastelPink => 'Pastel pink';
-}
-
-// Path: editor.imageOptions
-class Translations$editor$imageOptions$en {
-	Translations$editor$imageOptions$en.internal(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-
-	/// en: 'Image options'
-	String get title => 'Image options';
-
-	/// en: 'Invertible'
-	String get invertible => 'Invertible';
-
-	/// en: 'Download'
-	String get download => 'Download';
-
-	/// en: 'Delete'
-	String get delete => 'Delete';
 }
 
 // Path: editor.selectionBar
