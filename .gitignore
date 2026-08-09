@@ -51,3 +51,7 @@ app.*.map.json
 .mimocode/
 .reasonix/
 reasonix.toml
+
+# Android signing
+android/key.properties
+android/app/inkotes-release.jks
