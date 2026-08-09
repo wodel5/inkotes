@@ -523,19 +523,31 @@ class ToolbarState extends State<Toolbar> {
             ValueListenableBuilder<double>(
               valueListenable: CanvasGestureDetector.overscrollProgress,
               builder: (context, progress, _) {
-                if (progress <= 0) return const SizedBox.shrink();
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4),
-                  child: SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: CustomPaint(
-                      painter: _OverscrollProgressPainter(
-                        progress: progress,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                    ),
+                return AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeOutCubic,
+                  width: progress > 0 ? 32 : 0,
+                  height: 24,
+                  decoration: const BoxDecoration(
+                    color: Colors.transparent,
                   ),
+                  clipBehavior: Clip.hardEdge,
+                  alignment: Alignment.centerLeft,
+                  child: progress > 0
+                      ? Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          child: SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CustomPaint(
+                              painter: _OverscrollProgressPainter(
+                                progress: progress,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                            ),
+                          ),
+                        )
+                      : null,
                 );
               },
             ),
