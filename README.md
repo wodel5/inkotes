@@ -13,7 +13,9 @@
 
 ## 截图
 
-![Inkotes](screenshot.png)
+![Inkotes](assets/screen/img1.png)
+
+![Inkotes](assets/screen/img2.png)
 
 ## 下载
 
