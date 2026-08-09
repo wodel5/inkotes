@@ -748,6 +748,7 @@ class _InteractiveCanvasViewerState extends State<InteractiveCanvasViewer>
       _controller.stop();
       _controller.reset();
       _animation?.removeListener(_handleInertiaAnimation);
+      _animation?.removeListener(_handleSpringBackAnimation);
       _animation = null;
     }
     if (_scaleController.isAnimating) {
@@ -1071,11 +1072,14 @@ class _InteractiveCanvasViewerState extends State<InteractiveCanvasViewer>
 
   // Handle inertia drag animation.
   // 越界松手后，把内容回弹到边界（弹性回弹动画）。
+  // 注意：不能用 _handleInertiaAnimation，它经过 _matrixTranslate 会
+  // 在第一帧就把越界位置 clamp 到边界（闪回），必须直接设位移。
   void _springBack(double fromY, double toY) {
     final Matrix4 matrix = _transformer.value;
     final Offset current = _getMatrixTranslation(matrix);
 
     _animation?.removeListener(_handleInertiaAnimation);
+    _animation?.removeListener(_handleSpringBackAnimation);
     _controller.reset();
     _animation = Tween<Offset>(
       begin: current,
@@ -1084,8 +1088,22 @@ class _InteractiveCanvasViewerState extends State<InteractiveCanvasViewer>
         .chain(CurveTween(curve: Curves.easeOutCubic))
         .animate(_controller);
     _controller.duration = const Duration(milliseconds: 250);
-    _animation!.addListener(_handleInertiaAnimation);
+    _animation!.addListener(_handleSpringBackAnimation);
     _controller.forward();
+  }
+
+  void _handleSpringBackAnimation() {
+    if (!_controller.isAnimating) {
+      _currentAxis = null;
+      _animation?.removeListener(_handleSpringBackAnimation);
+      _animation = null;
+      _controller.reset();
+      return;
+    }
+    final Vector3 translation = _transformer.value.getTranslation();
+    final Offset target = _animation!.value;
+    _transformer.value = _transformer.value.clone()
+      ..setTranslation(Vector3(translation.x, target.dy, 0));
   }
 
   void _handleInertiaAnimation() {
