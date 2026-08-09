@@ -38,6 +38,7 @@ class InteractiveCanvasViewer extends StatefulWidget {
     this.isDrawGesture,
     this.interactionEndFrictionCoefficient = kDrag,
     this.onInteractionEnd,
+    this.onOverScroll,
     this.onDrawEnd,
     this.onDrawStart,
     this.onDrawUpdate,
@@ -85,6 +86,7 @@ class InteractiveCanvasViewer extends StatefulWidget {
     this.isDrawGesture,
     this.interactionEndFrictionCoefficient = kDrag,
     this.onInteractionEnd,
+    this.onOverScroll,
     this.onDrawEnd,
     this.onDrawStart,
     this.onDrawUpdate,
@@ -337,6 +339,12 @@ class InteractiveCanvasViewer extends StatefulWidget {
 
   /// Called when any gesture ends.
   final GestureScaleEndCallback? onInteractionEnd;
+
+  /// Called when panning is blocked by a boundary.
+  ///
+  /// [overScrollDistance] is positive when the user pans past the bottom
+  /// boundary (content pushed up beyond its last page).
+  final ValueChanged<double>? onOverScroll;
 
   /// A [TransformationController] for the transformation performed on the
   /// child.
@@ -718,6 +726,21 @@ class _InteractiveCanvasViewerState extends State<InteractiveCanvasViewer>
 
   bool isCurrentGestureADrawGesture = false;
 
+  /// 当前上拉越界的累计距离（场景像素），用于弹性偏移与追加页进度。
+  double _overscrollDistance = 0;
+
+  /// 进入越界时缓存的边界位置（内容贴底时 transform 的 y）。
+  /// 越界期间保持不变，避免每帧重算漂移。
+  double _overscrollBoundaryY = 0;
+
+  /// 底部越界弹性映射：越界越深、跟随比例越小，渐近逼近 [maxElasticOffset]。
+  /// 开始接近完全跟手，松手后回弹到边界（皮筋效果）。
+  static const double _maxElasticOffset = 100;
+
+  double _elasticOffset(double raw) {
+    return _maxElasticOffset * (1 - math.exp(-raw / 150));
+  }
+
   // Handle the start of a gesture. All of pan, scale, and rotate are handled
   // with GestureDetector's scale gesture.
   void _onScaleStart(ScaleStartDetails details) {
@@ -827,15 +850,68 @@ class _InteractiveCanvasViewerState extends State<InteractiveCanvasViewer>
           widget.onDrawUpdate?.call(details);
         } else {
           _currentAxis ??= _getPanAxis(_referenceFocalPoint!, focalPointScene);
-          // Translate so that the same point in the scene is underneath the
-          // focal point before and after the movement.
           final Offset translationChange =
               focalPointScene - _referenceFocalPoint!;
+          final double currentX =
+              _transformer.value.getTranslation().x;
+
+          if (_overscrollDistance > 0) {
+            // 已在越界状态：绕过 _matrixTranslate 的边界钳制，
+            // 直接按手指位移更新累计，位置 = 缓存的边界位置 - 弹性偏移。
+            if (translationChange.dy < 0) {
+              _overscrollDistance += -translationChange.dy;
+            } else {
+              _overscrollDistance = math.max(
+                0.0,
+                _overscrollDistance - translationChange.dy,
+              );
+            }
+            final double boundaryY = _overscrollBoundaryY;
+            if (_overscrollDistance > 0) {
+              final double elastic = _elasticOffset(_overscrollDistance);
+              _transformer.value = _transformer.value.clone()
+                ..setTranslation(
+                  Vector3(currentX, boundaryY - elastic, 0),
+                );
+              widget.onOverScroll?.call(_overscrollDistance);
+            } else {
+              // 完全放回：回到边界
+              _transformer.value = _transformer.value.clone()
+                ..setTranslation(Vector3(currentX, boundaryY, 0));
+              _overscrollBoundaryY = 0;
+              widget.onOverScroll?.call(0);
+            }
+            _referenceFocalPoint =
+                _transformer.toScene(details.localFocalPoint);
+            return;
+          }
+
+          // 正常滚动（未越界）
+          final double beforeY = _transformer.value.getTranslation().y;
           _transformer.value = _matrixTranslate(
             _transformer.value,
             translationChange,
           );
-          _referenceFocalPoint = _transformer.toScene(details.localFocalPoint);
+          final double consumedY =
+              _transformer.value.getTranslation().y - beforeY;
+          // 被边界吞掉的位移（负数 = 上拉越界）
+          final double overScrollY = translationChange.dy - consumedY;
+          if (overScrollY < 0) {
+            // 进入越界：按本帧越界量累计，缓存边界位置，应用弹性偏移
+            _overscrollDistance += -overScrollY;
+            _overscrollBoundaryY = _matrixTranslate(
+              _transformer.value,
+              Offset.zero,
+            ).getTranslation().y;
+            final double elastic = _elasticOffset(_overscrollDistance);
+            _transformer.value = _transformer.value.clone()
+              ..setTranslation(
+                Vector3(currentX, _overscrollBoundaryY - elastic, 0),
+              );
+            widget.onOverScroll?.call(_overscrollDistance);
+          }
+          _referenceFocalPoint =
+              _transformer.toScene(details.localFocalPoint);
         }
     }
   }
@@ -860,6 +936,17 @@ class _InteractiveCanvasViewerState extends State<InteractiveCanvasViewer>
     _scaleController.reset();
 
     if (!_gestureIsSupported(_gestureType)) {
+      _currentAxis = null;
+      return;
+    }
+
+    // 越界（弹性跟手）松手：回弹到边界，不进入惯性滚动。
+    if (_overscrollDistance > 0) {
+      final double currentY = _transformer.value.getTranslation().y;
+      _overscrollDistance = 0;
+      final double boundaryY = _overscrollBoundaryY;
+      _overscrollBoundaryY = 0;
+      _springBack(currentY, boundaryY);
       _currentAxis = null;
       return;
     }
@@ -983,6 +1070,24 @@ class _InteractiveCanvasViewerState extends State<InteractiveCanvasViewer>
   }
 
   // Handle inertia drag animation.
+  // 越界松手后，把内容回弹到边界（弹性回弹动画）。
+  void _springBack(double fromY, double toY) {
+    final Matrix4 matrix = _transformer.value;
+    final Offset current = _getMatrixTranslation(matrix);
+
+    _animation?.removeListener(_handleInertiaAnimation);
+    _controller.reset();
+    _animation = Tween<Offset>(
+      begin: current,
+      end: Offset(current.dx, toY),
+    )
+        .chain(CurveTween(curve: Curves.easeOutCubic))
+        .animate(_controller);
+    _controller.duration = const Duration(milliseconds: 250);
+    _animation!.addListener(_handleInertiaAnimation);
+    _controller.forward();
+  }
+
   void _handleInertiaAnimation() {
     if (!_controller.isAnimating) {
       _currentAxis = null;

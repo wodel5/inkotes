@@ -31,6 +31,7 @@ class CanvasGestureDetector extends StatefulWidget {
     required this.onStylusButtonChanged,
     required this.undo,
     required this.redo,
+    this.onOverscrollAddPage,
     required this.pages,
     required this.initialPageIndex,
     required this.pageBuilder,
@@ -56,6 +57,9 @@ class CanvasGestureDetector extends StatefulWidget {
   final VoidCallback undo;
   final VoidCallback redo;
 
+  /// 在最后一页底部继续上拉并拉满进度后松手时触发（追加页面）。
+  final VoidCallback? onOverscrollAddPage;
+
   final List<EditorPage> pages;
   final int? initialPageIndex;
   final Widget Function(BuildContext context, int pageIndex) pageBuilder;
@@ -69,6 +73,12 @@ class CanvasGestureDetector extends StatefulWidget {
 
   static const kMinScale = 0.3;
   static const kMaxScale = 10.0;
+
+  /// 上拉追加页的进度（0~1），由手势驱动，dock 栏据此显示环形进度条。
+  static final ValueNotifier<double> overscrollProgress = ValueNotifier(0);
+
+  /// 上拉满进度需要拉过的距离（逻辑像素，对应手指越界距离）。
+  static const double kOverScrollThreshold = 150;
 
   static double getTopOfPage({
     required int pageIndex,
@@ -491,7 +501,20 @@ class CanvasGestureDetectorState extends State<CanvasGestureDetector> {
                   ),
                   transformationController: widget._transformationController,
                   isDrawGesture: widget.isDrawGesture,
-                  onInteractionEnd: widget.onInteractionEnd,
+                  onInteractionEnd: (details) {
+                    // 上拉满进度松手 → 追加页面；否则进度归零
+                    if (CanvasGestureDetector.overscrollProgress.value >= 1) {
+                      widget.onOverscrollAddPage?.call();
+                    }
+                    CanvasGestureDetector.overscrollProgress.value = 0;
+                    widget.onInteractionEnd?.call(details);
+                  },
+                  onOverScroll: (distance) {
+                    // distance = 当前累计越界距离，直接换算进度
+                    CanvasGestureDetector.overscrollProgress.value =
+                        (distance / CanvasGestureDetector.kOverScrollThreshold)
+                            .clamp(0.0, 1.0);
+                  },
                   onDrawStart: widget.onDrawStart,
                   onDrawUpdate: widget.onDrawUpdate,
                   onDrawEnd: widget.onDrawEnd,

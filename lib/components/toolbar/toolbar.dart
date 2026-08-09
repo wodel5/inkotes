@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:keybinder/keybinder.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:inkotes/components/canvas/canvas_gesture_detector.dart';
 import 'package:inkotes/components/canvas/canvas_image.dart';
 import 'package:inkotes/components/common/dock_button.dart';
 import 'package:inkotes/components/common/glassmorphism_dock.dart';
@@ -517,6 +519,26 @@ class ToolbarState extends State<Toolbar> {
               },
               child: const FaIcon(FontAwesomeIcons.shareNodes, size: 20),
             ),
+            // 上拉追加页：环形进度条（在最后一页底部继续上拉时出现）
+            ValueListenableBuilder<double>(
+              valueListenable: CanvasGestureDetector.overscrollProgress,
+              builder: (context, progress, _) {
+                if (progress <= 0) return const SizedBox.shrink();
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CustomPaint(
+                      painter: _OverscrollProgressPainter(
+                        progress: progress,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
           ],
         ),
       ),
@@ -548,4 +570,43 @@ class _DockDivider extends StatelessWidget {
       color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.3),
     );
   }
+}
+
+/// 上拉追加页的环形进度条：底环 + 随进度填充的弧线。
+class _OverscrollProgressPainter extends CustomPainter {
+  const _OverscrollProgressPainter({required this.progress, required this.color});
+
+  final double progress;
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = size.center(Offset.zero);
+    final radius = size.width / 2 - 2.5;
+    const strokeWidth = 3.0;
+
+    final backgroundPaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = strokeWidth
+      ..color = color.withValues(alpha: 0.25);
+
+    final progressPaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = strokeWidth
+      ..strokeCap = StrokeCap.round
+      ..color = color;
+
+    canvas.drawCircle(center, radius, backgroundPaint);
+    canvas.drawArc(
+      Rect.fromCircle(center: center, radius: radius),
+      -math.pi / 2,
+      2 * math.pi * progress.clamp(0.0, 1.0),
+      false,
+      progressPaint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant _OverscrollProgressPainter oldDelegate) =>
+      oldDelegate.progress != progress || oldDelegate.color != color;
 }

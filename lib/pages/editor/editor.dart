@@ -379,6 +379,7 @@ class EditorState extends State<Editor>
       updatePointerData: updatePointerData,
       undo: undo,
       redo: redo,
+      onOverscrollAddPage: _addPageAtEnd,
       pages: coreInfo.pages,
       initialPageIndex: coreInfo.initialPageIndex,
       pageBuilder: pageBuilder,
@@ -958,6 +959,18 @@ class EditorState extends State<Editor>
       pickPhotos: pickPhotos,
       importPdf: importPdf,
       canRasterPdf: Editor.canRasterPdf,
+    );
+  }
+
+  /// 上拉追加页：在末尾插入空白页并滚动到新页。
+  void _addPageAtEnd() {
+    final lastIndex = coreInfo.pages.length - 1;
+    insertPageAfter(lastIndex);
+    CanvasGestureDetector.scrollToPage(
+      pageIndex: lastIndex + 1,
+      pages: coreInfo.pages,
+      screenWidth: MediaQuery.sizeOf(context).width,
+      transformationController: _transformationController,
     );
   }
 
