@@ -7,7 +7,6 @@ import 'package:flutter/widgets.dart';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
-import 'package:inkotes/components/home/sort_button.dart';
 import 'package:inkotes/data/prefs.dart';
 import 'package:inkotes/i18n/strings.g.dart';
 import 'package:inkotes/pages/editor/editor.dart';
@@ -209,12 +208,6 @@ class FileManager {
     if (awaitWrite) await writeFuture;
   }
 
-  static Future<void> createFolder(String folderPath) async {
-    folderPath = sanitisePath(folderPath);
-    final dir = Directory(documentsDirectory + folderPath);
-    await dir.create(recursive: true);
-  }
-
   // ─── File Operations ──────────────────────────────────────────────────
 
   static Future<String> moveFile(
@@ -336,58 +329,12 @@ class FileManager {
     await Future.wait(futures);
   }
 
-  static Future renameDirectory(String directoryPath, String newName) async {
-    directoryPath = sanitisePath(directoryPath);
-
-    final directory = Directory(documentsDirectory + directoryPath);
-    if (!directory.existsSync()) return;
-
-    final List<String> children = [];
-    await for (final entity in directory.list(recursive: true)) {
-      if (entity is File) {
-        children.add(entity.path.substring(directory.path.length));
-      }
-    }
-
-    final String newPath =
-        directoryPath.substring(0, directoryPath.lastIndexOf('/') + 1) +
-            newName;
-    await directory.rename(documentsDirectory + newPath);
-
-    for (final child in children) {
-      renameReferences(directoryPath + child, newPath + child);
-      broadcastFileWrite(FileOperationType.delete, directoryPath + child);
-      broadcastFileWrite(FileOperationType.write, newPath + child);
-    }
-  }
-
-  static Future deleteDirectory(
-    String directoryPath, [
-    bool recursive = true,
-  ]) async {
-    directoryPath = sanitisePath(directoryPath);
-
-    final directory = Directory(documentsDirectory + directoryPath);
-    if (!directory.existsSync()) return;
-
-    if (recursive) {
-      await for (final entity in directory.list(recursive: true)) {
-        if (entity is File) {
-          await deleteFile(entity.path.substring(documentsDirectory.length));
-        }
-      }
-    }
-
-    await directory.delete(recursive: recursive);
-  }
-
   // ─── Directory Listing ────────────────────────────────────────────────
 
   static Future<DirectoryChildren?> getChildrenOfDirectory(
     String directory, {
     bool includeExtensions = false,
     bool includeAssets = false,
-    SortMetric sortMetric = .nameAToZ,
   }) async {
     assert(
       !includeAssets || includeExtensions,
@@ -443,24 +390,7 @@ class FileManager {
       }
     }
 
-    switch (sortMetric) {
-      case .nameAToZ:
-        files.sortBy((child) => child);
-      case .nameZToA:
-        files.sortByCompare(
-          (child) => child,
-          (child, other) => -child.compareTo(other),
-        );
-      case .lastModifiedNewToOld:
-        files.sortByCompare(
-          (child) => lastModified(directory + child + Editor.extension),
-          (date, other) => -date.compareTo(other),
-        );
-      case .lastModifiedOldToNew:
-        files.sortBy(
-          (child) => lastModified(directory + child + Editor.extension),
-        );
-    }
+    files.sortBy((child) => child);
 
     return DirectoryChildren(directories, files);
   }

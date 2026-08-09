@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:perfect_freehand/perfect_freehand.dart';
-import 'package:inkotes/components/home/sort_button.dart';
 import 'package:inkotes/data/tools/highlighter.dart';
 import 'package:inkotes/data/tools/pen.dart';
 import 'package:inkotes/data/models/canvas_background_pattern.dart';
@@ -193,12 +192,6 @@ class Stows {
         volatile: !_isOnMainIsolate,
       );
 
-  final browseSortMetric = PlainStow(
-    'browseSortMetric',
-    SortMetric.nameAToZ,
-    codec: SortMetric.codec,
-    volatile: !_isOnMainIsolate,
-  );
   final recentFiles = PlainStow(
     'recentFiles',
     <String>[],

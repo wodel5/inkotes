@@ -8,9 +8,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:yaru/yaru.dart';
 import 'package:logging/logging.dart';
-import 'package:path/path.dart' as p;
 import 'package:inkotes/components/common/app_toast.dart';
-import 'package:inkotes/components/home/grid_folders.dart';
 import 'package:inkotes/components/home/masonry_files.dart';
 import 'package:inkotes/data/file_manager/file_importer.dart';
 import 'package:inkotes/data/file_manager/file_manager.dart';
@@ -22,7 +20,6 @@ import 'package:inkotes/i18n/strings.g.dart';
 import 'package:inkotes/pages/editor/editor.dart';
 import 'package:inkotes/pages/home/widgets/home_bottom_dock.dart';
 import 'package:inkotes/pages/home/widgets/no_files.dart';
-import 'package:inkotes/pages/home/widgets/path_breadcrumb.dart';
 
 class HomePage extends StatefulHookWidget {
   const HomePage({super.key});
@@ -34,14 +31,8 @@ class HomePage extends StatefulHookWidget {
 class _HomePageState extends State<HomePage> {
   final log = Logger('HomePage');
 
-  /// Current browsing path. null means root.
-  String? currentPath;
-
   /// All files (notes) at the current path level
   final List<String> filePaths = [];
-
-  /// Directories (folders) at the current path level
-  List<String> folders = [];
 
   var failed = false;
 
@@ -135,66 +126,19 @@ class _HomePageState extends State<HomePage> {
       if (location != RoutePaths.home) return;
     }
 
-    if (currentPath == null) {
-      // Root level: show recent files + folders
-      final recentFiles = await FileManager.getRecentlyAccessed();
-      // Filter out trashed files
-      final nonTrashedFiles = await FileTrashManager.filterOutTrashed(recentFiles);
-      filePaths.clear();
-      if (nonTrashedFiles.isEmpty) {
-        failed = true;
-      } else {
-        failed = false;
-        filePaths.addAll(nonTrashedFiles);
-      }
-
-      // Get folders at root
-      final children = await FileManager.getChildrenOfDirectory(
-        '/',
-        sortMetric: stows.browseSortMetric.value,
-      );
-      folders = children?.directories ?? [];
+    // Show recent files at root
+    final recentFiles = await FileManager.getRecentlyAccessed();
+    // Filter out trashed files
+    final nonTrashedFiles = await FileTrashManager.filterOutTrashed(recentFiles);
+    filePaths.clear();
+    if (nonTrashedFiles.isEmpty) {
+      failed = true;
     } else {
-      // Browsing a specific folder
-      final children = await FileManager.getChildrenOfDirectory(
-        currentPath!,
-        sortMetric: stows.browseSortMetric.value,
-      );
-      if (children == null) {
-        failed = true;
-        filePaths.clear();
-        folders = [];
-      } else {
-        failed = false;
-        filePaths.clear();
-        final allFiles = [
-          for (final filePath in children.files) "${currentPath!}/$filePath",
-        ];
-        // Filter out trashed files
-        final nonTrashedFiles = await FileTrashManager.filterOutTrashed(allFiles);
-        filePaths.addAll(nonTrashedFiles);
-        folders = children.directories;
-      }
+      failed = false;
+      filePaths.addAll(nonTrashedFiles);
     }
 
     if (mounted) setState(() {});
-  }
-
-  void onDirectoryTap(String folder) {
-    selectedFiles.value = [];
-    if (folder == '..') {
-      currentPath = p.dirname(currentPath ?? '/');
-      if (currentPath == '/') currentPath = null;
-    } else {
-      currentPath = p.join(currentPath ?? '/', folder);
-    }
-    findChildren();
-  }
-
-  Future<void> createFolder(String folderName) async {
-    final folderPath = '${currentPath ?? ''}/$folderName';
-    await FileManager.createFolder(folderPath);
-    findChildren();
   }
 
   void _startSearch() {
@@ -298,7 +242,7 @@ class _HomePageState extends State<HomePage> {
       fileName.length - '.pdf'.length,
     );
     final noteFilePath = await FileManager.suffixFilePathToMakeItUnique(
-      '${currentPath ?? ''}/$fileNameWithoutExtension',
+      '/$fileNameWithoutExtension',
     );
     if (!mounted) return;
     context.push(RoutePaths.editImportPdf(noteFilePath, filePath));
@@ -318,7 +262,7 @@ class _HomePageState extends State<HomePage> {
 
     final importedPath = await FileImporter.importFile(
       filePath,
-      '${currentPath ?? ''}/',
+      '/',
       extension: '.zip',
     );
     if (!mounted) return;
@@ -336,7 +280,6 @@ class _HomePageState extends State<HomePage> {
     final colorScheme = ColorScheme.of(context);
     final isLandscape = MediaQuery.sizeOf(context).width > MediaQuery.sizeOf(context).height;
     final crossAxisCount = isLandscape ? 4 : 2;
-    useOnListenableChange(stows.browseSortMetric, findChildren);
 
     return GestureDetector(
       onTap: () {
@@ -459,9 +402,8 @@ class _HomePageState extends State<HomePage> {
                               ).then((value) async {
                                 if (value == 'create') {
                                   final router = GoRouter.of(context);
-                                  final path = currentPath;
                                   final newFilePath = await FileImporter.newFilePath(
-                                    '${path ?? ''}/',
+                                    '/',
                                   );
                                   if (!mounted) return;
                                   router.push(RoutePaths.editFilePath(newFilePath));
@@ -572,15 +514,6 @@ class _HomePageState extends State<HomePage> {
           Positioned.fill(
             child: Column(
               children: [
-                if (currentPath != null)
-                  PathBreadcrumb(
-                    path: currentPath!,
-                    rootLabel: t.home.rootDirectory,
-                    onTap: (path) {
-                      currentPath = path.isEmpty ? null : path;
-                      findChildren();
-                    },
-                  ),
                 Expanded(
                   child: _isSearching ? _buildSearchResults() : _buildBody(crossAxisCount),
                 ),
@@ -637,55 +570,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildBody(int crossAxisCount) {
-    if (failed && currentPath == null) {
+    if (failed) {
       return _buildWelcome();
     }
 
     return CustomScrollView(
       slivers: [
-        // Back folder button (when inside a subfolder)
-        if (currentPath != null)
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              child: Card(
-                child: ListTile(
-                  leading: const Icon(Icons.arrow_back),
-                  title: Text(t.home.backFolder),
-                  onTap: () => onDirectoryTap('..'),
-                ),
-              ),
-            ),
-          ),
-        // Folders
-        if (folders.isNotEmpty)
-          GridFolders(
-            isAtRoot: currentPath == null,
-            crossAxisCount: crossAxisCount,
-            onTap: onDirectoryTap,
-            createFolder: createFolder,
-            doesFolderExist: (String folderName) {
-              return folders.contains(folderName);
-            },
-            renameFolder: (String oldName, String newName) async {
-              final oldPath = '${currentPath ?? ''}/$oldName';
-              await FileManager.renameDirectory(oldPath, newName);
-              findChildren();
-            },
-            isFolderEmpty: (String folderName) async {
-              final folderPath = '${currentPath ?? ''}/$folderName';
-              final children = await FileManager.getChildrenOfDirectory(
-                folderPath,
-              );
-              return children?.isEmpty ?? true;
-            },
-            deleteFolder: (String folderName) async {
-              final folderPath = '${currentPath ?? ''}/$folderName';
-              await FileManager.deleteDirectory(folderPath);
-              findChildren();
-            },
-            folders: folders,
-          ),
         // Notes
         if (filePaths.isNotEmpty)
           SliverSafeArea(
@@ -699,8 +589,8 @@ class _HomePageState extends State<HomePage> {
               selectedFiles: selectedFiles,
             ),
           ),
-        // Empty state at root
-        if (filePaths.isEmpty && folders.isEmpty && currentPath != null)
+        // Empty state
+        if (filePaths.isEmpty)
           const SliverSafeArea(
             sliver: SliverToBoxAdapter(child: NoFiles()),
           ),

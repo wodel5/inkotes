@@ -72,16 +72,10 @@ class _Translations$home$zh_Hans_CN extends Translations$home$en {
 	@override String get searchNotes => '搜索笔记';
 	@override String get searchNoResults => '未找到笔记';
 	@override String get createNewNote => '点击 + 按钮新建一个笔记';
-	@override String get backFolder => '回到上一个文件夹';
-	@override String get rootDirectory => '根目录';
-	@override late final _Translations$home$newFolder$zh_Hans_CN newFolder = _Translations$home$newFolder$zh_Hans_CN._(_root);
 	@override late final _Translations$home$renameNote$zh_Hans_CN renameNote = _Translations$home$renameNote$zh_Hans_CN._(_root);
 	@override String get deleteNote => '删除笔记';
 	@override late final _Translations$home$deleteNoteDialog$zh_Hans_CN deleteNoteDialog = _Translations$home$deleteNoteDialog$zh_Hans_CN._(_root);
-	@override late final _Translations$home$renameFolder$zh_Hans_CN renameFolder = _Translations$home$renameFolder$zh_Hans_CN._(_root);
-	@override late final _Translations$home$deleteFolder$zh_Hans_CN deleteFolder = _Translations$home$deleteFolder$zh_Hans_CN._(_root);
 	@override late final _Translations$home$trash$zh_Hans_CN trash = _Translations$home$trash$zh_Hans_CN._(_root);
-	@override late final _Translations$home$sort$zh_Hans_CN sort = _Translations$home$sort$zh_Hans_CN._(_root);
 }
 
 // Path: settings
@@ -167,21 +161,6 @@ class _Translations$home$import$zh_Hans_CN extends Translations$home$import$en {
 	@override String get invalidFile => '无效文件，该文件不是笔记归档';
 }
 
-// Path: home.newFolder
-class _Translations$home$newFolder$zh_Hans_CN extends Translations$home$newFolder$en {
-	_Translations$home$newFolder$zh_Hans_CN._(TranslationsZhHansCn root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHansCn _root; // ignore: unused_field
-
-	// Translations
-	@override String get newFolder => '新建文件夹';
-	@override String get folderName => '文件夹名称';
-	@override String get create => '创建';
-	@override String get folderNameEmpty => '文件夹名称不能为空';
-	@override String get folderNameContainsSlash => '文件夹名称不能包含斜杠';
-	@override String get folderNameExists => '文件夹已存在';
-}
-
 // Path: home.renameNote
 class _Translations$home$renameNote$zh_Hans_CN extends Translations$home$renameNote$en {
 	_Translations$home$renameNote$zh_Hans_CN._(TranslationsZhHansCn root) : this._root = root, super.internal(root);
@@ -212,34 +191,6 @@ class _Translations$home$deleteNoteDialog$zh_Hans_CN extends Translations$home$d
 	@override String get delete => '删除';
 }
 
-// Path: home.renameFolder
-class _Translations$home$renameFolder$zh_Hans_CN extends Translations$home$renameFolder$en {
-	_Translations$home$renameFolder$zh_Hans_CN._(TranslationsZhHansCn root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHansCn _root; // ignore: unused_field
-
-	// Translations
-	@override String get renameFolder => '重命名文件夹';
-	@override String get folderName => '文件夹名称';
-	@override String get rename => '重命名';
-	@override String get folderNameEmpty => '文件夹不能为空';
-	@override String get folderNameContainsSlash => '文件夹名称不能包含斜线';
-	@override String get folderNameExists => '已存在该名称的文件夹';
-}
-
-// Path: home.deleteFolder
-class _Translations$home$deleteFolder$zh_Hans_CN extends Translations$home$deleteFolder$en {
-	_Translations$home$deleteFolder$zh_Hans_CN._(TranslationsZhHansCn root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHansCn _root; // ignore: unused_field
-
-	// Translations
-	@override String get deleteFolder => '删除文件夹';
-	@override String deleteName({required Object f}) => '删除 ${f}';
-	@override String get delete => '删除';
-	@override String get alsoDeleteContents => '同时删除此文件夹中的所有笔记';
-}
-
 // Path: home.trash
 class _Translations$home$trash$zh_Hans_CN extends Translations$home$trash$en {
 	_Translations$home$trash$zh_Hans_CN._(TranslationsZhHansCn root) : this._root = root, super.internal(root);
@@ -255,20 +206,6 @@ class _Translations$home$trash$zh_Hans_CN extends Translations$home$trash$en {
 	@override String get emptyTrash => '清空回收站';
 	@override String get confirmEmptyTrash => '确定要清空回收站吗？此操作不可撤销。';
 	@override String get confirmPermanentDelete => '确定要彻底删除此笔记吗？此操作不可撤销。';
-}
-
-// Path: home.sort
-class _Translations$home$sort$zh_Hans_CN extends Translations$home$sort$en {
-	_Translations$home$sort$zh_Hans_CN._(TranslationsZhHansCn root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHansCn _root; // ignore: unused_field
-
-	// Translations
-	@override String get sortBy => '按...排序';
-	@override String get nameAToZ => '姓名（A-Z）';
-	@override String get nameZToA => '姓名（从 A 到 Z）';
-	@override String get lastModifiedNewToOld => '编辑（最新优先）';
-	@override String get lastModifiedOldToNew => '编辑（按最旧的排序）';
 }
 
 // Path: settings.prefLabels

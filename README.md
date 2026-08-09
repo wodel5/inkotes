@@ -1,17 +1,26 @@
-# inkotes
+# Inkotes
 
-A new Flutter project for notes改改改.
+Inkotes 是一款专业的手写笔记应用，提供流畅的书写体验与完善的 PDF 批注功能，支持 Android 与 iOS 平台。
 
-## Getting Started
+## 核心功能
 
-This project is a starting point for a Flutter application.
+- **手写输入**：钢笔、铅笔、高亮笔与形状笔，笔迹平滑，支持压感
+- **PDF 批注**：导入 PDF 文档，逐页进行书写与标注
+- **多页笔记**：支持多页文档管理
+- **图片插入**：支持图片插入、缩放调整及背景设置
+- **文档导出**：支持导出为 PDF、PNG 格式
+- **笔记管理**：文件夹分类、搜索与回收站
+- **个性化**：深色 / 浅色主题，简体中文 / English 双语支持
 
-A few resources to get you started if this is your first Flutter project:
+## 截图
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+![Inkotes](screenshot.png)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 下载
+
+- GitHub：<https://github.com/wodel5/inkotes/releases>
+- Gitee：<https://gitee.com/wodel-five/inkotes/releases>
+
+## 许可证
+
+[GNU General Public License v3.0](LICENSE)

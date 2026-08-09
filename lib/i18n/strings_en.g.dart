@@ -102,23 +102,13 @@ class Translations$home$en {
 	/// en: 'Tap the + button to create a new note'
 	String get createNewNote => 'Tap the + button to create a new note';
 
-	/// en: 'Go back to the previous folder'
-	String get backFolder => 'Go back to the previous folder';
-
-	/// en: 'Root'
-	String get rootDirectory => 'Root';
-
-	late final Translations$home$newFolder$en newFolder = Translations$home$newFolder$en.internal(_root);
 	late final Translations$home$renameNote$en renameNote = Translations$home$renameNote$en.internal(_root);
 
 	/// en: 'Delete note'
 	String get deleteNote => 'Delete note';
 
 	late final Translations$home$deleteNoteDialog$en deleteNoteDialog = Translations$home$deleteNoteDialog$en.internal(_root);
-	late final Translations$home$renameFolder$en renameFolder = Translations$home$renameFolder$en.internal(_root);
-	late final Translations$home$deleteFolder$en deleteFolder = Translations$home$deleteFolder$en.internal(_root);
 	late final Translations$home$trash$en trash = Translations$home$trash$en.internal(_root);
-	late final Translations$home$sort$en sort = Translations$home$sort$en.internal(_root);
 }
 
 // Path: settings
@@ -236,33 +226,6 @@ class Translations$home$import$en {
 	String get invalidFile => 'Invalid file. This is not a note archive.';
 }
 
-// Path: home.newFolder
-class Translations$home$newFolder$en {
-	Translations$home$newFolder$en.internal(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-
-	/// en: 'New folder'
-	String get newFolder => 'New folder';
-
-	/// en: 'Folder name'
-	String get folderName => 'Folder name';
-
-	/// en: 'Create'
-	String get create => 'Create';
-
-	/// en: 'Folder name can't be empty'
-	String get folderNameEmpty => 'Folder name can\'t be empty';
-
-	/// en: 'Folder name can't contain a slash'
-	String get folderNameContainsSlash => 'Folder name can\'t contain a slash';
-
-	/// en: 'Folder already exists'
-	String get folderNameExists => 'Folder already exists';
-}
-
 // Path: home.renameNote
 class Translations$home$renameNote$en {
 	Translations$home$renameNote$en.internal(this._root);
@@ -311,54 +274,6 @@ class Translations$home$deleteNoteDialog$en {
 	String get delete => 'Delete';
 }
 
-// Path: home.renameFolder
-class Translations$home$renameFolder$en {
-	Translations$home$renameFolder$en.internal(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-
-	/// en: 'Rename folder'
-	String get renameFolder => 'Rename folder';
-
-	/// en: 'Folder name'
-	String get folderName => 'Folder name';
-
-	/// en: 'Rename'
-	String get rename => 'Rename';
-
-	/// en: 'Folder name can't be empty'
-	String get folderNameEmpty => 'Folder name can\'t be empty';
-
-	/// en: 'Folder name can't contain a slash'
-	String get folderNameContainsSlash => 'Folder name can\'t contain a slash';
-
-	/// en: 'A folder with this name already exists'
-	String get folderNameExists => 'A folder with this name already exists';
-}
-
-// Path: home.deleteFolder
-class Translations$home$deleteFolder$en {
-	Translations$home$deleteFolder$en.internal(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-
-	/// en: 'Delete folder'
-	String get deleteFolder => 'Delete folder';
-
-	/// en: 'Delete $f'
-	String deleteName({required Object f}) => 'Delete ${f}';
-
-	/// en: 'Delete'
-	String get delete => 'Delete';
-
-	/// en: 'Also delete all notes inside this folder'
-	String get alsoDeleteContents => 'Also delete all notes inside this folder';
-}
-
 // Path: home.trash
 class Translations$home$trash$en {
 	Translations$home$trash$en.internal(this._root);
@@ -390,30 +305,6 @@ class Translations$home$trash$en {
 
 	/// en: 'Are you sure you want to permanently delete this note? This cannot be undone.'
 	String get confirmPermanentDelete => 'Are you sure you want to permanently delete this note? This cannot be undone.';
-}
-
-// Path: home.sort
-class Translations$home$sort$en {
-	Translations$home$sort$en.internal(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-
-	/// en: 'Sort by'
-	String get sortBy => 'Sort by';
-
-	/// en: 'Name (A-Z)'
-	String get nameAToZ => 'Name (A-Z)';
-
-	/// en: 'Name (Z-A)'
-	String get nameZToA => 'Name (Z-A)';
-
-	/// en: 'Edited (Newest first)'
-	String get lastModifiedNewToOld => 'Edited (Newest first)';
-
-	/// en: 'Edited (Oldest first)'
-	String get lastModifiedOldToNew => 'Edited (Oldest first)';
 }
 
 // Path: settings.prefLabels
