@@ -66,13 +66,15 @@ settings:
 editor:
   toolbar:
     exportAs: "Export as:"
+    palette: Palette
   pens:
-    fountainPen: Fountain pen
+    fountainPen: Pen
     ballpointPen: Ballpoint pen
     highlighter: Highlighter
     pencil: Pencil
   penOptions:
     size: Stroke size
+    pressure: Pressure
   colors:
     colorPicker: Color picker
     customBrightnessHue: Custom $b $h
@@ -96,7 +98,8 @@ editor:
     delete: Delete
     duplicate: Duplicate
   menu:
-    insertPage: Insert
+    insertPage: Insert new page
+    more: More
     duplicatePage: Duplicate
     clearPage: Clear
     deletePage: Delete
@@ -116,8 +119,8 @@ editor:
     watchingServer: You are currently watching for updates on the server. Editing is disabled in this mode.
     corrupted: Failed to load note. It may be corrupted or still being downloaded.
   hud:
-    unlockZoom: Unlock zoom
-    lockZoom: Lock zoom
+    unlockZoom: Unlock canvas zoom
+    lockZoom: Lock canvas zoom
     unlockSingleFingerPan: Enable single-finger panning
     lockSingleFingerPan: Disable single-finger panning
   pages: Page Management

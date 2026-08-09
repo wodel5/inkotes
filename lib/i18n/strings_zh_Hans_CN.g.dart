@@ -246,6 +246,7 @@ class _Translations$editor$toolbar$zh_Hans_CN extends Translations$editor$toolba
 
 	// Translations
 	@override String get exportAs => '导出为：';
+	@override String get palette => '调色盘';
 }
 
 // Path: editor.pens
@@ -269,6 +270,7 @@ class _Translations$editor$penOptions$zh_Hans_CN extends Translations$editor$pen
 
 	// Translations
 	@override String get size => '笔画粗细';
+	@override String get pressure => '压感';
 }
 
 // Path: editor.colors
@@ -316,7 +318,8 @@ class _Translations$editor$menu$zh_Hans_CN extends Translations$editor$menu$en {
 	final TranslationsZhHansCn _root; // ignore: unused_field
 
 	// Translations
-	@override String get insertPage => '插入';
+	@override String get insertPage => '插入新页面';
+	@override String get more => '更多';
 	@override String get duplicatePage => '复制';
 	@override String get clearPage => '清空';
 	@override String get deletePage => '删除';
@@ -346,8 +349,8 @@ class _Translations$editor$hud$zh_Hans_CN extends Translations$editor$hud$en {
 	final TranslationsZhHansCn _root; // ignore: unused_field
 
 	// Translations
-	@override String get unlockZoom => '解锁缩放';
-	@override String get lockZoom => '锁定缩放';
+	@override String get unlockZoom => '解锁画布缩放';
+	@override String get lockZoom => '锁定画布缩放';
 	@override String get unlockSingleFingerPan => '启用单指平移';
 	@override String get lockSingleFingerPan => '禁用单指平移';
 }

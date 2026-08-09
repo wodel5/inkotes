@@ -764,6 +764,7 @@ class EditorState extends State<Editor>
                     builder: (context) {
                       return IconButton(
                         icon: const AdaptiveIcon(icon: Icons.more_vert),
+                        tooltip: t.editor.menu.more,
                         onPressed: () {
                           _showMoreMenu(context);
                         },

@@ -356,6 +356,9 @@ class Translations$editor$toolbar$en {
 
 	/// en: 'Export as:'
 	String get exportAs => 'Export as:';
+
+	/// en: 'Palette'
+	String get palette => 'Palette';
 }
 
 // Path: editor.pens
@@ -366,8 +369,8 @@ class Translations$editor$pens$en {
 
 	// Translations
 
-	/// en: 'Fountain pen'
-	String get fountainPen => 'Fountain pen';
+	/// en: 'Pen'
+	String get fountainPen => 'Pen';
 
 	/// en: 'Ballpoint pen'
 	String get ballpointPen => 'Ballpoint pen';
@@ -389,6 +392,9 @@ class Translations$editor$penOptions$en {
 
 	/// en: 'Stroke size'
 	String get size => 'Stroke size';
+
+	/// en: 'Pressure'
+	String get pressure => 'Pressure';
 }
 
 // Path: editor.colors
@@ -477,8 +483,11 @@ class Translations$editor$menu$en {
 
 	// Translations
 
-	/// en: 'Insert'
-	String get insertPage => 'Insert';
+	/// en: 'Insert new page'
+	String get insertPage => 'Insert new page';
+
+	/// en: 'More'
+	String get more => 'More';
 
 	/// en: 'Duplicate'
 	String get duplicatePage => 'Duplicate';
@@ -528,11 +537,11 @@ class Translations$editor$hud$en {
 
 	// Translations
 
-	/// en: 'Unlock zoom'
-	String get unlockZoom => 'Unlock zoom';
+	/// en: 'Unlock canvas zoom'
+	String get unlockZoom => 'Unlock canvas zoom';
 
-	/// en: 'Lock zoom'
-	String get lockZoom => 'Lock zoom';
+	/// en: 'Lock canvas zoom'
+	String get lockZoom => 'Lock canvas zoom';
 
 	/// en: 'Enable single-finger panning'
 	String get unlockSingleFingerPan => 'Enable single-finger panning';

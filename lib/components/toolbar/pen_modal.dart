@@ -5,6 +5,7 @@ import 'package:inkotes/data/tools/tool.dart';
 import 'package:inkotes/data/tools/highlighter.dart';
 import 'package:inkotes/data/tools/pen.dart';
 import 'package:inkotes/data/tools/pencil.dart';
+import 'package:inkotes/i18n/strings.g.dart';
 
 class PenModal extends StatefulWidget {
   const PenModal({super.key, required this.getTool, required this.setTool, this.onInteraction});
@@ -58,6 +59,17 @@ class _PenModalState extends State<PenModal> {
       SizePicker(axis: axis, pen: currentPen, onChanged: widget.onInteraction),
       if (currentPen is! Highlighter && currentPen is! Pencil) ...[
         const SizedBox(width: 8),
+        Text(
+          t.editor.penOptions.pressure,
+          style: TextStyle(
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.8),
+            fontSize: 14,
+            height: 1,
+          ),
+        ),
+        const SizedBox(width: 4),
         AdvancedSwitch(
           controller: _controller,
           width: 50,
@@ -79,7 +91,7 @@ class _PenModalState extends State<PenModal> {
             painter: _RingPainter(),
           ),
           activeChild: const Icon(
-            IconData(0xec19, fontFamily: 'iconfont'),
+            IconData(0xec18, fontFamily: 'iconfont'),
             size: 20,
             color: Color(0xFFE3E2E9),
           ),

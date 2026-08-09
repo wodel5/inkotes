@@ -21,6 +21,7 @@ import 'package:inkotes/data/tools/laser_pointer.dart';
 import 'package:inkotes/data/tools/pen.dart';
 import 'package:inkotes/data/tools/pencil.dart';
 import 'package:inkotes/data/tools/select.dart';
+import 'package:inkotes/i18n/strings.g.dart';
 
 class Toolbar extends StatefulWidget {
   const Toolbar({
@@ -346,6 +347,7 @@ class ToolbarState extends State<Toolbar> {
             DockButton(
               selected: widget.currentTool == Pen.currentPen,
               enabled: !widget.readOnly,
+              tooltip: t.editor.pens.fountainPen,
               onPressed: () {
                 if (widget.currentTool == Pen.currentPen) {
                   toolOptionsType.value = toolOptionsType.value == .pen
@@ -363,6 +365,7 @@ class ToolbarState extends State<Toolbar> {
             DockButton(
               selected: widget.currentTool == Pencil.currentPencil,
               enabled: !widget.readOnly,
+              tooltip: t.editor.pens.pencil,
               onPressed: () {
                 if (widget.currentTool == Pencil.currentPencil) {
                   toolOptionsType.value = toolOptionsType.value == .pencil
@@ -380,6 +383,7 @@ class ToolbarState extends State<Toolbar> {
             DockButton(
               selected: widget.currentTool == Highlighter.currentHighlighter,
               enabled: !widget.readOnly,
+              tooltip: t.editor.pens.highlighter,
               onPressed: () {
                 if (widget.currentTool == Highlighter.currentHighlighter) {
                   toolOptionsType.value = toolOptionsType.value == .highlighter
@@ -396,6 +400,7 @@ class ToolbarState extends State<Toolbar> {
             ),
             DockButton(
               enabled: !widget.readOnly && widget.currentTool is! LaserPointer && widget.currentTool is! Eraser,
+              tooltip: t.editor.toolbar.palette,
               onPressed: toggleColorOptions,
               child: currentColor == null
                   ? const FaIcon(FontAwesomeIcons.palette, size: 20)

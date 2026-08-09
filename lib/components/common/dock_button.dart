@@ -11,6 +11,7 @@ class DockButton extends StatefulWidget {
     super.key,
     this.icon,
     this.child,
+    this.tooltip,
     this.selected = false,
     this.enabled = true,
     this.onPressed,
@@ -18,6 +19,7 @@ class DockButton extends StatefulWidget {
 
   final Object? icon;
   final Widget? child;
+  final String? tooltip;
   final bool selected;
   final bool enabled;
   final VoidCallback? onPressed;
@@ -53,7 +55,7 @@ class _DockButtonState extends State<DockButton> {
 
     final effectiveChild = widget.child ?? _buildIconFromObject(widget.icon!);
 
-    return GestureDetector(
+    final button = GestureDetector(
       onTapDown: widget.enabled
           ? (_) => setState(() => _pressing = true)
           : null,
@@ -80,6 +82,10 @@ class _DockButtonState extends State<DockButton> {
         ),
       ),
     );
+
+    return widget.tooltip == null
+        ? button
+        : Tooltip(message: widget.tooltip!, child: button);
   }
 
   Widget _buildIconFromObject(Object icon) {
