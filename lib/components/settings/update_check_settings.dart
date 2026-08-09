@@ -20,6 +20,8 @@ class _UpdateCheckSettingsState extends State<UpdateCheckSettings> {
   @override
   void initState() {
     stows.updateSource.addListener(onChanged);
+    // 语言切换时刷新文案，与其他设置项保持一致
+    stows.locale.addListener(onChanged);
     super.initState();
   }
 
@@ -102,6 +104,7 @@ class _UpdateCheckSettingsState extends State<UpdateCheckSettings> {
   @override
   void dispose() {
     stows.updateSource.removeListener(onChanged);
+    stows.locale.removeListener(onChanged);
     super.dispose();
   }
 }

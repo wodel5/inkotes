@@ -190,7 +190,7 @@ class _SettingsContentState extends State<SettingsContent> {
             ToggleButtonsOption(-1, Text(t.settings.autosaveDisabled)),
           ],
         ),
-        const UpdateCheckSettings(),
+        UpdateCheckSettings(),
         // About
         ListTile(
           contentPadding: const EdgeInsets.symmetric(
