@@ -337,12 +337,16 @@ class ToolbarState extends State<Toolbar> {
   }
 
   Widget _buildToolButtons(Color? currentColor) {
-    return IntrinsicWidth(
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        // 屏幕宽 - 外 Padding(12*2) - dock 内 padding(8*2) - 边框(≈1)
+        maxWidth: MediaQuery.sizeOf(context).width - 41,
+      ),
+      child: Wrap(
+        alignment: WrapAlignment.center,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        runSpacing: 4,
+        children: [
             DockButton(
               selected: widget.currentTool == Pen.currentPen,
               enabled: !widget.readOnly,
@@ -553,7 +557,6 @@ class ToolbarState extends State<Toolbar> {
             ),
           ],
         ),
-      ),
     );
   }
 

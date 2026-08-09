@@ -116,8 +116,9 @@ class _PreviewCardState extends State<PreviewCard> {
     );
 
     // 缩略图：固定 0.6:1 宽高比
-    final thumbnailWidget = SizedBox(
-      height: widget.thumbnailHeight,
+    // 缩略图：Expanded 弹性填充剩余高度（标题、日期固定），
+    // 避免横屏/窄屏时格子高度不足导致 Column 溢出
+    final thumbnailWidget = Expanded(
       child: ClipRRect(
         borderRadius: const BorderRadius.all(
           Radius.circular(kYaruContainerRadius),

@@ -733,6 +733,9 @@ class _InteractiveCanvasViewerState extends State<InteractiveCanvasViewer>
   /// 越界期间保持不变，避免每帧重算漂移。
   double _overscrollBoundaryY = 0;
 
+  /// 上一次 build 时的视口尺寸，用于检测横竖屏切换。
+  Rect _lastViewport = Rect.zero;
+
   /// 底部越界弹性映射：越界越深、跟随比例越小，渐近逼近 [maxElasticOffset]。
   /// 开始接近完全跟手，松手后回弹到边界（皮筋效果）。
   static const double _maxElasticOffset = 100;
@@ -1071,6 +1074,32 @@ class _InteractiveCanvasViewerState extends State<InteractiveCanvasViewer>
   }
 
   // Handle inertia drag animation.
+  // 视口尺寸变化（横竖屏切换）时调整 transform：
+  // 保持旧视口中心的 scene 点位于新视口中心，内容不跳出可视区。
+  void _onViewportChange(Rect oldViewport, Rect newViewport) {
+    final Matrix4 matrix = _transformer.value;
+    if (matrix.isIdentity()) return;
+    final double scale = matrix.getMaxScaleOnAxis();
+    final Quad oldQuad = _transformViewport(matrix, oldViewport);
+    final Offset oldCenterScene = Offset(
+      (oldQuad.point0.x + oldQuad.point1.x +
+              oldQuad.point2.x + oldQuad.point3.x) /
+          4,
+      (oldQuad.point0.y + oldQuad.point1.y +
+              oldQuad.point2.y + oldQuad.point3.y) /
+          4,
+    );
+    final Offset newTranslation = Offset(
+      newViewport.center.dx - oldCenterScene.dx * scale,
+      newViewport.center.dy - oldCenterScene.dy * scale,
+    );
+    // 方向切换时清理上拉越界状态
+    _overscrollDistance = 0;
+    _overscrollBoundaryY = 0;
+    _transformer.value = matrix.clone()
+      ..setTranslation(Vector3(newTranslation.dx, newTranslation.dy, 0));
+  }
+
   // 越界松手后，把内容回弹到边界（弹性回弹动画）。
   // 注意：不能用 _handleInertiaAnimation，它经过 _matrixTranslate 会
   // 在第一帧就把越界位置 clamp 到边界（闪回），必须直接设位移。
@@ -1230,6 +1259,23 @@ class _InteractiveCanvasViewerState extends State<InteractiveCanvasViewer>
           );
         },
       );
+    }
+
+    // 检测视口尺寸变化（横竖屏切换），保持旧视口中心的 scene 点
+    // 位于新视口中心，避免内容移出可视区导致渲染不出来。
+    if (_lastViewport == Rect.zero) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _lastViewport = _viewport;
+      });
+    } else {
+      final Rect currentViewport = _viewport;
+      if (currentViewport.size != _lastViewport.size) {
+        final Rect oldViewport = _lastViewport;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) _onViewportChange(oldViewport, _viewport);
+        });
+      }
+      _lastViewport = currentViewport;
     }
 
     return Listener(
