@@ -109,13 +109,9 @@ class EditorState extends State<Editor>
   late Tool _currentTool = () {
     switch (stows.lastTool.value) {
       case .fountainPen:
-        if (Pen.currentPen.toolId != stows.lastTool.value) {
-          Pen.currentPen = Pen.fountainPen();
-        }
-        return Pen.currentPen;
       case .ballpointPen:
         if (Pen.currentPen.toolId != stows.lastTool.value) {
-          Pen.currentPen = Pen.ballpointPen();
+          Pen.currentPen = Pen.fountainPen();
         }
         return Pen.currentPen;
       case .highlighter:
@@ -1002,7 +998,6 @@ class EditorState extends State<Editor>
     _removeKeybindings();
 
     stows.lastFountainPenOptions.notifyListeners();
-    stows.lastBallpointPenOptions.notifyListeners();
     stows.lastHighlighterOptions.notifyListeners();
     stows.lastPencilOptions.notifyListeners();
 

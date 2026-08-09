@@ -120,12 +120,6 @@ class Stows {
         fromJson: _strokeOptionsFromJson,
         volatile: !_isOnMainIsolate,
       ),
-      lastBallpointPenOptions = PlainStow.json(
-        'lastBallpointPenProperties',
-        Pen.ballpointPenOptions,
-        fromJson: _strokeOptionsFromJson,
-        volatile: !_isOnMainIsolate,
-      ),
       lastHighlighterOptions = PlainStow.json(
         'lastHighlighterProperties',
         Pen.highlighterOptions,
@@ -140,11 +134,6 @@ class Stows {
       );
   final lastFountainPenColor = PlainStow(
         'lastFountainPenColor',
-        Colors.black.toARGB32(),
-        volatile: !_isOnMainIsolate,
-      ),
-      lastBallpointPenColor = PlainStow(
-        'lastBallpointPenColor',
         Colors.black.toARGB32(),
         volatile: !_isOnMainIsolate,
       ),

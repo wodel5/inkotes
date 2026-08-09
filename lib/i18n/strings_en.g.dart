@@ -372,9 +372,6 @@ class Translations$editor$pens$en {
 	/// en: 'Pen'
 	String get fountainPen => 'Pen';
 
-	/// en: 'Ballpoint pen'
-	String get ballpointPen => 'Ballpoint pen';
-
 	/// en: 'Highlighter'
 	String get highlighter => 'Highlighter';
 

@@ -8,10 +8,9 @@ import 'package:inkotes/data/tools/pencil.dart';
 import 'package:inkotes/i18n/strings.g.dart';
 
 class PenModal extends StatefulWidget {
-  const PenModal({super.key, required this.getTool, required this.setTool, this.onInteraction});
+  const PenModal({super.key, required this.getTool, this.onInteraction});
 
   final Tool Function() getTool;
-  final void Function(Pen) setTool;
   final VoidCallback? onInteraction;
 
   @override
@@ -21,20 +20,23 @@ class PenModal extends StatefulWidget {
 class _PenModalState extends State<PenModal> {
   late ValueNotifier<bool> _controller;
 
+  bool _isPressureEnabled() {
+    final tool = widget.getTool();
+    return tool is Pen && tool.pressureEnabled;
+  }
+
   @override
   void initState() {
     super.initState();
-    final Tool currentTool = widget.getTool();
-    _controller = ValueNotifier(currentTool is Pen && currentTool.toolId != Pen.fountainPen().toolId);
+    _controller = ValueNotifier(_isPressureEnabled());
   }
 
   @override
   void didUpdateWidget(covariant PenModal oldWidget) {
     super.didUpdateWidget(oldWidget);
-    final Tool currentTool = widget.getTool();
-    final bool isBallpoint = currentTool is Pen && currentTool.toolId != Pen.fountainPen().toolId;
-    if (_controller.value != isBallpoint) {
-      _controller.value = isBallpoint;
+    final isPressureEnabled = _isPressureEnabled();
+    if (_controller.value != isPressureEnabled) {
+      _controller.value = isPressureEnabled;
     }
   }
 
@@ -76,7 +78,10 @@ class _PenModalState extends State<PenModal> {
           height: 20,
           onChanged: (value) {
             setState(() {
-              widget.setTool(value ? Pen.ballpointPen() : Pen.fountainPen());
+              final tool = widget.getTool();
+              if (tool is Pen) {
+                tool.pressureEnabled = value;
+              }
             });
             widget.onInteraction?.call();
           },
@@ -96,7 +101,7 @@ class _PenModalState extends State<PenModal> {
             color: Color(0xFFE3E2E9),
           ),
           inactiveChild: const Icon(
-            IconData(0xec18, fontFamily: 'iconfont'),
+            IconData(0xec19, fontFamily: 'iconfont'),
             size: 20,
             color: Color(0xFFE3E2E9),
           ),

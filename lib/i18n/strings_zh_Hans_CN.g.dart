@@ -257,7 +257,6 @@ class _Translations$editor$pens$zh_Hans_CN extends Translations$editor$pens$en {
 
 	// Translations
 	@override String get fountainPen => '钢笔';
-	@override String get ballpointPen => '圆珠笔';
 	@override String get highlighter => '荧光笔';
 	@override String get pencil => '铅笔';
 }

@@ -295,17 +295,14 @@ class ToolbarState extends State<Toolbar> {
                                   child: switch (toolOptionsType) {
                                       .pen => PenModal(
                                           getTool: () => Pen.currentPen,
-                                          setTool: widget.setTool,
                                           onInteraction: resetAutoCollapseTimer,
                                         ),
                                       .highlighter => PenModal(
                                           getTool: () => Highlighter.currentHighlighter,
-                                          setTool: widget.setTool,
                                           onInteraction: resetAutoCollapseTimer,
                                         ),
                                       .pencil => PenModal(
                                           getTool: () => Pencil.currentPencil,
-                                          setTool: widget.setTool,
                                           onInteraction: resetAutoCollapseTimer,
                                         ),
                                       .select => SelectionBar(

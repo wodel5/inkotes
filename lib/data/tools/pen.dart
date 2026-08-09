@@ -36,17 +36,6 @@ class Pen extends Tool {
       color = Color(stows.lastFountainPenColor.value),
       toolId = .fountainPen;
 
-  Pen.ballpointPen()
-    : name = t.editor.pens.ballpointPen,
-      sizeMin = 1,
-      sizeMax = 15,
-      sizeStep = 1,
-      icon = ballpointPenIcon,
-      options = stows.lastBallpointPenOptions.value,
-      pressureEnabled = false,
-      color = Color(stows.lastBallpointPenColor.value),
-      toolId = .ballpointPen;
-
   final String name;
   final double sizeMin, sizeMax, sizeStep;
   late final int sizeStepsBetweenMinAndMax = ((sizeMax - sizeMin) / sizeStep)
@@ -57,7 +46,6 @@ class Pen extends Tool {
   final ToolId toolId;
 
   static const fountainPenIcon = FontAwesomeIcons.penClip;
-  static const ballpointPenIcon = FontAwesomeIcons.pen;
 
   static Stroke? currentStroke;
   Color color;
@@ -114,7 +102,6 @@ class Pen extends Tool {
   static final defaultOptions = StrokeOptions(size: 5);
 
   static StrokeOptions get fountainPenOptions => defaultOptions.copyWith();
-  static StrokeOptions get ballpointPenOptions => defaultOptions.copyWith();
   static StrokeOptions get shapePenOptions =>
       defaultOptions.copyWith(smoothing: 0, streamline: 0);
   static StrokeOptions get highlighterOptions =>

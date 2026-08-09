@@ -69,7 +69,6 @@ editor:
     palette: Palette
   pens:
     fountainPen: Pen
-    ballpointPen: Ballpoint pen
     highlighter: Highlighter
     pencil: Pencil
   penOptions:
