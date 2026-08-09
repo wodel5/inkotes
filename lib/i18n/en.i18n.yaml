@@ -93,6 +93,7 @@ settings:
     downloadUpdate: Download update
     downloading: Downloading $percent
     downloaded: Download complete
+    downloadFailed: Download failed, please check your network and retry
   aboutDialog:
     title: About Inkotes
     version: Version $version

@@ -93,6 +93,7 @@ settings:
     downloadUpdate: 下载更新
     downloading: 正在下载 $percent
     downloaded: 下载完成
+    downloadFailed: 下载失败，请检查网络后重试
   aboutDialog:
     title: 关于 Inkotes
     version: 版本 $version

@@ -299,6 +299,7 @@ class _Translations$settings$update$zh_Hans_CN extends Translations$settings$upd
 	@override String get downloadUpdate => '下载更新';
 	@override String downloading({required Object percent}) => '正在下载 ${percent}';
 	@override String get downloaded => '下载完成';
+	@override String get downloadFailed => '下载失败，请检查网络后重试';
 }
 
 // Path: settings.aboutDialog

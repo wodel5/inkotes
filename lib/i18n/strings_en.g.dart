@@ -468,6 +468,9 @@ class Translations$settings$update$en {
 
 	/// en: 'Download complete'
 	String get downloaded => 'Download complete';
+
+	/// en: 'Download failed, please check your network and retry'
+	String get downloadFailed => 'Download failed, please check your network and retry';
 }
 
 // Path: settings.aboutDialog

@@ -79,9 +79,14 @@ class _UpdateCheckSettingsState extends State<UpdateCheckSettings> {
       ),
       trailing: ToggleButtons(
         borderRadius: const BorderRadius.all(Radius.circular(1000)),
-        constraints: const BoxConstraints(minWidth: 56, minHeight: 40),
+        // 2 个选项的宽度对齐上面 3 个选项的 SettingsSelection（60 x 3）
+        constraints: const BoxConstraints(minWidth: 90, minHeight: 40),
         onPressed: (int index) {
           stows.updateSource.value = UpdateSource.values[index];
+          // 切换来源后重新检查更新，红点状态随之刷新
+          UpdateService.checkForUpdates(
+            source: stows.updateSource.value,
+          );
         },
         isSelected: [
           for (final option in UpdateSource.values) option == source,
@@ -112,6 +117,7 @@ Future<void> showUpdateDialog(BuildContext context) {
     barrierDismissible: true,
     builder: (context) {
       var downloading = false;
+      var failed = false;
       return StatefulBuilder(
         builder: (context, setState) {
           return AlertDialog(
@@ -151,13 +157,21 @@ Future<void> showUpdateDialog(BuildContext context) {
                             child: LinearProgressIndicator(value: progress ?? 0),
                           ),
                           const SizedBox(height: 8),
-                          Text(
-                            progress != null && progress >= 1
-                                ? t.settings.update.downloaded
-                                : t.settings.update.downloading(
-                                    percent: '$percent%',
-                                  ),
-                          ),
+                          if (failed)
+                            Text(
+                              t.settings.update.downloadFailed,
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.error,
+                              ),
+                            )
+                          else
+                            Text(
+                              progress != null && progress >= 1
+                                  ? t.settings.update.downloaded
+                                  : t.settings.update.downloading(
+                                      percent: '$percent%',
+                                    ),
+                            ),
                         ],
                       );
                     },
@@ -171,9 +185,18 @@ Future<void> showUpdateDialog(BuildContext context) {
                 child: Text(t.common.cancel),
               ),
               FilledButton(
-                onPressed: () {
-                  setState(() => downloading = true);
-                  UpdateService.download();
+                onPressed: () async {
+                  setState(() {
+                    downloading = true;
+                    failed = false;
+                  });
+                  final path = await UpdateService.download();
+                  if (path == null) {
+                    if (context.mounted) setState(() => failed = true);
+                  } else {
+                    // 下载完成，跳转系统安装界面
+                    await UpdateService.installApk(path);
+                  }
                 },
                 child: Text(t.settings.update.downloadUpdate),
               ),
