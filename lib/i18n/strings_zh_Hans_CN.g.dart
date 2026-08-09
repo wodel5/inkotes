@@ -47,7 +47,6 @@ class _Translations$common$zh_Hans_CN extends Translations$common$en {
 
 	// Translations
 	@override String get done => '完成';
-	@override String get continueBtn => '继续';
 	@override String get cancel => '取消';
 }
 
@@ -60,20 +59,16 @@ class _Translations$home$zh_Hans_CN extends Translations$home$en {
 	// Translations
 	@override late final _Translations$home$titles$zh_Hans_CN titles = _Translations$home$titles$zh_Hans_CN._(_root);
 	@override String get importPdf => '导入 PDF';
-	@override late final _Translations$home$tooltips$zh_Hans_CN tooltips = _Translations$home$tooltips$zh_Hans_CN._(_root);
 	@override late final _Translations$home$create$zh_Hans_CN create = _Translations$home$create$zh_Hans_CN._(_root);
 	@override late final _Translations$home$import$zh_Hans_CN import = _Translations$home$import$zh_Hans_CN._(_root);
 	@override String get welcome => '欢迎使用 Inkotes';
-	@override String get noFiles => '未找到文件';
 	@override String get noPreviewAvailable => '无可用预览';
-	@override String editedAt({required Object date}) => '编辑于${date}';
 	@override String get today => '今天';
 	@override String get yesterday => '昨天';
 	@override String get searchNotes => '搜索笔记';
 	@override String get searchNoResults => '未找到笔记';
 	@override String get createNewNote => '点击 + 按钮新建一个笔记';
 	@override late final _Translations$home$renameNote$zh_Hans_CN renameNote = _Translations$home$renameNote$zh_Hans_CN._(_root);
-	@override String get deleteNote => '删除笔记';
 	@override late final _Translations$home$deleteNoteDialog$zh_Hans_CN deleteNoteDialog = _Translations$home$deleteNoteDialog$zh_Hans_CN._(_root);
 	@override late final _Translations$home$trash$zh_Hans_CN trash = _Translations$home$trash$zh_Hans_CN._(_root);
 }
@@ -122,19 +117,8 @@ class _Translations$home$titles$zh_Hans_CN extends Translations$home$titles$en {
 	final TranslationsZhHansCn _root; // ignore: unused_field
 
 	// Translations
-	@override String get home => '最近笔记';
 	@override String get settings => '设置';
 	@override String get appName => 'Inkotes';
-}
-
-// Path: home.tooltips
-class _Translations$home$tooltips$zh_Hans_CN extends Translations$home$tooltips$en {
-	_Translations$home$tooltips$zh_Hans_CN._(TranslationsZhHansCn root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHansCn _root; // ignore: unused_field
-
-	// Translations
-	@override String get exportNote => '导出笔记';
 }
 
 // Path: home.create
@@ -156,7 +140,6 @@ class _Translations$home$import$zh_Hans_CN extends Translations$home$import$en {
 
 	// Translations
 	@override String get success => '笔记导入成功';
-	@override String get failed => '笔记导入失败';
 	@override String get invalidFile => '无效文件，该文件不是笔记归档';
 }
 
@@ -167,7 +150,6 @@ class _Translations$home$renameNote$zh_Hans_CN extends Translations$home$renameN
 	final TranslationsZhHansCn _root; // ignore: unused_field
 
 	// Translations
-	@override String get renameNote => '重命名笔记';
 	@override String get noteName => '笔记名称';
 	@override String get rename => '重命名';
 	@override String get noteNameEmpty => '笔记名称不能为空';
@@ -200,10 +182,7 @@ class _Translations$home$trash$zh_Hans_CN extends Translations$home$trash$en {
 	@override String get title => '回收站';
 	@override String get empty => '回收站为空';
 	@override String get emptyDescription => '删除的笔记会显示在这里';
-	@override String get restore => '恢复';
 	@override String get delete => '彻底删除';
-	@override String get emptyTrash => '清空回收站';
-	@override String get confirmEmptyTrash => '确定要清空回收站吗？此操作不可撤销。';
 	@override String get confirmPermanentDelete => '确定要彻底删除此笔记吗？此操作不可撤销。';
 }
 
@@ -229,7 +208,6 @@ class _Translations$settings$update$zh_Hans_CN extends Translations$settings$upd
 	final TranslationsZhHansCn _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => '更新';
 	@override String newVersion({required Object version}) => '发现新版本 ${version}';
 	@override String get changelog => '更新日志';
 	@override String get downloadUpdate => '下载更新';
@@ -245,7 +223,6 @@ class _Translations$settings$aboutDialog$zh_Hans_CN extends Translations$setting
 	final TranslationsZhHansCn _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => '关于 Inkotes';
 	@override String version({required Object version}) => '版本 ${version}';
 	@override String copyright({required Object year}) => 'Inkotes Copyright © ${year}\n这是自由软件，欢迎在特定条件下重新分发。';
 	@override String get licenses => '查看开源许可证';
@@ -319,14 +296,6 @@ class _Translations$editor$colors$zh_Hans_CN extends Translations$editor$colors$
 	@override String get purple => '紫色';
 	@override String get pink => '粉色';
 	@override String get orange => '橙色';
-	@override String get pastelRed => '浅红色';
-	@override String get pastelOrange => '浅橙色';
-	@override String get pastelYellow => '浅黄色';
-	@override String get pastelGreen => '浅绿色';
-	@override String get pastelCyan => '浅青色';
-	@override String get pastelBlue => '浅蓝色';
-	@override String get pastelPurple => '浅紫色';
-	@override String get pastelPink => '浅粉色';
 }
 
 // Path: editor.selectionBar

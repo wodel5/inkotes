@@ -52,9 +52,6 @@ class Translations$common$en {
 	/// en: 'Done'
 	String get done => 'Done';
 
-	/// en: 'Continue'
-	String get continueBtn => 'Continue';
-
 	/// en: 'Cancel'
 	String get cancel => 'Cancel';
 }
@@ -71,21 +68,14 @@ class Translations$home$en {
 	/// en: 'Import PDF'
 	String get importPdf => 'Import PDF';
 
-	late final Translations$home$tooltips$en tooltips = Translations$home$tooltips$en.internal(_root);
 	late final Translations$home$create$en create = Translations$home$create$en.internal(_root);
 	late final Translations$home$import$en import = Translations$home$import$en.internal(_root);
 
 	/// en: 'Welcome to Inkotes'
 	String get welcome => 'Welcome to Inkotes';
 
-	/// en: 'No files found'
-	String get noFiles => 'No files found';
-
 	/// en: 'No preview available'
 	String get noPreviewAvailable => 'No preview available';
-
-	/// en: 'Edited $date'
-	String editedAt({required Object date}) => 'Edited ${date}';
 
 	/// en: 'Today'
 	String get today => 'Today';
@@ -103,10 +93,6 @@ class Translations$home$en {
 	String get createNewNote => 'Tap the + button to create a new note';
 
 	late final Translations$home$renameNote$en renameNote = Translations$home$renameNote$en.internal(_root);
-
-	/// en: 'Delete note'
-	String get deleteNote => 'Delete note';
-
 	late final Translations$home$deleteNoteDialog$en deleteNoteDialog = Translations$home$deleteNoteDialog$en.internal(_root);
 	late final Translations$home$trash$en trash = Translations$home$trash$en.internal(_root);
 }
@@ -170,26 +156,11 @@ class Translations$home$titles$en {
 
 	// Translations
 
-	/// en: 'Recent notes'
-	String get home => 'Recent notes';
-
 	/// en: 'Settings'
 	String get settings => 'Settings';
 
 	/// en: 'Inkotes'
 	String get appName => 'Inkotes';
-}
-
-// Path: home.tooltips
-class Translations$home$tooltips$en {
-	Translations$home$tooltips$en.internal(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-
-	/// en: 'Export note'
-	String get exportNote => 'Export note';
 }
 
 // Path: home.create
@@ -218,9 +189,6 @@ class Translations$home$import$en {
 	/// en: 'Note imported successfully'
 	String get success => 'Note imported successfully';
 
-	/// en: 'Failed to import note'
-	String get failed => 'Failed to import note';
-
 	/// en: 'Invalid file. This is not a note archive.'
 	String get invalidFile => 'Invalid file. This is not a note archive.';
 }
@@ -232,9 +200,6 @@ class Translations$home$renameNote$en {
 	final Translations _root; // ignore: unused_field
 
 	// Translations
-
-	/// en: 'Rename note'
-	String get renameNote => 'Rename note';
 
 	/// en: 'Note name'
 	String get noteName => 'Note name';
@@ -290,17 +255,8 @@ class Translations$home$trash$en {
 	/// en: 'Deleted notes will appear here'
 	String get emptyDescription => 'Deleted notes will appear here';
 
-	/// en: 'Restore'
-	String get restore => 'Restore';
-
 	/// en: 'Delete permanently'
 	String get delete => 'Delete permanently';
-
-	/// en: 'Empty trash'
-	String get emptyTrash => 'Empty trash';
-
-	/// en: 'Are you sure you want to empty the trash? This cannot be undone.'
-	String get confirmEmptyTrash => 'Are you sure you want to empty the trash? This cannot be undone.';
 
 	/// en: 'Are you sure you want to permanently delete this note? This cannot be undone.'
 	String get confirmPermanentDelete => 'Are you sure you want to permanently delete this note? This cannot be undone.';
@@ -341,9 +297,6 @@ class Translations$settings$update$en {
 
 	// Translations
 
-	/// en: 'Update'
-	String get title => 'Update';
-
 	/// en: 'New version $version available'
 	String newVersion({required Object version}) => 'New version ${version} available';
 
@@ -370,9 +323,6 @@ class Translations$settings$aboutDialog$en {
 	final Translations _root; // ignore: unused_field
 
 	// Translations
-
-	/// en: 'About Inkotes'
-	String get title => 'About Inkotes';
 
 	/// en: 'Version $version'
 	String version({required Object version}) => 'Version ${version}';
@@ -502,30 +452,6 @@ class Translations$editor$colors$en {
 
 	/// en: 'Orange'
 	String get orange => 'Orange';
-
-	/// en: 'Pastel red'
-	String get pastelRed => 'Pastel red';
-
-	/// en: 'Pastel orange'
-	String get pastelOrange => 'Pastel orange';
-
-	/// en: 'Pastel yellow'
-	String get pastelYellow => 'Pastel yellow';
-
-	/// en: 'Pastel green'
-	String get pastelGreen => 'Pastel green';
-
-	/// en: 'Pastel cyan'
-	String get pastelCyan => 'Pastel cyan';
-
-	/// en: 'Pastel blue'
-	String get pastelBlue => 'Pastel blue';
-
-	/// en: 'Pastel purple'
-	String get pastelPurple => 'Pastel purple';
-
-	/// en: 'Pastel pink'
-	String get pastelPink => 'Pastel pink';
 }
 
 // Path: editor.selectionBar

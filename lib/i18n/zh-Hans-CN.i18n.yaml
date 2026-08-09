@@ -1,38 +1,29 @@
 common:
   done: 完成
-  continueBtn: 继续
   cancel: 取消
 home:
   titles:
-    home: 最近笔记
     settings: 设置
     appName: Inkotes
   importPdf: 导入 PDF
-  tooltips:
-    exportNote: 导出笔记
   create:
     newNote: 新建笔记
     importNote: 导入笔记
   import:
     success: 笔记导入成功
-    failed: 笔记导入失败
     invalidFile: 无效文件，该文件不是笔记归档
   welcome: 欢迎使用 Inkotes
-  noFiles: 未找到文件
   noPreviewAvailable: 无可用预览
-  editedAt: 编辑于$date
   today: 今天
   yesterday: 昨天
   searchNotes: 搜索笔记
   searchNoResults: 未找到笔记
   createNewNote: 点击 + 按钮新建一个笔记
   renameNote:
-    renameNote: 重命名笔记
     noteName: 笔记名称
     rename: 重命名
     noteNameEmpty: 笔记名称不能为空
     noteNameExists: 此名称的笔记已经存在
-  deleteNote: 删除笔记
   deleteNoteDialog:
     deleteNotes: 删除 $n 个笔记
     deleteName: 删除 $f
@@ -44,10 +35,7 @@ home:
     title: 回收站
     empty: 回收站为空
     emptyDescription: 删除的笔记会显示在这里
-    restore: 恢复
     delete: 彻底删除
-    emptyTrash: 清空回收站
-    confirmEmptyTrash: 确定要清空回收站吗？此操作不可撤销。
     confirmPermanentDelete: 确定要彻底删除此笔记吗？此操作不可撤销。
 settings:
   prefLabels:
@@ -60,7 +48,6 @@ settings:
   checkUpdateSource: 检查更新源
   aboutApp: 关于此应用
   update:
-    title: 更新
     newVersion: 发现新版本 $version
     changelog: 更新日志
     downloadUpdate: 下载更新
@@ -68,7 +55,6 @@ settings:
     downloaded: 下载完成
     downloadFailed: 下载失败，请检查网络后重试
   aboutDialog:
-    title: 关于 Inkotes
     version: 版本 $version
     copyright: |-
       Inkotes Copyright © $year
@@ -106,14 +92,6 @@ editor:
     purple: 紫色
     pink: 粉色
     orange: 橙色
-    pastelRed: 浅红色
-    pastelOrange: 浅橙色
-    pastelYellow: 浅黄色
-    pastelGreen: 浅绿色
-    pastelCyan: 浅青色
-    pastelBlue: 浅蓝色
-    pastelPurple: 浅紫色
-    pastelPink: 浅粉色
   selectionBar:
     delete: 删除
     duplicate: 复制
