@@ -340,8 +340,6 @@ class _Translations$editor$imageOptions$zh_Hans_CN extends Translations$editor$i
 	@override String get title => '图片选项';
 	@override String get invertible => '反转颜色';
 	@override String get download => '下载';
-	@override String get setAsBackground => '设为背景';
-	@override String get removeAsBackground => '作为背景移除';
 	@override String get delete => '删除';
 }
 

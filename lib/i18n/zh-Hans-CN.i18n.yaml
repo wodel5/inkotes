@@ -118,8 +118,6 @@ editor:
     title: 图片选项
     invertible: 反转颜色
     download: 下载
-    setAsBackground: 设为背景
-    removeAsBackground: 作为背景移除
     delete: 删除
   selectionBar:
     delete: 删除

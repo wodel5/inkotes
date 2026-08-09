@@ -13,7 +13,6 @@ class CanvasImage extends StatefulHookWidget {
     required this.image,
     this.overrideBoxFit,
     required this.pageSize,
-    required this.setAsBackground,
     this.isBackground = false,
     this.readOnly = false,
     this.selected = false,
@@ -24,7 +23,6 @@ class CanvasImage extends StatefulHookWidget {
   final EditorImage image;
   final BoxFit? overrideBoxFit;
   final Size pageSize;
-  final void Function(EditorImage image)? setAsBackground;
   final bool isBackground;
   final bool readOnly;
   final bool selected;

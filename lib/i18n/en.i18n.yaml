@@ -118,8 +118,6 @@ editor:
     title: Image options
     invertible: Invertible
     download: Download
-    setAsBackground: Set as background
-    removeAsBackground: Remove as background
     delete: Delete
   selectionBar:
     delete: Delete

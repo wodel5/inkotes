@@ -396,7 +396,6 @@ class EditorState extends State<Editor>
           currentStrokeDetectedShape: null,
           currentSelection: null,
           placeholder: true,
-          setAsBackground: null,
           currentTool: currentTool,
           currentScale: double.minPositive,
         );
@@ -983,18 +982,6 @@ class EditorState extends State<Editor>
         if (selectResult.pageIndex != pageIndex) return null;
         return selectResult;
       }(),
-      setAsBackground: (image) {
-        if (page.backgroundImage != null) {
-          page.images.add(page.backgroundImage!);
-        }
-        page.images.remove(image);
-        page.backgroundImage = image;
-
-        CanvasImage.activeListener.notifyListenersPlease();
-
-        autosaveAfterDelay();
-        setState(() {});
-      },
       currentTool: currentTool,
       currentScale: _transformationController.value.approxScale,
     );

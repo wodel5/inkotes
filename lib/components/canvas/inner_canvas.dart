@@ -22,7 +22,6 @@ class InnerCanvas extends StatefulWidget {
     required this.currentStroke,
     required this.currentStrokeDetectedShape,
     required this.currentSelection,
-    this.setAsBackground,
     this.onRenderObjectChange,
     required this.currentToolIsSelect,
     required this.currentScale,
@@ -37,7 +36,6 @@ class InnerCanvas extends StatefulWidget {
   final Stroke? currentStroke;
   final RecognizedUnistroke? currentStrokeDetectedShape;
   final SelectResult? currentSelection;
-  final void Function(EditorImage image)? setAsBackground;
   final ValueChanged<RenderObject>? onRenderObjectChange;
 
   final bool currentToolIsSelect;
@@ -114,7 +112,6 @@ class _InnerCanvasState extends State<InnerCanvas> {
                     filePath: widget.coreInfo.filePath,
                     image: page.backgroundImage!,
                     pageSize: Size(widget.width, widget.height),
-                    setAsBackground: null,
                     isBackground: true,
                     readOnly: true,
                   ),
@@ -123,7 +120,6 @@ class _InnerCanvasState extends State<InnerCanvas> {
                     filePath: widget.coreInfo.filePath,
                     image: page.images[i],
                     pageSize: Size(widget.width, widget.height),
-                    setAsBackground: widget.setAsBackground,
                     readOnly:
                         widget.coreInfo.readOnly || !widget.currentToolIsSelect,
                     selected:
