@@ -17,6 +17,7 @@ home:
   today: 今天
   yesterday: 昨天
   searchNotes: 搜索笔记
+  selectAll: 全选
   searchNoResults: 未找到笔记
   createNewNote: 点击 + 按钮新建一个笔记
   renameNote:
@@ -33,6 +34,7 @@ home:
     delete: 删除
   trash:
     title: 回收站
+    restore: 恢复
     empty: 回收站为空
     emptyDescription: 删除的笔记会显示在这里
     delete: 彻底删除

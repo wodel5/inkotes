@@ -17,6 +17,7 @@ home:
   today: Today
   yesterday: Yesterday
   searchNotes: Search notes
+  selectAll: Select all
   searchNoResults: No notes found
   createNewNote: Tap the + button to create a new note
   renameNote:
@@ -33,6 +34,7 @@ home:
     delete: Delete
   trash:
     title: Trash
+    restore: Restore
     empty: Trash is empty
     emptyDescription: Deleted notes will appear here
     delete: Delete permanently

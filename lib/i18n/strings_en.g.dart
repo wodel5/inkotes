@@ -86,6 +86,9 @@ class Translations$home$en {
 	/// en: 'Search notes'
 	String get searchNotes => 'Search notes';
 
+	/// en: 'Select all'
+	String get selectAll => 'Select all';
+
 	/// en: 'No notes found'
 	String get searchNoResults => 'No notes found';
 
@@ -248,6 +251,9 @@ class Translations$home$trash$en {
 
 	/// en: 'Trash'
 	String get title => 'Trash';
+
+	/// en: 'Restore'
+	String get restore => 'Restore';
 
 	/// en: 'Trash is empty'
 	String get empty => 'Trash is empty';

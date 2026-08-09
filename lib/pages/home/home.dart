@@ -353,6 +353,7 @@ class _HomePageState extends State<HomePage> {
                         child: Builder(
                           builder: (context) => IconButton(
                             icon: const FaIcon(FontAwesomeIcons.plus),
+                            tooltip: t.home.create.newNote,
                             onPressed: () {
                               selectedFiles.value = [];
                               final RenderBox button =
@@ -423,6 +424,7 @@ class _HomePageState extends State<HomePage> {
                         duration: const Duration(milliseconds: 300),
                         child: IconButton(
                           icon: const FaIcon(FontAwesomeIcons.magnifyingGlass),
+                          tooltip: t.home.searchNotes,
                           onPressed: () {
                             selectedFiles.value = [];
                             _startSearch();
@@ -436,6 +438,7 @@ class _HomePageState extends State<HomePage> {
                         child: Builder(
                           builder: (context) => IconButton(
                             icon: const Icon(Icons.auto_delete_rounded),
+                            tooltip: t.home.trash.title,
                             onPressed: () {
                               selectedFiles.value = [];
                               context.push(RoutePaths.trash);
@@ -455,6 +458,7 @@ class _HomePageState extends State<HomePage> {
                               children: [
                                 IconButton(
                                   icon: const FaIcon(FontAwesomeIcons.gear),
+                                  tooltip: t.home.titles.settings,
                                   onPressed: () {
                                     selectedFiles.value = [];
                                     context.push(RoutePaths.settings);

@@ -66,12 +66,14 @@ class HomeBottomDock extends StatelessWidget {
                               icon: FontAwesomeIcons.penToSquare,
                               selected: isRenaming,
                               enabled: selectedFiles.value.length == 1,
+                              tooltip: t.home.renameNote.rename,
                               onPressed: selectedFiles.value.length == 1
                                   ? onStartRename
                                   : null,
                             ),
                             DockButton(
                               icon: FontAwesomeIcons.trash,
+                              tooltip: t.home.deleteNoteDialog.delete,
                               onPressed: () async {
                                 onCancelRename();
                                 for (final file in selectedFiles.value) {
@@ -84,6 +86,7 @@ class HomeBottomDock extends StatelessWidget {
                               icon: FontAwesomeIcons.checkDouble,
                               selected: selectedFiles.value.isNotEmpty &&
                                   selectedFiles.value.length == filePaths.length,
+                              tooltip: t.home.selectAll,
                               onPressed: () {
                                 onCancelRename();
                                 if (selectedFiles.value.length == filePaths.length) {

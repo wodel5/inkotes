@@ -201,15 +201,18 @@ class _TrashPageState extends State<TrashPage> {
                                   children: [
                                     DockButton(
                                       icon: FontAwesomeIcons.rotateLeft,
+                                      tooltip: t.home.trash.restore,
                                       onPressed: _restoreSelected,
                                     ),
                                     DockButton(
                                       icon: FontAwesomeIcons.trash,
+                                      tooltip: t.home.trash.delete,
                                       onPressed: _deleteSelected,
                                     ),
                                     DockButton(
                                       icon: FontAwesomeIcons.checkDouble,
                                       selected: _selectedFiles.isNotEmpty && _selectedFiles.length == _trashedFiles.length,
+                                      tooltip: t.home.selectAll,
                                       onPressed: _selectAll,
                                     ),
                                   ],

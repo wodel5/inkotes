@@ -66,6 +66,7 @@ class _Translations$home$zh_Hans_CN extends Translations$home$en {
 	@override String get today => '今天';
 	@override String get yesterday => '昨天';
 	@override String get searchNotes => '搜索笔记';
+	@override String get selectAll => '全选';
 	@override String get searchNoResults => '未找到笔记';
 	@override String get createNewNote => '点击 + 按钮新建一个笔记';
 	@override late final _Translations$home$renameNote$zh_Hans_CN renameNote = _Translations$home$renameNote$zh_Hans_CN._(_root);
@@ -180,6 +181,7 @@ class _Translations$home$trash$zh_Hans_CN extends Translations$home$trash$en {
 
 	// Translations
 	@override String get title => '回收站';
+	@override String get restore => '恢复';
 	@override String get empty => '回收站为空';
 	@override String get emptyDescription => '删除的笔记会显示在这里';
 	@override String get delete => '彻底删除';
