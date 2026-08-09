@@ -543,11 +543,28 @@ class ToolbarState extends State<Toolbar> {
                           child: SizedBox(
                             width: 24,
                             height: 24,
-                            child: CustomPaint(
-                              painter: _OverscrollProgressPainter(
-                                progress: progress,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                CustomPaint(
+                                  size: Size.square(24),
+                                  painter: _OverscrollProgressPainter(
+                                    progress: progress,
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                  ),
+                                ),
+                                // 中间加号：透明度跟随进度（0→100% 渐显）
+                                Opacity(
+                                  opacity: progress.clamp(0.0, 1.0),
+                                  child: Icon(
+                                    Icons.add,
+                                    size: 14,
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         )

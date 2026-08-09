@@ -78,7 +78,8 @@ class CanvasGestureDetector extends StatefulWidget {
   static final ValueNotifier<double> overscrollProgress = ValueNotifier(0);
 
   /// 上拉满进度需要拉过的距离（逻辑像素，对应手指越界距离）。
-  static const double kOverScrollThreshold = 150;
+  /// 200px：抬高触发门槛，防止日常滑动误触追加页。
+  static const double kOverScrollThreshold = 200;
 
   static double getTopOfPage({
     required int pageIndex,
