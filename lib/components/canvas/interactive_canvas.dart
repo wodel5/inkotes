@@ -1261,22 +1261,17 @@ class _InteractiveCanvasViewerState extends State<InteractiveCanvasViewer>
       );
     }
 
-    // 检测视口尺寸变化（横竖屏切换），保持旧视口中心的 scene 点
-    // 位于新视口中心，避免内容移出可视区导致渲染不出来。
-    if (_lastViewport == Rect.zero) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) _lastViewport = _viewport;
-      });
-    } else {
+    // 检测视口尺寸变化（横竖屏切换）。父 RenderBox 的 size 在 build 时
+    // 仍是旧值，必须等首帧布局完成后再读取比较。
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
       final Rect currentViewport = _viewport;
-      if (currentViewport.size != _lastViewport.size) {
-        final Rect oldViewport = _lastViewport;
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (mounted) _onViewportChange(oldViewport, _viewport);
-        });
+      if (_lastViewport != Rect.zero &&
+          currentViewport.size != _lastViewport.size) {
+        _onViewportChange(_lastViewport, currentViewport);
       }
       _lastViewport = currentViewport;
-    }
+    });
 
     return Listener(
       key: _parentKey,

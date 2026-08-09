@@ -590,7 +590,23 @@ class _PagesBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 先计算各页高度，得出 content 的自然总高
+    final pageHeights = <double>[];
+    double contentHeight = Editor.gapBetweenPages * 2; // 顶部 32
+    for (final page in pages) {
+      final pageWidth = min(page.size.width, containerWidth);
+      final pageHeight = pageWidth / page.size.width * page.size.height;
+      pageHeights.add(pageHeight);
+      contentHeight += pageHeight + Editor.gapBetweenPages;
+    }
+    contentHeight += Editor.gapBetweenPages + 100; // 末尾 16 + 100 底部预留
+
+    // 顶部弹性吸收：content 不足视口高时，差额塞到顶部，
+    // 使最后一页底端距屏幕底恒为固定值（116px），横竖屏一致。
+    final double extra = max(0.0, boundingBox.height - contentHeight);
+
     final List<Widget> children = [
+      SizedBox(height: extra),
       const SizedBox.square(dimension: Editor.gapBetweenPages),
       const SizedBox.square(dimension: Editor.gapBetweenPages),
     ];
@@ -598,13 +614,15 @@ class _PagesBuilder extends StatelessWidget {
     double topOfPage = Editor.gapBetweenPages * 2;
     for (int pageIndex = 0; pageIndex < pages.length; pageIndex++) {
       final page = pages[pageIndex];
-      final pageWidth = min(page.size.width, containerWidth);
-      final pageHeight = pageWidth / page.size.width * page.size.height;
+      final pageHeight = pageHeights[pageIndex];
       final bottomOfPage = topOfPage + pageHeight;
 
       final isFocused = page.quill.focusNode.hasFocus;
+      // 视口检测用绝对坐标（含顶部 extra 偏移）
+      final pageTopAbs = topOfPage + extra;
+      final pageBottomAbs = pageTopAbs + pageHeight;
       final isInViewport =
-          boundingBox.bottom >= topOfPage && boundingBox.top <= bottomOfPage;
+          boundingBox.bottom >= pageTopAbs && boundingBox.top <= pageBottomAbs;
       final shouldRender = isFocused || isInViewport;
 
       page.isRendered = shouldRender;
