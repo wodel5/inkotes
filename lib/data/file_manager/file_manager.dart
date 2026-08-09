@@ -344,7 +344,7 @@ class FileManager {
     directory = sanitisePath(directory);
     if (!directory.endsWith('/')) directory += '/';
 
-    final List<String> directories = [], files = [];
+    final List<String> files = [];
 
     final dir = Directory(documentsDirectory + directory);
     if (!dir.existsSync()) return null;
@@ -381,8 +381,9 @@ class FileManager {
         .toList();
 
     for (final child in allChildren) {
-      if (isDirectory(directory + child) && !directories.contains(child)) {
-        directories.add(child);
+      if (isDirectory(directory + child)) {
+        // 跳过子目录（不再支持文件夹，旧文件夹内容通过文件列表不展示）
+        continue;
       } else if (!includeAssets && assetFileRegex.hasMatch(child)) {
         // skip assets
       } else {
@@ -392,34 +393,19 @@ class FileManager {
 
     files.sortBy((child) => child);
 
-    return DirectoryChildren(directories, files);
+    return DirectoryChildren(files);
   }
 
   static Future<List<String>> getAllFiles({
     bool includeExtensions = false,
     bool includeAssets = false,
   }) async {
-    final allFiles = <String>[];
-    final directories = <String>['/'];
-
-    while (directories.isNotEmpty) {
-      final directory = directories.removeLast();
-      final children = await getChildrenOfDirectory(
-        directory,
-        includeExtensions: includeExtensions,
-        includeAssets: includeAssets,
-      );
-      if (children == null) continue;
-
-      for (final file in children.files) {
-        allFiles.add('$directory$file');
-      }
-      for (final childDirectory in children.directories) {
-        directories.add('$directory$childDirectory/');
-      }
-    }
-
-    return allFiles;
+    final children = await getChildrenOfDirectory(
+      '/',
+      includeExtensions: includeExtensions,
+      includeAssets: includeAssets,
+    );
+    return [for (final file in children?.files ?? []) '/$file'];
   }
 
   static Future<List<String>> getRecentlyAccessed() async {
@@ -538,14 +524,11 @@ class FileManager {
 }
 
 class DirectoryChildren {
-  final List<String> directories;
   final List<String> files;
 
-  DirectoryChildren(this.directories, this.files);
+  DirectoryChildren(this.files);
 
-  bool onlyOneChild() => directories.length + files.length <= 1;
-
-  bool get isEmpty => directories.isEmpty && files.isEmpty;
+  bool get isEmpty => files.isEmpty;
   bool get isNotEmpty => !isEmpty;
 }
 
