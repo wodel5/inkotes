@@ -75,7 +75,7 @@ class _ExportBarState extends State<ExportBar> {
           return TextButton(
             onPressed: _onPressed(widget.exportAsIks, context),
             style: TextButton.styleFrom(foregroundColor: colorScheme.primary),
-            child: _buttonChild(widget.exportAsIks, 'IKS'),
+            child: _buttonChild(widget.exportAsIks, t.editor.toolbar.exportIks),
           );
         },
       ),
@@ -84,7 +84,7 @@ class _ExportBarState extends State<ExportBar> {
           return TextButton(
             onPressed: _onPressed(widget.exportAsPdf, context),
             style: TextButton.styleFrom(foregroundColor: colorScheme.primary),
-            child: _buttonChild(widget.exportAsPdf, 'PDF'),
+            child: _buttonChild(widget.exportAsPdf, t.editor.toolbar.exportPdf),
           );
         },
       ),
@@ -93,7 +93,7 @@ class _ExportBarState extends State<ExportBar> {
           return TextButton(
             onPressed: _onPressed(widget.exportAsPng, context),
             style: TextButton.styleFrom(foregroundColor: colorScheme.primary),
-            child: _buttonChild(widget.exportAsPng, 'PNG'),
+            child: _buttonChild(widget.exportAsPng, t.editor.toolbar.exportPng),
           );
         },
       ),

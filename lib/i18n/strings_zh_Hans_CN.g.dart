@@ -247,6 +247,18 @@ class _Translations$editor$toolbar$zh_Hans_CN extends Translations$editor$toolba
 	// Translations
 	@override String get exportAs => '导出为：';
 	@override String get palette => '调色盘';
+	@override String get laserPointer => '激光笔';
+	@override String get select => '选择';
+	@override String get eraser => '橡皮擦';
+	@override String get insertImage => '插入图片';
+	@override String get importPdf => '导入 PDF';
+	@override String get fingerDrawing => '手指绘图';
+	@override String get undo => '撤销';
+	@override String get redo => '恢复';
+	@override String get export => '导出';
+	@override String get exportIks => 'IKS 包';
+	@override String get exportPdf => 'PDF';
+	@override String get exportPng => 'PNG 图片';
 }
 
 // Path: editor.pens
@@ -279,7 +291,7 @@ class _Translations$editor$colors$zh_Hans_CN extends Translations$editor$colors$
 	final TranslationsZhHansCn _root; // ignore: unused_field
 
 	// Translations
-	@override String get colorPicker => '选色器';
+	@override String get colorPicker => '自定义颜色';
 	@override String customBrightnessHue({required Object b, required Object h}) => '自定义 ${b} ${h}';
 	@override String customHue({required Object h}) => '自定义 ${h}';
 	@override String get dark => '暗色';

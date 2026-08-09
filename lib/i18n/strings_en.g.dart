@@ -359,6 +359,42 @@ class Translations$editor$toolbar$en {
 
 	/// en: 'Palette'
 	String get palette => 'Palette';
+
+	/// en: 'Laser pointer'
+	String get laserPointer => 'Laser pointer';
+
+	/// en: 'Select'
+	String get select => 'Select';
+
+	/// en: 'Eraser'
+	String get eraser => 'Eraser';
+
+	/// en: 'Insert image'
+	String get insertImage => 'Insert image';
+
+	/// en: 'Import PDF'
+	String get importPdf => 'Import PDF';
+
+	/// en: 'Finger drawing'
+	String get fingerDrawing => 'Finger drawing';
+
+	/// en: 'Undo'
+	String get undo => 'Undo';
+
+	/// en: 'Redo'
+	String get redo => 'Redo';
+
+	/// en: 'Export'
+	String get export => 'Export';
+
+	/// en: 'IKS package'
+	String get exportIks => 'IKS package';
+
+	/// en: 'PDF'
+	String get exportPdf => 'PDF';
+
+	/// en: 'PNG image'
+	String get exportPng => 'PNG image';
 }
 
 // Path: editor.pens
@@ -402,8 +438,8 @@ class Translations$editor$colors$en {
 
 	// Translations
 
-	/// en: 'Color picker'
-	String get colorPicker => 'Color picker';
+	/// en: 'Custom color'
+	String get colorPicker => 'Custom color';
 
 	/// en: 'Custom $b $h'
 	String customBrightnessHue({required Object b, required Object h}) => 'Custom ${b} ${h}';

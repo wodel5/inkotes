@@ -67,6 +67,18 @@ editor:
   toolbar:
     exportAs: "Export as:"
     palette: Palette
+    laserPointer: Laser pointer
+    select: Select
+    eraser: Eraser
+    insertImage: Insert image
+    importPdf: Import PDF
+    fingerDrawing: Finger drawing
+    undo: Undo
+    redo: Redo
+    export: Export
+    exportIks: IKS package
+    exportPdf: PDF
+    exportPng: PNG image
   pens:
     fountainPen: Pen
     highlighter: Highlighter
@@ -75,7 +87,7 @@ editor:
     size: Stroke size
     pressure: Pressure
   colors:
-    colorPicker: Color picker
+    colorPicker: Custom color
     customBrightnessHue: Custom $b $h
     customHue: Custom $h
     dark: dark

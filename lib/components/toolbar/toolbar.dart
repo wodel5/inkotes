@@ -407,6 +407,7 @@ class ToolbarState extends State<Toolbar> {
             DockButton(
               selected: widget.currentTool == LaserPointer.currentLaserPointer,
               enabled: true,
+              tooltip: t.editor.toolbar.laserPointer,
               onPressed: () {
                 toolOptionsType.value = .hide;
                 showColorOptions.value = false;
@@ -418,6 +419,7 @@ class ToolbarState extends State<Toolbar> {
             DockButton(
               selected: widget.currentTool is Select,
               enabled: !widget.readOnly,
+              tooltip: t.editor.toolbar.select,
               onPressed: () {
                 if (widget.currentTool == Select.currentSelect) {
                   if (toolOptionsType.value == .select) {
@@ -439,6 +441,7 @@ class ToolbarState extends State<Toolbar> {
             DockButton(
               selected: widget.currentTool is Eraser,
               enabled: !widget.readOnly,
+              tooltip: t.editor.toolbar.eraser,
               onPressed: () {
                 showColorOptions.value = false;
                 showExportOptions.value = false;
@@ -449,6 +452,7 @@ class ToolbarState extends State<Toolbar> {
             _DockDivider(),
             DockButton(
               enabled: !widget.readOnly,
+              tooltip: t.editor.toolbar.insertImage,
               onPressed: () {
                 showColorOptions.value = false;
                 showExportOptions.value = false;
@@ -459,6 +463,7 @@ class ToolbarState extends State<Toolbar> {
             if (widget.canRasterPdf)
               DockButton(
                 enabled: !widget.readOnly,
+                tooltip: t.editor.toolbar.importPdf,
                 onPressed: () async {
                   showColorOptions.value = false;
                   showExportOptions.value = false;
@@ -470,6 +475,7 @@ class ToolbarState extends State<Toolbar> {
             DockButton(
               selected: stows.editorFingerDrawing.value,
               enabled: !widget.readOnly,
+              tooltip: t.editor.toolbar.fingerDrawing,
               onPressed: () {
                 showColorOptions.value = false;
                 showExportOptions.value = false;
@@ -480,6 +486,7 @@ class ToolbarState extends State<Toolbar> {
             _DockDivider(),
             DockButton(
               enabled: !widget.readOnly && widget.isUndoPossible,
+              tooltip: t.editor.toolbar.undo,
               onPressed: () {
                 showColorOptions.value = false;
                 showExportOptions.value = false;
@@ -492,6 +499,7 @@ class ToolbarState extends State<Toolbar> {
             ),
             DockButton(
               enabled: !widget.readOnly && widget.isRedoPossible,
+              tooltip: t.editor.toolbar.redo,
               onPressed: () {
                 showColorOptions.value = false;
                 showExportOptions.value = false;
@@ -502,6 +510,7 @@ class ToolbarState extends State<Toolbar> {
             _DockDivider(),
             DockButton(
               enabled: !widget.readOnly,
+              tooltip: t.editor.toolbar.export,
               onPressed: () {
                 showColorOptions.value = false;
                 toggleExportBar();

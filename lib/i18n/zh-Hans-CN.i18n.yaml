@@ -67,6 +67,18 @@ editor:
   toolbar:
     exportAs: 导出为：
     palette: 调色盘
+    laserPointer: 激光笔
+    select: 选择
+    eraser: 橡皮擦
+    insertImage: 插入图片
+    importPdf: 导入 PDF
+    fingerDrawing: 手指绘图
+    undo: 撤销
+    redo: 恢复
+    export: 导出
+    exportIks: IKS 包
+    exportPdf: PDF
+    exportPng: PNG 图片
   pens:
     fountainPen: 钢笔
     highlighter: 荧光笔
@@ -75,7 +87,7 @@ editor:
     size: 笔画粗细
     pressure: 压感
   colors:
-    colorPicker: 选色器
+    colorPicker: 自定义颜色
     customBrightnessHue: 自定义 $b $h
     customHue: 自定义 $h
     dark: 暗色
