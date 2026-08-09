@@ -86,7 +86,6 @@ mixin EditorImportExportMixin<T extends StatefulWidget> on State<T> {
         images: images,
       ),
     );
-    createPage(currentPageIndex);
     coreInfo.pages[currentPageIndex].images.addAll(images);
     setState(() {});
     autosaveAfterDelay();
@@ -130,8 +129,11 @@ mixin EditorImportExportMixin<T extends StatefulWidget> on State<T> {
   Future<bool> importPdfFromFilePath(String path) async {
     final pdfDocument = await coreInfo.assetCache.pdfDocumentCache.load(path);
 
-    final emptyPage = coreInfo.pages.removeLast();
-    assert(emptyPage.isEmpty);
+    // 只有最后一页为空白页时才移除它（导入结束后末尾补回一个空白页）；
+    // 若最后一页有内容则保留，避免丢失用户已书写的内容。
+    final EditorPage? emptyPage = coreInfo.pages.last.isEmpty
+        ? coreInfo.pages.removeLast()
+        : null;
 
     try {
       for (final pdfPage in pdfDocument.pages) {
@@ -173,8 +175,11 @@ mixin EditorImportExportMixin<T extends StatefulWidget> on State<T> {
         );
       }
     } finally {
-      // 即使导入中途失败也恢复空页，避免 pages 为空导致保存崩溃
-      coreInfo.pages.add(emptyPage);
+      // 即使导入中途失败也恢复空白页，避免 pages 为空导致保存崩溃；
+      // 若原本最后一页非空（未移除），则无需恢复。
+      if (emptyPage != null) {
+        coreInfo.pages.add(emptyPage);
+      }
     }
 
     if (mounted) setState(() {});
