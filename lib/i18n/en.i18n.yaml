@@ -47,7 +47,7 @@ settings:
     autoSwitchPaperColor: Auto-switch paper color
     printPageIndicators: Print page indicators
     autosave: Auto-save
-  checkUpdateSource: Update source
+  checkUpdateSource: Check for updates
   aboutApp: About the APP
   update:
     newVersion: New version $version available
@@ -56,6 +56,9 @@ settings:
     downloading: Downloading $percent
     downloaded: Download complete
     downloadFailed: Download failed, please check your network and retry
+    cancelDownload: Cancel download
+    backgroundDownload: Background download
+    downloadingTitle: Downloading
   aboutDialog:
     version: Version $version
     copyright: |-

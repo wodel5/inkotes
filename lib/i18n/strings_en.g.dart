@@ -109,8 +109,8 @@ class Translations$settings$en {
 	// Translations
 	late final Translations$settings$prefLabels$en prefLabels = Translations$settings$prefLabels$en.internal(_root);
 
-	/// en: 'Update source'
-	String get checkUpdateSource => 'Update source';
+	/// en: 'Check for updates'
+	String get checkUpdateSource => 'Check for updates';
 
 	/// en: 'About the APP'
 	String get aboutApp => 'About the APP';
@@ -320,6 +320,15 @@ class Translations$settings$update$en {
 
 	/// en: 'Download failed, please check your network and retry'
 	String get downloadFailed => 'Download failed, please check your network and retry';
+
+	/// en: 'Cancel download'
+	String get cancelDownload => 'Cancel download';
+
+	/// en: 'Background download'
+	String get backgroundDownload => 'Background download';
+
+	/// en: 'Downloading'
+	String get downloadingTitle => 'Downloading';
 }
 
 // Path: settings.aboutDialog

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -187,6 +188,7 @@ class UpdateService {
     final info = latestUpdate;
     if (info == null) return null;
 
+    _cancelled = false;
     _downloadToken?.cancel();
     _downloadToken = CancelToken();
     downloadProgress.value = 0;
@@ -208,10 +210,14 @@ class UpdateService {
       downloadProgress.value = 1.0;
       return filePath;
     } on DioException catch (e) {
-      _log.warning('Failed to download update: $e');
-      if (e.type != DioExceptionType.cancel) {
+      if (e.type == DioExceptionType.cancel) {
+        // 用户主动取消：清空进度，不视为失败
+        _cancelled = true;
         downloadProgress.value = null;
+        return null;
       }
+      _log.warning('Failed to download update: $e');
+      downloadProgress.value = null;
       return null;
     } catch (e) {
       _log.warning('Failed to download update: $e');
@@ -220,11 +226,39 @@ class UpdateService {
     }
   }
 
+  /// 最近一次 [download] 是否被用户取消。
+  static bool get wasCancelled => _cancelled;
+  static bool _cancelled = false;
+
   /// 取消正在进行的下载。
   static void cancelDownload() {
     _downloadToken?.cancel();
     _downloadToken = null;
+    _mockTimer?.cancel();
+    _mockTimer = null;
     downloadProgress.value = null;
+  }
+
+  static Timer? _mockTimer;
+
+  /// 模拟下载（仅测试用）：不请求网络、不下载文件，
+  /// 直接让下载进度从 0 平滑增长到 100%，用于预览下载 UI。
+  static void mockDownload() {
+    _downloadToken?.cancel();
+    _downloadToken = null;
+    _mockTimer?.cancel();
+    downloadProgress.value = 0;
+    _mockTimer = Timer.periodic(const Duration(milliseconds: 250), (timer) {
+      final current = downloadProgress.value ?? 0;
+      final next = current + 0.01;
+      if (next >= 1) {
+        downloadProgress.value = 1.0;
+        timer.cancel();
+        _mockTimer = null;
+      } else {
+        downloadProgress.value = next;
+      }
+    });
   }
 
   static const MethodChannel _installChannel = MethodChannel('update/install');

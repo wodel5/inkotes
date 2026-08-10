@@ -82,7 +82,7 @@ class _Translations$settings$zh_Hans_CN extends Translations$settings$en {
 
 	// Translations
 	@override late final _Translations$settings$prefLabels$zh_Hans_CN prefLabels = _Translations$settings$prefLabels$zh_Hans_CN._(_root);
-	@override String get checkUpdateSource => '检查更新源';
+	@override String get checkUpdateSource => '检查更新';
 	@override String get aboutApp => '关于此应用';
 	@override late final _Translations$settings$update$zh_Hans_CN update = _Translations$settings$update$zh_Hans_CN._(_root);
 	@override late final _Translations$settings$aboutDialog$zh_Hans_CN aboutDialog = _Translations$settings$aboutDialog$zh_Hans_CN._(_root);
@@ -216,6 +216,9 @@ class _Translations$settings$update$zh_Hans_CN extends Translations$settings$upd
 	@override String downloading({required Object percent}) => '正在下载 ${percent}';
 	@override String get downloaded => '下载完成';
 	@override String get downloadFailed => '下载失败，请检查网络后重试';
+	@override String get cancelDownload => '取消下载';
+	@override String get backgroundDownload => '后台下载';
+	@override String get downloadingTitle => '正在下载';
 }
 
 // Path: settings.aboutDialog
