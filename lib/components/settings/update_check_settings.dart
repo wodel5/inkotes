@@ -2,6 +2,7 @@ import 'dart:ui' show GradientTransform;
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:inkotes/components/common/app_toast.dart';
 import 'package:inkotes/components/theming/uni_icon.dart';
 import 'package:inkotes/data/prefs.dart';
 import 'package:inkotes/data/update_service.dart';
@@ -48,6 +49,19 @@ class _UpdateCheckSettingsState extends State<UpdateCheckSettings>
 
   void _onDownloadPressed() {
     showUpdateDialog(context);
+  }
+
+  /// 长按主动检查更新：有更新则正常出现下载入口；
+  /// 无更新或检查失败时弹 toast 提示。
+  Future<void> _onLongPressCheck() async {
+    final info = await UpdateService.checkForUpdates();
+    if (!mounted) return;
+    if (UpdateService.lastCheckFailed) {
+      AppToast.show(context, message: t.settings.update.checkFailed);
+    } else if (info == null) {
+      AppToast.show(context, message: t.settings.update.alreadyLatest);
+    }
+    // info != null：有更新，红点与"下载更新"按钮自动出现，无需提示
   }
 
   @override
@@ -111,10 +125,8 @@ class _UpdateCheckSettingsState extends State<UpdateCheckSettings>
               ListTile(
                 // 下载中：点击整行呼出下载进度弹窗
                 onTap: isDownloading ? _onDownloadPressed : null,
-                // 长按触发模拟下载（测试用，不调更新 API）
-                onLongPress: isDownloading
-                    ? null
-                    : () => UpdateService.mockDownload(),
+                // 长按主动检查更新（进入软件时已自动检查一次）
+                onLongPress: isDownloading ? null : _onLongPressCheck,
                 contentPadding: const EdgeInsets.symmetric(
                   vertical: 4,
                   horizontal: 16,
@@ -224,6 +236,10 @@ Future<void> showUpdateDialog(BuildContext context) {
       return StatefulBuilder(
         builder: (context, setState) {
           return AlertDialog(
+            // 与软件其他弹窗（AdaptiveAlertDialog）背景一致
+            backgroundColor: Theme.of(context).brightness == Brightness.light
+                ? const Color(0xFFF2F4F8)
+                : null,
             title: Text(
               t.settings.update.newVersion(version: info?.latestVersion ?? ''),
             ),
@@ -283,48 +299,58 @@ Future<void> showUpdateDialog(BuildContext context) {
                 ],
               ],
             ),
-            actions: downloading
-                ? [
-                    // 取消下载：终止下载并关闭弹窗
-                    TextButton(
-                      onPressed: () {
-                        UpdateService.cancelDownload();
-                        Navigator.of(context).pop();
-                      },
-                      child: Text(t.settings.update.cancelDownload),
-                    ),
-                    // 后台下载：关闭弹窗，下载在后台继续
-                    FilledButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      child: Text(t.settings.update.backgroundDownload),
-                    ),
-                  ]
-                : [
-                    TextButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      child: Text(t.common.cancel),
-                    ),
-                    FilledButton(
-                      onPressed: () async {
-                        setState(() {
-                          downloading = true;
-                          failed = false;
-                        });
-                        final path = await UpdateService.download();
-                        if (path == null) {
-                          // 用户主动取消不算失败，不显示"下载失败"
-                          if (context.mounted && !UpdateService.wasCancelled) {
-                            setState(() => failed = true);
-                          }
-                        } else {
-                          // 下载完成，跳转系统安装界面
-                          await UpdateService.installApk(path);
-                          if (context.mounted) Navigator.of(context).pop();
-                        }
-                      },
-                      child: Text(t.settings.update.downloadUpdate),
-                    ),
-                  ],
+            actions: [
+              // 两个按钮等宽，风格与软件一致（TextButton + FilledButton）
+              Row(
+                children: [
+                  Expanded(
+                    child: downloading
+                        ? TextButton(
+                            onPressed: () {
+                              UpdateService.cancelDownload();
+                              Navigator.of(context).pop();
+                            },
+                            child: Text(t.settings.update.cancelDownload),
+                          )
+                        : TextButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: Text(t.common.cancel),
+                          ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: downloading
+                        ? FilledButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: Text(t.settings.update.backgroundDownload),
+                          )
+                        : FilledButton(
+                            onPressed: () async {
+                              setState(() {
+                                downloading = true;
+                                failed = false;
+                              });
+                              final path = await UpdateService.download();
+                              if (path == null) {
+                                // 用户主动取消不算失败，不显示"下载失败"
+                                if (context.mounted &&
+                                    !UpdateService.wasCancelled) {
+                                  setState(() => failed = true);
+                                }
+                              } else {
+                                // 下载完成，跳转系统安装界面
+                                await UpdateService.installApk(path);
+                                if (context.mounted) {
+                                  Navigator.of(context).pop();
+                                }
+                              }
+                            },
+                            child: Text(t.settings.update.downloadUpdate),
+                          ),
+                  ),
+                ],
+              ),
+            ],
           );
         },
       );

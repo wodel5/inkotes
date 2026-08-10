@@ -327,6 +327,12 @@ class Translations$settings$update$en {
 	/// en: 'Background download'
 	String get backgroundDownload => 'Background download';
 
+	/// en: 'Already up to date'
+	String get alreadyLatest => 'Already up to date';
+
+	/// en: 'Check for updates failed'
+	String get checkFailed => 'Check for updates failed';
+
 	/// en: 'Downloading'
 	String get downloadingTitle => 'Downloading';
 }

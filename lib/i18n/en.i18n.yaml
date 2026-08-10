@@ -58,6 +58,8 @@ settings:
     downloadFailed: Download failed, please check your network and retry
     cancelDownload: Cancel download
     backgroundDownload: Background download
+    alreadyLatest: Already up to date
+    checkFailed: Check for updates failed
     downloadingTitle: Downloading
   aboutDialog:
     version: Version $version

@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -65,10 +64,14 @@ class UpdateService {
     }
   }
 
+  /// 最近一次检查更新是否失败（网络异常等），用于区分"无更新"与"检查失败"。
+  static bool lastCheckFailed = false;
+
   /// 检查更新。成功且发现新版本时设置 [hasNewVersion] 并返回信息，
-  /// 否则返回 null（网络失败等异常被静默吞掉）。
+  /// 否则返回 null（无新版本或检查失败，通过 [lastCheckFailed] 区分）。
   static Future<UpdateInfo?> checkForUpdates({UpdateSource? source}) async {
     final src = source ?? stows.updateSource.value;
+    lastCheckFailed = false;
     try {
       final response = await _dio.get(_apiUrl(src));
       final data = response.data;
@@ -107,6 +110,7 @@ class UpdateService {
       return hasNewVersion.value ? info : null;
     } catch (e) {
       _log.warning('Failed to check for updates: $e');
+      lastCheckFailed = true;
       hasNewVersion.value = false;
       return null;
     }
@@ -234,31 +238,7 @@ class UpdateService {
   static void cancelDownload() {
     _downloadToken?.cancel();
     _downloadToken = null;
-    _mockTimer?.cancel();
-    _mockTimer = null;
     downloadProgress.value = null;
-  }
-
-  static Timer? _mockTimer;
-
-  /// 模拟下载（仅测试用）：不请求网络、不下载文件，
-  /// 直接让下载进度从 0 平滑增长到 100%，用于预览下载 UI。
-  static void mockDownload() {
-    _downloadToken?.cancel();
-    _downloadToken = null;
-    _mockTimer?.cancel();
-    downloadProgress.value = 0;
-    _mockTimer = Timer.periodic(const Duration(milliseconds: 250), (timer) {
-      final current = downloadProgress.value ?? 0;
-      final next = current + 0.01;
-      if (next >= 1) {
-        downloadProgress.value = 1.0;
-        timer.cancel();
-        _mockTimer = null;
-      } else {
-        downloadProgress.value = next;
-      }
-    });
   }
 
   static const MethodChannel _installChannel = MethodChannel('update/install');

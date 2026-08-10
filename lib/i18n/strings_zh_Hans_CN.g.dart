@@ -218,6 +218,8 @@ class _Translations$settings$update$zh_Hans_CN extends Translations$settings$upd
 	@override String get downloadFailed => '下载失败，请检查网络后重试';
 	@override String get cancelDownload => '取消下载';
 	@override String get backgroundDownload => '后台下载';
+	@override String get alreadyLatest => '已是最新版本';
+	@override String get checkFailed => '检查更新失败';
 	@override String get downloadingTitle => '正在下载';
 }
 
