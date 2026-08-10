@@ -56,8 +56,14 @@ class _UpdateCheckSettingsState extends State<UpdateCheckSettings>
   Future<void> _onLongPressCheck() async {
     final info = await UpdateService.checkForUpdates();
     if (!mounted) return;
+    // 检查完成后刷新行首图标（失败显示错误图标）
+    setState(() {});
     if (UpdateService.lastCheckFailed) {
-      AppToast.show(context, message: t.settings.update.checkFailed);
+      AppToast.show(
+        context,
+        message: t.settings.update.checkFailed,
+        isError: true,
+      );
     } else if (info == null) {
       AppToast.show(context, message: t.settings.update.alreadyLatest);
     }
@@ -180,7 +186,9 @@ class _UpdateCheckSettingsState extends State<UpdateCheckSettings>
                     // 切换来源后重新检查更新，红点状态随之刷新
                     UpdateService.checkForUpdates(
                       source: stows.updateSource.value,
-                    );
+                    ).then((_) {
+                      if (mounted) setState(() {});
+                    });
                   },
                   isSelected: [
                     for (final option in UpdateSource.values) option == source,
